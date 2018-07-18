@@ -12,7 +12,7 @@ def list_ports():
     modi_ports = list()
 
     for port in ports:
-        if port.manufacturer == "LUXROBO" and port.product == "MODI Network Module":
+        if port.manufacturer == "LUXROBO": 
             modi_ports.append(port.device)
 
     return modi_ports
