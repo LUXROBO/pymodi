@@ -69,7 +69,7 @@ class MODI:
 
     @property
     def dials(self):
-        return tuple([x for x in self.modules if x.type == "dials"])
+        return tuple([x for x in self.modules if x.type == "dial"])
 
     @property
     def displays(self):
