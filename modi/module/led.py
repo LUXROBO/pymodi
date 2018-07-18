@@ -27,9 +27,9 @@ class Led(OutputModule):
             return (self.red(), self.green(), self.blue())
         else:
             self._modi().write(set_property(self.id, 16, (
-                red if red else self.red(), 
-                green if green else self.green(), 
-                blue if blue else self.blue()
+                red if red != None else self.red(), 
+                green if green != None else self.green(), 
+                blue if blue != None else self.blue()
                 )))
 
     def on(self):
