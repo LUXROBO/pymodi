@@ -5,4 +5,11 @@ History
 0.1.0 (2018-06-28)
 ------------------
 
-* First release on PyPI.
+* First release on in-house GitLab.
+
+
+0.1.1 (2018-07-20)
+------------------
+
+* Requirements fix.
+* Packages' include path fix.
