@@ -11,7 +11,10 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=6.0', ]
+requirements = [
+    'Click>=6.0',
+    'pyserial>=3.1.1'
+    ]
 
 setup_requirements = [ ]
 
@@ -44,11 +47,11 @@ setup(
     include_package_data=True,
     keywords='modi',
     name='modi',
-    packages=find_packages(include=['modi']),
+    packages=find_packages(include=['modi', 'modi.module']),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/devkoriel/modi',
-    version='0.1.0',
+    url='https://git.luxrobo.com/modi/python-api',
+    version='0.1.1',
     zip_safe=False,
 )
