@@ -47,7 +47,7 @@ setup(
     include_package_data=True,
     keywords='modi',
     name='modi',
-    packages=find_packages(include=['modi']),
+    packages=find_packages(include=['modi', 'modi.module']),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
