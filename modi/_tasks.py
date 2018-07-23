@@ -65,7 +65,8 @@ class ProcDataTask(MODITask):
             except ValueError:
                 pass
 
-    async def _handler(self, msg):
+    @asyncio.coroutine
+    def _handler(self, msg):
         asyncio.ensure_future({
             0x00: self._update_health,
             0x0A: self._update_health,
@@ -73,7 +74,8 @@ class ProcDataTask(MODITask):
             0x1F: self._update_property
         }.get(msg['c'], self._dummy)(msg))
 
-    async def _update_health(self, msg):
+    @asyncio.coroutine
+    def _update_health(self, msg):
         modi = self._modi()
 
         id = msg['s']
@@ -94,8 +96,9 @@ class ProcDataTask(MODITask):
 
                 if module:
                     modi._modules.remove(module)
-        
-    async def _update_modules(self, msg):
+
+    @asyncio.coroutine    
+    def _update_modules(self, msg):
         modi = self._modi()
 
         id = msg['s']
@@ -146,7 +149,8 @@ class ProcDataTask(MODITask):
             "ultrasonic": ultrasonic.Ultrasonic
         }.get(type, lambda _: None)
     
-    async def _update_property(self, msg):
+    @asyncio.coroutine
+    def _update_property(self, msg):
         modi = self._modi()
 
         try:
@@ -166,7 +170,8 @@ class ProcDataTask(MODITask):
         except:
             pass
 
-    async def _dummy(self, msg):
+    @asyncio.coroutine
+    def _dummy(self, msg):
         pass
 
 class WriteDataTask(MODITask):
