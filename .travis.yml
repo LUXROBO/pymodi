@@ -5,7 +5,6 @@ python:
   - 3.6
   - 3.5
   - 3.4
-  - 2.7
 
 # Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install: pip install -U tox-travis
@@ -20,10 +19,10 @@ script: tox
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
-  user: devkoriel
+  user: LUXROBO
   password:
     secure: PLEASE_REPLACE_ME
   on:
     tags: true
-    repo: devkoriel/modi
+    repo: LUXROBO/MODI-Python-API
     python: 3.6
