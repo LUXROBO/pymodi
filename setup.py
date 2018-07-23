@@ -11,10 +11,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [
-    'Click>=6.0',
-    'pyserial>=3.1.1'
-    ]
+requirements = ['pyserial>=3.1.1', ]
 
 setup_requirements = [ ]
 
@@ -34,11 +31,6 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     description="Python Boilerplate contains all the boilerplate you need to create a Python package.",
-    entry_points={
-        'console_scripts': [
-            'modi=modi.cli:main',
-        ],
-    },
     install_requires=requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
