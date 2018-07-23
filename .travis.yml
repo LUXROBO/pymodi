@@ -4,8 +4,6 @@ python:
 - 3.5
 - 3.4
 - 2.7
-dist: xenial
-sudo: true
 install: pip install -U tox-travis
 script: tox
 deploy:
