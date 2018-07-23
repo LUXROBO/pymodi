@@ -13,3 +13,9 @@ History
 
 * Requirements fix.
 * Packages' include path fix.
+
+
+0.1.2 (2018-07-23)
+------------------
+
+* Python 3.4 support.
