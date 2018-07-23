@@ -6,8 +6,8 @@ MODI Python API
 .. image:: https://img.shields.io/pypi/v/modi.svg
         :target: https://pypi.python.org/pypi/modi
 
-.. image:: https://img.shields.io/travis/devkoriel/modi.svg
-        :target: https://travis-ci.org/devkoriel/modi
+.. image:: https://img.shields.io/travis/LUXROBO/MODI-Python-API.svg
+        :target: https://travis-ci.org/LUXROBO/MODI-Python-API
 
 .. image:: https://readthedocs.org/projects/modi/badge/?version=latest
         :target: https://modi.readthedocs.io/en/latest/?badge=latest

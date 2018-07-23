@@ -32,13 +32,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/devkoriel/modi
+    $ git clone git://github.com/LUXROBO/MODI-Python-API
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/devkoriel/modi/tarball/master
+    $ curl  -OL https://github.com/LUXROBO/MODI-Python-API/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/devkoriel/modi
-.. _tarball: https://github.com/devkoriel/modi/tarball/master
+.. _Github repo: https://github.com/LUXROBO/MODI-Python-API
+.. _tarball: https://github.com/LUXROBO/MODI-Python-API/tarball/master
