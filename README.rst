@@ -6,6 +6,9 @@ MODI Python API
 .. image:: https://img.shields.io/pypi/v/modi.svg
         :target: https://pypi.python.org/pypi/modi
 
+.. image:: https://img.shields.io/pypi/pyversions/modi.svg
+        :target: https://pypi.python.org/pypi/modi
+
 .. image:: https://img.shields.io/travis/LUXROBO/MODI-Python-API.svg
         :target: https://travis-ci.org/LUXROBO/MODI-Python-API
 
