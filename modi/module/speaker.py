@@ -8,6 +8,9 @@ from enum import Enum
 
 from modi.module._module import OutputModule
 
+from modi._cmd import set_property
+from modi._cmd import PropertyDataType
+
 class PropertyType(Enum):
     FREQUENCY = 3
     VOLUME = 2
@@ -105,8 +108,14 @@ class Speaker(OutputModule):
         super(Speaker, self).__init__(id, uuid, modi)
         self._type = "speaker"
 
-    def frequency(self):
-        return self._properties[PropertyType.FREQUENCY]
+    def frequency(self, frequency=None):
+        if frequency == None:
+            return self._properties[PropertyType.FREQUENCY]
+        else:
+            self._modi().write(set_property(self.id, 16, (frequency, self.volume()), PropertyDataType.FLOAT))
 
-    def volume(self):
-        return self._properties[PropertyType.VOLUME]
+    def volume(self, volume=None):
+        if volume == None:
+            return self._properties[PropertyType.VOLUME]
+        else:
+            self._modi().write(set_property(self.id, 16, (self.frequency(), volume), PropertyDataType.FLOAT))
