@@ -19,3 +19,10 @@ History
 ------------------
 
 * Python 3.4 support.
+
+
+0.2.0 (2018-07-25)
+------------------
+
+* Speaker module support.
+* Display module support.
