@@ -17,6 +17,12 @@ class ModuleState(Enum):
     NO_FIRMWARE = 4
     REBOOT = 5
 
+class PropertyDataType(Enum):
+    INT = 0
+    FLOAT = 1
+    STRING = 2
+    RAW = 3
+
 def request_uuid(id):
     msg = dict()
 
