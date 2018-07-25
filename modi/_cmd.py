@@ -6,6 +6,7 @@ from __future__ import absolute_import
 
 import json
 import base64
+import struct
 
 from enum import Enum
 
@@ -16,6 +17,12 @@ class ModuleState(Enum):
     ERROR = 3
     NO_FIRMWARE = 4
     REBOOT = 5
+
+class PropertyDataType(Enum):
+    INT = 0
+    FLOAT = 1
+    STRING = 2
+    RAW = 3
 
 def request_uuid(id):
     msg = dict()
@@ -51,7 +58,7 @@ def module_state(id, state):
     else:
         raise RuntimeError("The type of state is not ModuleState")
     
-def set_property(id, property_type, values):
+def set_property(id, property_type, values, datatype=None):
     msg = dict()
 
     msg['c'] = 0x04
@@ -60,10 +67,33 @@ def set_property(id, property_type, values):
 
     values_bytes = bytearray(8)
 
-    for index, value in enumerate(values):
-        value = int(value)
-        values_bytes[index * 2] = value & 0xFF
-        values_bytes[index * 2 + 1] = (value & 0xFF00) >> 8
+    if datatype == None or datatype == PropertyDataType.INT:
+        for index, value in enumerate(values):
+            value = int(value)
+            values_bytes[index * 2] = value & 0xFF
+            values_bytes[index * 2 + 1] = (value & 0xFF00) >> 8
+    elif datatype == PropertyDataType.FLOAT:
+        for index, value in enumerate(values):
+            values_bytes[index * 4:index * 4 + 4] = struct.pack('f', float(value))
+    elif datatype == PropertyDataType.STRING:
+        cmds = list()
+        value = str(values)[:27]
+        num_of_chunks = int(len(value) / 8) + 1
+
+        for i in range(num_of_chunks):
+            values_bytes[:] = [ord(i) for i in value[i * 8:i * 8 + 8]]
+            msg['b'] = base64.b64encode(bytes(values_bytes)).decode('utf-8')
+            msg['l'] = len(values_bytes)
+
+            cmds.append(json.dumps(msg, separators=(',', ':')))
+
+        return tuple(cmds)
+    elif datatype == PropertyDataType.RAW:
+        msg['b'] = base64.b64encode(bytearray(values)).decode('utf-8')
+        msg['l'] = len(values)
+
+    else:
+        raise RuntimeError("Not supported property data type.")
 
     msg['b'] = base64.b64encode(bytes(values_bytes)).decode('utf-8')
     msg['l'] = 8
