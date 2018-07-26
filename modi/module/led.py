@@ -42,16 +42,16 @@ class Led(OutputModule):
         if red == None:
             return self._properties[PropertyType.RED]
         else:
-            self._modi().write(set_property(self.id, 16, (red, self.green(), self.blue())))
+            self.rgb(red=red)
 
     def green(self, green=None):
         if green == None:
             return self._properties[PropertyType.GREEN]
         else:
-            self._modi().write(set_property(self.id, 16, (self.red(), green, self.blue())))
+            self.rgb(green=green)
 
     def blue(self, blue=None):
         if blue == None:
             return self._properties[PropertyType.BLUE]
         else:
-            self._modi().write(set_property(self.id, 16, (self.red(), self.green(), blue)))
+            self.rgb(blue=blue)
