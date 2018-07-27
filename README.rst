@@ -23,7 +23,7 @@ MODI Python API
 
 
 
-Python Boilerplate contains all the boilerplate you need to create a Python package.
+Easy😆 and fast💨 MODI Python API package.
 
 
 * Free software: MIT license
