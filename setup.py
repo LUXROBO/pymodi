@@ -11,13 +11,10 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-import sys
-IS_PY2 = sys.version_info < (3, 0)
-
-if IS_PY2:
-    requirements = ['pyserial>=3.1.1', 'enum34>=1.1.6', ]
-else:
-    requirements = ['pyserial>=3.1.1', ]
+requirements = [
+    'pyserial>=3.1.1',
+    'enum34>=1.1.6',
+    ]
 
 setup_requirements = [ ]
 
