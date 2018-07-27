@@ -108,14 +108,26 @@ class Speaker(OutputModule):
         super(Speaker, self).__init__(id, uuid, modi)
         self._type = "speaker"
 
+    def tune(self, frequency=None, volume=None):
+        if frequency == None and volume == None:
+            return (self.frequency(), self.volume())
+        else:
+            self._modi().write(set_property(self.id, 16, (
+                frequency if frequency != None else self.frequency(),
+                volume if volume != None else self.volume()
+            ), PropertyDataType.FLOAT))
+
     def frequency(self, frequency=None):
         if frequency == None:
             return self._properties[PropertyType.FREQUENCY]
         else:
-            self._modi().write(set_property(self.id, 16, (frequency, self.volume()), PropertyDataType.FLOAT))
+            self.tune(frequency=frequency)
 
     def volume(self, volume=None):
         if volume == None:
             return self._properties[PropertyType.VOLUME]
         else:
-            self._modi().write(set_property(self.id, 16, (self.frequency(), volume), PropertyDataType.FLOAT))
+            self.tune(volume=volume)
+
+    def off(self):
+        self.tune(0, 0)

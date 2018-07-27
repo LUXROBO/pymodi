@@ -26,3 +26,10 @@ History
 
 * Speaker module support.
 * Display module support.
+
+
+0.2.1 (2018-07-27)
+-----------------
+
+* Add speaker module's tune() and off() methods.
+* Remove duplicated codes.
