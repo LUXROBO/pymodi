@@ -9,12 +9,18 @@ from modi.serial import list_ports
 import modi._cmd as md_cmd
 from modi._tasks import *
 
-import queue
+import sys
+IS_PY2 = sys.version_info < (3, 0)
+
+if IS_PY2:
+    from Queue import Queue
+else:
+    from queue import Queue
 
 class MODI:
     def __init__(self, port=None):
-        self._recv_q = queue.Queue()
-        self._send_q = queue.Queue()
+        self._recv_q = Queue()
+        self._send_q = Queue()
 
         self._ids = dict()
         self._modules = list()

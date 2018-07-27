@@ -10,8 +10,8 @@ from modi.serial import list_ports
 from modi.module import *
 import modi._util as md_util 
 from modi._json_box import JsonBox
+from modi._threadpool import ThreadPool
 
-import asyncio
 import json
 import weakref
 import time
@@ -38,7 +38,7 @@ class ReadDataTask(MODITask):
 
                 while json_box.has_json():
                     modi._recv_q.put(json_box.json)
-            except OSError:
+            except:
                 pass
 
 class ProcDataTask(MODITask):
@@ -55,26 +55,25 @@ class ProcDataTask(MODITask):
 
     def run(self):
         modi = self._modi()
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+        pool = ThreadPool(10)
 
         while not self.stopped():
             try:
                 msg = json.loads(modi._recv_q.get())
-                loop.run_until_complete(self._handler(msg))
-            except ValueError:
+                pool.add_task(self._handler(msg['c']), msg)
+            except: 
                 pass
+        
+        pool.wait_completion()
 
-    @asyncio.coroutine
-    def _handler(self, msg):
-        asyncio.ensure_future({
+    def _handler(self, cmd):
+        return {
             0x00: self._update_health,
             0x0A: self._update_health,
             0x05: self._update_modules,
             0x1F: self._update_property
-        }.get(msg['c'], self._dummy)(msg))
+        }.get(cmd, lambda _: None)
 
-    @asyncio.coroutine
     def _update_health(self, msg):
         modi = self._modi()
 
@@ -89,15 +88,14 @@ class ProcDataTask(MODITask):
             modi.write(md_cmd.request_uuid(id))
 
         for id, info in list(modi._ids.items()):
-            if time_ms - info['timestamp'] > 5000:
+            if time_ms - info['timestamp'] > 3500:
                 del modi._ids[id]
 
                 module = next((module for module in modi.modules if module.uuid == info['uuid']), None)
 
                 if module:
                     modi._modules.remove(module)
-
-    @asyncio.coroutine    
+ 
     def _update_modules(self, msg):
         modi = self._modi()
 
@@ -149,7 +147,6 @@ class ProcDataTask(MODITask):
             "ultrasonic": ultrasonic.Ultrasonic
         }.get(type, lambda _: None)
     
-    @asyncio.coroutine
     def _update_property(self, msg):
         modi = self._modi()
 
@@ -170,10 +167,6 @@ class ProcDataTask(MODITask):
         except:
             pass
 
-    @asyncio.coroutine
-    def _dummy(self, msg):
-        pass
-
 class WriteDataTask(MODITask):
     def __init__(self, modi):
         super(WriteDataTask, self).__init__(modi)
@@ -185,5 +178,5 @@ class WriteDataTask(MODITask):
             try:
                 time.sleep(0.001)
                 modi._serial.write(modi._send_q.get().encode())
-            except OSError:
+            except: 
                 pass

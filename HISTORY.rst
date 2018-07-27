@@ -33,3 +33,9 @@ History
 
 * Add speaker module's tune() and off() methods.
 * Remove duplicated codes.
+
+0.3.0 (2018-07-28)
+-----------------
+
+* Support python 2.7
+* Speed up the performance
