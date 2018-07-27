@@ -37,5 +37,10 @@ History
 0.3.0 (2018-07-28)
 -----------------
 
-* Support python 2.7
-* Speed up the performance
+* Support python 2.7.
+* Speed up the performance.
+
+0.3.1 (2018-07-28)
+-----------------
+
+* Requirements fix.
