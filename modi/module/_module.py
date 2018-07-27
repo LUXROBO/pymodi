@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 import weakref
 
-class Module:
+class Module(object):
     def __init__(self, id, uuid, modi):
         self._id = id
         self._uuid = uuid
