@@ -38,6 +38,19 @@ Features
 * Turn on or off the PnP mode of MODI modules.
 * Get the position information of each modules.
 
+Build Status
+-------
+
+master:
+
+.. image:: https://travis-ci.org/LUXROBO/MODI-Python-API.svg?branch=master
+    :target: https://travis-ci.org/LUXROBO/MODI-Python-API
+
+develop:
+
+.. image:: https://travis-ci.org/LUXROBO/MODI-Python-API.svg?branch=develop
+    :target: https://travis-ci.org/LUXROBO/MODI-Python-API
+
 Credits
 -------
 
