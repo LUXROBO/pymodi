@@ -79,10 +79,10 @@ Let's blink the LED's light 5 times::
         led = bundle.leds[0]
 
         for _ in range(10):
-                led.on()
-                time.sleep(1)
-                led.off()
-                time.sleep(1)
+            led.on()
+            time.sleep(1)
+            led.off()
+            time.sleep(1)
 
 Credits
 -------
