@@ -41,7 +41,9 @@ setup(
     license="MIT license",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
-    keywords='modi',
+    keywords=(
+        'modi', 'luxrobo', 
+    ),
     name='modi',
     packages=find_packages(include=['modi', 'modi.module']),
     setup_requires=setup_requirements,
