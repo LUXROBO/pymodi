@@ -33,7 +33,10 @@ Easy😆 and fast💨 MODI Python API package.
 Features
 --------
 
-* TODO
+* Connect to the MODI network module and control input & output modules.
+* List serial ports of MODI network modules.
+* Turn on or off the PnP mode of MODI modules.
+* Get the position information of each modules.
 
 Credits
 -------
