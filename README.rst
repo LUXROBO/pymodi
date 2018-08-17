@@ -51,6 +51,39 @@ develop:
 .. image:: https://travis-ci.org/LUXROBO/MODI-Python-API.svg?branch=develop
     :target: https://travis-ci.org/LUXROBO/MODI-Python-API
 
+Quickstart
+-------
+
+Install the latest MODI-Python-API if you haven't installed it yet::
+
+        pip install -U modi
+
+Import `modi` package and create `MODI` instance::
+
+        import modi
+        bundle = modi.MODI()
+
+List connected modules::
+
+        bundle.modules
+
+List connected LED modules and pick the first one::
+
+        bundle.leds # List.
+        bundle.leds[0] # Pick.
+
+Let's blink the LED's light 5 times::
+
+        import time
+
+        led = bundle.leds[0]
+
+        for _ in range(10):
+                led.on()
+                time.sleep(1)
+                led.off()
+                time.sleep(1)
+
 Credits
 -------
 
