@@ -12,8 +12,8 @@ MODI Python API
 .. image:: https://img.shields.io/travis/LUXROBO/MODI-Python-API.svg
         :target: https://travis-ci.org/LUXROBO/MODI-Python-API
 
-.. image:: https://readthedocs.org/projects/modi/badge/?version=latest
-        :target: https://modi.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/modi-python-api/badge/?version=latest
+        :target: https://modi-python-api.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
 
@@ -27,7 +27,7 @@ Easy😆 and fast💨 MODI Python API package.
 
 
 * Free software: MIT license
-* Documentation: https://modi.readthedocs.io.
+* Documentation: https://modi-python-api.readthedocs.io.
 
 
 Features
