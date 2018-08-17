@@ -17,8 +17,8 @@ MODI Python API
         :alt: Documentation Status
 
 
-.. image:: https://pyup.io/repos/github/koriel/koriel/shield.svg
-     :target: https://pyup.io/repos/github/koriel/koriel/
+.. image:: https://pyup.io/repos/github/LUXROBO/MODI-Python-API/shield.svg
+     :target: https://pyup.io/repos/github/LUXROBO/MODI-Python-API/
      :alt: Updates
 
 
