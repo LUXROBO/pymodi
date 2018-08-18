@@ -18,6 +18,28 @@ else:
     from queue import Queue
 
 class MODI:
+    """Main module.
+
+    :param str port: MODI network module device name or ``None``.
+
+    :raises SerialException: In case the device can not be found or can not be configured.
+
+    The port is immediately opened on object creation, when a *port* is given. It is configured automatically when *port* is ``None`` and a successive call to :meth:`~modi.modi.MODI.open` is required.
+
+    *port* is a device name: depending on operating system. e.g. ``/dev/ttyUSB0`` on GNU/Linux or ``COM3`` on Windows.
+
+    Example:
+
+    >>> import modi
+    >>> bundle = modi.MODI()
+
+    It can also be used with :meth:`modi.serial.list_ports`.
+
+    >>> import modi
+    >>> import modi.serial
+    >>> ports = modi.serial.list_ports() # ['/dev/cu.usbmodem748BFFFEFFFF']
+    >>> bundle = modi.MODI(ports[0])
+    """
     def __init__(self, port=None):
         self._recv_q = Queue()
         self._send_q = Queue()
@@ -31,7 +53,7 @@ class MODI:
             if len(ports) > 0:
                 self._serial = serial.Serial(ports[0])
             else:
-                raise RuntimeError("There is no MODI module.")
+                raise serial.SerialException("No MODI network module connected.")
 
         else:
             self._serial = serial.Serial(port)
@@ -46,19 +68,43 @@ class MODI:
             self._threads.append(thread)
         
     def open(self):
+        """Open port.
+        """
         self._serial.open()
 
     def close(self):
+        """Close port immediately.
+        """
         self._serial.close()
 
     def write(self, msg):
+        """
+        :param str msg: Data to send.
+            
+        Put the string to the sending data queue. This should be of type ``str``.
+        """
         self._send_q.put(msg)
 
-    def pnp_on(self):
-        for id in self._ids:
+    def pnp_on(self, id=None):
+        """Turn on PnP mode of the module.
+
+        :param int id: The id of the module to turn on PnP mode or ``None``.
+
+        All connected modules' PnP mode will be turned on if the `id` is ``None``.
+        """
+        if id == None:
+            for _id in self._ids:
+                self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN))
+        else:
             self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN))
 
     def pnp_off(self, id=None):
+        """Turn off PnP mode of the module.
+
+        :param int id: The id of the module to turn off PnP mode or ``None``.
+
+        All connected modules' PnP mode will be turned off if the `id` is ``None``.
+        """
         if id == None:
             for _id in self._ids:
                 self.write(md_cmd.module_state(_id, md_cmd.ModuleState.PAUSE))

@@ -5,7 +5,6 @@
 from __future__ import absolute_import
 
 from modi.modi import MODI
-from modi.serial import *
 
 __author__ = """Jinsoo Heo"""
 __email__ = 'koriel@luxrobo.com'
