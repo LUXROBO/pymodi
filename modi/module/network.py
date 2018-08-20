@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 from enum import Enum
 
-from modi.module._module import SetupModule
+from modi.module.module import SetupModule
 
 class PropertyType(Enum):
     RESERVED = 0

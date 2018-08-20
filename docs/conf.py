@@ -166,5 +166,6 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
-
-
+intersphinx_mapping = {
+    'pyserial': ('https://pyserial.readthedocs.org/en/latest/', None),
+}
