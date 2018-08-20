@@ -44,3 +44,9 @@ History
 -----------------
 
 * Requirements fix.
+
+0.4.0 (2018-08-20)
+-----------------
+
+* Performance improvement.
+* The first documentation complete.

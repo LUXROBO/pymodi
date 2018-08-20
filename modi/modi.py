@@ -18,8 +18,7 @@ else:
     from queue import Queue
 
 class MODI:
-    """Main module.
-
+    """
     :param str port: MODI network module device name or ``None``.
 
     :raises SerialException: In case the device can not be found or can not be configured.
@@ -37,8 +36,8 @@ class MODI:
 
     >>> import modi
     >>> import modi.serial
-    >>> ports = modi.serial.list_ports() # ['/dev/cu.usbmodem748BFFFEFFFF']
-    >>> bundle = modi.MODI(ports[0])
+    >>> ports = modi.serial.list_ports() # [<serial.tools.list_ports_common.ListPortInfo object at 0x1026e95c0>]
+    >>> bundle = modi.MODI(ports[0].device)
     """
     def __init__(self, port=None):
         self._recv_q = Queue()
@@ -51,7 +50,7 @@ class MODI:
             ports = list_ports()
 
             if len(ports) > 0:
-                self._serial = serial.Serial(ports[0])
+                self._serial = serial.Serial(ports[0].device)
             else:
                 raise serial.SerialException("No MODI network module connected.")
 
@@ -113,49 +112,78 @@ class MODI:
 
     @property
     def modules(self):
+        """Tuple of connected modules except network module.
+
+        Example:
+
+        >>> bundle = modi.MODI()
+        >>> modules = bundle.modules # (<modi.module.button.Button object at 0x1009455c0>, <modi.module.led.Led object at 0x100945630>)
+        """
         return tuple(self._modules)
 
     @property
     def buttons(self):
+        """Tuple of connected :class:`~modi.module.button.Button` modules.
+        """
         return tuple([x for x in self.modules if x.type == "button"])
 
     @property
     def dials(self):
+        """Tuple of connected :class:`~modi.module.dial.Dial` modules.
+        """
         return tuple([x for x in self.modules if x.type == "dial"])
 
     @property
     def displays(self):
+        """Tuple of connected :class:`~modi.module.display.Display` modules.
+        """
         return tuple([x for x in self.modules if x.type == "display"])
 
     @property
     def envs(self):
+        """Tuple of connected :class:`~modi.module.env.Env` modules.
+        """
         return tuple([x for x in self.modules if x.type == "env"])
 
     @property
     def gyros(self):
+        """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
+        """
         return tuple([x for x in self.modules if x.type == "gyro"])
 
     @property
     def irs(self):
+        """Tuple of connected :class:`~modi.module.ir.Ir` modules.
+        """
         return tuple([x for x in self.modules if x.type == "ir"])
 
     @property
     def leds(self):
+        """Tuple of connected :class:`~modi.module.led.Led` modules.
+        """
         return tuple([x for x in self.modules if x.type == "led"])
 
     @property
     def mics(self):
+        """Tuple of connected :class:`~modi.module.mic.Mic` modules.
+        """
         return tuple([x for x in self.modules if x.type == "mic"])
 
     @property
     def motors(self):
+        """Tuple of connected :class:`~modi.module.motor.Motor` modules.
+        """
         return tuple([x for x in self.modules if x.type == "motor"])
 
     @property
     def speakers(self):
+        """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
+        """
         return tuple([x for x in self.modules if x.type == "speaker"])
 
     @property
     def ultrasonics(self):
+        """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
+        """
         return tuple([x for x in self.modules if x.type == "ultrasonic"])
 

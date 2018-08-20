@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 from enum import Enum
 
-from modi.module._module import InputModule
+from modi.module.module import InputModule
 
 class PropertyType(Enum):
     VOLUME = 2

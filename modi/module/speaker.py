@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 from enum import Enum
 
-from modi.module._module import OutputModule
+from modi.module.module import OutputModule
 
 from modi._cmd import set_property
 from modi._cmd import PropertyDataType
