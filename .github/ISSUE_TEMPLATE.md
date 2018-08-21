@@ -1,4 +1,4 @@
-* MODI Python API version:
+* pyMODI version:
 * Python version:
 * Operating System:
 

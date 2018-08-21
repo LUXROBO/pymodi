@@ -49,7 +49,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/LUXROBO/MODI-Python-API',
+    url='https://github.com/LUXROBO/pyMODI',
     version='0.4.0',
     zip_safe=False,
 )

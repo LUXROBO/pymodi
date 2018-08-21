@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use MODI Python API in a project::
+To use pyMODI in a project::
 
     import modi

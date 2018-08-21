@@ -54,7 +54,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'MODI Python API'
+project = u'pyMODI'
 copyright = u"2018, LUXROBO"
 author = u"Jinsoo Heo"
 
@@ -136,7 +136,7 @@ latex_elements = {
 # [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'modi.tex',
-     u'MODI Python API Documentation',
+     u'pyMODI Documentation',
      u'Jinsoo Heo', 'manual'),
 ]
 
@@ -147,7 +147,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     (master_doc, 'modi',
-     u'MODI Python API Documentation',
+     u'pyMODI Documentation',
      [author], 1)
 ]
 
@@ -159,7 +159,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'modi',
-     u'MODI Python API Documentation',
+     u'pyMODI Documentation',
      author,
      'modi',
      'One line description of project.',

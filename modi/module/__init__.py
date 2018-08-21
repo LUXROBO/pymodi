@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Module package for MODI Python API."""
+"""Module package for pyMODI."""
 
 from __future__ import absolute_import
 

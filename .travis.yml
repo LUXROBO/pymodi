@@ -14,7 +14,7 @@ deploy:
     secure: ebvlI2V0ikcsUtz5m1lMIOOHWoakJPsZLQTFy5qYFRR9Wi9mgnb3jKeFUt7TrnbWpD6/5foA+5/mAIdCsDPYD/Tg29KwgNi3QcDEYy/0AO0dAY/968ANKIAkNvF7oh81BTLOkza2RkWubtezRUIYE352p+77FQoasH8vQdaa1OvOu+tGW3gUj1iGYZf6ZgmwLmTKZx+i3faP/brvGF/7foUt1dErJx8GunEMBXZB1Fpuz/wcUqU5LmhsyCEuNxyRywH9q2tD8OLupOs+SJ85u5dTrrLTV1AbwfTL1JWPGvzVS30ibyYTBnQqaJQVtndfP/68CWuqKD5qXKcrbTYeAoyHFtouC5jpGJxxWOBK71yq+hgGJ5sFwlUpLBl4n87hBd6OLKyBcb69FWkIjmwbLjYuStRWLpk8GofP9Qv4s4JL95hyNLps+XkpKyH+rRhuZl7NF7BfAREj3ChsZJmKteTxajOywIO3lkDxHZOGdsyKRzCAcU6B77MKgCqeIj/OPzfIPo1jES2uDikq1ZCjhV1j3lfSsDtGFiXPSci1/ROdKJT72U72gZ1CNxBoAwYimoWvme0UgO5j46+gsmzjUvz6z+OSGBII1tF6NEEtXI5X0cIxaah/01mXw/hjfg5efUOQfPRRQ4jsKtzWvZONCAnAJlM3LelKsO1fVo1nFAQ=
   on:
     tags: true
-    repo: LUXROBO/MODI-Python-API
+    repo: LUXROBO/pyMODI
     python: 3.6
 notifications:
   slack:

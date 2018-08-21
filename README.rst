@@ -1,5 +1,5 @@
 ===============
-MODI Python API
+pyMODI
 ===============
 
 
@@ -9,16 +9,16 @@ MODI Python API
 .. image:: https://img.shields.io/pypi/pyversions/modi.svg
         :target: https://pypi.python.org/pypi/modi
 
-.. image:: https://img.shields.io/travis/LUXROBO/MODI-Python-API.svg
-        :target: https://travis-ci.org/LUXROBO/MODI-Python-API
+.. image:: https://img.shields.io/travis/LUXROBO/pyMODI.svg
+        :target: https://travis-ci.org/LUXROBO/pyMODI
 
-.. image:: https://readthedocs.org/projects/modi-python-api/badge/?version=latest
-        :target: https://modi-python-api.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/pymodi/badge/?version=latest
+        :target: https://pymodi.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
 
-.. image:: https://pyup.io/repos/github/LUXROBO/MODI-Python-API/shield.svg
-     :target: https://pyup.io/repos/github/LUXROBO/MODI-Python-API/
+.. image:: https://pyup.io/repos/github/LUXROBO/pyMODI/shield.svg
+     :target: https://pyup.io/repos/github/LUXROBO/pyMODI/
      :alt: Updates
 
 
@@ -27,7 +27,7 @@ Easy😆 and fast💨 MODI Python API package.
 
 
 * Free software: MIT license
-* Documentation: https://modi-python-api.readthedocs.io.
+* Documentation: https://pymodi.readthedocs.io.
 
 
 Features
@@ -43,18 +43,18 @@ Build Status
 
 master:
 
-.. image:: https://travis-ci.org/LUXROBO/MODI-Python-API.svg?branch=master
-    :target: https://travis-ci.org/LUXROBO/MODI-Python-API
+.. image:: https://travis-ci.org/LUXROBO/pyMODI.svg?branch=master
+    :target: https://travis-ci.org/LUXROBO/pyMODI
 
 develop:
 
-.. image:: https://travis-ci.org/LUXROBO/MODI-Python-API.svg?branch=develop
-    :target: https://travis-ci.org/LUXROBO/MODI-Python-API
+.. image:: https://travis-ci.org/LUXROBO/pyMODI.svg?branch=develop
+    :target: https://travis-ci.org/LUXROBO/pyMODI
 
 Quickstart
 -------
 
-Install the latest MODI-Python-API if you haven't installed it yet::
+Install the latest pyMODI if you haven't installed it yet::
 
         pip install -U modi
 
