@@ -44,7 +44,7 @@ setup(
     keywords=(
         'modi', 'luxrobo', 
     ),
-    name='modi',
+    name='pymodi',
     packages=find_packages(include=['modi', 'modi.module']),
     setup_requires=setup_requirements,
     test_suite='tests',
