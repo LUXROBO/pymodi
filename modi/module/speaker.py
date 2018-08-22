@@ -102,6 +102,12 @@ class Scale(Enum):
     F_RA_S_7 = 3729
 
 class Speaker(OutputModule):
+    """
+    :param int id: The id of the module.
+    :param int uuid: The uuid of the module.
+    :param modi: The :class:`~modi.modi.MODI` instance.
+    :type modi: :class:`~modi.modi.MODI`
+    """
     property_types = PropertyType
     
     def __init__(self, id, uuid, modi):
@@ -109,6 +115,19 @@ class Speaker(OutputModule):
         self._type = "speaker"
 
     def tune(self, frequency=None, volume=None):
+        """
+        * If either *frequency* or *volume* is not ``None``,
+
+        :param float frequency: Frequency to set or ``None``.
+        :param float volume: Volume to set or ``None``.
+
+        The ``None`` component retains its previous value.
+
+        * If *frequency* and *volume* are ``None``,
+
+        :return: Tuple of frequency and volume.
+        :rtype: tuple
+        """
         if frequency == None and volume == None:
             return (self.frequency(), self.volume())
         else:
@@ -118,16 +137,34 @@ class Speaker(OutputModule):
             ), PropertyDataType.FLOAT))
 
     def frequency(self, frequency=None):
+        """
+        :param float frequency: Frequency to set or ``None``.
+
+        If *frequency* is ``None``.
+
+        :return: Frequency.
+        :rtype: float
+        """
         if frequency == None:
             return self._properties[PropertyType.FREQUENCY]
         else:
             self.tune(frequency=frequency)
 
     def volume(self, volume=None):
+        """
+        :param float volume: Volume to set or ``None``.
+
+        If *volume* is ``None``.
+
+        :return: Volume.
+        :rtype: float
+        """
         if volume == None:
             return self._properties[PropertyType.VOLUME]
         else:
             self.tune(volume=volume)
 
     def off(self):
+        """Turn off.
+        """
         self.tune(0, 0)

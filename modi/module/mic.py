@@ -13,6 +13,12 @@ class PropertyType(Enum):
     FREQUENCY = 3
 
 class Mic(InputModule):
+    """
+    :param int id: The id of the module.
+    :param int uuid: The uuid of the module.
+    :param modi: The :class:`~modi.modi.MODI` instance.
+    :type modi: :class:`~modi.modi.MODI`
+    """
     property_types = PropertyType
     
     def __init__(self, id, uuid, modi):
@@ -20,7 +26,15 @@ class Mic(InputModule):
         self._type = "mic"
 
     def volume(self):
+        """
+        :return: Volume of input sound.
+        :rtype: float
+        """
         return self._properties[PropertyType.VOLUME]
 
     def frequency(self):
+        """
+        :return: Frequency of input sound.
+        :rtype: float
+        """
         return self._properties[PropertyType.FREQUENCY]

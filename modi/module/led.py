@@ -64,11 +64,9 @@ class Led(OutputModule):
 
     def red(self, red=None):
         """
-        * If *red* is not ``None``,
-
         :param int red: Red component to set or ``None``.
 
-        * If *red* is ``None``.
+        If *red* is ``None``.
 
         :return: Red component.
         :rtype: float
@@ -80,11 +78,9 @@ class Led(OutputModule):
 
     def green(self, green=None):
         """
-        * If *green* is not ``None``,
+        :param int green: Green component to set or ``None``.
 
-        :param int red: Green component to set or ``None``.
-
-        * If *green* is ``None``.
+        If *green* is ``None``.
 
         :return: Green component.
         :rtype: float
@@ -96,11 +92,9 @@ class Led(OutputModule):
 
     def blue(self, blue=None):
         """
-        * If *blue* is not ``None``,
+        :param int blue: Blue component to set or ``None``.
 
-        :param int red: Blue component to set or ``None``.
-
-        * If *blue* is ``None``.
+        If *blue* is ``None``.
 
         :return: Blue component.
         :rtype: float
