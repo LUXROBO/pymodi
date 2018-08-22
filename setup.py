@@ -42,7 +42,7 @@ setup(
     long_description=readme + '\n\n' + history,
     include_package_data=True,
     keywords=(
-        'modi', 'luxrobo', 
+        'pymodi', 'modi', 'luxrobo', 
     ),
     name='pymodi',
     packages=find_packages(include=['modi', 'modi.module']),
