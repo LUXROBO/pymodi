@@ -50,3 +50,8 @@ History
 
 * Performance improvement.
 * The first documentation complete.
+
+0.5.0 (2018-08-22)
+-----------------
+
+* Change the project name to pyMODI
