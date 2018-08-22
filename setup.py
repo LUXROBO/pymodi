@@ -42,7 +42,7 @@ setup(
     long_description=readme + '\n\n' + history,
     include_package_data=True,
     keywords=(
-        'modi', 'luxrobo', 
+        'pymodi', 'modi', 'luxrobo', 
     ),
     name='pymodi',
     packages=find_packages(include=['modi', 'modi.module']),
@@ -50,6 +50,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/LUXROBO/pyMODI',
-    version='0.4.0',
+    version='0.5.0',
     zip_safe=False,
 )

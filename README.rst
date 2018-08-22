@@ -3,11 +3,11 @@ pyMODI
 ===============
 
 
-.. image:: https://img.shields.io/pypi/v/modi.svg
-        :target: https://pypi.python.org/pypi/modi
+.. image:: https://img.shields.io/pypi/v/pymodi.svg
+        :target: https://pypi.python.org/pypi/pymodi
 
-.. image:: https://img.shields.io/pypi/pyversions/modi.svg
-        :target: https://pypi.python.org/pypi/modi
+.. image:: https://img.shields.io/pypi/pyversions/pymodi.svg
+        :target: https://pypi.python.org/pypi/pymodi
 
 .. image:: https://img.shields.io/travis/LUXROBO/pyMODI.svg
         :target: https://travis-ci.org/LUXROBO/pyMODI
@@ -56,7 +56,7 @@ Quickstart
 
 Install the latest pyMODI if you haven't installed it yet::
 
-        pip install -U modi
+        pip install -U pymodi
 
 Import `modi` package and create `MODI` instance::
 

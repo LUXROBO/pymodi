@@ -62,7 +62,7 @@ Ready to contribute? Here's how to set up `modi` for local development.
 1. Fork the `modi` repo on GitHub.
 2. Clone your fork locally::
 
-    $ git clone git@github.com:your_name_here/modi.git
+    $ git clone git@github.com:your_name_here/LUXROBO/pyMODI.git
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
 

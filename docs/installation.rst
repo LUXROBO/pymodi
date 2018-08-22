@@ -12,7 +12,7 @@ To install pyMODI, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install modi
+    $ pip install pymodi
 
 This is the preferred method to install pyMODI, as it will always install the most recent stable release.
 
