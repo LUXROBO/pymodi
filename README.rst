@@ -56,7 +56,7 @@ Quickstart
 
 Install the latest pyMODI if you haven't installed it yet::
 
-        pip install -U modi
+        pip install -U pymodi
 
 Import `modi` package and create `MODI` instance::
 
