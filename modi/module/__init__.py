@@ -17,6 +17,6 @@ from modi.module.ultrasonic import Ultrasonic
 
 __author__ = """Jinsoo Heo"""
 __email__ = 'koriel@luxrobo.com'
-__version__ = '0.5.0'
+__version__ = '0.5.1'
 
 __all__ = ["env", "gyro", "mic", "button", "dial", "ultrasonic", "ir", "display", "motor", "led", "speaker"]

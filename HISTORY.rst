@@ -54,4 +54,9 @@ History
 0.5.0 (2018-08-22)
 -----------------
 
-* Change the project name to pyMODI
+* Change the project name to pyMODI.
+
+0.5.1 (2018-11-07)
+-----------------
+
+* Fix #26 (No MODI network module connected) issue.
