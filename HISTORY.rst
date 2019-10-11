@@ -60,3 +60,8 @@ History
 -----------------
 
 * Fix #26 (No MODI network module connected) issue.
+
+0.5.2 (2019-10-11)
+-----------------
+
+* Can control a pair of motors of the motor module by torque(), speed(), angle().

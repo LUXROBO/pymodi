@@ -5,6 +5,7 @@
 from __future__ import absolute_import
 
 import serial
+import time
 from modi.serial import list_ports
 import modi._cmd as md_cmd
 from modi._tasks import *
@@ -50,7 +51,7 @@ class MODI:
             ports = list_ports()
 
             if len(ports) > 0:
-                self._serial = serial.Serial(ports[0].device)
+                self._serial = serial.Seral(ports[0].device)
             else:
                 raise serial.SerialException("No MODI network module connected.")
 
@@ -65,6 +66,8 @@ class MODI:
             thread.daemon = True
             thread.start()
             self._threads.append(thread)
+        
+        time.sleep(1)
         
     def open(self):
         """Open port.
