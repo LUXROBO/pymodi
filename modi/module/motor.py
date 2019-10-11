@@ -114,3 +114,54 @@ class Motor(OutputModule):
             self._modi().write(set_property(self.id, 16, (self.first_torque(), torque, 0)))
         else:
             return self._properties[PropertyType.SECOND_TORQUE]
+        
+    def torque(self, first_torque=None, second_torque=None):
+        """
+        :param int first_torque: Torque to set the first motor.
+        :param int second_torque: Torque to set the second motor.
+
+        If *first_torque* is ``None`` and *second_torque* is ``None``,
+
+        :return: Torque of the first motor , Torque of the second motor.
+        :rtype: float
+        """
+        if first_torque != None or second_torque != None :
+            first_torque = self.first_torque() if first_torque == None else first_torque
+            second_torque = self.second_torque() if second_torque == None else second_torque
+            self._modi().write(set_property(self.id, 16, (first_torque, second_torque, 0)))
+        else:
+            return (self._properties[PropertyType.FIRST_TORQUE] , self._properties[PropertyType.SECOND_TORQUE])
+
+    def speed(self, first_speed=None, second_speed=None):
+        """
+        :param int first_speed: Speed to set the first motor.
+        :param int second_speed: Speed to set the second motor.
+
+        If *first_speed* is ``None`` and *second_speed* is ``None``,
+
+        :return: Speed of the first motor , Speed of the second motor.
+        :rtype: float
+        """
+        if first_speed != None or second_speed != None :
+            first_speed = self.first_speed() if first_speed == None else first_speed
+            second_speed = self.second_speed() if second_speed == None else second_speed
+            self._modi().write(set_property(self.id, 17, (first_speed, second_speed, 0)))
+        else:
+            return (self._properties[PropertyType.FIRST_SPEED] , self._properties[PropertyType.SECOND_SPEED])
+            
+    def degree(self, first_degree=None, second_degree=None):
+        """
+        :param int first_degree: Degree to set the first motor.
+        :param int second_degree: Degree to set the second motor.
+
+        If *first_degree* is ``None`` and *second_degree* is ``None``,
+
+        :return: Degree of the first motor , Degree of the second motor.
+        :rtype: float
+        """
+        if first_degree != None or second_degree != None :
+            first_degree = self.first_degree() if first_degree == None else first_degree
+            second_degree = self.second_degree() if second_degree == None else second_degree
+            self._modi().write(set_property(self.id, 18, (first_degree, second_degree, 0)))
+        else:
+            return (self._properties[PropertyType.FIRST_DEGREE] , self._properties[PropertyType.SECOND_DEGREE])
