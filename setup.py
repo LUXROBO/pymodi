@@ -5,12 +5,6 @@
 
 from setuptools import setup, find_packages
 
-with open('README.rst') as readme_file:
-    readme = readme_file.read()
-
-with open('HISTORY.rst') as history_file:
-    history = history_file.read()
-
 requirements = [
     'pyserial>=3.1.1',
     'enum34>=1.1.6',
@@ -39,7 +33,6 @@ setup(
     description="Easy😆 and fast💨 MODI Python API package.",
     install_requires=requirements,
     license="MIT license",
-    long_description=readme + '\n\n' + history,
     include_package_data=True,
     keywords=(
         'pymodi', 'modi', 'luxrobo', 
