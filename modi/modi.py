@@ -51,7 +51,7 @@ class MODI:
             ports = list_ports()
 
             if len(ports) > 0:
-                self._serial = serial.Seral(ports[0].device)
+                self._serial = serial.Serial(ports[0].device)
             else:
                 raise serial.SerialException("No MODI network module connected.")
 
