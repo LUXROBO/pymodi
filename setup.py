@@ -4,6 +4,12 @@
 """The setup script."""
 
 from setuptools import setup, find_packages
+from os import path
+
+here = path.abspath(path.dirname(__file__))
+
+with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+    long_description = f.read()
 
 requirements = [
     'pyserial>=3.1.1',
@@ -31,6 +37,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     description="Easy😆 and fast💨 MODI Python API package.",
+    long_description=long_description,
     install_requires=requirements,
     license="MIT license",
     include_package_data=True,
