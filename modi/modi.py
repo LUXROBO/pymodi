@@ -7,6 +7,7 @@ from __future__ import absolute_import
 import serial
 import time
 from modi.serial import list_ports
+from modi._json_box import JsonBox
 import modi._cmd as md_cmd
 from modi._tasks import *
 
@@ -43,6 +44,9 @@ class MODI:
     def __init__(self, port=None):
         self._recv_q = Queue()
         self._send_q = Queue()
+        self._display_send_q = Queue()
+
+        self._json_box = JsonBox()
 
         self._ids = dict()
         self._modules = list()
@@ -51,15 +55,15 @@ class MODI:
             ports = list_ports()
 
             if len(ports) > 0:
-                self._serial = serial.Serial(ports[0].device)
+                self._serial = serial.Serial(ports[0].device, 115200)
             else:
                 raise serial.SerialException("No MODI network module connected.")
 
         else:
-            self._serial = serial.Serial(port)
+            self._serial = serial.Serial(port, 115200)
 
         self._threads = list()
-        tasks = [ReadDataTask, ProcDataTask, WriteDataTask]
+        tasks = [ReadDataTask, ParseDataTask, ProcDataTask, WriteDataTask, WriteDisplayDataTask]
 
         for task in tasks:
             thread = task(self) 
@@ -79,13 +83,16 @@ class MODI:
         """
         self._serial.close()
 
-    def write(self, msg):
+    def write(self, msg, is_display=False):
         """
         :param str msg: Data to send.
             
         Put the string to the sending data queue. This should be of type ``str``.
         """
-        self._send_q.put(msg)
+        if is_display:
+            self._display_send_q.put(msg)
+        else:
+            self._send_q.put(msg)
 
     def pnp_on(self, id=None):
         """Turn on PnP mode of the module.
