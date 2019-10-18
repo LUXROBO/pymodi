@@ -65,3 +65,9 @@ History
 -----------------
 
 * Can control a pair of motors of the motor module by torque(), speed(), angle().
+
+0.5.4 (2019-10-18)
+-----------------
+
+* Performance improvement.
+* Bug fixes.
