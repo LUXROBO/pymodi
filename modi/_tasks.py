@@ -8,8 +8,7 @@ import modi._cmd as md_cmd
 from modi._stoppable_thread import StoppableThread
 from modi.serial import list_ports
 from modi.module import *
-import modi._util as md_util 
-from modi._json_box import JsonBox
+import modi._util as md_util
 from modi._threadpool import ThreadPool
 
 import json
@@ -17,6 +16,7 @@ import weakref
 import time
 import base64
 import struct
+import multiprocessing 
 
 class MODITask(StoppableThread):
     def __init__(self, modi):
@@ -29,15 +29,21 @@ class ReadDataTask(MODITask):
 
     def run(self):
         modi = self._modi()
-        json_box = JsonBox()
+
+        while not self.stopped():
+            modi._json_box.add(modi._serial.read(modi._serial.in_waiting).decode())
+
+class ParseDataTask(MODITask):
+    def __init__(self, modi):
+        super(ParseDataTask, self).__init__(modi)
+
+    def run(self):
+        modi = self._modi()
 
         while not self.stopped():
             try:
-                waiting = modi._serial.in_waiting
-                json_box.add(modi._serial.read(waiting).decode("utf-8"))
-
-                while json_box.has_json():
-                    modi._recv_q.put(json_box.json)
+                while modi._json_box.has_json():
+                    modi._recv_q.put(modi._json_box.json)
             except:
                 pass
 
@@ -55,7 +61,7 @@ class ProcDataTask(MODITask):
 
     def run(self):
         modi = self._modi()
-        pool = ThreadPool(10)
+        pool = ThreadPool(multiprocessing.cpu_count())
 
         while not self.stopped():
             try:
@@ -178,5 +184,19 @@ class WriteDataTask(MODITask):
             try:
                 time.sleep(0.001)
                 modi._serial.write(modi._send_q.get().encode())
+            except: 
+                pass
+
+class WriteDisplayDataTask(MODITask):
+    def __init__(self, modi):
+        super(WriteDisplayDataTask, self).__init__(modi)
+
+    def run(self):
+        modi = self._modi()
+
+        while not self.stopped():
+            try:
+                time.sleep(0.05)
+                modi._serial.write(modi._display_send_q.get().encode())
             except: 
                 pass
