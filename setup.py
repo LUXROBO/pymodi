@@ -5,6 +5,12 @@
 
 from setuptools import setup, find_packages
 
+with open('README.md') as readme_file:
+    readme = readme_file.read()
+
+with open('HISTORY.md') as history_file:
+    history = history_file.read()
+
 requirements = [
     'pyserial>=3.1.1',
     'enum34>=1.1.6',
@@ -31,6 +37,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     description="Easy😆 and fast💨 MODI Python API package.",
+    long_description=readme + '\n\n' + history,
     install_requires=requirements,
     license="MIT license",
     include_package_data=True,
@@ -43,6 +50,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/LUXROBO/pyMODI',
-    version='0.5.2',
+    version='0.6.0',
     zip_safe=False,
 )
