@@ -1,11 +1,10 @@
-=======
 Credits
 =======
 
 Development Lead
 ----------------
 
-* Jinsoo Heo <koriel@luxrobo.com>
+-   Jinsoo Heo \<<koriel@luxrobo.com>\>
 
 Contributors
 ------------
