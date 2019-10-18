@@ -1,5 +1,6 @@
 language: python
 python:
+- 3.7
 - 3.6
 - 3.5
 - 3.4
@@ -15,7 +16,7 @@ deploy:
   on:
     tags: true
     repo: LUXROBO/pyMODI
-    python: 3.6
+    python: 3.7
 notifications:
   slack:
     secure: J3mKtnO2ChS3XGenXoLvPXeTPsr+q34ms9GAetkMRMtV3AhGCg4C4Ir/01BYZdr4kOFQ63Vw1Ru8gjSsvnlQPltunVG+1ZNTYpea6V84PJ1GZyAFWEESSsXKhBYiD1OArF+EHRtgwyAS7VhgD/FM6ojjlf1AKW1oz6Rm7kBmM9/U7Xm+4NQHTgPBd44NO5VKFqZ3lnC+jiZz1Wi4gZg2nHgcwnoUH7kCI4GUcZ0zEzGdriLv3dpeRw4QJJ/X+wHH4thbqILrR0I94Nl5XjdmX0uqZsok3lKo2qwCA9GrJlmhsM9kH1NXWm2yba6bYa4+6b720e+wwp0hlaCOd+plXzG9EEBg/CjEQXQQA8tg9b3E7CKr/FlGRCOK1Rv4k+r/X3L+LmAxVP/VgnphCeE7sU3elftLkayCXidowFFFi9xda0g9WZetXPsHXhwblqAnVfS+GuzqHjvF/kHi/Mk+Va9RLt94X5T4cOYCEewTzY0HAVsIVdvr5X0oQIPKhjHl+sIVTg8giIaziFQECOKyLdTUx8/UycTxGAesFFo0qphTcwlXGe9/rvjazC1GILBGrec/5H4sEnLbDE/RR/Kl9W4/PXagKZBwN0W0qxnLTWYXVvWuhbwcagz981gLSeqao60iFaZ0KfX0aggk1itu4DTQe2Dqei9+BU6sq5GaH0Y=
