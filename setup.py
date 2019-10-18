@@ -38,6 +38,7 @@ setup(
     ],
     description="Easy😆 and fast💨 MODI Python API package.",
     long_description=readme + '\n\n' + history,
+    long_description_content_type="text/markdown",
     install_requires=requirements,
     license="MIT license",
     include_package_data=True,
