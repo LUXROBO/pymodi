@@ -25,7 +25,7 @@ setup(
     author_email='koriel@luxrobo.com',
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Intended Audience :: Developers',
+        'Intended Audience :: Education',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 2',
