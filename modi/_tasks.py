@@ -37,14 +37,8 @@ class SerialTask(object):
         self._serial_read_q = serial_read_q
         self._serial_write_q = serial_write_q
         self._port = port
-<<<<<<< HEAD
-        if os.name != 'nt':
-            self.start_thread()
-            
-=======
         #if os.name != 'nt':
         #    self.start_thread()
->>>>>>> f4d55db5f771ee6983b77082898027f861ed3f9a
     
     def start_thread(self):
         # Sereial Connection Once
@@ -82,11 +76,7 @@ class SerialTask(object):
             pass
         else:
             self._serial.write(writetemp)
-<<<<<<< HEAD
-            # print(writetemp)
-=======
             #print(writetemp)
->>>>>>> f4d55db5f771ee6983b77082898027f861ed3f9a
             time.sleep(0.001)
 
         # # # Write Display Data
@@ -110,14 +100,8 @@ class ParsingTask(object):
         self._serial_read_q = serial_read_q
         self._recv_q = recv_q
         self._json_box = json_box
-<<<<<<< HEAD
-        if os.name != 'nt':
-            self.start_thread()
-            
-=======
         #if os.name != 'nt':
         #    self.start_thread()
->>>>>>> f4d55db5f771ee6983b77082898027f861ed3f9a
     
     def start_thread(self):
         print('ParsingTask : ', os.getpid())
@@ -126,22 +110,6 @@ class ParsingTask(object):
             time.sleep(0.005)
 
     def adding_json(self):
-<<<<<<< HEAD
-        # if self._serial_read_q.qsize() != 0:
-        #     self._json_box.add(self._serial_read_q.get())
-        #     while self._json_box.has_json():
-        #         json_temp = self._json_box.json
-        #         self._recv_q.put(json_temp)
-        try:
-            while self._serial_read_q.qsize() != 0:
-                self._json_box.add(self._serial_read_q.get_nowait())      
-        except queue.Empty:
-            pass
-        else:
-            while self._json_box.has_json():
-                json_temp = self._json_box.json
-                self._recv_q.put(json_temp)
-=======
         try:
             self._json_box.add(self._serial_read_q.get(False))
         except:
@@ -152,7 +120,6 @@ class ParsingTask(object):
             self._recv_q.put(json_temp)
             #print('jsonread : ', json_temp)
         
->>>>>>> f4d55db5f771ee6983b77082898027f861ed3f9a
 
 class ExcuteTask(object):
 
@@ -184,14 +151,9 @@ class ExcuteTask(object):
                 pass
             else:
                 self._handler(msg['c'])(msg)
-<<<<<<< HEAD
 
             time.sleep(0.001)
             
-=======
-            #print('ExcuteTask!!!!')
-            time.sleep(0.002)
->>>>>>> f4d55db5f771ee6983b77082898027f861ed3f9a
 
     def _handler(self, cmd):
         return {
