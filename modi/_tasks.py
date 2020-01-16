@@ -58,7 +58,7 @@ class SerialTask(object):
             # print('SerialTask',self._serial_read_q.qsize())
             # write serial
             self.write_serial()
-            time.sleep(0.01)
+            time.sleep(0.005)
 
 ##################################################################
 
@@ -107,7 +107,7 @@ class ParsingTask(object):
         while True:
             self.adding_json()
 
-            time.sleep(0.01)
+            time.sleep(0.005)
 
     def adding_json(self):
         if self._serial_read_q.qsize() != 0:
@@ -139,8 +139,13 @@ class ExcuteTask(object):
     
     def start_thread(self):
         while True:
-            msg = json.loads(self._recv_q.get())
-            self._handler(msg['c'])(msg)
+            # msg = json.loads(self._recv_q.get_nowait())
+            try:
+                msg = json.loads(self._recv_q.get_nowait())
+            except queue.Empty:
+                pass
+            else:
+                self._handler(msg['c'])(msg)
             # print('ExcuteTask')
             time.sleep(0.002)
 

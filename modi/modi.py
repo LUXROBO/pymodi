@@ -55,8 +55,8 @@ class MODI:
         print('os.getpid():', os.getpid())
         manager = multiprocessing.Manager()
 
-        self._serial_read_q = multiprocessing.Queue(200)
-        self._serial_write_q = multiprocessing.Queue(200)
+        self._serial_read_q = multiprocessing.Queue(2000)
+        self._serial_write_q = multiprocessing.Queue(1000)
         self._recv_q = multiprocessing.Queue(100)
         self._send_q = multiprocessing.Queue(100)
         self._display_send_q = multiprocessing.Queue(100)
