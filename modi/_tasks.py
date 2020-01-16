@@ -37,8 +37,8 @@ class SerialTask(object):
         self._serial_read_q = serial_read_q
         self._serial_write_q = serial_write_q
         self._port = port
-        if os.name != 'nt':
-            self.start_thread()
+        #if os.name != 'nt':
+        #    self.start_thread()
     
     def start_thread(self):
         # Sereial Connection Once
@@ -100,8 +100,8 @@ class ParsingTask(object):
         self._serial_read_q = serial_read_q
         self._recv_q = recv_q
         self._json_box = json_box
-        if os.name != 'nt':
-            self.start_thread()
+        #if os.name != 'nt':
+        #    self.start_thread()
     
     def start_thread(self):
         while True:
@@ -110,12 +110,16 @@ class ParsingTask(object):
             time.sleep(0.005)
 
     def adding_json(self):
-        if self._serial_read_q.qsize() != 0:
-            self._json_box.add(self._serial_read_q.get())
-            while self._json_box.has_json():
-                json_temp = self._json_box.json
-                self._recv_q.put(json_temp)
-                # print('jsonread : ', json_temp)
+        try:
+            self._json_box.add(self._serial_read_q.get(False))
+        except:
+            pass
+
+        while self._json_box.has_json():
+            json_temp = self._json_box.json
+            self._recv_q.put(json_temp)
+            #print('jsonread : ', json_temp)
+        
 
 class ExcuteTask(object):
 
@@ -134,8 +138,8 @@ class ExcuteTask(object):
         self._recv_q = recv_q
         self._ids = ids
         self._modules = modules
-        if os.name != 'nt':
-            self.start_thread()
+        #if os.name != 'nt':
+        #    self.start_thread()
     
     def start_thread(self):
         while True:
@@ -146,7 +150,7 @@ class ExcuteTask(object):
                 pass
             else:
                 self._handler(msg['c'])(msg)
-            # print('ExcuteTask')
+            #print('ExcuteTask!!!!')
             time.sleep(0.002)
 
     def _handler(self, cmd):
@@ -291,5 +295,3 @@ class ExcuteTask(object):
         else:
             pnp_temp = md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF)
             self._serial_write_q.put(pnp_temp)
-
-    
