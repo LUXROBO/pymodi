@@ -19,10 +19,11 @@ class Prop(object):
 
 
 class Module(object):
-    def __init__(self, id, uuid, modi):
+    def __init__(self, id, uuid, modi, serial_write_q):
         self._id = id
         self._uuid = uuid
         self._modi = modi
+        self._serial_write_q = serial_write_q
         self._category = str()
         self._type = str()
         self._properties = dict()
@@ -54,13 +55,17 @@ class Module(object):
     def _write_property(self, prop):
         if not prop in self._properties.keys():
             self._properties[prop] = Prop()
-            self._modi.write(md_cmd.get_property(self._id, prop.value))
-            self._properties[prop].last_request_time = time.process_time()
+            # self._modi.write(md_cmd.get_property(self._id, prop.value))
+            modi_serialtemp = md_cmd.get_property(self._id, prop.value)
+            self._serial_write_q.put(modi_serialtemp)
+            self._properties[prop].last_request_time = time.time()
 
-        duration = time.process_time() - self._properties[prop].last_update_time
-        if duration > 2 : # 1초
-            self._modi.write(md_cmd.get_property(self._id, prop.value))
-            self._properties[prop].last_request_time = time.process_time()
+        duration = time.time() - self._properties[prop].last_update_time
+        if duration > 1 : # 1초
+            # self._modi.write(md_cmd.get_property(self._id, prop.value))
+            modi_serialtemp = md_cmd.get_property(self._id, prop.value)
+            self._serial_write_q.put(modi_serialtemp)
+            self._properties[prop].last_request_time = time.time()
 
         # duration = time.process_time() - self._properties[prop].last_update_time
         # if duration > 1000: # 1초
@@ -74,7 +79,8 @@ class Module(object):
         updatecheck = 0
         if prop in self._properties.keys():
             self._properties[prop].value = value
-            self._properties[prop].last_update_time = time.process_time()
+            # self._properties[prop].last_update_time = time.process_time()
+            self._properties[prop].last_update_time = time.time()
             updatecheck = 1
 
 
@@ -85,8 +91,8 @@ class SetupModule(Module):
 
 
 class InputModule(Module):
-    def __init__(self, id, uuid, modi):
-        super(InputModule, self).__init__(id, uuid, modi)
+    def __init__(self, id, uuid, modi, serial_write_q):
+        super(InputModule, self).__init__(id, uuid, modi, serial_write_q)
         self._category = "input"
 
 

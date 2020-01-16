@@ -27,6 +27,10 @@ class MODIProcess(multiprocessing.Process):
     def __init__(self):
         super(MODIProcess, self).__init__()
 
+class MODITask(threading.Thread):
+    def __init__(self):
+        super(MODITask, self).__init__()
+
 # SerialProcess
 # Run SerialTask
 
@@ -54,7 +58,17 @@ class ParsingProcess(MODIProcess):
         if os.name == 'nt':
             self._ParsingTask.start_thread()
 
-class ExcuteProcess(MODIProcess):
+# class ExcuteProcess(MODIProcess):
+
+#     def __init__(self, serial_write_q, recv_q, ids, modules):
+#         super(ExcuteProcess,self).__init__()
+#         self._ExcuteTask = ExcuteTask(serial_write_q, recv_q, ids, modules)
+
+#     def run(self):
+#         if os.name == 'nt':
+#             self._ExcuteTask.start_thread()
+
+class ExcuteProcess(MODITask):
 
     def __init__(self, serial_write_q, recv_q, ids, modules):
         super(ExcuteProcess,self).__init__()

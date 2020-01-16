@@ -76,6 +76,7 @@ class SerialTask(object):
             pass
         else:
             self._serial.write(writetemp)
+            print(writetemp)
             time.sleep(0.001)
 
         # # # Write Display Data
@@ -114,7 +115,7 @@ class ParsingTask(object):
             while self._json_box.has_json():
                 json_temp = self._json_box.json
                 self._recv_q.put(json_temp)
-                # print(json_temp)
+                # print('jsonread : ', json_temp)
 
 class ExcuteTask(object):
 
@@ -141,14 +142,14 @@ class ExcuteTask(object):
             msg = json.loads(self._recv_q.get())
             self._handler(msg['c'])(msg)
             # print('ExcuteTask')
-            time.sleep(0.01)
+            time.sleep(0.002)
 
     def _handler(self, cmd):
         return {
             0x00: self._update_health,
             0x0A: self._update_health,
             0x05: self._update_modules,
-            # 0x1F: self._update_property
+            0x1F: self._update_property
         }.get(cmd, lambda _: None)
         
     def _update_health(self, msg):
@@ -165,6 +166,8 @@ class ExcuteTask(object):
         if not self._ids[id]['uuid']:
             write_temp = md_cmd.request_uuid(id)
             self._serial_write_q.put(write_temp)
+            write_temp = md_cmd.request_network_uuid(id)
+            self._serial_write_q.put(write_temp)
 
         for id, info in list(self._ids.items()):
             # if module is not connected for 3.5s, set the module's state to not_connected
@@ -172,6 +175,7 @@ class ExcuteTask(object):
                 module = next((module for module in self._modules if module.uuid == info['uuid']), None)
                 if module:
                     module.set_connected(False)
+                    # print('disconecting')
 
     def _update_modules(self, msg):
 
@@ -201,32 +205,22 @@ class ExcuteTask(object):
         moduledict = self._ids[id]
         moduledict['uuid'] = uuid
         self._ids[id] = moduledict
-        
-        # # handling re-connected modules
-        # for module in self._modules:
-        #     if module.uuid == uuid and not module.connected:
-        #         module.set_connected(True)
 
-        modulelist = list()
-        print(type(self._modules))
-        while self._modules.empty() != True:
-            modulelist.append(self._modules.get())
+        # handling re-connected modules
+        for module in self._modules:
+            if module.uuid == uuid and not module.connected:
+                module.set_connected(True)
 
         # handling newly-connected modules
-        if not next((module for module in modulelist if module.uuid == uuid), None):
-            module = self._init_module(type_)(id, uuid, self)
-            modulelist.append(module)
-            # print(type(module), type(modulelist))
+        if not next((module for module in self._modules if module.uuid == uuid), None):
+            if category != "network":
+                # print(type_)
+                module = self._init_module(type_)(id, uuid, self, self._serial_write_q)
+                self.pnp_off(module.id)
+                self._modules.append(module)
+                self._modules.sort(key=lambda x: x.uuid)
 
-        for item in modulelist:
-            self._modules.put(item)
-            print('xxxs')
-
-
-        # # handling newly-connected modules
-        # if not next((module for module in self._modules if module.uuid == uuid), None):
-        #     module = self._init_module(type_)(id, uuid, self)
-        #     print(module)      
+     
 
         #     # TODO: check why modules are sorted by its uuid
         #     # self._modules.sort(key=lambda x: x.uuid)
@@ -249,14 +243,48 @@ class ExcuteTask(object):
     def _update_property(self, msg):
 
         property_number = msg['d']
+        # print(property_number)
         if property_number == 0 or property_number == 1:
             return
         
         id = msg['s']
-        module = next((module for module in self.modules if module.id == id), None)
+        module = next((module for module in self._modules if module.id == id), None)
+        # print(module)
         if module:
             decoded = bytearray(base64.b64decode(msg['b']))
             property_type = module.property_types(property_number)
             module.update_property(property_type, round(struct.unpack('f', bytes(decoded[:4]))[0], 2))
+
+    def pnp_on(self, id=None):
+        """Turn on PnP mode of the module.
+
+        :param int id: The id of the module to turn on PnP mode or ``None``.
+
+        All connected modules' PnP mode will be turned on if the `id` is ``None``.
+        """
+        if id is None:
+            for _id in self._ids:
+                # self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
+                pnp_temp = md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON)
+                self._serial_write_q.put(pnp_temp)
+        else:
+            # self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
+            pnp_temp = md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON)
+            self._serial_write_q.put(pnp_temp)
+
+    def pnp_off(self, id=None):
+        """Turn off PnP mode of the module.
+
+        :param int id: The id of the module to turn off PnP mode or ``None``.
+
+        All connected modules' PnP mode will be turned off if the `id` is ``None``.
+        """
+        if id is None:
+            for _id in self._ids:
+                pnp_temp = md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF)
+                self._serial_write_q.put(pnp_temp)
+        else:
+            pnp_temp = md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF)
+            self._serial_write_q.put(pnp_temp)
 
     

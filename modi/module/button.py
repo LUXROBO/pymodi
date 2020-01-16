@@ -22,8 +22,8 @@ class Button(InputModule):
     """
     property_types = PropertyType
 
-    def __init__(self, id, uuid, modi):
-        super(Button, self).__init__(id, uuid, modi)
+    def __init__(self, id, uuid, modi, serial_write_q):
+        super(Button, self).__init__(id, uuid, modi, serial_write_q)
         self._type = "button"
 
     def clicked(self):
@@ -47,7 +47,6 @@ class Button(InputModule):
         :return: `True` if pressed or `False`.
         :rtype: bool    
         """
-
         return self._write_property(PropertyType.PRESSED) == 100.0
 
     def toggled(self):

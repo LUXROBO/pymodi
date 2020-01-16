@@ -51,6 +51,22 @@ def request_uuid(id):
 
     return json.dumps(msg, separators=(',', ':'))
 
+def request_network_uuid(id):
+    msg = dict()
+    
+    msg['c'] = 0x28
+    msg['s'] = 0
+    msg['d'] = 0xFFF
+
+    id_bytes = bytearray(8)
+    id_bytes[0] = 0xFF
+    id_bytes[1] = 0x0F
+
+    msg['b'] = base64.b64encode(bytes(id_bytes)).decode('utf-8')
+    msg['l'] = 8
+
+    return json.dumps(msg, separators=(',', ':'))
+
 def module_state(id, state, pnp):
     if type(state) is ModuleState:
         msg = dict()

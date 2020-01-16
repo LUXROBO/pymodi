@@ -29,8 +29,8 @@ class Gyro(InputModule):
     """
     property_types = PropertyType
 
-    def __init__(self, id, uuid, modi):
-        super(Gyro, self).__init__(id, uuid, modi)
+    def __init__(self, id, uuid, modi, serial_write_q):
+        super(Gyro, self).__init__(id, uuid, modi, serial_write_q)
         self._type = "gyro"
 
     def roll(self):

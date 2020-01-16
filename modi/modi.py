@@ -21,7 +21,7 @@ IS_PY2 = sys.version_info < (3, 0)
 #    from queue import Queue
 
 import multiprocessing
-from multiprocessing import Process, Queue, Pipe, Manager
+from multiprocessing import Process, Queue, Pipe, Manager, Lock
 from multiprocessing.managers import BaseManager
 
 
@@ -64,9 +64,7 @@ class MODI:
         # sharable?
         self._json_box = JsonBox()
         self._ids = manager.dict()
-        #self._modules = manager.list()
-        # self._modules = manager.dict()
-        self._modules = multiprocessing.Queue(100)
+        self._modules = list()
 
         print('Serial Process Start')
         p = SerialProcess(self._serial_read_q, self._serial_write_q, port)
@@ -82,6 +80,16 @@ class MODI:
         p = ExcuteProcess(self._serial_write_q, self._recv_q, self._ids, self._modules)
         p.daemon = True
         p.start()
+
+        modi_serialtemp = md_cmd.module_state(0xFFF,md_cmd.ModuleState.REBOOT, md_cmd.ModulePnp.OFF)
+        self._serial_write_q.put(modi_serialtemp)
+        time.sleep(1)
+        modi_serialtemp = md_cmd.module_state(0xFFF,md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF)
+        self._serial_write_q.put(modi_serialtemp)
+        time.sleep(1)
+        modi_serialtemp = md_cmd.request_uuid(0xFFF)
+        self._serial_write_q.put(modi_serialtemp)
+        time.sleep(1)
 
         # self.write(md_cmd.module_state(0xFFF,md_cmd.ModuleState.REBOOT, md_cmd.ModulePnp.OFF))
         # time.sleep(1)
@@ -111,31 +119,31 @@ class MODI:
         else:
             self._send_q.put(msg)
 
-    def pnp_on(self, id=None):
-        """Turn on PnP mode of the module.
+    # def pnp_on(self, id=None):
+    #     """Turn on PnP mode of the module.
 
-        :param int id: The id of the module to turn on PnP mode or ``None``.
+    #     :param int id: The id of the module to turn on PnP mode or ``None``.
 
-        All connected modules' PnP mode will be turned on if the `id` is ``None``.
-        """
-        if id is None:
-            for _id in self._ids:
-                self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
-        else:
-            self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
+    #     All connected modules' PnP mode will be turned on if the `id` is ``None``.
+    #     """
+    #     if id is None:
+    #         for _id in self._ids:
+    #             self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
+    #     else:
+    #         self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
 
-    def pnp_off(self, id=None):
-        """Turn off PnP mode of the module.
+    # def pnp_off(self, id=None):
+    #     """Turn off PnP mode of the module.
 
-        :param int id: The id of the module to turn off PnP mode or ``None``.
+    #     :param int id: The id of the module to turn off PnP mode or ``None``.
 
-        All connected modules' PnP mode will be turned off if the `id` is ``None``.
-        """
-        if id is None:
-            for _id in self._ids:
-                self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF))
-        else:
-            self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF))
+    #     All connected modules' PnP mode will be turned off if the `id` is ``None``.
+    #     """
+    #     if id is None:
+    #         for _id in self._ids:
+    #             self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF))
+    #     else:
+    #         self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF))
 
     # methods below are getters
     @property
