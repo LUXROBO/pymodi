@@ -76,7 +76,7 @@ class SerialTask(object):
             pass
         else:
             self._serial.write(writetemp)
-            print(writetemp)
+            #print(writetemp)
             time.sleep(0.001)
 
         # # # Write Display Data
