@@ -18,7 +18,7 @@ class Button(InputModule):
     :param int id: The id of the module.
     :param int uuid: The uuid of the module.
     :param modi: The :class:`~modi.modi.MODI` instance.
-    :type modi: :class:`~modi.modi.MODI`
+    :type modi: :class:`~modi.modi.MODI  `
     """
     property_types = PropertyType
 
@@ -31,25 +31,29 @@ class Button(InputModule):
         :return: `True` if clicked or `False`.
         :rtype: bool
         """
-        return self._properties[PropertyType.CLICKED] == 100.0
+        
+        return self._write_property(PropertyType.CLICKED) == 100.0
 
     def double_clicked(self):
         """
         :return: `True` if double clicked or `False`.
         :rtype: bool
         """
-        return self._properties[PropertyType.DOUBLE_CLICKED] == 100.0
+
+        return self._write_property(PropertyType.DOUBLE_CLICKED) == 100.0
 
     def pressed(self):
         """
         :return: `True` if pressed or `False`.
-        :rtype: bool
+        :rtype: bool    
         """
-        return self._properties[PropertyType.PRESSED] == 100.0
+
+        return self._write_property(PropertyType.PRESSED) == 100.0
 
     def toggled(self):
         """
         :return: `True` if toggled or `False`.
         :rtype: bool
         """
-        return self._properties[PropertyType.TOGGLED] == 100.0
+
+        return self._write_property(PropertyType.TOGGLED) == 100.0

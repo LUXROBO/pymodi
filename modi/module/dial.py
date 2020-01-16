@@ -29,4 +29,4 @@ class Dial(InputModule):
         :return: The dial's angle.
         :rtype: float
         """
-        return self._properties[PropertyType.DEGREE]
+        return self._write_property(PropertyType.DEGREE)

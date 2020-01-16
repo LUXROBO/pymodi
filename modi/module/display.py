@@ -35,9 +35,21 @@ class Display(OutputModule):
         self.clear()
 
         for cmd in set_property(self.id, 17, text, PropertyDataType.STRING):
-            self._modi().write(cmd, is_display=True)
+            self._modi.write(cmd, is_display=True)
+            print(cmd)
+
+    def variable(self, var):
+        """
+
+        :param variable: variable to display.
+        """
+        self.clear()
+        for cmd in set_property(self.id, 21, var, (10,20,var)):
+            self._modi.write(cmd, is_display=True)
+            print(cmd)
+
 
     def clear(self):
         """Clear the screen.
         """
-        self._modi().write(set_property(self.id, 20, bytes(2), PropertyDataType.RAW), is_display=True)
+        self._modi.write(set_property(self.id, 20, bytes(2), PropertyDataType.RAW), is_display=True)

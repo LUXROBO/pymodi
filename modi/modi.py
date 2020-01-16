@@ -10,14 +10,22 @@ from modi.serial import list_ports
 from modi._json_box import JsonBox
 import modi._cmd as md_cmd
 from modi._tasks import *
+from modi._processes import *
+from modi.module import *
 
 import sys
 IS_PY2 = sys.version_info < (3, 0)
+#if IS_PY2:
+#    from Queue import Queue
+#else:
+#    from queue import Queue
 
-if IS_PY2:
-    from Queue import Queue
-else:
-    from queue import Queue
+import multiprocessing
+from multiprocessing import Process, Queue, Pipe, Manager
+from multiprocessing.managers import BaseManager
+
+
+import queue
 
 class MODI:
     """
@@ -41,37 +49,46 @@ class MODI:
     >>> ports = modi.serial.list_ports() # [<serial.tools.list_ports_common.ListPortInfo object at 0x1026e95c0>]
     >>> bundle = modi.MODI(ports[0].device)
     """
+
+
     def __init__(self, port=None):
-        self._recv_q = Queue()
-        self._send_q = Queue()
-        self._display_send_q = Queue()
+        print('os.getpid():', os.getpid())
+        manager = multiprocessing.Manager()
 
+        self._serial_read_q = multiprocessing.Queue(200)
+        self._serial_write_q = multiprocessing.Queue(200)
+        self._recv_q = multiprocessing.Queue(100)
+        self._send_q = multiprocessing.Queue(100)
+        self._display_send_q = multiprocessing.Queue(100)
+
+        # sharable?
         self._json_box = JsonBox()
+        self._ids = manager.dict()
+        #self._modules = manager.list()
+        # self._modules = manager.dict()
+        self._modules = multiprocessing.Queue(100)
 
-        self._ids = dict()
-        self._modules = list()
+        print('Serial Process Start')
+        p = SerialProcess(self._serial_read_q, self._serial_write_q, port)
+        p.daemon = True
+        p.start()
 
-        if port == None:
-            ports = list_ports()
+        print('Parsing Process Start')
+        p = ParsingProcess(self._serial_read_q, self._recv_q, self._json_box)
+        p.daemon = True
+        p.start()
 
-            if len(ports) > 0:
-                self._serial = serial.Serial(ports[0].device, 115200)
-            else:
-                raise serial.SerialException("No MODI network module connected.")
+        print('Excute Process Start')
+        p = ExcuteProcess(self._serial_write_q, self._recv_q, self._ids, self._modules)
+        p.daemon = True
+        p.start()
 
-        else:
-            self._serial = serial.Serial(port, 115200)
-
-        self._threads = list()
-        tasks = [ReadDataTask, ParseDataTask, ProcDataTask, WriteDataTask, WriteDisplayDataTask]
-
-        for task in tasks:
-            thread = task(self) 
-            thread.daemon = True
-            thread.start()
-            self._threads.append(thread)
-        
-        time.sleep(1)
+        # self.write(md_cmd.module_state(0xFFF,md_cmd.ModuleState.REBOOT, md_cmd.ModulePnp.OFF))
+        # time.sleep(1)
+        # self.write(md_cmd.module_state(0xFFF,md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF))
+        # time.sleep(1)
+        # self.write(md_cmd.request_uuid(0xFFF))
+        # time.sleep(1)
         
     def open(self):
         """Open port.
@@ -101,11 +118,11 @@ class MODI:
 
         All connected modules' PnP mode will be turned on if the `id` is ``None``.
         """
-        if id == None:
+        if id is None:
             for _id in self._ids:
-                self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN))
+                self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
         else:
-            self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN))
+            self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
 
     def pnp_off(self, id=None):
         """Turn off PnP mode of the module.
@@ -114,12 +131,13 @@ class MODI:
 
         All connected modules' PnP mode will be turned off if the `id` is ``None``.
         """
-        if id == None:
+        if id is None:
             for _id in self._ids:
-                self.write(md_cmd.module_state(_id, md_cmd.ModuleState.PAUSE))
+                self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF))
         else:
-            self.write(md_cmd.module_state(id, md_cmd.ModuleState.PAUSE))
+            self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF))
 
+    # methods below are getters
     @property
     def modules(self):
         """Tuple of connected modules except network module.
@@ -196,4 +214,5 @@ class MODI:
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
         return tuple([x for x in self.modules if x.type == "ultrasonic"])
+
 

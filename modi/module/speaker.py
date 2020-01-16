@@ -131,7 +131,7 @@ class Speaker(OutputModule):
         if frequency == None and volume == None:
             return (self.frequency(), self.volume())
         else:
-            self._modi().write(set_property(self.id, 16, (
+            self._modi.write(set_property(self.id, 16, (
                 frequency if frequency != None else self.frequency(),
                 volume if volume != None else self.volume()
             ), PropertyDataType.FLOAT))
@@ -146,7 +146,7 @@ class Speaker(OutputModule):
         :rtype: float
         """
         if frequency == None:
-            return self._properties[PropertyType.FREQUENCY]
+            return self._write_property(PropertyType.FREQUENCY)
         else:
             self.tune(frequency=frequency)
 
@@ -160,7 +160,7 @@ class Speaker(OutputModule):
         :rtype: float
         """
         if volume == None:
-            return self._properties[PropertyType.VOLUME]
+            return self._write_property(PropertyType.VOLUME)
         else:
             self.tune(volume=volume)
 

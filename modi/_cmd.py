@@ -16,7 +16,11 @@ class ModuleState(Enum):
     PAUSE = 2
     ERROR = 3
     NO_FIRMWARE = 4
-    REBOOT = 5
+    REBOOT = 6
+
+class ModulePnp(Enum):
+    ON = 1
+    OFF = 2
 
 class PropertyDataType(Enum):
     INT = 0
@@ -27,29 +31,41 @@ class PropertyDataType(Enum):
 def request_uuid(id):
     msg = dict()
 
+    # msg['c'] = 0x08
+    # msg['s'] = 0
+    # msg['d'] = 0xFFF
+
+    # id_bytes = bytearray(8)
+    # id_bytes[0] = id & 0xFF
+    # id_bytes[1] = (id & 0xFF00) >> 8
     msg['c'] = 0x08
-    msg['s'] = 0
+    msg['s'] = id
     msg['d'] = 0xFFF
 
     id_bytes = bytearray(8)
-    id_bytes[0] = id & 0xFF
-    id_bytes[1] = (id & 0xFF00) >> 8
+    id_bytes[0] = 0xFF
+    id_bytes[1] = 0x0F
 
     msg['b'] = base64.b64encode(bytes(id_bytes)).decode('utf-8')
     msg['l'] = 8
 
     return json.dumps(msg, separators=(',', ':'))
 
-def module_state(id, state):
+def module_state(id, state, pnp):
     if type(state) is ModuleState:
         msg = dict()
 
         msg['c'] = 0x09
         msg['s'] = 0
         msg['d'] = id
-
+        
         state_bytes = bytearray(2)
-        state_bytes[1] = state.value
+        state_bytes[0] = state.value # set state instruction 에서 Module State 지정 바이트
+        state_bytes[1] = pnp.value # set state instruction 에서 Module Plug & Play 지정 바이트
+
+        # 기존 코드
+        # state_bytes[1] = state.value
+        # state.value가 PnP 지정 변수로 사용되고 있었음 - Patrick
 
         msg['b'] = base64.b64encode(bytes(state_bytes)).decode('utf-8')
         msg['l'] = 2
@@ -87,7 +103,7 @@ def set_property(id, property_type, values, datatype=None):
 
             cmds.append(json.dumps(msg, separators=(',', ':')))
 
-        return tuple(cmds)
+        return cmds # tuple(cmds)
     elif datatype == PropertyDataType.RAW:
         msg['b'] = base64.b64encode(bytearray(values)).decode('utf-8')
         msg['l'] = len(values)
@@ -102,15 +118,16 @@ def set_property(id, property_type, values, datatype=None):
 
 def get_property(id, property_type):
     msg = dict()
-
+    
     msg['c'] = 0x03
     msg['s'] = 0
     msg['d'] = id
 
+
     property_bytes = bytearray(4)
 
     property_bytes[0] = property_type
-    property_bytes[2] = 97 
+    property_bytes[2] = 92
 
     msg['b'] = base64.b64encode(bytes(property_bytes)).decode('utf-8')
     msg['l'] = 4

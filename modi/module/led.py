@@ -46,7 +46,7 @@ class Led(OutputModule):
         if red == None and green == None and blue == None:
             return (self.red(), self.green(), self.blue())
         else:
-            self._modi().write(set_property(self.id, 16, (
+            self._modi.write(set_property(self.id, 16, (
                 red if red != None else self.red(), 
                 green if green != None else self.green(), 
                 blue if blue != None else self.blue()
@@ -72,7 +72,7 @@ class Led(OutputModule):
         :rtype: float
         """
         if red == None:
-            return self._properties[PropertyType.RED]
+            return self._write_property(PropertyType.RED)
         else:
             self.rgb(red=red)
 
@@ -86,7 +86,7 @@ class Led(OutputModule):
         :rtype: float
         """
         if green == None:
-            return self._properties[PropertyType.GREEN]
+            return self._write_property(PropertyType.GREEN)
         else:
             self.rgb(green=green)
 
@@ -100,6 +100,6 @@ class Led(OutputModule):
         :rtype: float
         """
         if blue == None:
-            return self._properties[PropertyType.BLUE]
+            return self._write_property(PropertyType.BLUE)
         else:
             self.rgb(blue=blue)
