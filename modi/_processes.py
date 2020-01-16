@@ -42,8 +42,7 @@ class SerialProcess(MODIProcess):
         
         # self.dostuff = DoStuff(self)
     def run(self):
-        if os.name == 'nt':
-            self._SerialTask.start_thread()
+        self._SerialTask.start_thread()
 
 # ParsingProcess
 # Run ParseTask
@@ -55,8 +54,7 @@ class ParsingProcess(MODIProcess):
         self._ParsingTask = ParsingTask(serial_read_q, recv_q, json_box)
     
     def run(self):
-        if os.name == 'nt':
-            self._ParsingTask.start_thread()
+        self._ParsingTask.start_thread()
 
 # class ExcuteProcess(MODIProcess):
 
@@ -74,7 +72,5 @@ class ExcuteProcess(MODITask):
         super(ExcuteProcess,self).__init__()
         self._ExcuteTask = ExcuteTask(serial_write_q, recv_q, ids, modules)
 
-    def run(self):        
+    def run(self):
         self._ExcuteTask.start_thread()
-        import sys
-        sys.exit()
