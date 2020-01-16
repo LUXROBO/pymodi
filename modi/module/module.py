@@ -61,7 +61,7 @@ class Module(object):
             self._properties[prop].last_request_time = time.time()
 
         duration = time.time() - self._properties[prop].last_update_time
-        if duration > 1 : # 1초
+        if duration > 0.5 : # 1초
             # self._modi.write(md_cmd.get_property(self._id, prop.value))
             modi_serialtemp = md_cmd.get_property(self._id, prop.value)
             self._serial_write_q.put(modi_serialtemp)

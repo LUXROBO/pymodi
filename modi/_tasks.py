@@ -39,6 +39,7 @@ class SerialTask(object):
         self._port = port
         if os.name != 'nt':
             self.start_thread()
+            
     
     def start_thread(self):
         # Sereial Connection Once
@@ -50,8 +51,8 @@ class SerialTask(object):
                 raise serial.SerialException("No MODI network module connected.")
         else:
             self._serial = serial.Serial(port, 921600)
-        
-        # Main Thread 10ms loop
+        print('SerialTask : ', os.getpid())
+        # Main Thread 2ms loop
         while True:
             # read serial
             self.read_serial()
@@ -66,7 +67,7 @@ class SerialTask(object):
         if self._serial.in_waiting != 0:
             read_temp = self._serial.read(self._serial.in_waiting).decode()
             self._serial_read_q.put(read_temp)
-            # print(read_temp)
+            
 
     def write_serial(self):
 
@@ -76,7 +77,7 @@ class SerialTask(object):
             pass
         else:
             self._serial.write(writetemp)
-            print(writetemp)
+            # print(writetemp)
             time.sleep(0.001)
 
         # # # Write Display Data
@@ -102,20 +103,29 @@ class ParsingTask(object):
         self._json_box = json_box
         if os.name != 'nt':
             self.start_thread()
+            
     
     def start_thread(self):
+        print('ParsingTask : ', os.getpid())
         while True:
             self.adding_json()
-
             time.sleep(0.005)
 
     def adding_json(self):
-        if self._serial_read_q.qsize() != 0:
-            self._json_box.add(self._serial_read_q.get())
+        # if self._serial_read_q.qsize() != 0:
+        #     self._json_box.add(self._serial_read_q.get())
+        #     while self._json_box.has_json():
+        #         json_temp = self._json_box.json
+        #         self._recv_q.put(json_temp)
+        try:
+            while self._serial_read_q.qsize() != 0:
+                self._json_box.add(self._serial_read_q.get_nowait())      
+        except queue.Empty:
+            pass
+        else:
             while self._json_box.has_json():
                 json_temp = self._json_box.json
                 self._recv_q.put(json_temp)
-                # print('jsonread : ', json_temp)
 
 class ExcuteTask(object):
 
@@ -138,16 +148,18 @@ class ExcuteTask(object):
             self.start_thread()
     
     def start_thread(self):
+        print('ExcuteTask : ', os.getpid())
         while True:
-            # msg = json.loads(self._recv_q.get_nowait())
+            
             try:
                 msg = json.loads(self._recv_q.get_nowait())
             except queue.Empty:
                 pass
             else:
                 self._handler(msg['c'])(msg)
-            # print('ExcuteTask')
-            time.sleep(0.002)
+
+            time.sleep(0.001)
+            
 
     def _handler(self, cmd):
         return {
@@ -176,11 +188,11 @@ class ExcuteTask(object):
 
         for id, info in list(self._ids.items()):
             # if module is not connected for 3.5s, set the module's state to not_connected
-            if time_ms - info['timestamp'] > 3500:
+            if time_ms - info['timestamp'] > 2000:
                 module = next((module for module in self._modules if module.uuid == info['uuid']), None)
                 if module:
                     module.set_connected(False)
-                    # print('disconecting')
+                    print('disconecting : ', module)
 
     def _update_modules(self, msg):
 

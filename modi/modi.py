@@ -60,7 +60,6 @@ class MODI:
         self._recv_q = multiprocessing.Queue(100)
         self._send_q = multiprocessing.Queue(100)
         self._display_send_q = multiprocessing.Queue(100)
-
         # sharable?
         self._json_box = JsonBox()
         self._ids = manager.dict()
@@ -119,31 +118,14 @@ class MODI:
         else:
             self._send_q.put(msg)
 
-    # def pnp_on(self, id=None):
-    #     """Turn on PnP mode of the module.
-
-    #     :param int id: The id of the module to turn on PnP mode or ``None``.
-
-    #     All connected modules' PnP mode will be turned on if the `id` is ``None``.
-    #     """
-    #     if id is None:
-    #         for _id in self._ids:
-    #             self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
-    #     else:
-    #         self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
-
-    # def pnp_off(self, id=None):
-    #     """Turn off PnP mode of the module.
-
-    #     :param int id: The id of the module to turn off PnP mode or ``None``.
-
-    #     All connected modules' PnP mode will be turned off if the `id` is ``None``.
-    #     """
-    #     if id is None:
-    #         for _id in self._ids:
-    #             self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF))
-    #     else:
-    #         self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF))
+    def __del__(self):
+        try:
+            ExcuteProcess.__exit = True
+            time.sleep(0.5)
+            self.__exit = True
+        except:
+            pass
+        
 
     # methods below are getters
     @property
@@ -222,5 +204,9 @@ class MODI:
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
         return tuple([x for x in self.modules if x.type == "ultrasonic"])
+
+
+    def __delattr__(self, name):
+        return super().__delattr__(name)
 
 

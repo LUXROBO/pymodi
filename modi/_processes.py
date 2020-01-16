@@ -27,7 +27,7 @@ class MODIProcess(multiprocessing.Process):
     def __init__(self):
         super(MODIProcess, self).__init__()
 
-class MODITask(threading.Thread):
+class MODITask(StoppableThread):
     def __init__(self):
         super(MODITask, self).__init__()
 
@@ -74,6 +74,7 @@ class ExcuteProcess(MODITask):
         super(ExcuteProcess,self).__init__()
         self._ExcuteTask = ExcuteTask(serial_write_q, recv_q, ids, modules)
 
-    def run(self):
-        if os.name == 'nt':
-            self._ExcuteTask.start_thread()
+    def run(self):        
+        self._ExcuteTask.start_thread()
+        import sys
+        sys.exit()
