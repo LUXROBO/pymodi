@@ -77,4 +77,3 @@ class ExcuteProcess(threading.Thread):
 
     def stopped(self):
         return self._stop.isSet()
-
