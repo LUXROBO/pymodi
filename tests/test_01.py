@@ -10,9 +10,11 @@ if __name__ == "__main__":
     # gyro = bundle.gyros[0]
     motor = bundle.motors[0]
     # while button.double_clicked() != True:
-    for i in range(1, 50, 1):
-        k = i * 1.0
-        motor.speed(k, -k)
+    for i in range(0, 100, 2):
+        # k = i * 1.0
+        # motor.speed(k, -k)
+        # motor.degree(k, k)
+        motor.motor_ch_ctrl(0, 0, i)
         # print('dX, dY, Dz, aX aY aZ gX gY gZ',
         #         gyro.pitch(),
         #         gyro.roll(),

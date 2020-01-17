@@ -94,7 +94,8 @@ class Command(object):
         msg["d"] = dst_id
 
         values_bytes = bytearray(8)
-
+        # motor channel control
+        # channel(2) mode(2) value_high(2) value_low(2)
         if datatype == None or datatype == PropertyDataType.INT:
             for index, value in enumerate(values):
                 value = int(value)
