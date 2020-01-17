@@ -4,27 +4,19 @@
 
 from __future__ import absolute_import
 
-import modi._cmd as md_cmd
-from modi.serial import list_ports
-import serial
-from modi.module import *
-import modi._util as md_util
-
-# from modi._stoppable_thread import StoppableThread
+import multiprocessing
+from multiprocessing import Process, Queue
+import threading
 
 import json
-import weakref
 import time
 import base64
 import struct
-import multiprocessing
-import os
-import threading
 import queue
 
-from multiprocessing import Process, Queue
-from modi._tasks import *
-import atexit
+from modi._serial_task import *
+from modi._serial_parsing_task import *
+from modi._json_excute_task import *
 
 
 class MODIProcess(multiprocessing.Process):

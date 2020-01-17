@@ -9,11 +9,17 @@ import time
 from modi.serial import list_ports
 from modi._json_box import JsonBox
 import modi._cmd as md_cmd
-from modi._tasks import *
+
+# from modi._tasks import *
+from modi._serial_task import *
+from modi._serial_parsing_task import *
+from modi._json_excute_task import *
+
 from modi._processes import *
 from modi.module import *
 
 import sys
+import os
 
 IS_PY2 = sys.version_info < (3, 0)
 # if IS_PY2:
@@ -24,8 +30,6 @@ IS_PY2 = sys.version_info < (3, 0)
 import multiprocessing
 from multiprocessing import Process, Queue, Pipe, Manager, Lock
 from multiprocessing.managers import BaseManager
-import atexit
-import signal
 
 import queue
 

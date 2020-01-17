@@ -1,13 +1,10 @@
 import modi
 import time
-import os
-import sys
 
 
 if __name__ == "__main__":
 
     print("Program Start")
-    print("main.getpid():", os.getpid())
     bundle = modi.MODI()
     # button = bundle.buttons[0]
     # gyro = bundle.gyros[0]
@@ -32,7 +29,7 @@ if __name__ == "__main__":
         print("i am alive")
         time.sleep(0.1)
     motor.speed(0.0, 0.0)
-    time.sleep(2)
+    time.sleep(0.1)
     bundle.end()
     print("Program End")
 
