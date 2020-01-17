@@ -32,15 +32,6 @@ class MODIProcess(multiprocessing.Process):
         super(MODIProcess, self).__init__()
 
 
-# class MODITask(StoppableThread):
-#     def __init__(self):
-#         super(MODITask, self).__init__()
-
-
-# SerialProcess
-# Run SerialTask
-
-
 class SerialProcess(MODIProcess):
     def __init__(self, serial_read_q, serial_write_q, port):
         super(SerialProcess, self).__init__()
@@ -60,10 +51,6 @@ class SerialProcess(MODIProcess):
         return self._stop.is_set()
 
 
-# ParsingProcess
-# Run ParseTask
-
-
 class ParsingProcess(MODIProcess):
     def __init__(self, serial_read_q, recv_q, json_box):
         super(ParsingProcess, self).__init__()
@@ -80,17 +67,6 @@ class ParsingProcess(MODIProcess):
 
     def stopped(self):
         return self._stop.is_set()
-
-
-# class ExcuteProcess(MODIProcess):
-
-#     def __init__(self, serial_write_q, recv_q, ids, modules):
-#         super(ExcuteProcess,self).__init__()
-#         self._ExcuteTask = ExcuteTask(serial_write_q, recv_q, ids, modules)
-
-#     def run(self):
-#         if os.name == 'nt':
-#             self._ExcuteTask.start_thread()
 
 
 class ExcuteProcess(threading.Thread):

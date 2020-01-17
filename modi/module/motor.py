@@ -10,6 +10,7 @@ from modi.module.module import OutputModule
 
 from modi._cmd import set_property
 
+
 class PropertyType(Enum):
     FIRST_DEGREE = 4
     SECOND_DEGREE = 12
@@ -18,6 +19,7 @@ class PropertyType(Enum):
     FIRST_TORQUE = 2
     SECOND_TORQUE = 10
 
+
 class Motor(OutputModule):
     """
     :param int id: The id of the module.
@@ -25,11 +27,13 @@ class Motor(OutputModule):
     :param modi: The :class:`~modi.modi.MODI` instance.
     :type modi: :class:`~modi.modi.MODI`
     """
+
     property_types = PropertyType
-    
-    def __init__(self, id, uuid, modi):
-        super(Motor, self).__init__(id, uuid, modi)
+
+    def __init__(self, id, uuid, modi, serial_write_q):
+        super(Motor, self).__init__(id, uuid, modi, serial_write_q)
         self._type = "motor"
+        self._serial_write_q = serial_write_q
 
     def first_degree(self, degree=None):
         """
@@ -41,7 +45,12 @@ class Motor(OutputModule):
         :rtype: float
         """
         if degree != None:
-            self._modi.write(set_property(self.id, 18, (degree, self.second_degree(), 0)))
+            self._serial_write_q.put(
+                set_property(self.id, 18, (degree, self.first_degree(), 0))
+            )
+            # self._modi.write(
+            #     set_property(self.id, 18, (degree, self.second_degree(), 0))
+            # )
         else:
             return self._write_property(PropertyType.FIRST_DEGREE)
 
@@ -55,7 +64,12 @@ class Motor(OutputModule):
         :rtype: float
         """
         if degree != None:
-            self._modi.write(set_property(self.id, 18, (self.first_degree(), degree, 0)))
+            self._serial_write_q.put(
+                set_property(self.id, 18, (self.second_degree(), degree, 0))
+            )
+            # self._modi.write(
+            #     set_property(self.id, 18, (self.second_degree(), degree, 0))
+            # )
         else:
             return self._write_property(PropertyType.SECOND_DEGREE)
 
@@ -69,7 +83,10 @@ class Motor(OutputModule):
         :rtype: float
         """
         if speed != None:
-            self._modi.write(set_property(self.id, 17, (speed, self.second_speed(), 0)))
+            self._serial_write_q.put(
+                set_property(self.id, 17, (speed, self.first_speed(), 0))
+            )
+            # self._modi.write(set_property(self.id, 17, (speed, self.second_speed(), 0)))
         else:
             return self._write_property(PropertyType.FIRST_DEGREE)
 
@@ -83,8 +100,11 @@ class Motor(OutputModule):
         :rtype: float
         """
         if speed != None:
-            self._modi.write(set_property(self.id, 17, (self.first_speed(), speed, 0)))
-        else:    
+            self._serial_write_q.put(
+                set_property(self.id, 17, (self.second_speed(), speed, 0))
+            )
+            # self._modi.write(set_property(self.id, 17, (self.first_speed(), speed, 0)))
+        else:
             return self._write_property(PropertyType.SECOND_DEGREE)
 
     def first_torque(self, torque=None):
@@ -97,7 +117,9 @@ class Motor(OutputModule):
         :rtype: float
         """
         if torque != None:
-            self._modi.write(set_property(self.id, 16, (torque, self.second_torque(), 0)))
+            self._serial_write_q.put(
+                set_property(self.id, 16, (torque, self.second_torque(), 0))
+            )
         else:
             return self._write_property(PropertyType.FIRST_TORQUE)
 
@@ -111,10 +133,12 @@ class Motor(OutputModule):
         :rtype: float
         """
         if torque != None:
-            self._modi.write(set_property(self.id, 16, (self.first_torque(), torque, 0)))
+            self._serial_write_q.put(
+                set_property(self.id, 16, (self.first_torque(), torque, 0))
+            )
         else:
             return self._write_property(PropertyType.SECOND_TORQUE)
-        
+
     def torque(self, first_torque=None, second_torque=None):
         """
         :param int first_torque: Torque to set the first motor.
@@ -125,12 +149,19 @@ class Motor(OutputModule):
         :return: Torque of the first motor , Torque of the second motor.
         :rtype: float
         """
-        if first_torque != None or second_torque != None :
+        if first_torque != None or second_torque != None:
             first_torque = self.first_torque() if first_torque == None else first_torque
-            second_torque = self.second_torque() if second_torque == None else second_torque
-            self._modi.write(set_property(self.id, 16, (first_torque, second_torque, 0)))
+            second_torque = (
+                self.second_torque() if second_torque == None else second_torque
+            )
+            self._serial_write_q.put(
+                set_property(self.id, 16, (first_torque, second_torque, 0))
+            )
         else:
-            return (self._write_property(PropertyType.FIRST_TORQUE) , self._write_property(PropertyType.SECOND_TORQUE))
+            return (
+                self._write_property(PropertyType.FIRST_TORQUE),
+                self._write_property(PropertyType.SECOND_TORQUE),
+            )
 
     def speed(self, first_speed=None, second_speed=None):
         """
@@ -142,13 +173,18 @@ class Motor(OutputModule):
         :return: Speed of the first motor , Speed of the second motor.
         :rtype: float
         """
-        if first_speed != None or second_speed != None :
+        if first_speed != None or second_speed != None:
             first_speed = self.first_speed() if first_speed == None else first_speed
             second_speed = self.second_speed() if second_speed == None else second_speed
-            self._modi.write(set_property(self.id, 17, (first_speed, second_speed, 0)))
+            self._serial_write_q.put(
+                set_property(self.id, 17, (first_speed, second_speed, 0))
+            )
         else:
-            return (self._write_property(PropertyType.FIRST_SPEED) , self._write_property(PropertyType.SECOND_SPEED))
-            
+            return (
+                self._write_property(PropertyType.FIRST_SPEED),
+                self._write_property(PropertyType.SECOND_SPEED),
+            )
+
     def degree(self, first_degree=None, second_degree=None):
         """
         :param int first_degree: Degree to set the first motor.
@@ -159,9 +195,16 @@ class Motor(OutputModule):
         :return: Degree of the first motor , Degree of the second motor.
         :rtype: float
         """
-        if first_degree != None or second_degree != None :
+        if first_degree != None or second_degree != None:
             first_degree = self.first_degree() if first_degree == None else first_degree
-            second_degree = self.second_degree() if second_degree == None else second_degree
-            self._modi.write(set_property(self.id, 18, (first_degree, second_degree, 0)))
+            second_degree = (
+                self.second_degree() if second_degree == None else second_degree
+            )
+            self._serial_write_q.put(
+                set_property(self.id, 18, (first_degree, second_degree, 0))
+            )
         else:
-            return (self._write_property(PropertyType.FIRST_DEGREE) , self._write_property(PropertyType.SECOND_DEGREE))
+            return (
+                self._write_property(PropertyType.FIRST_DEGREE),
+                self._write_property(PropertyType.SECOND_DEGREE),
+            )

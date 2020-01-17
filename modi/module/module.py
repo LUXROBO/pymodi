@@ -5,7 +5,7 @@
 from __future__ import absolute_import
 
 import weakref
-import modi._cmd as md_cmd 
+import modi._cmd as md_cmd
 import time
 import base64
 import json
@@ -61,7 +61,7 @@ class Module(object):
             self._properties[prop].last_request_time = time.time()
 
         duration = time.time() - self._properties[prop].last_update_time
-        if duration > 0.5 : # 1초
+        if duration > 0.5:  # 1초
             # self._modi.write(md_cmd.get_property(self._id, prop.value))
             modi_serialtemp = md_cmd.get_property(self._id, prop.value)
             self._serial_write_q.put(modi_serialtemp)
@@ -97,7 +97,7 @@ class InputModule(Module):
 
 
 class OutputModule(Module):
-    def __init__(self, id, uuid, modi):
-        super(OutputModule, self).__init__(id, uuid, modi)
+    def __init__(self, id, uuid, modi, serial_write_q):
+        super(OutputModule, self).__init__(id, uuid, modi, serial_write_q)
         self._category = "output"
 

@@ -55,7 +55,7 @@ class MODI:
 
     def __init__(self, port=None):
         print("os.getpid():", os.getpid())
-        self._manager = multiprocessing.Manager()
+        # self._manager = multiprocessing.Manager()
 
         self._serial_read_q = multiprocessing.Queue(200)
         self._serial_write_q = multiprocessing.Queue(200)
@@ -64,7 +64,7 @@ class MODI:
         self._display_send_q = multiprocessing.Queue(200)
         # sharable?
         self._json_box = JsonBox()
-        self._ids = self._manager.dict()  # _ids -> _module_ids
+        self._ids = dict()  # _ids -> _module_ids
         self._modules = list()
 
         print("Serial Process Start")
@@ -119,7 +119,6 @@ class MODI:
     def end(self):
         # end -> exit
         print("You are now leaving the Python sector.")
-        self._manager.shutdown()
         self._serialp.stop()
         self._parsingp.stop()
         self._excutep.stop()
