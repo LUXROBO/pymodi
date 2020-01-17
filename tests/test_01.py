@@ -10,7 +10,7 @@ if __name__ == "__main__":
     # gyro = bundle.gyros[0]
     motor = bundle.motors[0]
     # while button.double_clicked() != True:
-    for i in range(1, 100, 2):
+    for i in range(1, 50, 1):
         k = i * 1.0
         motor.speed(k, -k)
         # print('dX, dY, Dz, aX aY aZ gX gY gZ',
@@ -27,9 +27,9 @@ if __name__ == "__main__":
         #     )
 
         print("i am alive")
-        time.sleep(0.1)
+        # time.sleep(0.1)
     motor.speed(0.0, 0.0)
     time.sleep(0.1)
     bundle.end()
+    bundle2.end()
     print("Program End")
-

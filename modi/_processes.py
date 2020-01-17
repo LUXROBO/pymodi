@@ -18,6 +18,8 @@ from modi._serial_task import *
 from modi._serial_parsing_task import *
 from modi._json_excute_task import *
 
+import os
+
 
 class MODIProcess(multiprocessing.Process):
     def __init__(self):
@@ -34,6 +36,7 @@ class SerialProcess(MODIProcess):
         self._SerialTask.connect_serial()
         while not self.stopped():
             self._SerialTask.start_thread()
+        self._SerialTask.disconnect_serial()
         print("Serial Process End")
 
     def stop(self):

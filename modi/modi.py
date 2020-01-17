@@ -67,7 +67,7 @@ class MODI:
         self._send_q = multiprocessing.Queue(100)
         self._display_send_q = multiprocessing.Queue(200)
         # sharable?
-        self._json_box = JsonBox()
+        self._json_box = JsonBox()  # Parsing Process 내부로 이동
         self._ids = dict()  # _ids -> _module_ids
         self._modules = list()
 
@@ -94,6 +94,10 @@ class MODI:
         # _ExcuteProcess -> _ExcuteTask
         # _excutep -> _excute_task
 
+        self._init_modules()
+        # 함수로 변경, -> _init_modules
+
+    def _init_modules(self):
         modi_serialtemp = md_cmd.module_state(
             0xFFF, md_cmd.ModuleState.REBOOT, md_cmd.ModulePnp.OFF
         )
@@ -107,7 +111,6 @@ class MODI:
         modi_serialtemp = md_cmd.request_uuid(0xFFF)
         self._serial_write_q.put(modi_serialtemp)
         time.sleep(1)
-        # 함수로 변경, -> _init_modules
 
     def write(self, msg, is_display=False):
         """
@@ -127,7 +130,7 @@ class MODI:
         self._parsingp.stop()
         self._excutep.stop()
 
-        os._exit(0)
+        # os._exit(0)
 
     # methods below are getters
     @property

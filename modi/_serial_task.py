@@ -59,7 +59,10 @@ class SerialTask(object):
             else:
                 raise serial.SerialException("No MODI network module connected.")
         else:
-            self._serial = serial.Serial(port, 921600)
+            self._serial = serial.Serial(self._port, 921600)
+
+    def disconnect_serial(self):
+        self._serial.close()
 
     def start_thread(self):
 
@@ -88,7 +91,7 @@ class SerialTask(object):
             pass
         else:
             self._serial.write(writetemp)
-            print(writetemp)
+            # print(writetemp)
             time.sleep(0.001)
 
         # # # Write Display Data

@@ -58,10 +58,6 @@ class ExcuteTask(object):
         self._ids[module_id] = self._ids.get(module_id, dict())
         self._ids[module_id]["timestamp"] = time_ms
         self._ids[module_id]["uuid"] = self._ids[module_id].get("uuid", str())
-        # moduledict = self._ids[module_id]
-        # moduledict["timestamp"] = time_ms
-        # moduledict["uuid"] = self._ids[module_id].get("uuid", str())
-        # self._ids[module_id] = moduledict
 
         if not self._ids[module_id]["uuid"]:
             write_temp = md_cmd.request_uuid(module_id)
@@ -90,10 +86,6 @@ class ExcuteTask(object):
         self._ids[module_id] = self._ids.get(module_id, dict())
         self._ids[module_id]["timestamp"] = time_ms
         self._ids[module_id]["uuid"] = self._ids[module_id].get("uuid", str())
-        # moduledict = self._ids[module_id]
-        # moduledict["timestamp"] = time_ms
-        # moduledict["uuid"] = self._ids[module_id].get("uuid", str())
-        # self._ids[module_id] = moduledict
 
         decoded = bytearray(base64.b64decode(msg["b"]))
         data1 = decoded[:4]
