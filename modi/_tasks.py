@@ -182,7 +182,8 @@ class ExcuteTask(object):
             # if module is not connected for 3.5s, set the module's state to not_connected
             if time_ms - info["timestamp"] > 2000:
                 module = next(
-                    (module for module in self._modules if module.uuid == info["uuid"]), None
+                    (module for module in self._modules if module.uuid == info["uuid"]),
+                    None,
                 )
                 if module:
                     module.set_connected(False)
@@ -278,11 +279,15 @@ class ExcuteTask(object):
         if id is None:
             for _id in self._ids:
                 # self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
-                pnp_temp = md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON)
+                pnp_temp = md_cmd.module_state(
+                    _id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON
+                )
                 self._serial_write_q.put(pnp_temp)
         else:
             # self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
-            pnp_temp = md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON)
+            pnp_temp = md_cmd.module_state(
+                id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON
+            )
             self._serial_write_q.put(pnp_temp)
 
     def pnp_off(self, id=None):
@@ -294,8 +299,12 @@ class ExcuteTask(object):
         """
         if id is None:
             for _id in self._ids:
-                pnp_temp = md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF)
+                pnp_temp = md_cmd.module_state(
+                    _id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF
+                )
                 self._serial_write_q.put(pnp_temp)
         else:
-            pnp_temp = md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF)
+            pnp_temp = md_cmd.module_state(
+                id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF
+            )
             self._serial_write_q.put(pnp_temp)

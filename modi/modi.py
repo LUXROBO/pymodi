@@ -14,10 +14,11 @@ from modi._processes import *
 from modi.module import *
 
 import sys
+
 IS_PY2 = sys.version_info < (3, 0)
-#if IS_PY2:
+# if IS_PY2:
 #    from Queue import Queue
-#else:
+# else:
 #    from queue import Queue
 
 import multiprocessing
@@ -26,6 +27,7 @@ from multiprocessing.managers import BaseManager
 
 
 import queue
+
 
 class MODI:
     """
@@ -50,9 +52,8 @@ class MODI:
     >>> bundle = modi.MODI(ports[0].device)
     """
 
-
     def __init__(self, port=None):
-        print('os.getpid():', os.getpid())
+        print("os.getpid():", os.getpid())
         manager = multiprocessing.Manager()
 
         self._serial_read_q = multiprocessing.Queue(2000)
@@ -65,25 +66,29 @@ class MODI:
         self._ids = manager.dict()
         self._modules = list()
 
-        print('Serial Process Start')
+        print("Serial Process Start")
         p = SerialProcess(self._serial_read_q, self._serial_write_q, port)
         p.daemon = True
         p.start()
 
-        print('Parsing Process Start')
+        print("Parsing Process Start")
         p = ParsingProcess(self._serial_read_q, self._recv_q, self._json_box)
         p.daemon = True
         p.start()
 
-        print('Excute Process Start')
+        print("Excute Process Start")
         p = ExcuteProcess(self._serial_write_q, self._recv_q, self._ids, self._modules)
         p.daemon = True
         p.start()
 
-        modi_serialtemp = md_cmd.module_state(0xFFF,md_cmd.ModuleState.REBOOT, md_cmd.ModulePnp.OFF)
+        modi_serialtemp = md_cmd.module_state(
+            0xFFF, md_cmd.ModuleState.REBOOT, md_cmd.ModulePnp.OFF
+        )
         self._serial_write_q.put(modi_serialtemp)
         time.sleep(1)
-        modi_serialtemp = md_cmd.module_state(0xFFF,md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF)
+        modi_serialtemp = md_cmd.module_state(
+            0xFFF, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF
+        )
         self._serial_write_q.put(modi_serialtemp)
         time.sleep(1)
         modi_serialtemp = md_cmd.request_uuid(0xFFF)
@@ -96,7 +101,7 @@ class MODI:
         # time.sleep(1)
         # self.write(md_cmd.request_uuid(0xFFF))
         # time.sleep(1)
-        
+
     def open(self):
         """Open port.
         """
@@ -125,7 +130,6 @@ class MODI:
             self.__exit = True
         except:
             pass
-        
 
     # methods below are getters
     @property
@@ -205,8 +209,6 @@ class MODI:
         """
         return tuple([x for x in self.modules if x.type == "ultrasonic"])
 
-
     def __delattr__(self, name):
         return super().__delattr__(name)
-
 
