@@ -11,7 +11,7 @@ import multiprocessing
 class StoppableProc(multiprocessing.Process):
     def __init__(self):
         super(StoppableProc, self).__init__(target=self.run)
-        self._stop = threading.Event()
+        self._stop = multiprocessing.Event()
 
     def stop(self):
         self._stop.set()
