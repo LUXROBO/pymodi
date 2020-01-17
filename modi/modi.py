@@ -7,8 +7,9 @@ from __future__ import absolute_import
 import serial
 import time
 from modi.serial import list_ports
-from modi._json_box import JsonBox
-import modi._cmd as md_cmd
+
+# import modi._cmd as md_cmd
+from modi._command import *
 
 # from modi._tasks import *
 from modi._serial_task import *
@@ -66,50 +67,49 @@ class MODI:
         self._recv_q = multiprocessing.Queue(100)
         self._send_q = multiprocessing.Queue(100)
         self._display_send_q = multiprocessing.Queue(200)
-        # sharable?
-        self._json_box = JsonBox()  # Parsing Process 내부로 이동
-        self._ids = dict()  # _ids -> _module_ids
+
+        self._src_ids = dict()
         self._modules = list()
+        self._cmd = Command()
 
         print("Serial Process Start")
-        self._serialp = SerialProcess(self._serial_read_q, self._serial_write_q, port)
-        self._serialp.daemon = True
-        self._serialp.start()
-        # _serialp -> _serial_proc
+        self._ser_proc = SerialProcess(self._serial_read_q, self._serial_write_q, port)
+        self._ser_proc.daemon = True
+        self._ser_proc.start()
 
         print("Parsing Process Start")
-        self._parsingp = ParsingProcess(
-            self._serial_read_q, self._recv_q, self._json_box
-        )
-        self._parsingp.daemon = True
-        self._parsingp.start()
-        # _parsingp -> _paresing_proc
+        self._par_proc = ParsingProcess(self._serial_read_q, self._recv_q)
+        self._par_proc.daemon = True
+        self._par_proc.start()
 
         print("Excute Process Start")
-        self._excutep = ExcuteProcess(
-            self._serial_write_q, self._recv_q, self._ids, self._modules
+        self._exe_thrd = ExeThread(
+            self._serial_write_q, self._recv_q, self._src_ids, self._modules, self._cmd
         )
-        self._excutep.daemon = True
-        self._excutep.start()
-        # _ExcuteProcess -> _ExcuteTask
-        # _excutep -> _excute_task
+        self._exe_thrd.daemon = True
+        self._exe_thrd.start()
 
         self._init_modules()
-        # 함수로 변경, -> _init_modules
 
     def _init_modules(self):
-        modi_serialtemp = md_cmd.module_state(
-            0xFFF, md_cmd.ModuleState.REBOOT, md_cmd.ModulePnp.OFF
+
+        msg_to_send = self._cmd.module_state(
+            0xFFF, self._cmd.ModuleState.REBOOT, self._cmd.ModulePnp.OFF
         )
-        self._serial_write_q.put(modi_serialtemp)
-        time.sleep(1)
-        modi_serialtemp = md_cmd.module_state(
-            0xFFF, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF
+        self._serial_write_q.put(msg_to_send)
+        self._delay()
+
+        msg_to_send = self._cmd.module_state(
+            0xFFF, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.OFF
         )
-        self._serial_write_q.put(modi_serialtemp)
-        time.sleep(1)
-        modi_serialtemp = md_cmd.request_uuid(0xFFF)
-        self._serial_write_q.put(modi_serialtemp)
+        self._serial_write_q.put(msg_to_send)
+        self._delay()
+
+        msg_to_send = self._cmd.request_uuid(0xFFF)
+        self._serial_write_q.put(msg_to_send)
+        self._delay()
+
+    def _delay(self):
         time.sleep(1)
 
     def write(self, msg, is_display=False):
@@ -123,14 +123,11 @@ class MODI:
         else:
             self._send_q.put(msg)
 
-    def end(self):
-        # end -> exit
+    def exit(self):
         print("You are now leaving the Python sector.")
-        self._serialp.stop()
-        self._parsingp.stop()
-        self._excutep.stop()
-
-        # os._exit(0)
+        self._ser_proc.stop()
+        self._par_proc.stop()
+        self._exe_thrd.stop()
 
     # methods below are getters
     @property

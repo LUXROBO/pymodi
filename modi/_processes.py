@@ -47,9 +47,9 @@ class SerialProcess(MODIProcess):
 
 
 class ParsingProcess(MODIProcess):
-    def __init__(self, serial_read_q, recv_q, json_box):
+    def __init__(self, serial_read_q, recv_q):
         super(ParsingProcess, self).__init__()
-        self._ParsingTask = ParsingTask(serial_read_q, recv_q, json_box)
+        self._ParsingTask = ParsingTask(serial_read_q, recv_q)
         self._stop = multiprocessing.Event()
 
     def run(self):
@@ -64,10 +64,10 @@ class ParsingProcess(MODIProcess):
         return self._stop.is_set()
 
 
-class ExcuteProcess(threading.Thread):
-    def __init__(self, serial_write_q, recv_q, ids, modules):
-        super(ExcuteProcess, self).__init__()
-        self._ExcuteTask = ExcuteTask(serial_write_q, recv_q, ids, modules)
+class ExeThread(threading.Thread):
+    def __init__(self, serial_write_q, recv_q, ids, modules, cmd):
+        super(ExeThread, self).__init__()
+        self._ExcuteTask = ExcuteTask(serial_write_q, recv_q, ids, modules, cmd)
         self._stop = threading.Event()
 
     def run(self):

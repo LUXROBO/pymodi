@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 import time
 import json
-import modi._cmd as md_cmd
+from modi._command import *
 from modi.module import *
 import base64
 import struct
@@ -23,12 +23,13 @@ class ExcuteTask(object):
     }
     # _modules = list()
 
-    def __init__(self, serial_write_q, recv_q, ids, modules):
+    def __init__(self, serial_write_q, recv_q, ids, modules, cmd):
         super(ExcuteTask, self).__init__()
         self._serial_write_q = serial_write_q
         self._recv_q = recv_q
         self._ids = ids
         self._modules = modules
+        self._cmd = cmd
 
     def start_thread(self):
 
@@ -54,15 +55,14 @@ class ExcuteTask(object):
         module_id = msg["s"]
         time_ms = int(time.time() * 1000)
 
-        # TODO : manager().dict -> dict()
         self._ids[module_id] = self._ids.get(module_id, dict())
         self._ids[module_id]["timestamp"] = time_ms
         self._ids[module_id]["uuid"] = self._ids[module_id].get("uuid", str())
 
         if not self._ids[module_id]["uuid"]:
-            write_temp = md_cmd.request_uuid(module_id)
+            write_temp = self._cmd.request_uuid(module_id)
             self._serial_write_q.put(write_temp)
-            write_temp = md_cmd.request_network_uuid(module_id)
+            write_temp = self._cmd.request_network_uuid(module_id)
             self._serial_write_q.put(write_temp)
 
         for module_id, info in list(self._ids.items()):
@@ -169,15 +169,13 @@ class ExcuteTask(object):
         """
         if module_id is None:
             for _id in self._ids:
-                # self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
-                pnp_temp = md_cmd.module_state(
-                    _id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON
+                pnp_temp = self._cmd.module_state(
+                    _id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.ON
                 )
                 self._serial_write_q.put(pnp_temp)
         else:
-            # self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
-            pnp_temp = md_cmd.module_state(
-                module_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON
+            pnp_temp = self._cmd.module_state(
+                module_id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.ON
             )
             self._serial_write_q.put(pnp_temp)
 
@@ -190,13 +188,13 @@ class ExcuteTask(object):
         """
         if module_id is None:
             for _id in self._ids:
-                pnp_temp = md_cmd.module_state(
-                    _id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF
+                pnp_temp = self._cmd.module_state(
+                    _id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.OFF
                 )
                 self._serial_write_q.put(pnp_temp)
         else:
-            pnp_temp = md_cmd.module_state(
-                module_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF
+            pnp_temp = self._cmd.module_state(
+                module_id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.OFF
             )
             self._serial_write_q.put(pnp_temp)
 

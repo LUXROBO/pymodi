@@ -6,14 +6,15 @@ from __future__ import absolute_import
 
 import json
 import time
+from modi._json_box import JsonBox
 
 
 class ParsingTask(object):
-    def __init__(self, serial_read_q, recv_q, json_box):
+    def __init__(self, serial_read_q, recv_q):
         super(ParsingTask, self).__init__()
         self._serial_read_q = serial_read_q
         self._recv_q = recv_q
-        self._json_box = json_box
+        self._json_box = JsonBox()  # Parsing Process 내부로 이동
         # if os.name != 'nt':
         #    self.start_thread()
 

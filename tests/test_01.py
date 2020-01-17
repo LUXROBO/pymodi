@@ -27,9 +27,8 @@ if __name__ == "__main__":
         #     )
 
         print("i am alive")
-        # time.sleep(0.1)
+        time.sleep(0.1)
     motor.speed(0.0, 0.0)
     time.sleep(0.1)
-    bundle.end()
-    bundle2.end()
+    bundle.exit()
     print("Program End")
