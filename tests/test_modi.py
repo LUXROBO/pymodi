@@ -3,20 +3,26 @@
 
 """Tests for `modi` package."""
 
-
+# must
+import modi
 import unittest
 
-from modi import modi
+# from modi import a
 
 
 class TestModi(unittest.TestCase):
     """Tests for `modi` package."""
 
-    def setUp(self):
+    def test_(self):
         """Set up test fixtures, if any."""
+        # given, actual, actual
 
-    def tearDown(self):
+    def test_(self):
         """Tear down test fixtures, if any."""
 
-    def test_000_something(self):
+    def test_something(self):
         """Test something."""
+
+
+if __name__ == "__main__":
+    unittest.main()
