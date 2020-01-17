@@ -7,11 +7,13 @@ from __future__ import absolute_import
 from enum import Enum
 from modi.module.module import InputModule
 
+
 class PropertyType(Enum):
-     CLICKED = 2
-     DOUBLE_CLICKED = 3
-     PRESSED = 4
-     TOGGLED = 5
+    CLICKED = 2
+    DOUBLE_CLICKED = 3
+    PRESSED = 4
+    TOGGLED = 5
+
 
 class Button(InputModule):
     """
@@ -20,6 +22,7 @@ class Button(InputModule):
     :param modi: The :class:`~modi.modi.MODI` instance.
     :type modi: :class:`~modi.modi.MODI  `
     """
+
     property_types = PropertyType
 
     def __init__(self, id, uuid, modi, serial_write_q):
@@ -31,7 +34,6 @@ class Button(InputModule):
         :return: `True` if clicked or `False`.
         :rtype: bool
         """
-        
         return self._write_property(PropertyType.CLICKED) == 100.0
 
     def double_clicked(self):
@@ -39,7 +41,6 @@ class Button(InputModule):
         :return: `True` if double clicked or `False`.
         :rtype: bool
         """
-
         return self._write_property(PropertyType.DOUBLE_CLICKED) == 100.0
 
     def pressed(self):
@@ -54,5 +55,4 @@ class Button(InputModule):
         :return: `True` if toggled or `False`.
         :rtype: bool
         """
-
         return self._write_property(PropertyType.TOGGLED) == 100.0
