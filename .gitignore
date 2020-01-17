@@ -88,6 +88,9 @@ celerybeat-schedule
 venv/
 ENV/
 
+# mac finder file
+.DS_Store
+
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -101,13 +104,9 @@ ENV/
 # mypy
 .mypy_cache/
 
-# Created by https://www.gitignore.io/api/visualstudiocode
-
-### VisualStudioCode ###
+# VisualStudioCode
 .vscode/*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 
-
-# End of https://www.gitignore.io/api/visualstudiocode

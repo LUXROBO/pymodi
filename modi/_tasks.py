@@ -129,7 +129,6 @@ class ParsingTask(object):
 class ExcuteTask(object):
 
     categories = ["network", "input", "output"]
-
     types = {
         "network": ["usb", "usb/wifi/ble"],
         "input": ["env", "gyro", "mic", "button", "dial", "ultrasonic", "ir"],
