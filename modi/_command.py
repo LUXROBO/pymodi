@@ -12,6 +12,7 @@ from enum import Enum
 
 
 class Command(object):
+
     class ModuleState(Enum):
         RUN = 0
         IDLE = 1
@@ -75,9 +76,7 @@ class Command(object):
 
             state_bytes = bytearray(2)
             state_bytes[0] = state.value  # set state instruction 에서 Module State 지정 바이트
-            state_bytes[
-                1
-            ] = pnp.value  # set state instruction 에서 Module Plug & Play 지정 바이트
+            state_bytes[1] = pnp.value  # set state instruction 에서 Module Plug & Play 지정 바이트
 
             msg["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
             msg["l"] = 2
@@ -96,15 +95,16 @@ class Command(object):
         values_bytes = bytearray(8)
         # motor channel control
         # channel(2) mode(2) value_high(2) value_low(2)
-        if datatype == None or datatype == PropertyDataType.INT:
+        if datatype is None or datatype == self.PropertyDataType.INT:
             for index, value in enumerate(values):
                 value = int(value)
-                values_bytes[index * 2] = value & 0xFF
+                # leaves the last 8 bits only
+                values_bytes[index * 2] = value & 0xFF 
                 values_bytes[index * 2 + 1] = (value & 0xFF00) >> 8
-        elif datatype == PropertyDataType.FLOAT:
+        elif datatype == self.PropertyDataType.FLOAT:
             for index, value in enumerate(values):
                 values_bytes[index * 4 : index * 4 + 4] = struct.pack("f", float(value))
-        elif datatype == PropertyDataType.STRING:
+        elif datatype == self.PropertyDataType.STRING:
             cmds = list()
             value = str(values)[:27]
             num_of_chunks = int(len(value) / 8) + 1
@@ -113,14 +113,11 @@ class Command(object):
                 values_bytes[:] = [ord(i) for i in value[i * 8 : i * 8 + 8]]
                 msg["b"] = base64.b64encode(bytes(values_bytes)).decode("utf-8")
                 msg["l"] = len(values_bytes)
-
                 cmds.append(json.dumps(msg, separators=(",", ":")))
-
             return cmds  # tuple(cmds)
-        elif datatype == PropertyDataType.RAW:
+        elif datatype == self.PropertyDataType.RAW:
             msg["b"] = base64.b64encode(bytearray(values)).decode("utf-8")
             msg["l"] = len(values)
-
         else:
             raise RuntimeError("Not supported property data type.")
 
