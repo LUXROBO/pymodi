@@ -105,17 +105,6 @@ class MODI:
     def __delay(self):
         time.sleep(1)
 
-    # def write(self, msg, is_display=False):
-    #     """
-    #     :param str msg: Data to send.
-
-    #     Put the string to the sending data queue. This should be of type ``str``.
-    #     """
-    #     if is_display:
-    #         self._display_send_q.put(msg)
-    #     else:
-    #         self._send_q.put(msg)
-
     def exit(self):
         print("You are now leaving the Python sector.")
         self._ser_proc.stop()
