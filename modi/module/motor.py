@@ -18,12 +18,12 @@ class Motor(OutputModule):
     """
 
     class PropertyType(Enum):
-        FIRST_DEGREE = 4
-        SECOND_DEGREE = 12
-        FIRST_SPEED = 3
-        SECOND_SPEED = 11
         FIRST_TORQUE = 2
         SECOND_TORQUE = 10
+        FIRST_SPEED = 3
+        SECOND_SPEED = 11
+        FIRST_DEGREE = 4
+        SECOND_DEGREE = 12
 
     def __init__(self, id, uuid, modi, serial_write_q):
         super(Motor, self).__init__(id, uuid, modi, serial_write_q)
@@ -31,17 +31,15 @@ class Motor(OutputModule):
         self._serial_write_q = serial_write_q
 
     def motor_ch_ctrl(self, channel, mode, value=None):
-        cmd = self._modi._cmd
         if value is not None:
             # Channel 0, 1 -> Top/Bottom
             # Mode 0, 1, 2 -> Torque, Speed, Position / 현재 Torque 구현되어있지 않음
             self._serial_write_q.put(
-                cmd.set_property(
+                self._command.set_property(
                     self.id, 19, (channel, mode, value, 0x00 if value >= 0 else 0xFFFF)
                 )
             )
         else:
-            # return self._write_property(PropertyType.FIRST_DEGREE)
             pass
 
     def first_degree(self, degree=None):
@@ -79,9 +77,6 @@ class Motor(OutputModule):
                     self.id, 18, (self.second_degree(), degree, 0)
                 )
             )
-            # self._modi.write(
-            #     set_property(self.id, 18, (self.second_degree(), degree, 0))
-            # )
         else:
             return self._write_property(self.PropertyType.SECOND_DEGREE)
 
@@ -98,7 +93,6 @@ class Motor(OutputModule):
             self._serial_write_q.put(
                 self._command.set_property(self.id, 17, (speed, self.first_speed(), 0))
             )
-            # self._modi.write(set_property(self.id, 17, (speed, self.second_speed(), 0)))
         else:
             return self._write_property(self.PropertyType.FIRST_DEGREE)
 
@@ -170,7 +164,7 @@ class Motor(OutputModule):
                 self.first_torque() if first_torque is not None else first_torque
             )
             second_torque = (
-                self.second_torque() if second_torque == None else second_torque
+                self.second_torque() if second_torque is None else second_torque
             )
             self._serial_write_q.put(
                 self._command.set_property(

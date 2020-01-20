@@ -23,6 +23,7 @@ class TestModi(unittest.TestCase):
         bundle = modi.MODI()
         button = bundle.buttons[0]
         gyro = bundle.gyros[0]
+        motor = bundle.motors[0]
 
         # dial = bundle.dials[0]
         # env = bundle.envs[0]
@@ -42,6 +43,7 @@ class TestModi(unittest.TestCase):
                 gyro.angular_vel_x(),
                 gyro.angular_vel_y(),
                 gyro.angular_vel_z(),
+                button.pressed(),
             )
             # print('aX', gyro.acceleration_x())
             # print('aY', gyro.acceleration_y())
