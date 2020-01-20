@@ -31,10 +31,10 @@ class SerialProcess(MODIProcess):
         self._stop = multiprocessing.Event()
 
     def run(self):
-        self._SerialTask.connect_serial()
+        self._SerialTask.open_serial()
         while not self.stopped():
             self._SerialTask.start_thread()
-        self._SerialTask.disconnect_serial()
+        self._SerialTask.close_serial()
 
     def stop(self):
         self._stop.set()

@@ -28,6 +28,7 @@ from modi.module import (
 
 class ExcuteTask(object):
 
+    # variables shared across all class instances
     categories = ["network", "input", "output"]
     types = {
         "network": ["usb", "usb/wifi/ble"],
@@ -98,11 +99,12 @@ class ExcuteTask(object):
         info = (data2[1] << 8) + data2[0]
         # version = (data2[3] << 8) + data2[2]
 
+        # TODO: refactor code to remove magic numbers
         category_idx = info >> 13
         type_idx = (info >> 4) & 0x1FF
 
         category = self.categories[category_idx]
-        type_ = self.types[category][type_idx]
+        mtype = self.types[category][type_idx]
         uuid = self.__append_hex(
             info, ((data1[3] << 24) + (data1[2] << 16) + (data1[1] << 8) + data1[0])
         )
@@ -119,13 +121,14 @@ class ExcuteTask(object):
         # handling newly-connected modules
         if not next((module for module in self._modules if module.uuid == uuid), None):
             if category != "network":
-                module = self.__init_module(type_)(
+                module_template = self.__init_module(mtype)
+                module_instance = module_template(
                     module_id, uuid, self, self._serial_write_q
                 )
-                self.__set_pnp(module_id=module.id, pnp_on=False)
-                self._modules.append(module)
+                self.__set_pnp(module_id=module_instance.id, pnp_on=False)
+                self._modules.append(module_instance)
                 # TODO: find out why modules are sorted by its uuid
-                self._modules.sort(key=lambda x: x.uuid)
+                self._modules.sort(key=lambda module: module.uuid)
 
     def __init_module(self, mtype):
         module = {
