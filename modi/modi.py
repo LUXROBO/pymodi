@@ -5,7 +5,6 @@
 from __future__ import absolute_import
 
 import os
-import sys
 import time
 import serial
 
@@ -85,26 +84,25 @@ class MODI:
         self._init_modules()
 
     def _init_modules(self):
-
         broadcast_id = 0xFFF
 
         msg_to_send = self._cmd.module_state(
             broadcast_id, self._cmd.ModuleState.REBOOT, self._cmd.ModulePnp.OFF
         )
         self._serial_write_q.put(msg_to_send)
-        self._delay()
+        self.__delay()
 
         msg_to_send = self._cmd.module_state(
             broadcast_id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.OFF
         )
         self._serial_write_q.put(msg_to_send)
-        self._delay()
+        self.__delay()
 
         msg_to_send = self._cmd.request_uuid(broadcast_id)
         self._serial_write_q.put(msg_to_send)
-        self._delay()
+        self.__delay()
 
-    def _delay(self):
+    def __delay(self):
         time.sleep(1)
 
     # def write(self, msg, is_display=False):
@@ -139,64 +137,64 @@ class MODI:
     def buttons(self):
         """Tuple of connected :class:`~modi.module.button.Button` modules.
         """
-        return tuple([x for x in self.modules if x.type == "button"])
+        return tuple([x for x in self.modules if x.mtype == "button"])
 
     @property
     def dials(self):
         """Tuple of connected :class:`~modi.module.dial.Dial` modules.
         """
-        return tuple([x for x in self.modules if x.type == "dial"])
+        return tuple([x for x in self.modules if x.mtype == "dial"])
 
     @property
     def displays(self):
         """Tuple of connected :class:`~modi.module.display.Display` modules.
         """
-        return tuple([x for x in self.modules if x.type == "display"])
+        return tuple([x for x in self.modules if x.mtype == "display"])
 
     @property
     def envs(self):
         """Tuple of connected :class:`~modi.module.env.Env` modules.
         """
-        return tuple([x for x in self.modules if x.type == "env"])
+        return tuple([x for x in self.modules if x.mtype == "env"])
 
     @property
     def gyros(self):
         """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
         """
-        return tuple([x for x in self.modules if x.type == "gyro"])
+        return tuple([x for x in self.modules if x.mtype == "gyro"])
 
     @property
     def irs(self):
         """Tuple of connected :class:`~modi.module.ir.Ir` modules.
         """
-        return tuple([x for x in self.modules if x.type == "ir"])
+        return tuple([x for x in self.modules if x.mtype == "ir"])
 
     @property
     def leds(self):
         """Tuple of connected :class:`~modi.module.led.Led` modules.
         """
-        return tuple([x for x in self.modules if x.type == "led"])
+        return tuple([x for x in self.modules if x.mtype == "led"])
 
     @property
     def mics(self):
         """Tuple of connected :class:`~modi.module.mic.Mic` modules.
         """
-        return tuple([x for x in self.modules if x.type == "mic"])
+        return tuple([x for x in self.modules if x.mtype == "mic"])
 
     @property
     def motors(self):
         """Tuple of connected :class:`~modi.module.motor.Motor` modules.
         """
-        return tuple([x for x in self.modules if x.type == "motor"])
+        return tuple([x for x in self.modules if x.mtype == "motor"])
 
     @property
     def speakers(self):
         """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
         """
-        return tuple([x for x in self.modules if x.type == "speaker"])
+        return tuple([x for x in self.modules if x.mtype == "speaker"])
 
     @property
     def ultrasonics(self):
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
-        return tuple([x for x in self.modules if x.type == "ultrasonic"])
+        return tuple([x for x in self.modules if x.mtype == "ultrasonic"])

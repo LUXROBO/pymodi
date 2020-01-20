@@ -31,9 +31,6 @@ class Command(object):
         RAW = 3
         DISPLAY_Var = 4
 
-    def __init__(self):
-        super().__init__()
-
     def request_uuid(self, src_id):
         msg = dict()
 

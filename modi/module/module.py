@@ -42,7 +42,7 @@ class Module(object):
         return self._connected
 
     @property
-    def type(self):
+    def mtype(self):
         return self._type
 
     def set_connected(self, flag):

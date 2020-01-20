@@ -8,17 +8,6 @@ from enum import Enum
 
 from modi.module.module import InputModule
 
-class PropertyType(Enum):
-    ROLL = 2
-    PITCH = 3
-    YAW = 4
-    ANGULAR_VEL_X = 5
-    ANGULAR_VEL_Y = 6
-    ANGULAR_VEL_Z = 7
-    ACCELERATION_X = 8
-    ACCELERATION_Y = 9
-    ACCELERATION_Z = 10
-    VIBRATION = 11
 
 class Gyro(InputModule):
     """
@@ -27,7 +16,18 @@ class Gyro(InputModule):
     :param modi: The :class:`~modi.modi.MODI` instance.
     :type modi: :class:`~modi.modi.MODI`
     """
-    property_types = PropertyType
+
+    class PropertyType(Enum):
+        ROLL = 2
+        PITCH = 3
+        YAW = 4
+        ANGULAR_VEL_X = 5
+        ANGULAR_VEL_Y = 6
+        ANGULAR_VEL_Z = 7
+        ACCELERATION_X = 8
+        ACCELERATION_Y = 9
+        ACCELERATION_Z = 10
+        VIBRATION = 11
 
     def __init__(self, id, uuid, modi, serial_write_q):
         super(Gyro, self).__init__(id, uuid, modi, serial_write_q)
@@ -39,7 +39,7 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(PropertyType.ROLL)
+        return self._write_property(self.PropertyType.ROLL)
 
     def pitch(self):
         """
@@ -47,7 +47,7 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(PropertyType.PITCH)
+        return self._write_property(self.PropertyType.PITCH)
 
     def yaw(self):
         """
@@ -55,15 +55,15 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(PropertyType.YAW)
+        return self._write_property(self.PropertyType.YAW)
 
     def angular_vel_x(self):
         """
         :return: Angular velocity the about x-axis.
         :rtype: float
         """
-        
-        return self._write_property(PropertyType.ANGULAR_VEL_X)
+
+        return self._write_property(self.PropertyType.ANGULAR_VEL_X)
 
     def angular_vel_y(self):
         """
@@ -71,7 +71,7 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(PropertyType.ANGULAR_VEL_Y)
+        return self._write_property(self.PropertyType.ANGULAR_VEL_Y)
 
     def angular_vel_z(self):
         """
@@ -79,7 +79,7 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(PropertyType.ANGULAR_VEL_Z)
+        return self._write_property(self.PropertyType.ANGULAR_VEL_Z)
 
     def acceleration_x(self):
         """
@@ -87,25 +87,23 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(PropertyType.ACCELERATION_X)
-    
+        return self._write_property(self.PropertyType.ACCELERATION_X)
+
     def acceleration_y(self):
         """
         :return: Y-axis acceleration.
         :rtype: float
         """
 
-        return self._write_property(PropertyType.ACCELERATION_Y)
+        return self._write_property(self.PropertyType.ACCELERATION_Y)
 
     def acceleration_z(self):
         """
-
-        
         :return: Z-axis acceleration.
         :rtype: float
         """
 
-        return self._write_property(PropertyType.ACCELERATION_Z)
+        return self._write_property(self.PropertyType.ACCELERATION_Z)
 
     def vibration(self):
         """
@@ -113,4 +111,4 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(PropertyType.VIBRATION)
+        return self._write_property(self.PropertyType.VIBRATION)
