@@ -31,13 +31,13 @@ class Motor(OutputModule):
         self._serial_write_q = serial_write_q
 
     def motor_ch_ctrl(self, channel, mode, value=None):
+        cmd = self._modi._cmd
         if value is not None:
-
+            # Channel 0, 1 -> Top/Bottom
+            # Mode 0, 1, 2 -> Torque, Speed, Position / 현재 Torque 구현되어있지 않음
             self._serial_write_q.put(
-                self._command.set_property(
-                    self.id,
-                    19,
-                    (channel, mode, ((value & 0xFF00) >> 8), (value & 0x00FF)),
+                cmd.set_property(
+                    self.id, 19, (channel, mode, value, 0x00 if value >= 0 else 0xFFFF),
                 )
             )
         else:

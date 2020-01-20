@@ -58,13 +58,13 @@ class Module(object):
 
         if not prop in self._properties.keys():
             self._properties[prop] = Prop()
-            modi_serialtemp = self._modi._command.get_property(self._id, prop.value)
+            modi_serialtemp = self._modi._cmd.get_property(self._id, prop.value)
             self._serial_write_q.put(modi_serialtemp)
             self._properties[prop].last_request_time = time.time()
 
         duration = time.time() - self._properties[prop].last_update_time
         if duration > 0.5:  # 1초
-            modi_serialtemp = self._modi._command.get_property(self._id, prop.value)
+            modi_serialtemp = self._modi._cmd.get_property(self._id, prop.value)
             self._serial_write_q.put(modi_serialtemp)
             self._properties[prop].last_request_time = time.time()
 
@@ -93,4 +93,3 @@ class OutputModule(Module):
         super(OutputModule, self).__init__(id, uuid, modi, serial_write_q)
         self._category = "output"
         self._command = modi._cmd
-
