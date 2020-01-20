@@ -8,13 +8,13 @@ import serial
 import time
 from modi.serial import list_ports
 
-# import modi._cmd as md_cmd
-from modi._command import *
+# # import modi._cmd as md_cmd
+# from modi._command import *
 
-# from modi._tasks import *
-from modi._serial_task import *
-from modi._serial_parsing_task import *
-from modi._json_excute_task import *
+# # from modi._tasks import *
+# from modi._serial_task import *
+# from modi._serial_parsing_task import *
+# from modi._json_excute_task import *
 
 from modi._processes import *
 from modi.module import *

@@ -58,24 +58,22 @@ class Module(object):
 
         if not prop in self._properties.keys():
             self._properties[prop] = Prop()
-            modi_serialtemp = self._modi._cmd.get_property(self._id, prop.value)
+            modi_serialtemp = self._modi._command.get_property(self._id, prop.value)
             self._serial_write_q.put(modi_serialtemp)
             self._properties[prop].last_request_time = time.time()
 
         duration = time.time() - self._properties[prop].last_update_time
         if duration > 0.5:  # 1초
-            modi_serialtemp = self._modi._cmd.get_property(self._id, prop.value)
+            modi_serialtemp = self._modi._command.get_property(self._id, prop.value)
             self._serial_write_q.put(modi_serialtemp)
             self._properties[prop].last_request_time = time.time()
 
         return self._properties[prop].value
 
     def update_property(self, prop, value):
-        updatecheck = 0
         if prop in self._properties.keys():
             self._properties[prop].value = value
             self._properties[prop].last_update_time = time.time()
-            updatecheck = 1
 
 
 class SetupModule(Module):

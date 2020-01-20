@@ -8,8 +8,7 @@ from enum import Enum
 
 from modi.module.module import OutputModule 
 
-from modi._cmd import set_property
-from modi._cmd import PropertyDataType
+from modi._command import Command
 
 class PropertyType(Enum):
     CURSOR_X = 2
