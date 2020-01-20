@@ -10,10 +10,22 @@ import time
 import serial
 
 from modi._processes import SerialProcess, ParsingProcess, ExeThread
-from modi.module import *
 from modi._command import Command
+from modi.module import (
+    button,
+    dial,
+    display,
+    env,
+    gyro,
+    ir,
+    led,
+    mic,
+    motor,
+    network,
+    speaker,
+    ultrasonic,
+)
 
-import multiprocessing
 from multiprocessing import Process, Queue
 
 
