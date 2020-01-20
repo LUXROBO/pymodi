@@ -113,7 +113,7 @@ class Command(object):
                 msg["b"] = base64.b64encode(bytes(values_bytes)).decode("utf-8")
                 msg["l"] = len(values_bytes)
                 cmds.append(json.dumps(msg, separators=(",", ":")))
-            return cmds  # tuple(cmds)
+            return cmds
         elif datatype == self.PropertyDataType.RAW:
             msg["b"] = base64.b64encode(bytearray(values)).decode("utf-8")
             msg["l"] = len(values)
