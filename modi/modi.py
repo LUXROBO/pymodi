@@ -4,20 +4,18 @@
 
 from __future__ import absolute_import
 
-import serial
-import time
-from modi.serial import list_ports
-from modi._json_box import JsonBox
-import modi._cmd as md_cmd
-from modi._tasks import *
-
+import os
 import sys
-IS_PY2 = sys.version_info < (3, 0)
+import time
+import serial
 
-if IS_PY2:
-    from Queue import Queue
-else:
-    from queue import Queue
+from modi._processes import SerialProcess, ParsingProcess, ExeThread
+from modi.module import *
+from modi._command import Command
+
+import multiprocessing
+from multiprocessing import Process, Queue
+
 
 class MODI:
     """
@@ -41,84 +39,78 @@ class MODI:
     >>> ports = modi.serial.list_ports() # [<serial.tools.list_ports_common.ListPortInfo object at 0x1026e95c0>]
     >>> bundle = modi.MODI(ports[0].device)
     """
+
     def __init__(self, port=None):
-        self._recv_q = Queue()
-        self._send_q = Queue()
-        self._display_send_q = Queue()
+        print("os.getpid():", os.getpid())
 
-        self._json_box = JsonBox()
+        self._serial_read_q = Queue(100)
+        self._serial_write_q = Queue(100)
+        self._recv_q = Queue(100)
+        self._send_q = Queue(100)
+        self._display_send_q = Queue(100)
 
-        self._ids = dict()
+        self._src_ids = dict()
         self._modules = list()
+        self._cmd = Command()
 
-        if port == None:
-            ports = list_ports()
+        print("Serial Process Start")
+        self._ser_proc = SerialProcess(self._serial_read_q, self._serial_write_q, port)
+        self._ser_proc.daemon = True
+        self._ser_proc.start()
 
-            if len(ports) > 0:
-                self._serial = serial.Serial(ports[0].device, 115200)
-            else:
-                raise serial.SerialException("No MODI network module connected.")
+        print("Parsing Process Start")
+        self._par_proc = ParsingProcess(self._serial_read_q, self._recv_q)
+        self._par_proc.daemon = True
+        self._par_proc.start()
 
-        else:
-            self._serial = serial.Serial(port, 115200)
+        print("Excute Process Start")
+        self._exe_thrd = ExeThread(
+            self._serial_write_q, self._recv_q, self._src_ids, self._modules, self._cmd
+        )
+        self._exe_thrd.daemon = True
+        self._exe_thrd.start()
 
-        self._threads = list()
-        tasks = [ReadDataTask, ParseDataTask, ProcDataTask, WriteDataTask, WriteDisplayDataTask]
+        self._init_modules()
 
-        for task in tasks:
-            thread = task(self) 
-            thread.daemon = True
-            thread.start()
-            self._threads.append(thread)
-        
+    def _init_modules(self):
+
+        broadcast_id = 0xFFF
+
+        msg_to_send = self._cmd.module_state(
+            broadcast_id, self._cmd.ModuleState.REBOOT, self._cmd.ModulePnp.OFF
+        )
+        self._serial_write_q.put(msg_to_send)
+        self._delay()
+
+        msg_to_send = self._cmd.module_state(
+            broadcast_id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.OFF
+        )
+        self._serial_write_q.put(msg_to_send)
+        self._delay()
+
+        msg_to_send = self._cmd.request_uuid(broadcast_id)
+        self._serial_write_q.put(msg_to_send)
+        self._delay()
+
+    def _delay(self):
         time.sleep(1)
-        
-    def open(self):
-        """Open port.
-        """
-        self._serial.open()
 
-    def close(self):
-        """Close port immediately.
-        """
-        self._serial.close()
+    # def write(self, msg, is_display=False):
+    #     """
+    #     :param str msg: Data to send.
 
-    def write(self, msg, is_display=False):
-        """
-        :param str msg: Data to send.
-            
-        Put the string to the sending data queue. This should be of type ``str``.
-        """
-        if is_display:
-            self._display_send_q.put(msg)
-        else:
-            self._send_q.put(msg)
+    #     Put the string to the sending data queue. This should be of type ``str``.
+    #     """
+    #     if is_display:
+    #         self._display_send_q.put(msg)
+    #     else:
+    #         self._send_q.put(msg)
 
-    def pnp_on(self, id=None):
-        """Turn on PnP mode of the module.
-
-        :param int id: The id of the module to turn on PnP mode or ``None``.
-
-        All connected modules' PnP mode will be turned on if the `id` is ``None``.
-        """
-        if id == None:
-            for _id in self._ids:
-                self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN))
-        else:
-            self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN))
-
-    def pnp_off(self, id=None):
-        """Turn off PnP mode of the module.
-
-        :param int id: The id of the module to turn off PnP mode or ``None``.
-
-        All connected modules' PnP mode will be turned off if the `id` is ``None``.
-        """
-        if id == None:
-            for _id in self._ids:
-                self.write(md_cmd.module_state(_id, md_cmd.ModuleState.PAUSE))
-        else:
-            self.write(md_cmd.module_state(id, md_cmd.ModuleState.PAUSE))
+    def exit(self):
+        print("You are now leaving the Python sector.")
+        self._ser_proc.stop()
+        self._par_proc.stop()
+        self._exe_thrd.stop()
 
     @property
     def modules(self):
@@ -196,4 +188,3 @@ class MODI:
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
         return tuple([x for x in self.modules if x.type == "ultrasonic"])
-

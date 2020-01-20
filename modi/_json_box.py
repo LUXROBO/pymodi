@@ -13,6 +13,7 @@ class JsonBox:
         self._buffer += data
 
     def has_json(self):
+
         end = self._buffer.find('}')
 
         if end >= 0:

@@ -5,10 +5,10 @@
 
 from setuptools import setup, find_packages
 
-with open('README.md') as readme_file:
+with open('README.md','rt', encoding='UTF8') as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.md') as history_file:
+with open('HISTORY.md','rt', encoding='UTF8') as history_file:
     history = history_file.read()
 
 requirements = [

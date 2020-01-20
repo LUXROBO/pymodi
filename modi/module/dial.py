@@ -8,8 +8,10 @@ from enum import Enum
 
 from modi.module.module import InputModule
 
+
 class PropertyType(Enum):
-    DEGREE = 2 
+    DEGREE = 2
+
 
 class Dial(InputModule):
     """
@@ -18,10 +20,11 @@ class Dial(InputModule):
     :param modi: The :class:`~modi.modi.MODI` instance.
     :type modi: :class:`~modi.modi.MODI`
     """
+
     property_types = PropertyType
-    
-    def __init__(self, id, uuid, modi):
-        super(Dial, self).__init__(id, uuid, modi)
+
+    def __init__(self, id, uuid, modi, serial_write_q):
+        super(Dial, self).__init__(id, uuid, modi, serial_write_q)
         self._type = "dial"
 
     def degree(self):
@@ -29,4 +32,4 @@ class Dial(InputModule):
         :return: The dial's angle.
         :rtype: float
         """
-        return self._properties[PropertyType.DEGREE]
+        return self._write_property(PropertyType.DEGREE)
