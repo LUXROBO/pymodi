@@ -14,7 +14,7 @@ from modi.module import *
 from modi._command import Command
 
 import multiprocessing
-from multiprocessing import Process, Queue, Pipe, Manager, Lock
+from multiprocessing import Process, Queue
 
 
 class MODI:
@@ -43,11 +43,11 @@ class MODI:
     def __init__(self, port=None):
         print("os.getpid():", os.getpid())
 
-        self._serial_read_q = multiprocessing.Queue(100)
-        self._serial_write_q = multiprocessing.Queue(100)
-        self._recv_q = multiprocessing.Queue(100)
-        self._send_q = multiprocessing.Queue(100)
-        self._display_send_q = multiprocessing.Queue(100)
+        self._serial_read_q = Queue(100)
+        self._serial_write_q = Queue(100)
+        self._recv_q = Queue(100)
+        self._send_q = Queue(100)
+        self._display_send_q = Queue(100)
 
         self._src_ids = dict()
         self._modules = list()
@@ -185,4 +185,3 @@ class MODI:
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
         return tuple([x for x in self.modules if x.type == "ultrasonic"])
-
