@@ -5,14 +5,8 @@
 from __future__ import absolute_import
 
 from enum import Enum
+
 from modi.module.module import InputModule
-
-
-class PropertyType(Enum):
-    CLICKED = 2
-    DOUBLE_CLICKED = 3
-    PRESSED = 4
-    TOGGLED = 5
 
 
 class Button(InputModule):
@@ -23,7 +17,11 @@ class Button(InputModule):
     :type modi: :class:`~modi.modi.MODI  `
     """
 
-    property_types = PropertyType
+    class PropertyType(Enum):
+        CLICKED = 2
+        DOUBLE_CLICKED = 3
+        PRESSED = 4
+        TOGGLED = 5
 
     def __init__(self, id, uuid, modi, serial_write_q):
         super(Button, self).__init__(id, uuid, modi, serial_write_q)
@@ -34,25 +32,25 @@ class Button(InputModule):
         :return: `True` if clicked or `False`.
         :rtype: bool
         """
-        return self._write_property(PropertyType.CLICKED) == 100.0
+        return self._write_property(self.PropertyType.CLICKED) == 100.0
 
     def double_clicked(self):
         """
         :return: `True` if double clicked or `False`.
         :rtype: bool
         """
-        return self._write_property(PropertyType.DOUBLE_CLICKED) == 100.0
+        return self._write_property(self.PropertyType.DOUBLE_CLICKED) == 100.0
 
     def pressed(self):
         """
         :return: `True` if pressed or `False`.
         :rtype: bool    
         """
-        return self._write_property(PropertyType.PRESSED) == 100.0
+        return self._write_property(self.PropertyType.PRESSED) == 100.0
 
     def toggled(self):
         """
         :return: `True` if toggled or `False`.
         :rtype: bool
         """
-        return self._write_property(PropertyType.TOGGLED) == 100.0
+        return self._write_property(self.PropertyType.TOGGLED) == 100.0
