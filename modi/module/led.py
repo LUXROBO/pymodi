@@ -8,7 +8,7 @@ from enum import Enum
 
 from modi.module.module import OutputModule
 
-from modi._cmd import set_property
+from modi._command import Command
 
 class PropertyType(Enum):
     RED = 2
