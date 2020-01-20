@@ -23,8 +23,8 @@ class Dial(InputModule):
 
     property_types = PropertyType
 
-    def __init__(self, id, uuid, modi):
-        super(Dial, self).__init__(id, uuid, modi)
+    def __init__(self, id, uuid, modi, serial_write_q):
+        super(Dial, self).__init__(id, uuid, modi, serial_write_q)
         self._type = "dial"
 
     def degree(self):

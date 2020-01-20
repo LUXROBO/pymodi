@@ -14,9 +14,9 @@ import base64
 import struct
 import queue
 
-from modi._serial_task import *
-from modi._serial_parsing_task import *
-from modi._json_excute_task import *
+from modi._serial_task import SerialTask
+from modi._serial_parsing_task import ParsingTask
+from modi._json_excute_task import ExcuteTask
 
 import os
 

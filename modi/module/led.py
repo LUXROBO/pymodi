@@ -22,9 +22,10 @@ class Led(OutputModule):
         GREEN = 3
         BLUE = 4
 
-    def __init__(self, id, uuid, modi):
-        super(Led, self).__init__(id, uuid, modi)
+    def __init__(self, id, uuid, modi, serial_write_q):
+        super(Led, self).__init__(id, uuid, modi, serial_write_q)
         self._type = "led"
+        self._serial_write_q = serial_write_q
 
     def rgb(self, red=None, green=None, blue=None):
         """
@@ -41,11 +42,12 @@ class Led(OutputModule):
         :return: Tuple of red, green and blue.
         :rtype: tuple
         """
+        cmd = self._modi._cmd
         if red is None and green is None and blue is None:
             return (self.red(), self.green(), self.blue())
         else:
-            self._modi.write(
-                self._command.set_property(
+            self._serial_write_q.put(
+                cmd.set_property(
                     self.id,
                     16,
                     (

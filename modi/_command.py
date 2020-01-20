@@ -29,6 +29,7 @@ class Command(object):
         FLOAT = 1
         STRING = 2
         RAW = 3
+        DISPLAY_Var = 4
 
     def __init__(self):
         super().__init__()
@@ -119,6 +120,12 @@ class Command(object):
         elif datatype == self.PropertyDataType.RAW:
             msg["b"] = base64.b64encode(bytearray(values)).decode("utf-8")
             msg["l"] = len(values)
+        elif datatype == self.PropertyDataType.DISPLAY_Var:
+            values_bytes[:4] = struct.pack("f", float(values[0]))
+            values_bytes[4] = values[1]
+            values_bytes[5] = 0x00
+            values_bytes[6] = values[2]
+            values_bytes[7] = 0x00
         else:
             raise RuntimeError("Not supported property data type.")
 
@@ -143,4 +150,3 @@ class Command(object):
         msg["l"] = 4
 
         return json.dumps(msg, separators=(",", ":"))
-

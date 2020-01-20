@@ -107,9 +107,10 @@ class Speaker(OutputModule):
         F_SOL_S_7 = 3322
         F_RA_S_7 = 3729
 
-    def __init__(self, id, uuid, modi):
-        super(Speaker, self).__init__(id, uuid, modi)
+    def __init__(self, id, uuid, modi, serial_write_q):
+        super(Speaker, self).__init__(id, uuid, modi, serial_write_q)
         self._type = "speaker"
+        self._serial_write_q = serial_write_q
 
     def tune(self, frequency=None, volume=None):
         """
@@ -125,11 +126,12 @@ class Speaker(OutputModule):
         :return: Tuple of frequency and volume.
         :rtype: tuple
         """
+        cmd = self._modi._cmd
         if frequency is None and volume is None:
             return (self.frequency(), self.volume())
         else:
-            self._modi.write(
-                self._command.set_property(
+            self._serial_write_q.put(
+                cmd.set_property(
                     self.id,
                     16,
                     (

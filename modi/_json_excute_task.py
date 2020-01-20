@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 import time
 import json
-from modi._command import *
+from modi._command import Command
 from modi.module import *
 import base64
 import struct
@@ -21,7 +21,6 @@ class ExcuteTask(object):
         "input": ["env", "gyro", "mic", "button", "dial", "ultrasonic", "ir"],
         "output": ["display", "motor", "led", "speaker"],
     }
-    # _modules = list()
 
     def __init__(self, serial_write_q, recv_q, ids, modules, cmd):
         super(ExcuteTask, self).__init__()

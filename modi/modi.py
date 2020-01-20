@@ -4,35 +4,24 @@
 
 from __future__ import absolute_import
 
-import serial
-import time
-from modi.serial import list_ports
-
-# # import modi._cmd as md_cmd
-# from modi._command import *
-
-# # from modi._tasks import *
-# from modi._serial_task import *
-# from modi._serial_parsing_task import *
-# from modi._json_excute_task import *
-
-from modi._processes import *
-from modi.module import *
-
 import sys
 import os
+import serial
+import time
+import queue
+
+from modi._processes import SerialProcess, ParsingProcess, ExeThread
+from modi._command import Command
+
+import multiprocessing
+from multiprocessing import Process, Queue, Pipe, Manager, Lock
+from multiprocessing.managers import BaseManager
 
 IS_PY2 = sys.version_info < (3, 0)
 # if IS_PY2:
 #    from Queue import Queue
 # else:
 #    from queue import Queue
-
-import multiprocessing
-from multiprocessing import Process, Queue, Pipe, Manager, Lock
-from multiprocessing.managers import BaseManager
-
-import queue
 
 
 class MODI:
@@ -59,14 +48,10 @@ class MODI:
     """
 
     def __init__(self, port=None):
-        print("os.getpid():", os.getpid())
-        # self._manager = multiprocessing.Manager()
-
         self._serial_read_q = multiprocessing.Queue(200)
         self._serial_write_q = multiprocessing.Queue(200)
         self._recv_q = multiprocessing.Queue(100)
         self._send_q = multiprocessing.Queue(100)
-        self._display_send_q = multiprocessing.Queue(200)
 
         self._src_ids = dict()
         self._modules = list()
@@ -93,35 +78,37 @@ class MODI:
 
     def _init_modules(self):
 
+        broadcast_id = 0xFFF
+
         msg_to_send = self._cmd.module_state(
-            0xFFF, self._cmd.ModuleState.REBOOT, self._cmd.ModulePnp.OFF
+            broadcast_id, self._cmd.ModuleState.REBOOT, self._cmd.ModulePnp.OFF
         )
         self._serial_write_q.put(msg_to_send)
         self._delay()
 
         msg_to_send = self._cmd.module_state(
-            0xFFF, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.OFF
+            broadcast_id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.OFF
         )
         self._serial_write_q.put(msg_to_send)
         self._delay()
 
-        msg_to_send = self._cmd.request_uuid(0xFFF)
+        msg_to_send = self._cmd.request_uuid(broadcast_id)
         self._serial_write_q.put(msg_to_send)
         self._delay()
 
     def _delay(self):
         time.sleep(1)
 
-    def write(self, msg, is_display=False):
-        """
-        :param str msg: Data to send.
-            
-        Put the string to the sending data queue. This should be of type ``str``.
-        """
-        if is_display:
-            self._display_send_q.put(msg)
-        else:
-            self._send_q.put(msg)
+    # def write(self, msg, is_display=False):
+    #     """
+    #     :param str msg: Data to send.
+
+    #     Put the string to the sending data queue. This should be of type ``str``.
+    #     """
+    #     if is_display:
+    #         self._display_send_q.put(msg)
+    #     else:
+    #         self._send_q.put(msg)
 
     def exit(self):
         print("You are now leaving the Python sector.")
@@ -209,4 +196,3 @@ class MODI:
 
     def __delattr__(self, name):
         return super().__delattr__(name)
-

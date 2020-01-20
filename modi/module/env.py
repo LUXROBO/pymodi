@@ -7,6 +7,7 @@ from __future__ import absolute_import
 from enum import Enum
 from modi.module.module import InputModule
 
+
 class PropertyType(Enum):
     TEMPERATURE = 6
     HUMIDITY = 7
@@ -15,6 +16,7 @@ class PropertyType(Enum):
     GREEN = 4
     BLUE = 5
 
+
 class Env(InputModule):
     """
     :param int id: The id of the module.
@@ -22,10 +24,11 @@ class Env(InputModule):
     :param modi: The :class:`~modi.modi.MODI` instance.
     :type modi: :class:`~modi.modi.MODI`
     """
+
     property_types = PropertyType
-    
-    def __init__(self, id, uuid, modi):
-        super(Env, self).__init__(id, uuid, modi)
+
+    def __init__(self, id, uuid, modi, serial_write_q):
+        super(Env, self).__init__(id, uuid, modi, serial_write_q)
         self._type = "env"
 
     def temperature(self):

@@ -8,9 +8,11 @@ from enum import Enum
 
 from modi.module.module import InputModule
 
+
 class PropertyType(Enum):
     VOLUME = 2
     FREQUENCY = 3
+
 
 class Mic(InputModule):
     """
@@ -19,10 +21,11 @@ class Mic(InputModule):
     :param modi: The :class:`~modi.modi.MODI` instance.
     :type modi: :class:`~modi.modi.MODI`
     """
+
     property_types = PropertyType
-    
-    def __init__(self, id, uuid, modi):
-        super(Mic, self).__init__(id, uuid, modi)
+
+    def __init__(self, id, uuid, modi, serial_write_q):
+        super(Mic, self).__init__(id, uuid, modi, serial_write_q)
         self._type = "mic"
 
     def volume(self):

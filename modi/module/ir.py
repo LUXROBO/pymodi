@@ -8,9 +8,11 @@ from enum import Enum
 
 from modi.module.module import InputModule
 
+
 class PropertyType(Enum):
     DISTANCE = 2
     BRIGHTNESS = 3
+
 
 class Ir(InputModule):
     """
@@ -19,10 +21,11 @@ class Ir(InputModule):
     :param modi: The :class:`~modi.modi.MODI` instance.
     :type modi: :class:`~modi.modi.MODI`
     """
+
     property_types = PropertyType
 
-    def __init__(self, id, uuid, modi):
-        super(Ir, self).__init__(id, uuid, modi)
+    def __init__(self, id, uuid, modi, serial_write_q):
+        super(Ir, self).__init__(id, uuid, modi, serial_write_q)
         self._type = "ir"
 
     def distance(self):
