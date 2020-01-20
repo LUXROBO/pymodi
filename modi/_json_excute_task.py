@@ -160,14 +160,16 @@ class ExcuteTask(object):
                 )
 
     def __set_pnp(self, module_id, pnp_on=False):
-        state = self._cmd.ModulePnp.ON if pnp_on else self._cmd.ModulePnp.OFF
+        pnp_state = self._cmd.ModulePnp.ON if pnp_on else self._cmd.ModulePnp.OFF
         if module_id is None:
-            for _id in self._ids:
-                pnp_temp = self._cmd.module_state(_id, self._cmd.ModuleState.RUN, state)
+            for curr_module_id in self._ids:
+                pnp_temp = self._cmd.module_state(
+                    curr_module_id, self._cmd.ModuleState.RUN, pnp_state
+                )
                 self._serial_write_q.put(pnp_temp)
         else:
             pnp_temp = self._cmd.module_state(
-                module_id, self._cmd.ModuleState.RUN, state
+                module_id, self._cmd.ModuleState.RUN, pnp_state
             )
             self._serial_write_q.put(pnp_temp)
 
