@@ -6,11 +6,24 @@ from __future__ import absolute_import
 
 import time
 import json
-from modi._command import *
-from modi.module import *
+import queue
 import base64
 import struct
-import queue
+
+from modi.module import (
+    button,
+    dial,
+    display,
+    env,
+    gyro,
+    ir,
+    led,
+    mic,
+    motor,
+    network,
+    speaker,
+    ultrasonic,
+)
 
 
 class ExcuteTask(object):
@@ -31,26 +44,24 @@ class ExcuteTask(object):
         self._cmd = cmd
 
     def start_thread(self):
-
         try:
             msg = json.loads(self._recv_q.get_nowait())
         except queue.Empty:
             pass
         else:
-            self._handler(msg["c"])(msg)
+            self.__handler(msg["c"])(msg)
 
         time.sleep(0.001)
 
-    def _handler(self, cmd):
+    def __handler(self, cmd):
         return {
-            0x00: self._update_health,
-            0x0A: self._update_health,
-            0x05: self._update_modules,
-            0x1F: self._update_property,
+            0x00: self.__update_health,
+            0x0A: self.__update_health,
+            0x05: self.__update_modules,
+            0x1F: self.__update_property,
         }.get(cmd, lambda _: None)
 
-    def _update_health(self, msg):
-
+    def __update_health(self, msg):
         module_id = msg["s"]
         time_ms = int(time.time() * 1000)
 
@@ -65,7 +76,7 @@ class ExcuteTask(object):
             self._serial_write_q.put(write_temp)
 
         for module_id, info in list(self._ids.items()):
-            # if module is not connected for 3.5s, set the module's state to not_connected
+            # if module is not connected for 2s, set the module's state to not_connected
             if time_ms - info["timestamp"] > 2000:
                 module = next(
                     (module for module in self._modules if module.uuid == info["uuid"]),
@@ -75,7 +86,7 @@ class ExcuteTask(object):
                     module.set_connected(False)
                     print("disconecting : ", module)
 
-    def _update_modules(self, msg):
+    def __update_modules(self, msg):
         time_ms = int(time.time() * 1000)
 
         module_id = msg["s"]
@@ -95,7 +106,7 @@ class ExcuteTask(object):
 
         category = self.categories[category_idx]
         type_ = self.types[category][type_idx]
-        uuid = self.append_hex(
+        uuid = self.__append_hex(
             info, ((data1[3] << 24) + (data1[2] << 16) + (data1[1] << 8) + data1[0])
         )
 
@@ -114,7 +125,7 @@ class ExcuteTask(object):
                 module = self.__init_module(type_)(
                     module_id, uuid, self, self._serial_write_q
                 )
-                self.set_pnp(module_id=module.id, pnp_on=False)
+                self.__set_pnp(module_id=module.id, pnp_on=False)
                 self._modules.append(module)
                 # TODO: check why modules are sorted by its uuid
                 self._modules.sort(key=lambda x: x.uuid)
@@ -135,7 +146,7 @@ class ExcuteTask(object):
         }.get(mtype)
         return module
 
-    def _update_property(self, msg):
+    def __update_property(self, msg):
         property_number = msg["d"]
         if property_number == 0 or property_number == 1:
             return
@@ -148,7 +159,7 @@ class ExcuteTask(object):
                     property_type, round(struct.unpack("f", bytes(decoded[:4]))[0], 2)
                 )
 
-    def set_pnp(self, module_id, pnp_on=False):
+    def __set_pnp(self, module_id, pnp_on=False):
         state = self._cmd.ModulePnp.ON if pnp_on else self._cmd.ModulePnp.OFF
         if module_id is None:
             for _id in self._ids:
@@ -160,7 +171,7 @@ class ExcuteTask(object):
             )
             self._serial_write_q.put(pnp_temp)
 
-    def append_hex(self, a, b):
+    def __append_hex(self, a, b):
         sizeof_b = 0
 
         while (b >> sizeof_b) > 0:
