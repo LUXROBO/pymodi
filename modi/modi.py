@@ -64,26 +64,26 @@ class MODI:
         self._modules = list()
         self._cmd = Command()
 
-        print("Serial Process Start")
+        print("SerProc Start")
         self._ser_proc = SerialProcess(self._serial_read_q, self._serial_write_q, port)
         self._ser_proc.daemon = True
         self._ser_proc.start()
 
-        print("Parsing Process Start")
+        print("ParProc Start")
         self._par_proc = ParsingProcess(self._serial_read_q, self._recv_q)
         self._par_proc.daemon = True
         self._par_proc.start()
 
-        print("Excute Process Start")
+        print("ExcProc Start")
         self._exe_thrd = ExeThread(
             self._serial_write_q, self._recv_q, self._src_ids, self._modules, self._cmd
         )
         self._exe_thrd.daemon = True
         self._exe_thrd.start()
 
-        self._init_modules()
+        self.__init_modules()
 
-    def _init_modules(self):
+    def __init_modules(self):
         broadcast_id = 0xFFF
 
         msg_to_send = self._cmd.module_state(
@@ -106,7 +106,6 @@ class MODI:
         time.sleep(1)
 
     def exit(self):
-        print("You are now leaving the Python sector.")
         self._ser_proc.stop()
         self._par_proc.stop()
         self._exe_thrd.stop()

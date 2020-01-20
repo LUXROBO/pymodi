@@ -6,6 +6,8 @@ from __future__ import absolute_import
 
 import time
 
+from enum import Enum
+
 
 class Prop(object):
     def __init__(self):
