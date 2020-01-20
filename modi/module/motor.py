@@ -37,7 +37,7 @@ class Motor(OutputModule):
             # Mode 0, 1, 2 -> Torque, Speed, Position / 현재 Torque 구현되어있지 않음
             self._serial_write_q.put(
                 cmd.set_property(
-                    self.id, 19, (channel, mode, value, 0x00 if value >= 0 else 0xFFFF),
+                    self.id, 19, (channel, mode, value, 0x00 if value >= 0 else 0xFFFF)
                 )
             )
         else:

@@ -4,13 +4,7 @@
 
 from __future__ import absolute_import
 
-import weakref
-
-# import modi._cmd as md_cmd
-from modi._command import *
 import time
-import base64
-import json
 
 
 class Prop(object):
@@ -55,7 +49,6 @@ class Module(object):
         self._connected = flag
 
     def _write_property(self, prop):
-
         if not prop in self._properties.keys():
             self._properties[prop] = Prop()
             modi_serialtemp = self._modi._cmd.get_property(self._id, prop.value)
