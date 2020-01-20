@@ -4,24 +4,17 @@
 
 from __future__ import absolute_import
 
-import sys
 import os
-import serial
+import sys
 import time
-import queue
+import serial
 
 from modi._processes import SerialProcess, ParsingProcess, ExeThread
+from modi.module import *
 from modi._command import Command
 
 import multiprocessing
-from multiprocessing import Process, Queue, Pipe, Manager, Lock
-from multiprocessing.managers import BaseManager
-
-IS_PY2 = sys.version_info < (3, 0)
-# if IS_PY2:
-#    from Queue import Queue
-# else:
-#    from queue import Queue
+from multiprocessing import Process, Queue
 
 
 class MODI:
@@ -48,10 +41,13 @@ class MODI:
     """
 
     def __init__(self, port=None):
-        self._serial_read_q = multiprocessing.Queue(200)
-        self._serial_write_q = multiprocessing.Queue(200)
-        self._recv_q = multiprocessing.Queue(100)
-        self._send_q = multiprocessing.Queue(100)
+        print("os.getpid():", os.getpid())
+
+        self._serial_read_q = Queue(100)
+        self._serial_write_q = Queue(100)
+        self._recv_q = Queue(100)
+        self._send_q = Queue(100)
+        self._display_send_q = Queue(100)
 
         self._src_ids = dict()
         self._modules = list()
@@ -116,7 +112,6 @@ class MODI:
         self._par_proc.stop()
         self._exe_thrd.stop()
 
-    # methods below are getters
     @property
     def modules(self):
         """Tuple of connected modules except network module.
@@ -193,6 +188,3 @@ class MODI:
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
         return tuple([x for x in self.modules if x.type == "ultrasonic"])
-
-    def __delattr__(self, name):
-        return super().__delattr__(name)

@@ -65,40 +65,22 @@ class SerialTask(object):
         self._serial.close()
 
     def start_thread(self):
-
-        # print('SerialTask : ', os.getpid())
-        # Main Thread 2ms loop
-        # while True:
-        # read serial
-        self.read_serial()
-        # write serial
-        self.write_serial()
+        self.__read_serial()
+        self.__write_serial()
         time.sleep(0.005)
-        # self._serial.close()
 
     ##################################################################
 
-    def read_serial(self):
+    def __read_serial(self):
         if self._serial.in_waiting != 0:
             read_temp = self._serial.read(self._serial.in_waiting).decode()
             self._serial_read_q.put(read_temp)
 
-    def write_serial(self):
-
+    def __write_serial(self):
         try:
-            writetemp = self._serial_write_q.get_nowait().encode()
+            write_temp = self._serial_write_q.get_nowait().encode()
         except queue.Empty:
             pass
         else:
-            self._serial.write(writetemp)
-            print(writetemp)
+            self._serial.write(write_temp)
             time.sleep(0.001)
-
-        # # # Write Display Data
-        # try:
-        #     writedisplaytemp = self._display_send_q.get_nowait().encode()
-        # except queue.Empty:
-        #     pass
-        # else:
-        #     self._serial.write(writedisplaytemp)
-        #     time.sleep(0.001)

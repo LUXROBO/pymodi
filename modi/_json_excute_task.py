@@ -6,11 +6,24 @@ from __future__ import absolute_import
 
 import time
 import json
-from modi._command import Command
-from modi.module import *
+import queue
 import base64
 import struct
-import queue
+
+from modi.module import (
+    button,
+    dial,
+    display,
+    env,
+    gyro,
+    ir,
+    led,
+    mic,
+    motor,
+    network,
+    speaker,
+    ultrasonic,
+)
 
 
 class ExcuteTask(object):
@@ -31,26 +44,24 @@ class ExcuteTask(object):
         self._cmd = cmd
 
     def start_thread(self):
-
         try:
             msg = json.loads(self._recv_q.get_nowait())
         except queue.Empty:
             pass
         else:
-            self._handler(msg["c"])(msg)
+            self.__handler(msg["c"])(msg)
 
         time.sleep(0.001)
 
-    def _handler(self, cmd):
+    def __handler(self, cmd):
         return {
-            0x00: self._update_health,
-            0x0A: self._update_health,
-            0x05: self._update_modules,
-            0x1F: self._update_property,
+            0x00: self.__update_health,
+            0x0A: self.__update_health,
+            0x05: self.__update_modules,
+            0x1F: self.__update_property,
         }.get(cmd, lambda _: None)
 
-    def _update_health(self, msg):
-
+    def __update_health(self, msg):
         module_id = msg["s"]
         time_ms = int(time.time() * 1000)
 
@@ -65,7 +76,7 @@ class ExcuteTask(object):
             self._serial_write_q.put(write_temp)
 
         for module_id, info in list(self._ids.items()):
-            # if module is not connected for 3.5s, set the module's state to not_connected
+            # if module is not connected for 2s, set the module's state to not_connected
             if time_ms - info["timestamp"] > 2000:
                 module = next(
                     (module for module in self._modules if module.uuid == info["uuid"]),
@@ -75,12 +86,9 @@ class ExcuteTask(object):
                     module.set_connected(False)
                     print("disconecting : ", module)
 
-    def _update_modules(self, msg):
-
+    def __update_modules(self, msg):
         time_ms = int(time.time() * 1000)
 
-        # TODO : manager().dict -> dict()
-        # TODO : id -> module_id
         module_id = msg["s"]
         self._ids[module_id] = self._ids.get(module_id, dict())
         self._ids[module_id]["timestamp"] = time_ms
@@ -91,14 +99,14 @@ class ExcuteTask(object):
         data2 = decoded[-4:]
 
         info = (data2[1] << 8) + data2[0]
-        version = (data2[3] << 8) + data2[2]
+        # version = (data2[3] << 8) + data2[2]
 
         category_idx = info >> 13
         type_idx = (info >> 4) & 0x1FF
 
         category = self.categories[category_idx]
         type_ = self.types[category][type_idx]
-        uuid = self.append_hex(
+        uuid = self.__append_hex(
             info, ((data1[3] << 24) + (data1[2] << 16) + (data1[1] << 8) + data1[0])
         )
 
@@ -114,19 +122,16 @@ class ExcuteTask(object):
         # handling newly-connected modules
         if not next((module for module in self._modules if module.uuid == uuid), None):
             if category != "network":
-                # print(type_)
-                module = self._init_module(type_)(
+                module = self.__init_module(type_)(
                     module_id, uuid, self, self._serial_write_q
                 )
-                self.pnp_off(module.id)
+                self.__set_pnp(module_id=module.id, pnp_on=False)
                 self._modules.append(module)
+                # TODO: check why modules are sorted by its uuid
                 self._modules.sort(key=lambda x: x.uuid)
 
-        #     # TODO: check why modules are sorted by its uuid
-        #     # self._modules.sort(key=lambda x: x.uuid)
-
-    def _init_module(self, type_):
-        return {
+    def __init_module(self, mtype):
+        module = {
             "button": button.Button,
             "dial": dial.Dial,
             "display": display.Display,
@@ -138,66 +143,35 @@ class ExcuteTask(object):
             "motor": motor.Motor,
             "speaker": speaker.Speaker,
             "ultrasonic": ultrasonic.Ultrasonic,
-        }.get(type_, None)
+        }.get(mtype)
+        return module
 
-    def _update_property(self, msg):
-
+    def __update_property(self, msg):
         property_number = msg["d"]
-        # print(property_number)
         if property_number == 0 or property_number == 1:
             return
 
-        module_id = msg["s"]
-        module = next(
-            (module for module in self._modules if module.id == module_id), None
-        )
-        # print(module)
-        if module:
-            decoded = bytearray(base64.b64decode(msg["b"]))
-            property_type = module.property_types(property_number)
-            module.update_property(
-                property_type, round(struct.unpack("f", bytes(decoded[:4]))[0], 2)
-            )
+        for module in self._modules:
+            if module.id == msg["s"]:
+                decoded = bytearray(base64.b64decode(msg["b"]))
+                property_type = module.PropertyType(property_number)
+                module.update_property(
+                    property_type, round(struct.unpack("f", bytes(decoded[:4]))[0], 2)
+                )
 
-    def pnp_on(self, module_id=None):
-        """Turn on PnP mode of the module.
-
-        :param int id: The id of the module to turn on PnP mode or ``None``.
-
-        All connected modules' PnP mode will be turned on if the `id` is ``None``.
-        """
+    def __set_pnp(self, module_id, pnp_on=False):
+        state = self._cmd.ModulePnp.ON if pnp_on else self._cmd.ModulePnp.OFF
         if module_id is None:
             for _id in self._ids:
-                pnp_temp = self._cmd.module_state(
-                    _id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.ON
-                )
+                pnp_temp = self._cmd.module_state(_id, self._cmd.ModuleState.RUN, state)
                 self._serial_write_q.put(pnp_temp)
         else:
             pnp_temp = self._cmd.module_state(
-                module_id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.ON
+                module_id, self._cmd.ModuleState.RUN, state
             )
             self._serial_write_q.put(pnp_temp)
 
-    def pnp_off(self, module_id=None):
-        """Turn off PnP mode of the module.
-
-        :param int id: The id of the module to turn off PnP mode or ``None``.
-
-        All connected modules' PnP mode will be turned off if the `id` is ``None``.
-        """
-        if module_id is None:
-            for _id in self._ids:
-                pnp_temp = self._cmd.module_state(
-                    _id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.OFF
-                )
-                self._serial_write_q.put(pnp_temp)
-        else:
-            pnp_temp = self._cmd.module_state(
-                module_id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.OFF
-            )
-            self._serial_write_q.put(pnp_temp)
-
-    def append_hex(self, a, b):
+    def __append_hex(self, a, b):
         sizeof_b = 0
 
         while (b >> sizeof_b) > 0:

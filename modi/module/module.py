@@ -4,11 +4,7 @@
 
 from __future__ import absolute_import
 
-# import modi._cmd as md_cmd
-from modi._command import Command
 import time
-import base64
-import json
 
 
 class Prop(object):
@@ -53,7 +49,6 @@ class Module(object):
         self._connected = flag
 
     def _write_property(self, prop):
-
         if not prop in self._properties.keys():
             self._properties[prop] = Prop()
             modi_serialtemp = self._modi._cmd.get_property(self._id, prop.value)
@@ -61,7 +56,7 @@ class Module(object):
             self._properties[prop].last_request_time = time.time()
 
         duration = time.time() - self._properties[prop].last_update_time
-        if duration > 0.5:  # 1초
+        if duration > 0.5:
             modi_serialtemp = self._modi._cmd.get_property(self._id, prop.value)
             self._serial_write_q.put(modi_serialtemp)
             self._properties[prop].last_request_time = time.time()
