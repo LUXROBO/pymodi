@@ -6,13 +6,8 @@ from __future__ import absolute_import
 
 from enum import Enum
 
-from modi.module.module import OutputModule 
+from modi.module.module import OutputModule
 
-from modi._command import Command
-
-class PropertyType(Enum):
-    CURSOR_X = 2
-    CURSOR_Y = 3
 
 class Display(OutputModule):
     """
@@ -21,8 +16,11 @@ class Display(OutputModule):
     :param modi: The :class:`~modi.modi.MODI` instance.
     :type modi: :class:`~modi.modi.MODI`
     """
-    property_types = PropertyType
-    
+
+    class PropertyType(Enum):
+        CURSOR_X = 2
+        CURSOR_Y = 3
+
     def __init__(self, id, uuid, modi):
         super(Display, self).__init__(id, uuid, modi)
         self._type = "display"
@@ -33,22 +31,25 @@ class Display(OutputModule):
         """
         self.clear()
 
-        for cmd in set_property(self.id, 17, text, PropertyDataType.STRING):
+        for cmd in self._command.set_property(
+            self.id, 17, text, self._command.PropertyDataType.STRING
+        ):
             self._modi.write(cmd, is_display=True)
-            print(cmd)
 
     def variable(self, var):
         """
-
         :param variable: variable to display.
         """
         self.clear()
-        for cmd in set_property(self.id, 21, var, (10,20,var)):
+        for cmd in self._command.set_property(self.id, 21, var, (10, 20, var)):
             self._modi.write(cmd, is_display=True)
-            print(cmd)
-
 
     def clear(self):
         """Clear the screen.
         """
-        self._modi.write(set_property(self.id, 20, bytes(2), PropertyDataType.RAW), is_display=True)
+        self._modi.write(
+            self._command.set_property(
+                self.id, 20, bytes(2), self._command.PropertyDataType.RAW
+            ),
+            is_display=True,
+        )

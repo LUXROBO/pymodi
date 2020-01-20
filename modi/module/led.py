@@ -8,12 +8,6 @@ from enum import Enum
 
 from modi.module.module import OutputModule
 
-from modi._command import Command
-
-class PropertyType(Enum):
-    RED = 2
-    GREEN = 3
-    BLUE = 4
 
 class Led(OutputModule):
     """
@@ -22,8 +16,12 @@ class Led(OutputModule):
     :param modi: The :class:`~modi.modi.MODI` instance.
     :type modi: :class:`~modi.modi.MODI`
     """
-    property_types = PropertyType
-    
+
+    class PropertyType(Enum):
+        RED = 2
+        GREEN = 3
+        BLUE = 4
+
     def __init__(self, id, uuid, modi):
         super(Led, self).__init__(id, uuid, modi)
         self._type = "led"
@@ -43,20 +41,26 @@ class Led(OutputModule):
         :return: Tuple of red, green and blue.
         :rtype: tuple
         """
-        if red == None and green == None and blue == None:
+        if red is None and green is None and blue is None:
             return (self.red(), self.green(), self.blue())
         else:
-            self._modi.write(set_property(self.id, 16, (
-                red if red != None else self.red(), 
-                green if green != None else self.green(), 
-                blue if blue != None else self.blue()
-                )))
+            self._modi.write(
+                self._command.set_property(
+                    self.id,
+                    16,
+                    (
+                        red if red is not None else self.red(),
+                        green if green is not None else self.green(),
+                        blue if blue is not None else self.blue(),
+                    ),
+                )
+            )
 
     def on(self):
         """Turn on at maximum brightness.
         """
         self.rgb(255, 255, 255)
-    
+
     def off(self):
         """Turn off.
         """
@@ -71,8 +75,8 @@ class Led(OutputModule):
         :return: Red component.
         :rtype: float
         """
-        if red == None:
-            return self._write_property(PropertyType.RED)
+        if red is None:
+            return self._write_property(self.PropertyType.RED)
         else:
             self.rgb(red=red)
 
@@ -85,8 +89,8 @@ class Led(OutputModule):
         :return: Green component.
         :rtype: float
         """
-        if green == None:
-            return self._write_property(PropertyType.GREEN)
+        if green is None:
+            return self._write_property(self.PropertyType.GREEN)
         else:
             self.rgb(green=green)
 
@@ -99,7 +103,7 @@ class Led(OutputModule):
         :return: Blue component.
         :rtype: float
         """
-        if blue == None:
-            return self._write_property(PropertyType.BLUE)
+        if blue is None:
+            return self._write_property(self.PropertyType.BLUE)
         else:
             self.rgb(blue=blue)

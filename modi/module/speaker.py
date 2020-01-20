@@ -107,8 +107,6 @@ class Speaker(OutputModule):
         F_SOL_S_7 = 3322
         F_RA_S_7 = 3729
 
-    property_types = PropertyType
-
     def __init__(self, id, uuid, modi):
         super(Speaker, self).__init__(id, uuid, modi)
         self._type = "speaker"
@@ -138,7 +136,7 @@ class Speaker(OutputModule):
                         frequency if frequency != None else self.frequency(),
                         volume if volume != None else self.volume(),
                     ),
-                    self.PropertyDataType.FLOAT,
+                    self._command.PropertyDataType.FLOAT,
                 )
             )
 

@@ -12,7 +12,6 @@ from enum import Enum
 
 
 class Command(object):
-
     class ModuleState(Enum):
         RUN = 0
         IDLE = 1
@@ -76,7 +75,9 @@ class Command(object):
 
             state_bytes = bytearray(2)
             state_bytes[0] = state.value  # set state instruction 에서 Module State 지정 바이트
-            state_bytes[1] = pnp.value  # set state instruction 에서 Module Plug & Play 지정 바이트
+            state_bytes[
+                1
+            ] = pnp.value  # set state instruction 에서 Module Plug & Play 지정 바이트
 
             msg["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
             msg["l"] = 2
@@ -99,7 +100,7 @@ class Command(object):
             for index, value in enumerate(values):
                 value = int(value)
                 # leaves the last 8 bits only
-                values_bytes[index * 2] = value & 0xFF 
+                values_bytes[index * 2] = value & 0xFF
                 values_bytes[index * 2 + 1] = (value & 0xFF00) >> 8
         elif datatype == self.PropertyDataType.FLOAT:
             for index, value in enumerate(values):

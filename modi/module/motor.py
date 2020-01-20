@@ -25,8 +25,6 @@ class Motor(OutputModule):
         FIRST_TORQUE = 2
         SECOND_TORQUE = 10
 
-    property_types = PropertyType
-
     def __init__(self, id, uuid, modi, serial_write_q):
         super(Motor, self).__init__(id, uuid, modi, serial_write_q)
         self._type = "motor"
