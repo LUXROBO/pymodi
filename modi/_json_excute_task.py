@@ -78,13 +78,10 @@ class ExcuteTask(object):
         for module_id, info in list(self._ids.items()):
             # if module is not connected for 2s, set the module's state to not_connected
             if time_ms - info["timestamp"] > 2000:
-                module = next(
-                    (module for module in self._modules if module.uuid == info["uuid"]),
-                    None,
-                )
-                if module:
-                    module.set_connected(False)
-                    print("disconecting : ", module)
+                for module in self._modules:
+                    if module.uuid == info["uuid"]:
+                        module.set_connected(False)
+                        print("disconecting : ", module)
 
     def __update_modules(self, msg):
         time_ms = int(time.time() * 1000)
@@ -127,7 +124,7 @@ class ExcuteTask(object):
                 )
                 self.__set_pnp(module_id=module.id, pnp_on=False)
                 self._modules.append(module)
-                # TODO: check why modules are sorted by its uuid
+                # TODO: find out why modules are sorted by its uuid
                 self._modules.sort(key=lambda x: x.uuid)
 
     def __init_module(self, mtype):
@@ -172,8 +169,8 @@ class ExcuteTask(object):
             self._serial_write_q.put(pnp_temp)
 
     def __append_hex(self, a, b):
+        # TODO: comment on the input parameters a and b
         sizeof_b = 0
-
         while (b >> sizeof_b) > 0:
             sizeof_b += 1
         sizeof_b += sizeof_b % 4
