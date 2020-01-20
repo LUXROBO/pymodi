@@ -1,160 +1,16 @@
 # -*- coding: utf-8 -*-
 
-"""Tasks."""
+"""Json Excute module."""
 
 from __future__ import absolute_import
 
-import modi._cmd as md_cmd
-
-from modi.module import *
-import serial.tools.list_ports as stl
-
-
-import serial
-import json
-import weakref
 import time
+import json
+from modi._command import *
+from modi.module import *
 import base64
 import struct
-import multiprocessing
-from multiprocessing import Process, Queue, Pipe, Manager
-import os
-import threading
 import queue
-import atexit
-import sys
-
-# Serial Task Work
-# 1. Serial Read
-# - put data serialqueue
-# 3. get data writequeue
-# - writedata serial
-
-
-class SerialTask(object):
-    def __init__(self, serial_read_q, serial_write_q, port):
-        super(SerialTask, self).__init__()
-        self._serial_read_q = serial_read_q
-        self._serial_write_q = serial_write_q
-        self._port = port
-        # if os.name != 'nt':
-        #    self.start_thread()
-
-    def connect_serial(self):
-        # Sereial Connection Once
-        if self._port is None:
-            ports = self.list_ports()
-            if len(ports) > 0:
-                self._serial = serial.Serial(ports[0].device, 921600)
-            else:
-                raise serial.SerialException("No MODI network module connected.")
-        else:
-            self._serial = serial.Serial(port, 921600)
-
-    def list_ports(self):
-        """
-        :return: an iterable that yields :py:class:`~serial.tools.list_ports.ListPortInfo` objects.
-
-        The function returns an iterable that yields tuples of three strings:
-
-        * port name as it can be passed to :py:class:`modi.modi.MODI`
-        * description in human readable form
-        * sort of hardware ID. E.g. may contain VID:PID of USB-serial adapters.
-
-        Items are returned in no particular order. It may make sense to sort the items. Also note that the reported strings are different across platforms and operating systems, even for the same device.
-        
-        .. note:: Support is limited to a number of operating systems. On some systems description and hardware ID will not be available (``None``).
-
-        :platform: Posix (/dev files)
-        :platform: Linux (/dev files, sysfs)
-        :platform: OSX (iokit)
-        :platform: Windows (setupapi, registry)
-        """
-        ports = stl.comports()
-        modi_ports = list()
-
-        for port in ports:
-            if (
-                port.manufacturer == "LUXROBO"
-                or port.product == "MODI Network Module"
-                or port.description == "MODI Network Module"
-                or (port.vid == 12254 and port.pid == 2)
-            ):
-                modi_ports.append(port)
-
-        return modi_ports
-
-    def start_thread(self):
-
-        # print('SerialTask : ', os.getpid())
-        # Main Thread 2ms loop
-        # while True:
-        # read serial
-        self.read_serial()
-        # write serial
-        self.write_serial()
-        time.sleep(0.005)
-        # self._serial.close()
-
-    ##################################################################
-
-    def read_serial(self):
-        if self._serial.in_waiting != 0:
-            read_temp = self._serial.read(self._serial.in_waiting).decode()
-            self._serial_read_q.put(read_temp)
-
-    def write_serial(self):
-
-        try:
-            writetemp = self._serial_write_q.get_nowait().encode()
-        except queue.Empty:
-            pass
-        else:
-            self._serial.write(writetemp)
-            print(writetemp)
-            time.sleep(0.001)
-
-        # # # Write Display Data
-        # try:
-        #     writedisplaytemp = self._display_send_q.get_nowait().encode()
-        # except queue.Empty:
-        #     pass
-        # else:
-        #     self._serial.write(writedisplaytemp)
-        #     time.sleep(0.001)
-
-
-# Parsing Task Work
-# 1. Get queue serial read queue
-# 2. Json Box Add
-# 3. Put queue json recv_q
-
-
-class ParsingTask(object):
-    def __init__(self, serial_read_q, recv_q, json_box):
-        super(ParsingTask, self).__init__()
-        self._serial_read_q = serial_read_q
-        self._recv_q = recv_q
-        self._json_box = json_box
-        # if os.name != 'nt':
-        #    self.start_thread()
-
-    def start_thread(self):
-        # print('ParsingTask : ', os.getpid())
-        # while True:
-        self.adding_json()
-        time.sleep(0.005)
-
-    def adding_json(self):
-        try:
-            self._json_box.add(self._serial_read_q.get(False))
-        except:
-            pass
-
-        while self._json_box.has_json():
-            json_temp = self._json_box.json
-            self._recv_q.put(json_temp)
-            # print('jsonread : ', json_temp)
 
 
 class ExcuteTask(object):
@@ -167,12 +23,13 @@ class ExcuteTask(object):
     }
     # _modules = list()
 
-    def __init__(self, serial_write_q, recv_q, ids, modules):
+    def __init__(self, serial_write_q, recv_q, ids, modules, cmd):
         super(ExcuteTask, self).__init__()
         self._serial_write_q = serial_write_q
         self._recv_q = recv_q
         self._ids = ids
         self._modules = modules
+        self._cmd = cmd
 
     def start_thread(self):
 
@@ -198,19 +55,14 @@ class ExcuteTask(object):
         module_id = msg["s"]
         time_ms = int(time.time() * 1000)
 
-        # TODO : manager().dict -> dict()
         self._ids[module_id] = self._ids.get(module_id, dict())
         self._ids[module_id]["timestamp"] = time_ms
         self._ids[module_id]["uuid"] = self._ids[module_id].get("uuid", str())
-        # moduledict = self._ids[module_id]
-        # moduledict["timestamp"] = time_ms
-        # moduledict["uuid"] = self._ids[module_id].get("uuid", str())
-        # self._ids[module_id] = moduledict
 
         if not self._ids[module_id]["uuid"]:
-            write_temp = md_cmd.request_uuid(module_id)
+            write_temp = self._cmd.request_uuid(module_id)
             self._serial_write_q.put(write_temp)
-            write_temp = md_cmd.request_network_uuid(module_id)
+            write_temp = self._cmd.request_network_uuid(module_id)
             self._serial_write_q.put(write_temp)
 
         for module_id, info in list(self._ids.items()):
@@ -234,10 +86,6 @@ class ExcuteTask(object):
         self._ids[module_id] = self._ids.get(module_id, dict())
         self._ids[module_id]["timestamp"] = time_ms
         self._ids[module_id]["uuid"] = self._ids[module_id].get("uuid", str())
-        # moduledict = self._ids[module_id]
-        # moduledict["timestamp"] = time_ms
-        # moduledict["uuid"] = self._ids[module_id].get("uuid", str())
-        # self._ids[module_id] = moduledict
 
         decoded = bytearray(base64.b64decode(msg["b"]))
         data1 = decoded[:4]
@@ -321,15 +169,13 @@ class ExcuteTask(object):
         """
         if module_id is None:
             for _id in self._ids:
-                # self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
-                pnp_temp = md_cmd.module_state(
-                    _id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON
+                pnp_temp = self._cmd.module_state(
+                    _id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.ON
                 )
                 self._serial_write_q.put(pnp_temp)
         else:
-            # self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON))
-            pnp_temp = md_cmd.module_state(
-                module_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.ON
+            pnp_temp = self._cmd.module_state(
+                module_id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.ON
             )
             self._serial_write_q.put(pnp_temp)
 
@@ -342,13 +188,13 @@ class ExcuteTask(object):
         """
         if module_id is None:
             for _id in self._ids:
-                pnp_temp = md_cmd.module_state(
-                    _id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF
+                pnp_temp = self._cmd.module_state(
+                    _id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.OFF
                 )
                 self._serial_write_q.put(pnp_temp)
         else:
-            pnp_temp = md_cmd.module_state(
-                module_id, md_cmd.ModuleState.RUN, md_cmd.ModulePnp.OFF
+            pnp_temp = self._cmd.module_state(
+                module_id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.OFF
             )
             self._serial_write_q.put(pnp_temp)
 

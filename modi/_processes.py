@@ -4,27 +4,21 @@
 
 from __future__ import absolute_import
 
-import modi._cmd as md_cmd
-from modi.serial import list_ports
-import serial
-from modi.module import *
-import modi._util as md_util
-
-# from modi._stoppable_thread import StoppableThread
+import multiprocessing
+from multiprocessing import Process, Queue
+import threading
 
 import json
-import weakref
 import time
 import base64
 import struct
-import multiprocessing
-import os
-import threading
 import queue
 
-from multiprocessing import Process, Queue
-from modi._tasks import *
-import atexit
+from modi._serial_task import *
+from modi._serial_parsing_task import *
+from modi._json_excute_task import *
+
+import os
 
 
 class MODIProcess(multiprocessing.Process):
@@ -42,6 +36,7 @@ class SerialProcess(MODIProcess):
         self._SerialTask.connect_serial()
         while not self.stopped():
             self._SerialTask.start_thread()
+        self._SerialTask.disconnect_serial()
         print("Serial Process End")
 
     def stop(self):
@@ -52,9 +47,9 @@ class SerialProcess(MODIProcess):
 
 
 class ParsingProcess(MODIProcess):
-    def __init__(self, serial_read_q, recv_q, json_box):
+    def __init__(self, serial_read_q, recv_q):
         super(ParsingProcess, self).__init__()
-        self._ParsingTask = ParsingTask(serial_read_q, recv_q, json_box)
+        self._ParsingTask = ParsingTask(serial_read_q, recv_q)
         self._stop = multiprocessing.Event()
 
     def run(self):
@@ -69,10 +64,10 @@ class ParsingProcess(MODIProcess):
         return self._stop.is_set()
 
 
-class ExcuteProcess(threading.Thread):
-    def __init__(self, serial_write_q, recv_q, ids, modules):
-        super(ExcuteProcess, self).__init__()
-        self._ExcuteTask = ExcuteTask(serial_write_q, recv_q, ids, modules)
+class ExeThread(threading.Thread):
+    def __init__(self, serial_write_q, recv_q, ids, modules, cmd):
+        super(ExeThread, self).__init__()
+        self._ExcuteTask = ExcuteTask(serial_write_q, recv_q, ids, modules, cmd)
         self._stop = threading.Event()
 
     def run(self):

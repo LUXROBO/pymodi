@@ -35,6 +35,20 @@ class Motor(OutputModule):
         self._type = "motor"
         self._serial_write_q = serial_write_q
 
+    def motor_ch_ctrl(self, channel, mode, value=None):
+        if value is not None:
+
+            self._serial_write_q.put(
+                set_property(
+                    self.id,
+                    19,
+                    (channel, mode, ((value & 0xFF00) >> 8), (value & 0x00FF)),
+                )
+            )
+        else:
+            # return self._write_property(PropertyType.FIRST_DEGREE)
+            pass
+
     def first_degree(self, degree=None):
         """
         :param int degree: Angle to set the first motor.
@@ -44,13 +58,14 @@ class Motor(OutputModule):
         :return: Angle of the first motor.
         :rtype: float
         """
-        if degree != None:
+        if degree is not None:
             self._serial_write_q.put(
-                set_property(self.id, 18, (degree, self.first_degree(), 0))
+                set_property(
+                    self.id,
+                    18,
+                    (degree, self._write_property(PropertyType.FIRST_DEGREE), 0),
+                )
             )
-            # self._modi.write(
-            #     set_property(self.id, 18, (degree, self.second_degree(), 0))
-            # )
         else:
             return self._write_property(PropertyType.FIRST_DEGREE)
 
