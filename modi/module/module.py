@@ -92,4 +92,5 @@ class OutputModule(Module):
     def __init__(self, id, uuid, modi, serial_write_q):
         super(OutputModule, self).__init__(id, uuid, modi, serial_write_q)
         self._category = "output"
+        self._command = modi._cmd
 

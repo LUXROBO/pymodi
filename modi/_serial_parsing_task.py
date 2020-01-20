@@ -14,13 +14,9 @@ class ParsingTask(object):
         super(ParsingTask, self).__init__()
         self._serial_read_q = serial_read_q
         self._recv_q = recv_q
-        self._json_box = JsonBox()  # Parsing Process 내부로 이동
-        # if os.name != 'nt':
-        #    self.start_thread()
+        self._json_box = JsonBox()
 
     def start_thread(self):
-        # print('ParsingTask : ', os.getpid())
-        # while True:
         self.adding_json()
         time.sleep(0.005)
 
@@ -33,4 +29,3 @@ class ParsingTask(object):
         while self._json_box.has_json():
             json_temp = self._json_box.json
             self._recv_q.put(json_temp)
-            # print('jsonread : ', json_temp)
