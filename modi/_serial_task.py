@@ -75,8 +75,6 @@ class SerialTask(object):
         if self._serial.in_waiting != 0:
             read_temp = self._serial.read(self._serial.in_waiting).decode()
             self._serial_read_q.put(read_temp)
-            self._flog = open("serial_log.txt", "a")
-            self._flog.write(read_temp)
 
     def __write_serial(self):
         try:
