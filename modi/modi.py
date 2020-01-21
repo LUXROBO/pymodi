@@ -52,7 +52,7 @@ class MODI:
     """
 
     def __init__(self, port=None):
-        print("os.getpid():", os.getpid())
+        # print("os.getpid():", os.getpid())
 
         self._serial_read_q = Queue(100)
         self._serial_write_q = Queue(100)
@@ -64,17 +64,17 @@ class MODI:
         self._modules = list()
         self._cmd = Command()
 
-        print("SerProc Start")
+        #print("SerProc Start")
         self._ser_proc = SerialProcess(self._serial_read_q, self._serial_write_q, port)
         self._ser_proc.daemon = True
         self._ser_proc.start()
 
-        print("ParProc Start")
+        #print("ParProc Start")
         self._par_proc = ParsingProcess(self._serial_read_q, self._recv_q)
         self._par_proc.daemon = True
         self._par_proc.start()
 
-        print("ExcProc Start")
+        #print("ExcProc Start")
         self._exe_thrd = ExeThread(
             self._serial_write_q, self._recv_q, self._src_ids, self._modules, self._cmd
         )
