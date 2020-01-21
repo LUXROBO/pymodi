@@ -23,6 +23,7 @@ class TestSpeaker(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
         self.modi_inst.exit()
+        self.speaker.tune(0, 0)
         time.sleep(1)
 
     def test_init(self):
@@ -31,23 +32,21 @@ class TestSpeaker(unittest.TestCase):
 
     def test_basic_tune(self):
         """Test something."""
-        self.speaker.tune(self.speaker.Scale.F_RA_6.value, 50)
-        self.speaker.tune()
+        expected_values = (self.speaker.Scale.F_RA_6.value, 50)
+        self.speaker.tune(*expected_values)
+        # TODO: remove delaying function
         time.sleep(3)
-        self.assertEqual((self.speaker.Scale.F_RA_6.value, 50), self.speaker.tune())
-        # for _ in range(30):
-        #     print(self.speaker.tune())
-        #     time.sleep(0.1)
-        self.speaker.tune(0, 0)
+        actual_values = self.speaker.tune()
+        self.assertEqual(expected_values, actual_values)
 
-    def test_custom_tune(self):
-        """Test something."""
+    # def test_custom_tune(self):
+    #    """Test something."""
 
-    def test_get_volume(self):
-        """Test something."""
+    # def test_get_volume(self):
+    #    """Test something."""
 
-    def test_get_frequency(self):
-        """Test something."""
+    # def test_get_frequency(self):
+    #    """Test something."""
 
 
 if __name__ == "__main__":
