@@ -6,6 +6,8 @@ from __future__ import absolute_import
 
 import time
 
+from enum import Enum
+
 
 class Prop(object):
     def __init__(self):
@@ -24,7 +26,6 @@ class Module(object):
         self._type = str()
         self._properties = dict()
         self._connected = True
-        self._bat_connected = False
 
     @property
     def id(self):
@@ -43,11 +44,7 @@ class Module(object):
         return self._connected
 
     @property
-    def bat_connected(self):
-        return self._bat_connected
-
-    @property
-    def type(self):
+    def mtype(self):
         return self._type
 
     def set_connected(self, flag):

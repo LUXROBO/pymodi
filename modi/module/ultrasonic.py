@@ -9,10 +9,6 @@ from enum import Enum
 from modi.module.module import InputModule
 
 
-class PropertyType(Enum):
-    DISTANCE = 2
-
-
 class Ultrasonic(InputModule):
     """
     :param int id: The id of the module.
@@ -21,7 +17,8 @@ class Ultrasonic(InputModule):
     :type modi: :class:`~modi.modi.MODI`
     """
 
-    property_types = PropertyType
+    class PropertyType(Enum):
+        DISTANCE = 2
 
     def __init__(self, id, uuid, modi, serial_write_q):
         super(Ultrasonic, self).__init__(id, uuid, modi, serial_write_q)
@@ -32,4 +29,4 @@ class Ultrasonic(InputModule):
         :return: Distance to object.
         :rtype: float
         """
-        return self._write_property(PropertyType.DISTANCE)
+        return self._write_property(self.PropertyType.DISTANCE)

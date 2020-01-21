@@ -8,11 +8,10 @@ from enum import Enum
 
 from modi.module.module import SetupModule
 
-class PropertyType(Enum):
-    RESERVED = 0
 
 class Network(SetupModule):
-    property_types = PropertyType
+    class PropertyType(Enum):
+        RESERVED = 0
 
     def __init__(self, id, uuid, modi):
         super(Network, self).__init__(id, uuid, modi)

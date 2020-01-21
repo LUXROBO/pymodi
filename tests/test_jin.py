@@ -22,19 +22,20 @@ class TestModi(unittest.TestCase):
         """Test something."""
         bundle = modi.MODI()
         button = bundle.buttons[0]
-        gyro = bundle.gyros[0]
+        # gyro = bundle.gyros[0]
         # motor = bundle.motors[0]
 
         # dial = bundle.dials[0]
-        # env = bundle.envs[0]
+        env = bundle.envs[0]
         # ir = bundle.irs[0]
         # led = bundle.leds[0]
         # mic = bundle.mics[0]
-        # display = bundle.displays[0
+        # display = bundle.displays[0]
         # button.pressed()
         while True:
             time.sleep(0.01)
-            print(button.pressed())
+            print("env:", env.temperature())
+            # print(button.pressed())
             # print('button.pressed():', button.pressed())
             # print(
             #    "aX aY aZ gX gY gZ",

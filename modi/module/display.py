@@ -30,28 +30,29 @@ class Display(OutputModule):
         """
         :param text: Text to display.
         """
-        cmd = self._modi._cmd
         self.clear()
 
-        for string in cmd.set_property(self.id, 17, text, cmd.PropertyDataType.STRING):
-            # self._modi.write(cmd, is_display=True)
+        for string in self._command.set_property(
+            self.id, 17, text, self._command.PropertyDataType.STRING
+        ):
             self._serial_write_q.put(string)
 
     def variable(self, var, axisx, axisy):
         """
         :param variable: variable to display.
         """
-        cmd = self._modi._cmd
         self.clear()
-        string = cmd.set_property(
-            self.id, 22, (var, axisx, axisy), cmd.PropertyDataType.DISPLAY_Var
+
+        string = self._command.set_property(
+            self.id, 22, (var, axisx, axisy), self._command.PropertyDataType.DISPLAY_Var
         )
         self._serial_write_q.put(string)
 
     def clear(self):
         """Clear the screen.
         """
-        cmd = self._modi._cmd
         self._serial_write_q.put(
-            cmd.set_property(self.id, 20, bytes(2), cmd.PropertyDataType.RAW)
+            self._command.set_property(
+                self.id, 20, bytes(2), self._command.PropertyDataType.RAW
+            )
         )

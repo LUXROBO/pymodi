@@ -28,6 +28,7 @@ from modi.module import (
 
 class ExcuteTask(object):
 
+    # variables shared across all class instances
     categories = ["network", "input", "output"]
     types = {
         "network": ["usb", "usb/wifi/ble"],
@@ -70,7 +71,6 @@ class ExcuteTask(object):
         self._ids[module_id]["timestamp"] = time_ms
         self._ids[module_id]["uuid"] = self._ids[module_id].get("uuid", str())
         self._ids[module_id]["battery"] = int(decoded[3])
-        print(module_id, self._ids[module_id]["battery"])
 
         if not self._ids[module_id]["uuid"]:
             write_temp = self._cmd.request_uuid(module_id)
@@ -81,13 +81,10 @@ class ExcuteTask(object):
         for module_id, info in list(self._ids.items()):
             # if module is not connected for 2s, set the module's state to not_connected
             if time_ms - info["timestamp"] > 2000:
-                module = next(
-                    (module for module in self._modules if module.uuid == info["uuid"]),
-                    None,
-                )
-                if module:
-                    module.set_connected(False)
-                    print("disconnecting : ", module)
+                for module in self._modules:
+                    if module.uuid == info["uuid"]:
+                        module.set_connected(False)
+                        print("disconecting : ", module)
 
     def __update_modules(self, msg):
         time_ms = int(time.time() * 1000)
@@ -104,18 +101,16 @@ class ExcuteTask(object):
         info = (data2[1] << 8) + data2[0]
         # version = (data2[3] << 8) + data2[2]
 
+        # TODO: refactor code to remove magic numbers
         category_idx = info >> 13
         type_idx = (info >> 4) & 0x1FF
 
         category = self.categories[category_idx]
-        type_ = self.types[category][type_idx]
+        mtype = self.types[category][type_idx]
         uuid = self.__append_hex(
             info, ((data1[3] << 24) + (data1[2] << 16) + (data1[1] << 8) + data1[0])
         )
 
-        # moduledict = self._ids[module_id]
-        # moduledict["uuid"] = uuid
-        # self._ids[module_id] = moduledict
         self._ids[module_id]["uuid"] = uuid
 
         # handling re-connected modules
@@ -126,13 +121,14 @@ class ExcuteTask(object):
         # handling newly-connected modules
         if not next((module for module in self._modules if module.uuid == uuid), None):
             if category != "network":
-                module = self.__init_module(type_)(
+                module_template = self.__init_module(mtype)
+                module_instance = module_template(
                     module_id, uuid, self, self._serial_write_q
                 )
-                self.__set_pnp(module_id=module.id, pnp_on=False)
-                self._modules.append(module)
-                # TODO: check why modules are sorted by its uuid
-                self._modules.sort(key=lambda x: x.uuid)
+                self.__set_pnp(module_id=module_instance.id, pnp_on=False)
+                self._modules.append(module_instance)
+                # TODO: find out why modules are sorted by its uuid
+                self._modules.sort(key=lambda module: module.uuid)
 
     def __init_module(self, mtype):
         module = {
@@ -164,20 +160,22 @@ class ExcuteTask(object):
                 )
 
     def __set_pnp(self, module_id, pnp_on=False):
-        state = self._cmd.ModulePnp.ON if pnp_on else self._cmd.ModulePnp.OFF
+        pnp_state = self._cmd.ModulePnp.ON if pnp_on else self._cmd.ModulePnp.OFF
         if module_id is None:
-            for _id in self._ids:
-                pnp_temp = self._cmd.module_state(_id, self._cmd.ModuleState.RUN, state)
+            for curr_module_id in self._ids:
+                pnp_temp = self._cmd.module_state(
+                    curr_module_id, self._cmd.ModuleState.RUN, pnp_state
+                )
                 self._serial_write_q.put(pnp_temp)
         else:
             pnp_temp = self._cmd.module_state(
-                module_id, self._cmd.ModuleState.RUN, state
+                module_id, self._cmd.ModuleState.RUN, pnp_state
             )
             self._serial_write_q.put(pnp_temp)
 
     def __append_hex(self, a, b):
+        # TODO: comment on the input parameters a and b
         sizeof_b = 0
-
         while (b >> sizeof_b) > 0:
             sizeof_b += 1
         sizeof_b += sizeof_b % 4

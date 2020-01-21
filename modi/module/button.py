@@ -5,15 +5,11 @@
 from __future__ import absolute_import
 
 from enum import Enum
+
 from modi.module.module import InputModule
 
 
 class Button(InputModule):
-    class PropertyType(Enum):
-        CLICKED = 2
-        DOUBLE_CLICKED = 3
-        PRESSED = 4
-        TOGGLED = 5
 
     """
     :param int id: The id of the module.
@@ -22,7 +18,11 @@ class Button(InputModule):
     :type modi: :class:`~modi.modi.MODI  `
     """
 
-    property_types = PropertyType
+    class PropertyType(Enum):
+        CLICKED = 2
+        DOUBLE_CLICKED = 3
+        PRESSED = 4
+        TOGGLED = 5
 
     def __init__(self, id, uuid, modi, serial_write_q):
         super(Button, self).__init__(id, uuid, modi, serial_write_q)

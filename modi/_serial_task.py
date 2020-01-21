@@ -7,7 +7,8 @@ from __future__ import absolute_import
 import serial
 import serial.tools.list_ports as stl
 import time
-import queue
+
+from queue import Empty
 
 
 class SerialTask(object):
@@ -15,7 +16,7 @@ class SerialTask(object):
         super(SerialTask, self).__init__()
         self._serial_read_q = serial_read_q
         self._serial_write_q = serial_write_q
-        self._port = port
+        self.__port = port
 
     def list_ports(self):
         """
@@ -50,18 +51,17 @@ class SerialTask(object):
 
         return modi_ports
 
-    def connect_serial(self):
-        # Sereial Connection Once
-        if self._port is None:
+    def open_serial(self):
+        if self.__port is None:
             ports = self.list_ports()
             if len(ports) > 0:
                 self._serial = serial.Serial(ports[0].device, 921600)
             else:
                 raise serial.SerialException("No MODI network module connected.")
         else:
-            self._serial = serial.Serial(self._port, 921600)
+            self._serial = serial.Serial(self.__port, 921600)
 
-    def disconnect_serial(self):
+    def close_serial(self):
         self._serial.close()
 
     def start_thread(self):
@@ -81,7 +81,7 @@ class SerialTask(object):
     def __write_serial(self):
         try:
             write_temp = self._serial_write_q.get_nowait().encode()
-        except queue.Empty:
+        except Empty:
             pass
         else:
             self._serial.write(write_temp)

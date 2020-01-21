@@ -10,6 +10,14 @@ from modi.module.module import InputModule
 
 
 class Gyro(InputModule):
+
+    """
+    :param int id: The id of the module.
+    :param int uuid: The uuid of the module.
+    :param modi: The :class:`~modi.modi.MODI` instance.
+    :type modi: :class:`~modi.modi.MODI`
+    """
+
     class PropertyType(Enum):
         ROLL = 2
         PITCH = 3
@@ -21,14 +29,6 @@ class Gyro(InputModule):
         ACCELERATION_Y = 9
         ACCELERATION_Z = 10
         VIBRATION = 11
-
-    """
-    :param int id: The id of the module.
-    :param int uuid: The uuid of the module.
-    :param modi: The :class:`~modi.modi.MODI` instance.
-    :type modi: :class:`~modi.modi.MODI`
-    """
-    property_types = PropertyType
 
     def __init__(self, id, uuid, modi, serial_write_q):
         super(Gyro, self).__init__(id, uuid, modi, serial_write_q)
@@ -100,8 +100,6 @@ class Gyro(InputModule):
 
     def acceleration_z(self):
         """
-
-        
         :return: Z-axis acceleration.
         :rtype: float
         """

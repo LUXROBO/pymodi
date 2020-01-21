@@ -4,22 +4,21 @@
 
 from __future__ import absolute_import
 
-import multiprocessing
-from multiprocessing import Process, Queue
-import threading
-
 import json
 import time
+import queue
 import base64
 import struct
-import queue
+import threading
+
+from multiprocessing import Process, Queue, Event
 
 from modi._serial_task import SerialTask
 from modi._serial_parsing_task import ParsingTask
 from modi._json_excute_task import ExcuteTask
 
 
-class MODIProcess(multiprocessing.Process):
+class MODIProcess(Process):
     def __init__(self):
         super(MODIProcess, self).__init__()
 
@@ -27,54 +26,54 @@ class MODIProcess(multiprocessing.Process):
 class SerialProcess(MODIProcess):
     def __init__(self, serial_read_q, serial_write_q, port):
         super(SerialProcess, self).__init__()
-        self._SerialTask = SerialTask(serial_read_q, serial_write_q, port)
-        self._stop = multiprocessing.Event()
+        self.__SerialTask = SerialTask(serial_read_q, serial_write_q, port)
+        self.__stop = Event()
 
     def run(self):
-        self._SerialTask.connect_serial()
+        self.__SerialTask.open_serial()
         while not self.stopped():
-            self._SerialTask.start_thread()
-        self._SerialTask.disconnect_serial()
-        print("Serial Process End")
+            self.__SerialTask.start_thread()
+        self.__SerialTask.close_serial()
+        print("SerProc terminates")
 
     def stop(self):
-        self._stop.set()
+        self.__stop.set()
 
     def stopped(self):
-        return self._stop.is_set()
+        return self.__stop.is_set()
 
 
 class ParsingProcess(MODIProcess):
     def __init__(self, serial_read_q, recv_q):
         super(ParsingProcess, self).__init__()
-        self._ParsingTask = ParsingTask(serial_read_q, recv_q)
-        self._stop = multiprocessing.Event()
+        self.__ParsingTask = ParsingTask(serial_read_q, recv_q)
+        self.__stop = Event()
 
     def run(self):
         while not self.stopped():
-            self._ParsingTask.start_thread()
-        print("Parsing Process End")
+            self.__ParsingTask.start_thread()
+        print("ParProc terminates")
 
     def stop(self):
-        self._stop.set()
+        self.__stop.set()
 
     def stopped(self):
-        return self._stop.is_set()
+        return self.__stop.is_set()
 
 
 class ExeThread(threading.Thread):
     def __init__(self, serial_write_q, recv_q, ids, modules, cmd):
         super(ExeThread, self).__init__()
-        self._ExcuteTask = ExcuteTask(serial_write_q, recv_q, ids, modules, cmd)
-        self._stop = threading.Event()
+        self.__ExcuteTask = ExcuteTask(serial_write_q, recv_q, ids, modules, cmd)
+        self.__stop = threading.Event()
 
     def run(self):
         while not self.stopped():
-            self._ExcuteTask.start_thread()
-        print("Excute Process End")
+            self.__ExcuteTask.start_thread()
+        print("ExeThrd terminates")
 
     def stop(self):
-        self._stop.set()
+        self.__stop.set()
 
     def stopped(self):
-        return self._stop.isSet()
+        return self.__stop.is_set()

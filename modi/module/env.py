@@ -8,15 +8,6 @@ from enum import Enum
 from modi.module.module import InputModule
 
 
-class PropertyType(Enum):
-    TEMPERATURE = 6
-    HUMIDITY = 7
-    BRIGHTNESS = 2
-    RED = 3
-    GREEN = 4
-    BLUE = 5
-
-
 class Env(InputModule):
     """
     :param int id: The id of the module.
@@ -25,7 +16,13 @@ class Env(InputModule):
     :type modi: :class:`~modi.modi.MODI`
     """
 
-    property_types = PropertyType
+    class PropertyType(Enum):
+        TEMPERATURE = 6
+        HUMIDITY = 7
+        BRIGHTNESS = 2
+        RED = 3
+        GREEN = 4
+        BLUE = 5
 
     def __init__(self, id, uuid, modi, serial_write_q):
         super(Env, self).__init__(id, uuid, modi, serial_write_q)
@@ -36,39 +33,39 @@ class Env(InputModule):
         :return: Temperature.
         :rtype: float
         """
-        return self._write_property(PropertyType.TEMPERATURE)
+        return self._write_property(self.PropertyType.TEMPERATURE)
 
     def humidity(self):
         """
         :return: Humidity.
         :rtype: float
         """
-        return self._write_property(PropertyType.HUMIDITY)
+        return self._write_property(self.PropertyType.HUMIDITY)
 
     def brightness(self):
         """
         :return: Brightness.
         :rtype: float
         """
-        return self._write_property(PropertyType.BRIGHTNESS)
+        return self._write_property(self.PropertyType.BRIGHTNESS)
 
     def red(self):
         """
         :return: Red component of light.
         :rtype: float
         """
-        return self._write_property(PropertyType.RED)
+        return self._write_property(self.PropertyType.RED)
 
     def green(self):
         """
         :return: Green component of light.
         :rtype: float
         """
-        return self._write_property(PropertyType.GREEN)
+        return self._write_property(self.PropertyType.GREEN)
 
     def blue(self):
         """
         :return: Blue component of light.
         :rtype: float
         """
-        return self._write_property(PropertyType.BLUE)
+        return self._write_property(self.PropertyType.BLUE)
