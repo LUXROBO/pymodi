@@ -31,18 +31,18 @@ class Display(OutputModule):
         :param text: Text to display.
         """
         self.clear()
-
-        for string in self._command.set_property(
+        msgs = self._command.set_property(
             self.id, 17, text, self._command.PropertyDataType.STRING
-        ):
-            self._serial_write_q.put(string)
+        )
+        for msg_str in msgs:
+            self._serial_write_q.put(msg_str)
+        return msgs
 
     def variable(self, var, axisx, axisy):
         """
         :param variable: variable to display.
         """
         self.clear()
-
         string = self._command.set_property(
             self.id, 22, (var, axisx, axisy), self._command.PropertyDataType.DISPLAY_Var
         )
