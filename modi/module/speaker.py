@@ -126,9 +126,7 @@ class Speaker(OutputModule):
         :return: Tuple of frequency and volume.
         :rtype: tuple
         """
-        if frequency is None and volume is None:
-            return (self.frequency(), self.volume())
-        else:
+        if frequency is not None or volume is not None:
             self._serial_write_q.put(
                 self._command.set_property(
                     self.id,
@@ -140,6 +138,7 @@ class Speaker(OutputModule):
                     self._command.PropertyDataType.FLOAT,
                 )
             )
+        return self.frequency(), self.volume()
 
     def frequency(self, frequency=None):
         """
@@ -153,7 +152,7 @@ class Speaker(OutputModule):
         if frequency is None:
             return self._write_property(self.PropertyType.FREQUENCY)
         else:
-            self.tune(frequency=frequency)
+            return self.tune(frequency=frequency)
 
     def volume(self, volume=None):
         """
@@ -167,7 +166,7 @@ class Speaker(OutputModule):
         if volume is None:
             return self._write_property(self.PropertyType.VOLUME)
         else:
-            self.tune(volume=volume)
+            return self.tune(volume=volume)
 
     def off(self):
         """Turn off.
