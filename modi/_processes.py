@@ -35,6 +35,7 @@ class SerialProcess(MODIProcess):
         while not self.stopped():
             self._SerialTask.start_thread()
         self._SerialTask.disconnect_serial()
+        print("Serial Process End")
 
     def stop(self):
         self._stop.set()

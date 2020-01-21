@@ -144,7 +144,7 @@ class Command(object):
         property_bytes = bytearray(4)
 
         property_bytes[0] = property_type
-        property_bytes[2] = 97
+        property_bytes[2] = 95
 
         msg["b"] = base64.b64encode(bytes(property_bytes)).decode("utf-8")
         msg["l"] = 4

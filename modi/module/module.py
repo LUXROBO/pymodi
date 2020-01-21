@@ -24,6 +24,7 @@ class Module(object):
         self._type = str()
         self._properties = dict()
         self._connected = True
+        self._bat_connected = False
 
     @property
     def id(self):
@@ -40,6 +41,10 @@ class Module(object):
     @property
     def connected(self):
         return self._connected
+
+    @property
+    def bat_connected(self):
+        return self._bat_connected
 
     @property
     def type(self):

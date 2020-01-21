@@ -64,10 +64,13 @@ class ExcuteTask(object):
     def __update_health(self, msg):
         module_id = msg["s"]
         time_ms = int(time.time() * 1000)
+        decoded = bytearray(base64.b64decode(msg["b"]))
 
         self._ids[module_id] = self._ids.get(module_id, dict())
         self._ids[module_id]["timestamp"] = time_ms
         self._ids[module_id]["uuid"] = self._ids[module_id].get("uuid", str())
+        self._ids[module_id]["battery"] = int(decoded[3])
+        print(module_id, self._ids[module_id]["battery"])
 
         if not self._ids[module_id]["uuid"]:
             write_temp = self._cmd.request_uuid(module_id)
@@ -84,7 +87,7 @@ class ExcuteTask(object):
                 )
                 if module:
                     module.set_connected(False)
-                    print("disconecting : ", module)
+                    print("disconnecting : ", module)
 
     def __update_modules(self, msg):
         time_ms = int(time.time() * 1000)
@@ -110,9 +113,10 @@ class ExcuteTask(object):
             info, ((data1[3] << 24) + (data1[2] << 16) + (data1[1] << 8) + data1[0])
         )
 
-        moduledict = self._ids[module_id]
-        moduledict["uuid"] = uuid
-        self._ids[module_id] = moduledict
+        # moduledict = self._ids[module_id]
+        # moduledict["uuid"] = uuid
+        # self._ids[module_id] = moduledict
+        self._ids[module_id]["uuid"] = uuid
 
         # handling re-connected modules
         for module in self._modules:
