@@ -3,26 +3,25 @@
 
 """Tests for `modi` package."""
 
-# must
 import modi
 import time
 import unittest
-
-# from modi import a
 
 
 class TestModi(unittest.TestCase):
     """Tests for `modi` package."""
 
-    def test_1(self):
+    def setUp(self):
         """Set up test fixtures, if any."""
-        # given, actual, actual
+        pass
 
-    def test_2(self):
+    def tearDown(self):
         """Tear down test fixtures, if any."""
+        pass
 
     def test_something(self):
         """Test something."""
+        pass
 
 
 if __name__ == "__main__":

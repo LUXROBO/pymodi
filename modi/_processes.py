@@ -34,7 +34,7 @@ class SerialProcess(MODIProcess):
         while not self.stopped():
             self.__SerialTask.start_thread()
         self.__SerialTask.close_serial()
-        print("SerProc terminates")
+        # print("SerProc terminates")
 
     def stop(self):
         self.__stop.set()
@@ -52,7 +52,7 @@ class ParsingProcess(MODIProcess):
     def run(self):
         while not self.stopped():
             self.__ParsingTask.start_thread()
-        print("ParProc terminates")
+        # print("ParProc terminates")
 
     def stop(self):
         self.__stop.set()
@@ -70,7 +70,7 @@ class ExeThread(threading.Thread):
     def run(self):
         while not self.stopped():
             self.__ExcuteTask.start_thread()
-        print("ExeThrd terminates")
+        # print("ExeThrd terminates")
 
     def stop(self):
         self.__stop.set()
