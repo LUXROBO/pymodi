@@ -45,7 +45,7 @@ class Motor(OutputModule):
             self._serial_write_q.put(
                 self._command.set_property(
                     self.id,
-                    self.ControlType.INV,
+                    self.ControlType.INV.value,
                     (channel, mode, value, 0x00 if value >= 0 else 0xFFFF),
                 )
             )
@@ -63,7 +63,7 @@ class Motor(OutputModule):
             self._serial_write_q.put(
                 self._command.set_property(
                     self.id,
-                    self.ControlType.DEGREE,
+                    self.ControlType.DEGREE.value,
                     (degree, self._write_property(self.PropertyType.FIRST_DEGREE), 0),
                 )
             )
@@ -100,7 +100,9 @@ class Motor(OutputModule):
         if speed is not None:
             self._serial_write_q.put(
                 self._command.set_property(
-                    self.id, self.ControlType.SPEED, (speed, self.first_speed(), 0)
+                    self.id,
+                    self.ControlType.SPEED.value,
+                    (speed, self.first_speed(), 0),
                 )
             )
         else:
@@ -118,7 +120,9 @@ class Motor(OutputModule):
         if speed is not None:
             self._serial_write_q.put(
                 self._command.set_property(
-                    self.id, self.ControlType.SPEED, (self.second_speed(), speed, 0)
+                    self.id,
+                    self.ControlType.SPEED.value,
+                    (self.second_speed(), speed, 0),
                 )
             )
         else:
@@ -136,7 +140,9 @@ class Motor(OutputModule):
         if torque is not None:
             self._serial_write_q.put(
                 self._command.set_property(
-                    self.id, self.ControlType.TORQUE, (torque, self.second_torque(), 0)
+                    self.id,
+                    self.ControlType.TORQUE.value,
+                    (torque, self.second_torque(), 0),
                 )
             )
         else:
@@ -154,7 +160,9 @@ class Motor(OutputModule):
         if torque is not None:
             self._serial_write_q.put(
                 self._command.set_property(
-                    self.id, self.ControlType.TORQUE, (self.first_torque(), torque, 0)
+                    self.id,
+                    self.ControlType.TORQUE.value,
+                    (self.first_torque(), torque, 0),
                 )
             )
         else:
@@ -179,14 +187,15 @@ class Motor(OutputModule):
             )
             self._serial_write_q.put(
                 self._command.set_property(
-                    self.id, self.ControlType.TORQUE, (first_torque, second_torque, 0)
+                    self.id,
+                    self.ControlType.TORQUE.value,
+                    (first_torque, second_torque, 0),
                 )
             )
-        else:
-            return (
-                self._write_property(self.PropertyType.FIRST_TORQUE),
-                self._write_property(self.PropertyType.SECOND_TORQUE),
-            )
+        return (
+            self._write_property(self.PropertyType.FIRST_TORQUE),
+            self._write_property(self.PropertyType.SECOND_TORQUE),
+        )
 
     def speed(self, first_speed=None, second_speed=None):
         """
@@ -203,14 +212,15 @@ class Motor(OutputModule):
             second_speed = self.second_speed() if second_speed is None else second_speed
             self._serial_write_q.put(
                 self._command.set_property(
-                    self.id, self.ControlType.SPEED, (first_speed, second_speed, 0)
+                    self.id,
+                    self.ControlType.SPEED.value,
+                    (first_speed, second_speed, 0),
                 )
             )
-        else:
-            return (
-                self._write_property(self.PropertyType.FIRST_SPEED),
-                self._write_property(self.PropertyType.SECOND_SPEED),
-            )
+        return (
+            self._write_property(self.PropertyType.FIRST_SPEED),
+            self._write_property(self.PropertyType.SECOND_SPEED),
+        )
 
     def degree(self, first_degree=None, second_degree=None):
         """
@@ -229,11 +239,12 @@ class Motor(OutputModule):
             )
             self._serial_write_q.put(
                 self._command.set_property(
-                    self.id, self.ControlType.DEGREE, (first_degree, second_degree, 0)
+                    self.id,
+                    self.ControlType.DEGREE.value,
+                    (first_degree, second_degree, 0),
                 )
             )
-        else:
-            return (
-                self._write_property(self.PropertyType.FIRST_DEGREE),
-                self._write_property(self.PropertyType.SECOND_DEGREE),
-            )
+        return (
+            self._write_property(self.PropertyType.FIRST_DEGREE),
+            self._write_property(self.PropertyType.SECOND_DEGREE),
+        )
