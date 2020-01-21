@@ -22,8 +22,8 @@ class TestSpeaker(unittest.TestCase):
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
-        self.modi_inst.exit()
         self.speaker.tune(0, 0)
+        self.modi_inst.exit()
         time.sleep(1)
 
     def test_init(self):

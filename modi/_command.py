@@ -72,10 +72,10 @@ class Command(object):
             msg["d"] = dst_id
 
             state_bytes = bytearray(2)
-            state_bytes[0] = state.value  # set state instruction 에서 Module State 지정 바이트
-            state_bytes[
-                1
-            ] = pnp.value  # set state instruction 에서 Module Plug & Play 지정 바이트
+            state_bytes[0] = state.value
+            # set state instruction 에서 Module State 지정 바이트
+            state_bytes[1] = pnp.value
+            # set state instruction 에서 Module Plug & Play 지정 바이트
 
             msg["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
             msg["l"] = 2
