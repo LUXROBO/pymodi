@@ -16,7 +16,13 @@ class TestModi(unittest.TestCase):
 
     def test_1(self):
         """Set up test fixtures, if any."""
-        # given, actual, actual
+        bundle = modi.MODI()
+        ir = bundle.irs[0]
+        for _ in range(100):
+
+            print(ir.distance())
+            time.sleep(0.1)
+        bundle.exit()
 
     def test_2(self):
         """Tear down test fixtures, if any."""

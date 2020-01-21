@@ -16,7 +16,17 @@ class TestModi(unittest.TestCase):
 
     def test_1(self):
         """Set up test fixtures, if any."""
-        # given, actual, actual
+        bundle = modi.MODI()
+        button = bundle.buttons[0]
+        for _ in range(100):
+            print(
+                button.clicked(),
+                button.double_clicked(),
+                button.pressed(),
+                button.toggled(),
+            )
+            time.sleep(0.1)
+        bundle.exit()
 
     def test_2(self):
         """Tear down test fixtures, if any."""

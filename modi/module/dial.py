@@ -19,6 +19,7 @@ class Dial(InputModule):
 
     class PropertyType(Enum):
         DEGREE = 2
+        TURNSPEED = 3
 
     def __init__(self, id, uuid, modi, serial_write_q):
         super(Dial, self).__init__(id, uuid, modi, serial_write_q)
@@ -30,3 +31,6 @@ class Dial(InputModule):
         :rtype: float
         """
         return self._write_property(self.PropertyType.DEGREE)
+
+    def turnspeed(self):
+        return self._write_property(self.PropertyType.TURNSPEED)

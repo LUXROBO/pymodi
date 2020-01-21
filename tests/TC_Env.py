@@ -16,7 +16,20 @@ class TestModi(unittest.TestCase):
 
     def test_1(self):
         """Set up test fixtures, if any."""
-        # given, actual, actual
+        bundle = modi.MODI()
+        env = bundle.envs[0]
+        for _ in range(100):
+
+            print(
+                env.temperature(),
+                env.humidity(),
+                env.brightness(),
+                env.red(),
+                env.green(),
+                env.blue(),
+            )
+            time.sleep(0.1)
+        bundle.exit()
 
     def test_2(self):
         """Tear down test fixtures, if any."""
