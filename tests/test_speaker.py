@@ -13,9 +13,6 @@ from modi.module.speaker import Speaker
 class TestSpeaker(unittest.TestCase):
     """Tests for `Speaker` class."""
 
-    modi_inst = None
-    speaker = None
-
     def setUp(self):
         """Set up test fixtures, if any."""
         self.modi_inst = modi.MODI()

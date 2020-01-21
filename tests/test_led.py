@@ -11,9 +11,6 @@ import unittest
 class TestLed(unittest.TestCase):
     """Tests for `Led` class."""
 
-    modi_inst = None
-    led = None
-
     def setUp(self):
         """Set up test fixtures, if any."""
         self.modi_inst = modi.MODI()

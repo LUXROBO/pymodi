@@ -13,9 +13,6 @@ import unittest
 class TestDisplay(unittest.TestCase):
     """Tests for `Display` class."""
 
-    modi_inst = None
-    display = None
-
     def setUp(self):
         """Set up test fixtures, if any."""
         self.modi_inst = modi.MODI()
