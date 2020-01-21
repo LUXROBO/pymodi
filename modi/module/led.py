@@ -42,12 +42,9 @@ class Led(OutputModule):
         :return: Tuple of red, green and blue.
         :rtype: tuple
         """
-        cmd = self._modi._cmd
-        if red is None and green is None and blue is None:
-            return (self.red(), self.green(), self.blue())
-        else:
+        if not (red is None and green is None and blue is None):
             self._serial_write_q.put(
-                cmd.set_property(
+                self._command.set_property(
                     self.id,
                     16,
                     (
@@ -57,16 +54,17 @@ class Led(OutputModule):
                     ),
                 )
             )
+        return self.red(), self.green(), self.blue()
 
     def on(self):
         """Turn on at maximum brightness.
         """
-        self.rgb(255, 255, 255)
+        return self.rgb(255, 255, 255)
 
     def off(self):
         """Turn off.
         """
-        self.rgb(0, 0, 0)
+        return self.rgb(0, 0, 0)
 
     def red(self, red=None):
         """
@@ -77,10 +75,9 @@ class Led(OutputModule):
         :return: Red component.
         :rtype: float
         """
-        if red is None:
-            return self._write_property(self.PropertyType.RED)
-        else:
+        if red is not None:
             self.rgb(red=red)
+        return self._write_property(self.PropertyType.RED)
 
     def green(self, green=None):
         """
@@ -91,10 +88,9 @@ class Led(OutputModule):
         :return: Green component.
         :rtype: float
         """
-        if green is None:
-            return self._write_property(self.PropertyType.GREEN)
-        else:
+        if green is not None:
             self.rgb(green=green)
+        return self._write_property(self.PropertyType.GREEN)
 
     def blue(self, blue=None):
         """
@@ -105,7 +101,6 @@ class Led(OutputModule):
         :return: Blue component.
         :rtype: float
         """
-        if blue is None:
-            return self._write_property(self.PropertyType.BLUE)
-        else:
+        if blue is not None:
             self.rgb(blue=blue)
+        return self._write_property(self.PropertyType.BLUE)
