@@ -3,7 +3,6 @@
 
 """Tests for `modi` package."""
 
-# must
 import modi
 import unittest
 import time
@@ -12,6 +11,8 @@ from modi.module.speaker import Speaker
 
 
 class TestSpeaker(unittest.TestCase):
+    """Tests for `Speaker` class."""
+
     modi_inst = None
     speaker = None
 

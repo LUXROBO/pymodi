@@ -11,6 +11,8 @@ from modi.module.motor import Motor
 
 
 class TestMotor(unittest.TestCase):
+    """Tests for `Motor` class."""
+
     modi_inst = None
     motor = None
 

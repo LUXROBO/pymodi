@@ -8,8 +8,11 @@ import time
 import unittest
 
 
-class TestModi(unittest.TestCase):
-    """Tests for `modi` package."""
+class TestLed(unittest.TestCase):
+    """Tests for `Led` class."""
+
+    modi = None
+    led = None
 
     def setUp(self):
         """Set up test fixtures, if any."""
