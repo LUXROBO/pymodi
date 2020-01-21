@@ -31,7 +31,7 @@ class TestSpeaker(unittest.TestCase):
         self.assertIsInstance(self.speaker, Speaker)
 
     def test_basic_tune(self):
-        """Test something."""
+        """Test tune method with pre-defined inputs"""
         expected_values = (self.speaker.Scale.F_RA_6.value, 50)
         self.speaker.tune(*expected_values)
         # TODO: remove delaying function
@@ -39,8 +39,13 @@ class TestSpeaker(unittest.TestCase):
         actual_values = self.speaker.tune()
         self.assertEqual(expected_values, actual_values)
 
-    # def test_custom_tune(self):
-    #    """Test something."""
+    def test_custom_tune(self):
+        """Test tune method with custom inputs"""
+        expected_values = (2350, 50)
+        self.speaker.tune(*expected_values)
+        time.sleep(3)
+        actual_values = self.speaker.tune()
+        self.assertEqual(expected_values, actual_values)
 
     # def test_get_volume(self):
     #    """Test something."""
