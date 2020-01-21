@@ -35,7 +35,7 @@ class TestSpeaker(unittest.TestCase):
         expected_values = (self.speaker.Scale.F_RA_6.value, 50)
         self.speaker.tune(*expected_values)
         # TODO: remove delaying function
-        time.sleep(3)
+        time.sleep(2)
         actual_values = self.speaker.tune()
         self.assertEqual(expected_values, actual_values)
 
@@ -43,15 +43,25 @@ class TestSpeaker(unittest.TestCase):
         """Test tune method with custom inputs"""
         expected_values = (2350, 50)
         self.speaker.tune(*expected_values)
-        time.sleep(3)
+        time.sleep(2)
         actual_values = self.speaker.tune()
         self.assertEqual(expected_values, actual_values)
 
-    # def test_get_volume(self):
-    #    """Test something."""
+    def test_get_frequency(self):
+        """Test frequency method"""
+        expected_frequncy = self.speaker.Scale.F_RA_6.value
+        self.speaker.frequency(frequency=expected_frequncy)
+        time.sleep(2)
+        actual_frequency = self.speaker.frequency()
+        self.assertEqual(expected_frequncy, actual_frequency)
 
-    # def test_get_frequency(self):
-    #    """Test something."""
+    def test_get_volume(self):
+        """Test volume method"""
+        expected_volume = 70
+        self.speaker.volume(expected_volume)
+        time.sleep(2)
+        actual_volume = self.speaker.volume()
+        self.assertEqual(expected_volume, actual_volume)
 
 
 if __name__ == "__main__":
