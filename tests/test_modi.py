@@ -13,11 +13,11 @@ import unittest
 class TestModi(unittest.TestCase):
     """Tests for `modi` package."""
 
-    def test_(self):
+    def test_1(self):
         """Set up test fixtures, if any."""
         # given, actual, actual
 
-    def test_(self):
+    def test_2(self):
         """Tear down test fixtures, if any."""
 
     def test_something(self):
