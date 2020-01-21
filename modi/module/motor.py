@@ -49,6 +49,11 @@ class Motor(OutputModule):
                     (channel, mode, value, 0x00 if value >= 0 else 0xFFFF),
                 )
             )
+        # TODO: implement return statement below
+        # return (
+        #    self._write_property(self.PropertyType.?),
+        #    self._write_property(self.PropertyType.?),
+        # )
 
     def first_degree(self, degree=None):
         """
