@@ -4,9 +4,9 @@
 
 from __future__ import absolute_import
 
+import time
 import serial
 import serial.tools.list_ports as stl
-import time
 
 from queue import Empty
 

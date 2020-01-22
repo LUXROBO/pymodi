@@ -8,7 +8,7 @@ import os
 import time
 import serial
 
-from modi._processes import SerialProcess, ParsingProcess, ExeThread
+from modi._processes import SerialProcess, ParserProcess, ExecutableThread
 from modi._command import Command
 from modi.module import (
     button,
@@ -70,12 +70,12 @@ class MODI:
         self._ser_proc.start()
 
         # print("ParProc Start")
-        self._par_proc = ParsingProcess(self._serial_read_q, self._recv_q)
+        self._par_proc = ParserProcess(self._serial_read_q, self._recv_q)
         self._par_proc.daemon = True
         self._par_proc.start()
 
         # print("ExcProc Start")
-        self._exe_thrd = ExeThread(
+        self._exe_thrd = ExecutableThread(
             self._serial_write_q, self._recv_q, self._src_ids, self._modules, self._cmd
         )
         self._exe_thrd.daemon = True

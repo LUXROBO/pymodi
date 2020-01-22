@@ -14,8 +14,8 @@ import threading
 from multiprocessing import Process, Queue, Event
 
 from modi._serial_task import SerialTask
-from modi._serial_parsing_task import ParsingTask
-from modi._json_excute_task import ExcuteTask
+from modi._serial_parsing_task import ParserTask
+from modi._json_excute_task import ExcutableTask
 
 
 class MODIProcess(Process):
@@ -43,10 +43,10 @@ class SerialProcess(MODIProcess):
         return self.__stop.is_set()
 
 
-class ParsingProcess(MODIProcess):
+class ParserProcess(MODIProcess):
     def __init__(self, serial_read_q, recv_q):
-        super(ParsingProcess, self).__init__()
-        self.__ParsingTask = ParsingTask(serial_read_q, recv_q)
+        super(ParserProcess, self).__init__()
+        self.__ParsingTask = ParserTask(serial_read_q, recv_q)
         self.__stop = Event()
 
     def run(self):
@@ -61,15 +61,15 @@ class ParsingProcess(MODIProcess):
         return self.__stop.is_set()
 
 
-class ExeThread(threading.Thread):
+class ExecutableThread(threading.Thread):
     def __init__(self, serial_write_q, recv_q, ids, modules, cmd):
-        super(ExeThread, self).__init__()
-        self.__ExcuteTask = ExcuteTask(serial_write_q, recv_q, ids, modules, cmd)
+        super(ExecutableThread, self).__init__()
+        self.__ExcutableTask = ExcutableTask(serial_write_q, recv_q, ids, modules, cmd)
         self.__stop = threading.Event()
 
     def run(self):
         while not self.stopped():
-            self.__ExcuteTask.start_thread()
+            self.__ExcutableTask.start_thread()
         # print("ExeThrd terminates")
 
     def stop(self):

@@ -9,9 +9,9 @@ import time
 import queue
 
 
-class ParsingTask(object):
+class ParserTask(object):
     def __init__(self, serial_read_q, recv_q):
-        super(ParsingTask, self).__init__()
+        super(ParserTask, self).__init__()
         self._serial_read_q = serial_read_q
         self._recv_q = recv_q
 

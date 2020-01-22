@@ -26,7 +26,7 @@ from modi.module import (
 )
 
 
-class ExcuteTask(object):
+class ExcutableTask(object):
 
     # variables shared across all class instances
     categories = ["network", "input", "output"]
@@ -37,7 +37,7 @@ class ExcuteTask(object):
     }
 
     def __init__(self, serial_write_q, recv_q, ids, modules, cmd):
-        super(ExcuteTask, self).__init__()
+        super(ExcutableTask, self).__init__()
         self._serial_write_q = serial_write_q
         self._recv_q = recv_q
         self._ids = ids
@@ -45,7 +45,6 @@ class ExcuteTask(object):
         self._cmd = cmd
 
     def start_thread(self):
-
         try:
             msg = json.loads(self._recv_q.get_nowait())
         except queue.Empty:
