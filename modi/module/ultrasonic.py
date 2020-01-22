@@ -29,4 +29,4 @@ class Ultrasonic(InputModule):
         :return: Distance to object.
         :rtype: float
         """
-        return self._write_property(self.PropertyType.DISTANCE)
+        return self._get_property(self.PropertyType.DISTANCE)

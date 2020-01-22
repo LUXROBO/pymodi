@@ -75,7 +75,7 @@ class ExcuteTask(object):
         if not self._ids[module_id]["uuid"]:
             write_temp = self._cmd.request_uuid(module_id)
             self._serial_write_q.put(write_temp)
-            write_temp = self._cmd.request_network_uuid(module_id)
+            write_temp = self._cmd.request_uuid(module_id, is_network=True)
             self._serial_write_q.put(write_temp)
 
         for module_id, info in list(self._ids.items()):
@@ -163,12 +163,12 @@ class ExcuteTask(object):
         pnp_state = self._cmd.ModulePnp.ON if pnp_on else self._cmd.ModulePnp.OFF
         if module_id is None:
             for curr_module_id in self._ids:
-                pnp_temp = self._cmd.module_state(
+                pnp_temp = self._cmd.set_module_state(
                     curr_module_id, self._cmd.ModuleState.RUN, pnp_state
                 )
                 self._serial_write_q.put(pnp_temp)
         else:
-            pnp_temp = self._cmd.module_state(
+            pnp_temp = self._cmd.set_module_state(
                 module_id, self._cmd.ModuleState.RUN, pnp_state
             )
             self._serial_write_q.put(pnp_temp)

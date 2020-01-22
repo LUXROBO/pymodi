@@ -30,11 +30,11 @@ class Mic(InputModule):
         :return: Volume of input sound.
         :rtype: float
         """
-        return self._write_property(self.PropertyType.VOLUME)
+        return self._get_property(self.PropertyType.VOLUME)
 
     def frequency(self):
         """
         :return: Frequency of input sound.
         :rtype: float
         """
-        return self._write_property(self.PropertyType.FREQUENCY)
+        return self._get_property(self.PropertyType.FREQUENCY)

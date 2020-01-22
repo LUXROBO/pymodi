@@ -51,8 +51,8 @@ class Motor(OutputModule):
             )
         # TODO: implement return statement below
         # return (
-        #    self._write_property(self.PropertyType.?),
-        #    self._write_property(self.PropertyType.?),
+        #    self._get_property(self.PropertyType.?),
+        #    self._get_property(self.PropertyType.?),
         # )
 
     def first_degree(self, degree=None):
@@ -69,11 +69,11 @@ class Motor(OutputModule):
                 self._command.set_property(
                     self.id,
                     self.ControlType.DEGREE.value,
-                    (degree, self._write_property(self.PropertyType.FIRST_DEGREE), 0),
+                    (degree, self._get_property(self.PropertyType.FIRST_DEGREE), 0),
                 )
             )
         else:
-            return self._write_property(self.PropertyType.FIRST_DEGREE)
+            return self._get_property(self.PropertyType.FIRST_DEGREE)
 
     def second_degree(self, degree=None):
         """
@@ -91,7 +91,7 @@ class Motor(OutputModule):
                 )
             )
         else:
-            return self._write_property(self.PropertyType.SECOND_DEGREE)
+            return self._get_property(self.PropertyType.SECOND_DEGREE)
 
     def first_speed(self, speed=None):
         """
@@ -111,7 +111,7 @@ class Motor(OutputModule):
                 )
             )
         else:
-            return self._write_property(self.PropertyType.FIRST_DEGREE)
+            return self._get_property(self.PropertyType.FIRST_DEGREE)
 
     def second_speed(self, speed=None):
         """
@@ -131,7 +131,7 @@ class Motor(OutputModule):
                 )
             )
         else:
-            return self._write_property(self.PropertyType.SECOND_DEGREE)
+            return self._get_property(self.PropertyType.SECOND_DEGREE)
 
     def first_torque(self, torque=None):
         """
@@ -151,7 +151,7 @@ class Motor(OutputModule):
                 )
             )
         else:
-            return self._write_property(self.PropertyType.FIRST_TORQUE)
+            return self._get_property(self.PropertyType.FIRST_TORQUE)
 
     def second_torque(self, torque=None):
         """
@@ -171,7 +171,7 @@ class Motor(OutputModule):
                 )
             )
         else:
-            return self._write_property(self.PropertyType.SECOND_TORQUE)
+            return self._get_property(self.PropertyType.SECOND_TORQUE)
 
     def torque(self, first_torque=None, second_torque=None):
         """
@@ -198,8 +198,8 @@ class Motor(OutputModule):
                 )
             )
         return (
-            self._write_property(self.PropertyType.FIRST_TORQUE),
-            self._write_property(self.PropertyType.SECOND_TORQUE),
+            self._get_property(self.PropertyType.FIRST_TORQUE),
+            self._get_property(self.PropertyType.SECOND_TORQUE),
         )
 
     def speed(self, first_speed=None, second_speed=None):
@@ -223,8 +223,8 @@ class Motor(OutputModule):
                 )
             )
         return (
-            self._write_property(self.PropertyType.FIRST_SPEED),
-            self._write_property(self.PropertyType.SECOND_SPEED),
+            self._get_property(self.PropertyType.FIRST_SPEED),
+            self._get_property(self.PropertyType.SECOND_SPEED),
         )
 
     def degree(self, first_degree=None, second_degree=None):
@@ -250,6 +250,6 @@ class Motor(OutputModule):
                 )
             )
         return (
-            self._write_property(self.PropertyType.FIRST_DEGREE),
-            self._write_property(self.PropertyType.SECOND_DEGREE),
+            self._get_property(self.PropertyType.FIRST_DEGREE),
+            self._get_property(self.PropertyType.SECOND_DEGREE),
         )

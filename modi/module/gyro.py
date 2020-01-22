@@ -40,7 +40,7 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(self.PropertyType.ROLL)
+        return self._get_property(self.PropertyType.ROLL)
 
     def pitch(self):
         """
@@ -48,7 +48,7 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(self.PropertyType.PITCH)
+        return self._get_property(self.PropertyType.PITCH)
 
     def yaw(self):
         """
@@ -56,7 +56,7 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(self.PropertyType.YAW)
+        return self._get_property(self.PropertyType.YAW)
 
     def angular_vel_x(self):
         """
@@ -64,7 +64,7 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(self.PropertyType.ANGULAR_VEL_X)
+        return self._get_property(self.PropertyType.ANGULAR_VEL_X)
 
     def angular_vel_y(self):
         """
@@ -72,7 +72,7 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(self.PropertyType.ANGULAR_VEL_Y)
+        return self._get_property(self.PropertyType.ANGULAR_VEL_Y)
 
     def angular_vel_z(self):
         """
@@ -80,7 +80,7 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(self.PropertyType.ANGULAR_VEL_Z)
+        return self._get_property(self.PropertyType.ANGULAR_VEL_Z)
 
     def acceleration_x(self):
         """
@@ -88,7 +88,7 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(self.PropertyType.ACCELERATION_X)
+        return self._get_property(self.PropertyType.ACCELERATION_X)
 
     def acceleration_y(self):
         """
@@ -96,7 +96,7 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(self.PropertyType.ACCELERATION_Y)
+        return self._get_property(self.PropertyType.ACCELERATION_Y)
 
     def acceleration_z(self):
         """
@@ -104,7 +104,7 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(self.PropertyType.ACCELERATION_Z)
+        return self._get_property(self.PropertyType.ACCELERATION_Z)
 
     def vibration(self):
         """
@@ -112,4 +112,4 @@ class Gyro(InputModule):
         :rtype: float
         """
 
-        return self._write_property(self.PropertyType.VIBRATION)
+        return self._get_property(self.PropertyType.VIBRATION)

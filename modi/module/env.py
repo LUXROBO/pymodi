@@ -33,39 +33,39 @@ class Env(InputModule):
         :return: Temperature.
         :rtype: float
         """
-        return self._write_property(self.PropertyType.TEMPERATURE)
+        return self._get_property(self.PropertyType.TEMPERATURE)
 
     def humidity(self):
         """
         :return: Humidity.
         :rtype: float
         """
-        return self._write_property(self.PropertyType.HUMIDITY)
+        return self._get_property(self.PropertyType.HUMIDITY)
 
     def brightness(self):
         """
         :return: Brightness.
         :rtype: float
         """
-        return self._write_property(self.PropertyType.BRIGHTNESS)
+        return self._get_property(self.PropertyType.BRIGHTNESS)
 
     def red(self):
         """
         :return: Red component of light.
         :rtype: float
         """
-        return self._write_property(self.PropertyType.RED)
+        return self._get_property(self.PropertyType.RED)
 
     def green(self):
         """
         :return: Green component of light.
         :rtype: float
         """
-        return self._write_property(self.PropertyType.GREEN)
+        return self._get_property(self.PropertyType.GREEN)
 
     def blue(self):
         """
         :return: Blue component of light.
         :rtype: float
         """
-        return self._write_property(self.PropertyType.BLUE)
+        return self._get_property(self.PropertyType.BLUE)

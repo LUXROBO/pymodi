@@ -77,7 +77,7 @@ class Led(OutputModule):
         """
         if red is not None:
             self.rgb(red=red)
-        return self._write_property(self.PropertyType.RED)
+        return self._get_property(self.PropertyType.RED)
 
     def green(self, green=None):
         """
@@ -90,7 +90,7 @@ class Led(OutputModule):
         """
         if green is not None:
             self.rgb(green=green)
-        return self._write_property(self.PropertyType.GREEN)
+        return self._get_property(self.PropertyType.GREEN)
 
     def blue(self, blue=None):
         """
@@ -103,4 +103,4 @@ class Led(OutputModule):
         """
         if blue is not None:
             self.rgb(blue=blue)
-        return self._write_property(self.PropertyType.BLUE)
+        return self._get_property(self.PropertyType.BLUE)

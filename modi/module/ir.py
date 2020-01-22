@@ -30,11 +30,11 @@ class Ir(InputModule):
         :return: Distance to object.
         :rtype: float
         """
-        return self._write_property(self.PropertyType.DISTANCE)
+        return self._get_property(self.PropertyType.DISTANCE)
 
     def brightness(self):
         """
         :return: Brightness.
         :rtype: float
         """
-        return self._write_property(self.PropertyType.BRIGHTNESS)
+        return self._get_property(self.PropertyType.BRIGHTNESS)

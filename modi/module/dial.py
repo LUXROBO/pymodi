@@ -30,7 +30,7 @@ class Dial(InputModule):
         :return: The dial's angle.
         :rtype: float
         """
-        return self._write_property(self.PropertyType.DEGREE)
+        return self._get_property(self.PropertyType.DEGREE)
 
     def turnspeed(self):
-        return self._write_property(self.PropertyType.TURNSPEED)
+        return self._get_property(self.PropertyType.TURNSPEED)

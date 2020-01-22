@@ -150,7 +150,7 @@ class Speaker(OutputModule):
         :rtype: float
         """
         if frequency is None:
-            return self._write_property(self.PropertyType.FREQUENCY)
+            return self._get_property(self.PropertyType.FREQUENCY)
         else:
             return self.tune(frequency=frequency)
 
@@ -164,7 +164,7 @@ class Speaker(OutputModule):
         :rtype: float
         """
         if volume is None:
-            return self._write_property(self.PropertyType.VOLUME)
+            return self._get_property(self.PropertyType.VOLUME)
         else:
             return self.tune(volume=volume)
 

@@ -31,10 +31,10 @@ class Command(object):
         RAW = 3
         DISPLAY_Var = 4
 
-    def request_uuid(self, src_id):
+    def request_uuid(self, src_id, is_network=False):
         msg = dict()
 
-        msg["c"] = 0x08
+        msg["c"] = 0x28 if is_network else 0x08
         msg["s"] = src_id
         msg["d"] = 0xFFF
 
@@ -47,23 +47,7 @@ class Command(object):
 
         return json.dumps(msg, separators=(",", ":"))
 
-    def request_network_uuid(self, src_id):
-        msg = dict()
-
-        msg["c"] = 0x28
-        msg["s"] = src_id
-        msg["d"] = 0xFFF
-
-        id_bytes = bytearray(8)
-        id_bytes[0] = 0xFF
-        id_bytes[1] = 0x0F
-
-        msg["b"] = base64.b64encode(bytes(id_bytes)).decode("utf-8")
-        msg["l"] = 8
-
-        return json.dumps(msg, separators=(",", ":"))
-
-    def module_state(self, dst_id, state, pnp):
+    def set_module_state(self, dst_id, state, pnp):
         if type(state) is self.ModuleState:
             msg = dict()
 
@@ -131,7 +115,7 @@ class Command(object):
 
         return json.dumps(msg, separators=(",", ":"))
 
-    def get_property(self, dst_id, property_type):
+    def request_property(self, dst_id, property_type):
         msg = dict()
 
         msg["c"] = 0x03

@@ -44,22 +44,22 @@ class Module(object):
         return self._connected
 
     @property
-    def mtype(self):
+    def module_type(self):
         return self._type
 
     def set_connected(self, flag):
         self._connected = flag
 
-    def _write_property(self, prop):
+    def _get_property(self, prop):
         if not prop in self._properties.keys():
             self._properties[prop] = Prop()
-            modi_serialtemp = self._modi._cmd.get_property(self._id, prop.value)
+            modi_serialtemp = self._modi._cmd.request_property(self._id, prop.value)
             self._serial_write_q.put(modi_serialtemp)
             self._properties[prop].last_request_time = time.time()
 
         duration = time.time() - self._properties[prop].last_update_time
         if duration > 0.5:
-            modi_serialtemp = self._modi._cmd.get_property(self._id, prop.value)
+            modi_serialtemp = self._modi._cmd.request_property(self._id, prop.value)
             self._serial_write_q.put(modi_serialtemp)
             self._properties[prop].last_request_time = time.time()
 
