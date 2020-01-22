@@ -74,16 +74,20 @@ class ExcutableTask(object):
         self._module_ids[module_id]["battery"] = int(msg_decoded[3])
 
         if not self._module_ids[module_id]["uuid"]:
-            write_temp = self._command.request_uuid(module_id, is_network=False)
-            self._serial_write_q.put(write_temp)
-            write_temp = self._command.request_uuid(module_id, is_network=True)
-            self._serial_write_q.put(write_temp)
+            msg_to_write = self._command.request_uuid(
+                module_id, is_network_module=False
+            )
+            self._serial_write_q.put(msg_to_write)
+            msg_to_write = self._command.request_uuid(module_id, is_network_module=True)
+            self._serial_write_q.put(msg_to_write)
 
         for module_id, info in list(self._module_ids.items()):
             if current_time_ms - info["timestamp"] > 2000:
                 for module in self._modules:
                     if module.uuid == info["uuid"]:
-                        module.set_connected(False)
+                        module.set_connection_state(
+                            state=module.ConnectionState.CONNECTED
+                        )
                         print("disconnecting : ", module)
 
     def __update_modules(self, msg):
@@ -96,19 +100,25 @@ class ExcutableTask(object):
             "uuid", str()
         )
 
-        decoded = bytearray(base64.b64decode(msg["b"]))
-        data1 = decoded[:4]
-        data2 = decoded[-4:]
+        msg_decoded = bytearray(base64.b64decode(msg["b"]))
+        module_uuid_bytes = msg_decoded[:4]
+        module_info_bytes = msg_decoded[-4:]
 
-        info = (data2[1] << 8) + data2[0]
+        module_info = (module_info_bytes[1] << 8) + module_info_bytes[0]
 
-        category_idx = info >> 13
-        type_idx = (info >> 4) & 0x1FF
+        module_category_idx = module_info >> 13
+        module_type_idx = (module_info >> 4) & 0x1FF
 
-        category = self.module_categories[category_idx]
-        module_type = self.module_types[category][type_idx]
+        category = self.module_categories[module_category_idx]
+        module_type = self.module_types[category][module_type_idx]
         module_uuid = self.__append_hex(
-            info, ((data1[3] << 24) + (data1[2] << 16) + (data1[1] << 8) + data1[0])
+            module_info,
+            (
+                (module_uuid_bytes[3] << 24)
+                + (module_uuid_bytes[2] << 16)
+                + (module_uuid_bytes[1] << 8)
+                + module_uuid_bytes[0]
+            ),
         )
 
         self._module_ids[module_id]["uuid"] = module_uuid
@@ -116,7 +126,7 @@ class ExcutableTask(object):
         # handling re-connected modules
         for module in self._modules:
             if module.uuid == module_uuid and not module.connected:
-                module.set_connected(True)
+                module.set_connection_state(state=module.ConnectionState.CONNECTED)
 
         # handling newly-connected modules
         if not next(
@@ -128,7 +138,10 @@ class ExcutableTask(object):
                     module_id, module_uuid, self, self._serial_write_q
                 )
 
-                self.__set_pnp(module_id=module_instance.id, pnp_on=False)
+                self.__set_pnp(
+                    module_id=module_instance.id,
+                    module_pnp_state=self._command.ModulePnp.OFF,
+                )
                 self._modules.append(module_instance)
                 self._modules.sort(key=lambda module: module.uuid)
 
@@ -161,21 +174,21 @@ class ExcutableTask(object):
                     property_type, round(struct.unpack("f", bytes(decoded[:4]))[0], 2)
                 )
 
-    def __set_pnp(self, module_id, pnp_on=False):
-        pnp_state = (
-            self._command.ModulePnp.ON if pnp_on else self._command.ModulePnp.OFF
-        )
+    def __set_pnp(self, module_id, module_pnp_state):
+        # pnp_state = (
+        #    self._command.ModulePnp.ON if pnp_on else self._command.ModulePnp.OFF
+        # )
         if module_id is None:
             for curr_module_id in self._module_ids:
-                pnp_temp = self._command.set_module_state(
-                    curr_module_id, self._command.ModuleState.RUN, pnp_state
+                msg_to_write = self._command.set_module_state(
+                    curr_module_id, self._command.ModuleState.RUN, module_pnp_state
                 )
-                self._serial_write_q.put(pnp_temp)
+                self._serial_write_q.put(msg_to_write)
         else:
-            pnp_temp = self._command.set_module_state(
-                module_id, self._command.ModuleState.RUN, pnp_state
+            msg_to_write = self._command.set_module_state(
+                module_id, self._command.ModuleState.RUN, module_pnp_state
             )
-            self._serial_write_q.put(pnp_temp)
+            self._serial_write_q.put(msg_to_write)
 
     def __append_hex(self, a, b):
         sizeof_b = 0

@@ -31,12 +31,11 @@ class Command(object):
         RAW = 3
         DISPLAY_Var = 4
 
-    def request_uuid(self, src_id, is_network=False):
-
+    def request_uuid(self, src_id, is_network_module=False):
         BROADCAST_ID = 0xFFF
-        msg = dict()
 
-        msg["c"] = 0x28 if is_network else 0x08
+        msg = dict()
+        msg["c"] = 0x28 if is_network_module else 0x08
         msg["s"] = src_id
         msg["d"] = BROADCAST_ID
 
@@ -49,8 +48,8 @@ class Command(object):
 
         return json.dumps(msg, separators=(",", ":"))
 
-    def set_module_state(self, dst_id, state, pnp):
-        if type(state) is self.ModuleState:
+    def set_module_state(self, dst_id, module_state, pnp_state):
+        if type(module_state) is self.ModuleState:
             msg = dict()
 
             msg["c"] = 0x09
@@ -58,8 +57,8 @@ class Command(object):
             msg["d"] = dst_id
 
             state_bytes = bytearray(2)
-            state_bytes[0] = state.value
-            state_bytes[1] = pnp.value
+            state_bytes[0] = module_state.value
+            state_bytes[1] = pnp_state.value
 
             msg["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
             msg["l"] = 2
@@ -79,7 +78,6 @@ class Command(object):
         if datatype is None or datatype == self.PropertyDataType.INT:
             for index, property_value in enumerate(property_values):
                 property_value = int(property_value)
-                # leaves the last 8 bits only
                 property_values_bytes[index * 2] = property_value & 0xFF
                 property_values_bytes[index * 2 + 1] = (property_value & 0xFF00) >> 8
 
@@ -90,7 +88,7 @@ class Command(object):
                 )
 
         elif datatype == self.PropertyDataType.STRING:
-            cmds = list()
+            msgs = list()
             property_value = str(property_values)[:27]
             num_of_chunks = int(len(property_value) / 8) + 1
 
@@ -102,8 +100,8 @@ class Command(object):
                     "utf-8"
                 )
                 msg["l"] = len(property_values_bytes)
-                cmds.append(json.dumps(msg, separators=(",", ":")))
-            return cmds
+                msgs.append(json.dumps(msg, separators=(",", ":")))
+            return msgs
 
         elif datatype == self.PropertyDataType.RAW:
             msg["b"] = base64.b64encode(bytearray(property_values)).decode("utf-8")

@@ -82,21 +82,21 @@ class MODI:
         self.__init_modules()
 
     def __init_modules(self):
-        broadcast_id = 0xFFF
+        BROADCAST_ID = 0xFFF
 
         msg_to_send = self._command.set_module_state(
-            broadcast_id, self._command.ModuleState.REBOOT, self._command.ModulePnp.OFF
+            BROADCAST_ID, self._command.ModuleState.REBOOT, self._command.ModulePnp.OFF
         )
         self._serial_write_q.put(msg_to_send)
         self.__delay()
 
         msg_to_send = self._command.set_module_state(
-            broadcast_id, self._command.ModuleState.RUN, self._command.ModulePnp.OFF
+            BROADCAST_ID, self._command.ModuleState.RUN, self._command.ModulePnp.OFF
         )
         self._serial_write_q.put(msg_to_send)
         self.__delay()
 
-        msg_to_send = self._command.request_uuid(broadcast_id)
+        msg_to_send = self._command.request_uuid(BROADCAST_ID)
         self._serial_write_q.put(msg_to_send)
         self.__delay()
 

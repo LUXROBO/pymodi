@@ -8,7 +8,7 @@ import time
 import serial
 import serial.tools.list_ports as stl
 
-from queue import Empty
+import queue
 
 
 class SerialTask(object):
@@ -77,7 +77,7 @@ class SerialTask(object):
     def __write_serial(self):
         try:
             msg_to_write = self._serial_write_q.get_nowait().encode()
-        except Empty:
+        except queue.Empty:
             pass
         else:
             self._serial.write(msg_to_write)
