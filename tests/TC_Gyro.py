@@ -18,21 +18,25 @@ class TestModi(unittest.TestCase):
         """Set up test fixtures, if any."""
         bundle = modi.MODI()
         gyro = bundle.gyros[0]
-        for _ in range(100):
-
+        now = time.time()
+        past = now
+        # for _ in range(100):
+        while (now - past) < 10:
+            now = time.time()
             print(
                 gyro.roll(),
-                gyro.roll(),
-                gyro.roll(),
-                gyro.roll(),
-                gyro.roll(),
-                gyro.roll(),
-                gyro.roll(),
-                gyro.roll(),
-                gyro.roll(),
-                gyro.roll(),
+                gyro.pitch(),
+                gyro.yaw(),
+                gyro.angular_vel_x(),
+                gyro.angular_vel_y(),
+                gyro.angular_vel_z(),
+                gyro.acceleration_x(),
+                gyro.acceleration_y(),
+                gyro.acceleration_z(),
+                gyro.vibration(),
+                bundle._recv_q.qsize(),
             )
-            time.sleep(0.1)
+            time.sleep(0.01)
         bundle.exit()
 
     def test_2(self):

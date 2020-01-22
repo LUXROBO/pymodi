@@ -21,14 +21,16 @@ class TestDisplay(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
         self.display.clear()
+        time.sleep(0.1)
         self.modi_inst.exit()
         time.sleep(1)
 
     def test_text(self):
         """Test text method"""
         # display text maxlen -> 27
-        expected_text = "abcdefghijklmnopqrstuv"
+        expected_text = "abcdefghijklmnopqrstuvwxyz"
         msg_strs = self.display.text(expected_text)
+        time.sleep(1)
         actual_text = str()
         for msg_str in msg_strs:
             msg_str_frag = msg_str.split('"b":"')[1].split('"')[0]
@@ -44,6 +46,7 @@ class TestDisplay(unittest.TestCase):
         expected_number = "-812.23"
         pos_x, pos_y = 5, 5
         msg_str = self.display.variable(expected_number, pos_x, pos_y)
+        time.sleep(1)
         msg_str_frag = msg_str.split('"b":"')[1].split('"')[0]
         msg_str_frag_decoded = base64.b64decode(msg_str_frag)
         actual_number = struct.unpack("f", msg_str_frag_decoded[:4])[0]

@@ -54,6 +54,6 @@ class Display(OutputModule):
         """
         self._serial_write_q.put(
             self._command.set_property(
-                self.id, 20, bytes(2), self._command.PropertyDataType.RAW
+                self.id, 21, bytes(2), self._command.PropertyDataType.RAW
             )
         )
