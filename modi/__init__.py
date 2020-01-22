@@ -6,8 +6,8 @@ from __future__ import absolute_import
 
 from modi.modi import MODI
 
-__author__ = """Jinsoo Heo"""
-__email__ = "koriel@luxrobo.com"
-__version__ = "0.6.0"
+__author__ = """Jinsung Ha"""
+__email__ = "jinsung@luxrobo.com"
+__version__ = "0.7.0"
 
 __all__ = ["modi"]
