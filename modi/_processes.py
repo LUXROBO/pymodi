@@ -46,12 +46,12 @@ class SerialProcess(MODIProcess):
 class ParserProcess(MODIProcess):
     def __init__(self, serial_read_q, recv_q):
         super(ParserProcess, self).__init__()
-        self.__ParsingTask = ParserTask(serial_read_q, recv_q)
+        self.__ParserTask = ParserTask(serial_read_q, recv_q)
         self.__stop = Event()
 
     def run(self):
         while not self.stopped():
-            self.__ParsingTask.start_thread()
+            self.__ParserTask.start_thread()
         # print("ParProc terminates")
 
     def stop(self):
@@ -62,9 +62,11 @@ class ParserProcess(MODIProcess):
 
 
 class ExecutableThread(threading.Thread):
-    def __init__(self, serial_write_q, recv_q, ids, modules, cmd):
+    def __init__(self, serial_write_q, recv_q, module_ids, modules, command):
         super(ExecutableThread, self).__init__()
-        self.__ExcutableTask = ExcutableTask(serial_write_q, recv_q, ids, modules, cmd)
+        self.__ExcutableTask = ExcutableTask(
+            serial_write_q, recv_q, module_ids, modules, command
+        )
         self.__stop = threading.Event()
 
     def run(self):

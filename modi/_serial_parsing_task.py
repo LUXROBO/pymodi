@@ -24,15 +24,14 @@ class ParserTask(object):
 
     def read_json(self):
         try:
-            data = self._serial_read_q.get_nowait()
+            serial_raw_data = self._serial_read_q.get_nowait()
         except queue.Empty:
             pass
         else:
-            self.__buffer += data
+            self.__buffer += serial_raw_data
 
         while self.has_json():
-            json_temp = self.__json
-            self._recv_q.put(json_temp)
+            self._recv_q.put(self.__json)
 
     def has_json(self):
         end = self.__buffer.find("}")

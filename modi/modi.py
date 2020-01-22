@@ -52,8 +52,6 @@ class MODI:
     """
 
     def __init__(self, port=None):
-        # print("os.getpid():", os.getpid())
-
         self._serial_read_q = Queue(100)
         self._serial_write_q = Queue(100)
         self._recv_q = Queue(100)
@@ -62,21 +60,22 @@ class MODI:
 
         self._src_ids = dict()
         self._modules = list()
-        self._cmd = Command()
+        self._command = Command()
 
-        # print("SerProc Start")
         self._ser_proc = SerialProcess(self._serial_read_q, self._serial_write_q, port)
         self._ser_proc.daemon = True
         self._ser_proc.start()
 
-        # print("ParProc Start")
         self._par_proc = ParserProcess(self._serial_read_q, self._recv_q)
         self._par_proc.daemon = True
         self._par_proc.start()
 
-        # print("ExcProc Start")
         self._exe_thrd = ExecutableThread(
-            self._serial_write_q, self._recv_q, self._src_ids, self._modules, self._cmd
+            self._serial_write_q,
+            self._recv_q,
+            self._src_ids,
+            self._modules,
+            self._command,
         )
         self._exe_thrd.daemon = True
         self._exe_thrd.start()
@@ -86,19 +85,19 @@ class MODI:
     def __init_modules(self):
         broadcast_id = 0xFFF
 
-        msg_to_send = self._cmd.set_module_state(
-            broadcast_id, self._cmd.ModuleState.REBOOT, self._cmd.ModulePnp.OFF
+        msg_to_send = self._command.set_module_state(
+            broadcast_id, self._command.ModuleState.REBOOT, self._command.ModulePnp.OFF
         )
         self._serial_write_q.put(msg_to_send)
         self.__delay()
 
-        msg_to_send = self._cmd.set_module_state(
-            broadcast_id, self._cmd.ModuleState.RUN, self._cmd.ModulePnp.OFF
+        msg_to_send = self._command.set_module_state(
+            broadcast_id, self._command.ModuleState.RUN, self._command.ModulePnp.OFF
         )
         self._serial_write_q.put(msg_to_send)
         self.__delay()
 
-        msg_to_send = self._cmd.request_uuid(broadcast_id)
+        msg_to_send = self._command.request_uuid(broadcast_id)
         self._serial_write_q.put(msg_to_send)
         self.__delay()
 
@@ -125,64 +124,78 @@ class MODI:
     def buttons(self):
         """Tuple of connected :class:`~modi.module.button.Button` modules.
         """
-        return tuple([x for x in self.modules if x.module_type == "button"])
+        return tuple(
+            [module for module in self.modules if module.module_type == "button"]
+        )
 
     @property
     def dials(self):
         """Tuple of connected :class:`~modi.module.dial.Dial` modules.
         """
-        return tuple([x for x in self.modules if x.module_type == "dial"])
+        return tuple(
+            [module for module in self.modules if module.module_type == "dial"]
+        )
 
     @property
     def displays(self):
         """Tuple of connected :class:`~modi.module.display.Display` modules.
         """
-        return tuple([x for x in self.modules if x.module_type == "display"])
+        return tuple(
+            [module for module in self.modules if module.module_type == "display"]
+        )
 
     @property
     def envs(self):
         """Tuple of connected :class:`~modi.module.env.Env` modules.
         """
-        return tuple([x for x in self.modules if x.module_type == "env"])
+        return tuple([module for module in self.modules if module.module_type == "env"])
 
     @property
     def gyros(self):
         """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
         """
-        return tuple([x for x in self.modules if x.module_type == "gyro"])
+        return tuple(
+            [module for module in self.modules if module.module_type == "gyro"]
+        )
 
     @property
     def irs(self):
         """Tuple of connected :class:`~modi.module.ir.Ir` modules.
         """
-        return tuple([x for x in self.modules if x.module_type == "ir"])
+        return tuple([module for module in self.modules if module.module_type == "ir"])
 
     @property
     def leds(self):
         """Tuple of connected :class:`~modi.module.led.Led` modules.
         """
-        return tuple([x for x in self.modules if x.module_type == "led"])
+        return tuple([module for module in self.modules if module.module_type == "led"])
 
     @property
     def mics(self):
         """Tuple of connected :class:`~modi.module.mic.Mic` modules.
         """
-        return tuple([x for x in self.modules if x.module_type == "mic"])
+        return tuple([module for module in self.modules if module.module_type == "mic"])
 
     @property
     def motors(self):
         """Tuple of connected :class:`~modi.module.motor.Motor` modules.
         """
-        return tuple([x for x in self.modules if x.module_type == "motor"])
+        return tuple(
+            [module for module in self.modules if module.module_type == "motor"]
+        )
 
     @property
     def speakers(self):
         """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
         """
-        return tuple([x for x in self.modules if x.module_type == "speaker"])
+        return tuple(
+            [module for module in self.modules if module.module_type == "speaker"]
+        )
 
     @property
     def ultrasonics(self):
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
-        return tuple([x for x in self.modules if x.module_type == "ultrasonic"])
+        return tuple(
+            [module for module in self.modules if module.module_type == "ultrasonic"]
+        )

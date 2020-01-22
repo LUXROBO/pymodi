@@ -32,11 +32,13 @@ class Command(object):
         DISPLAY_Var = 4
 
     def request_uuid(self, src_id, is_network=False):
+
+        BROADCAST_ID = 0xFFF
         msg = dict()
 
         msg["c"] = 0x28 if is_network else 0x08
         msg["s"] = src_id
-        msg["d"] = 0xFFF
+        msg["d"] = BROADCAST_ID
 
         id_bytes = bytearray(8)
         id_bytes[0] = 0xFF
@@ -57,9 +59,7 @@ class Command(object):
 
             state_bytes = bytearray(2)
             state_bytes[0] = state.value
-            # set state instruction 에서 Module State 지정 바이트
             state_bytes[1] = pnp.value
-            # set state instruction 에서 Module Plug & Play 지정 바이트
 
             msg["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
             msg["l"] = 2
@@ -68,49 +68,58 @@ class Command(object):
         else:
             raise RuntimeError("The type of state is not ModuleState")
 
-    def set_property(self, dst_id, property_type, values, datatype=None):
+    def set_property(self, dst_id, property_type, property_values, datatype=None):
         msg = dict()
 
         msg["c"] = 0x04
         msg["s"] = property_type
         msg["d"] = dst_id
 
-        values_bytes = bytearray(8)
-        # motor channel control
-        # channel(2) mode(2) value_high(2) value_low(2)
+        property_values_bytes = bytearray(8)
         if datatype is None or datatype == self.PropertyDataType.INT:
-            for index, value in enumerate(values):
-                value = int(value)
+            for index, property_value in enumerate(property_values):
+                property_value = int(property_value)
                 # leaves the last 8 bits only
-                values_bytes[index * 2] = value & 0xFF
-                values_bytes[index * 2 + 1] = (value & 0xFF00) >> 8
+                property_values_bytes[index * 2] = property_value & 0xFF
+                property_values_bytes[index * 2 + 1] = (property_value & 0xFF00) >> 8
+
         elif datatype == self.PropertyDataType.FLOAT:
-            for index, value in enumerate(values):
-                values_bytes[index * 4 : index * 4 + 4] = struct.pack("f", float(value))
+            for index, property_value in enumerate(property_values):
+                property_values_bytes[index * 4 : index * 4 + 4] = struct.pack(
+                    "f", float(property_value)
+                )
+
         elif datatype == self.PropertyDataType.STRING:
             cmds = list()
-            value = str(values)[:27]
-            num_of_chunks = int(len(value) / 8) + 1
+            property_value = str(property_values)[:27]
+            num_of_chunks = int(len(property_value) / 8) + 1
 
             for i in range(num_of_chunks):
-                values_bytes[:] = [ord(i) for i in value[i * 8 : i * 8 + 8]]
-                msg["b"] = base64.b64encode(bytes(values_bytes)).decode("utf-8")
-                msg["l"] = len(values_bytes)
+                property_values_bytes[:] = [
+                    ord(i) for i in property_value[i * 8 : i * 8 + 8]
+                ]
+                msg["b"] = base64.b64encode(bytes(property_values_bytes)).decode(
+                    "utf-8"
+                )
+                msg["l"] = len(property_values_bytes)
                 cmds.append(json.dumps(msg, separators=(",", ":")))
             return cmds
+
         elif datatype == self.PropertyDataType.RAW:
-            msg["b"] = base64.b64encode(bytearray(values)).decode("utf-8")
-            msg["l"] = len(values)
+            msg["b"] = base64.b64encode(bytearray(property_values)).decode("utf-8")
+            msg["l"] = len(property_values)
+
         elif datatype == self.PropertyDataType.DISPLAY_Var:
-            values_bytes[:4] = struct.pack("f", float(values[0]))
-            values_bytes[4] = values[1]
-            values_bytes[5] = 0x00
-            values_bytes[6] = values[2]
-            values_bytes[7] = 0x00
+            property_values_bytes[:4] = struct.pack("f", float(property_values[0]))
+            property_values_bytes[4] = property_values[1]
+            property_values_bytes[5] = 0x00
+            property_values_bytes[6] = property_values[2]
+            property_values_bytes[7] = 0x00
+
         else:
             raise RuntimeError("Not supported property data type.")
 
-        msg["b"] = base64.b64encode(bytes(values_bytes)).decode("utf-8")
+        msg["b"] = base64.b64encode(bytes(property_values_bytes)).decode("utf-8")
         msg["l"] = 8
 
         return json.dumps(msg, separators=(",", ":"))
