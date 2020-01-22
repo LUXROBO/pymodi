@@ -20,7 +20,7 @@ class ParsingTask(object):
 
     def start_thread(self):
         self.read_json()
-        time.sleep(0.005)
+        time.sleep(0.008)
 
     def read_json(self):
         try:

@@ -7,6 +7,7 @@
 import modi
 import time
 import unittest
+import timeit
 
 # from modi import a
 
@@ -18,6 +19,21 @@ class TestModi(unittest.TestCase):
         """Set up test fixtures, if any."""
         bundle = modi.MODI()
         gyro = bundle.gyros[0]
+
+        print(
+            gyro.roll(),
+            gyro.pitch(),
+            gyro.yaw(),
+            gyro.angular_vel_x(),
+            gyro.angular_vel_y(),
+            gyro.angular_vel_z(),
+            gyro.acceleration_x(),
+            gyro.acceleration_y(),
+            gyro.acceleration_z(),
+            gyro.vibration(),
+            bundle._recv_q.qsize(),
+        )
+
         now = time.time()
         past = now
         # for _ in range(100):
@@ -36,6 +52,7 @@ class TestModi(unittest.TestCase):
                 gyro.vibration(),
                 bundle._recv_q.qsize(),
             )
+            # print(bundle._recv_q.qsize())
             time.sleep(0.01)
         bundle.exit()
 

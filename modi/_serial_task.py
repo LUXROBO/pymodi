@@ -67,7 +67,7 @@ class SerialTask(object):
     def start_thread(self):
         self.__read_serial()
         self.__write_serial()
-        time.sleep(0.001)
+        time.sleep(0.008)
 
     ##################################################################
 

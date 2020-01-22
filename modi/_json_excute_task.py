@@ -45,14 +45,14 @@ class ExcuteTask(object):
         self._cmd = cmd
 
     def start_thread(self):
+
         try:
             msg = json.loads(self._recv_q.get_nowait())
         except queue.Empty:
             pass
         else:
             self.__handler(msg["c"])(msg)
-
-        time.sleep(0.001)
+            time.sleep(0.004)
 
     def __handler(self, cmd):
         return {
