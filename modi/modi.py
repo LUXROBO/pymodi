@@ -56,7 +56,6 @@ class MODI:
         self._serial_write_q = Queue(100)
         self._recv_q = Queue(100)
         self._send_q = Queue(100)
-        self._display_send_q = Queue(100)
 
         self._src_ids = dict()
         self._modules = list()

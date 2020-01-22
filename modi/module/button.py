@@ -24,8 +24,8 @@ class Button(InputModule):
         PRESSED = 4
         TOGGLED = 5
 
-    def __init__(self, id, uuid, modi, serial_write_q):
-        super(Button, self).__init__(id, uuid, modi, serial_write_q)
+    def __init__(self, module_id, uuid, modi, serial_write_q):
+        super(Button, self).__init__(module_id, uuid, modi, serial_write_q)
         self._type = "button"
 
     def clicked(self):

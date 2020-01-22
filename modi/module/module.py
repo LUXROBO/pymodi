@@ -17,8 +17,8 @@ class Prop(object):
 
 
 class Module(object):
-    def __init__(self, id, uuid, modi, serial_write_q):
-        self._id = id
+    def __init__(self, module_id, uuid, modi, serial_write_q):
+        self._module_id = module_id
         self._uuid = uuid
         self._modi = modi
         self._serial_write_q = serial_write_q
@@ -29,7 +29,7 @@ class Module(object):
 
     @property
     def id(self):
-        return self._id
+        return self._module_id
 
     @property
     def uuid(self):
@@ -53,13 +53,17 @@ class Module(object):
     def _get_property(self, prop):
         if not prop in self._properties.keys():
             self._properties[prop] = Prop()
-            modi_serialtemp = self._modi._cmd.request_property(self._id, prop.value)
+            modi_serialtemp = self._modi._command.request_property(
+                self._module_id, prop.value
+            )
             self._serial_write_q.put(modi_serialtemp)
             self._properties[prop].last_request_time = time.time()
 
         duration = time.time() - self._properties[prop].last_update_time
         if duration > 0.5:
-            modi_serialtemp = self._modi._cmd.request_property(self._id, prop.value)
+            modi_serialtemp = self._modi._command.request_property(
+                self._module_id, prop.value
+            )
             self._serial_write_q.put(modi_serialtemp)
             self._properties[prop].last_request_time = time.time()
 
@@ -72,19 +76,19 @@ class Module(object):
 
 
 class SetupModule(Module):
-    def __init__(self, id, uuid, modi):
-        super(SetupModule, self).__init__(id, uuid, modi)
+    def __init__(self, module_id, uuid, modi):
+        super(SetupModule, self).__init__(module_id, uuid, modi)
         self._category = "setup"
 
 
 class InputModule(Module):
-    def __init__(self, id, uuid, modi, serial_write_q):
-        super(InputModule, self).__init__(id, uuid, modi, serial_write_q)
+    def __init__(self, module_id, uuid, modi, serial_write_q):
+        super(InputModule, self).__init__(module_id, uuid, modi, serial_write_q)
         self._category = "input"
 
 
 class OutputModule(Module):
-    def __init__(self, id, uuid, modi, serial_write_q):
-        super(OutputModule, self).__init__(id, uuid, modi, serial_write_q)
+    def __init__(self, module_id, uuid, modi, serial_write_q):
+        super(OutputModule, self).__init__(module_id, uuid, modi, serial_write_q)
         self._category = "output"
-        self._command = modi._cmd
+        self._command = modi._command

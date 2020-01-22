@@ -22,8 +22,8 @@ class Led(OutputModule):
         GREEN = 3
         BLUE = 4
 
-    def __init__(self, id, uuid, modi, serial_write_q):
-        super(Led, self).__init__(id, uuid, modi, serial_write_q)
+    def __init__(self, module_id, uuid, modi, serial_write_q):
+        super(Led, self).__init__(module_id, uuid, modi, serial_write_q)
         self._type = "led"
         self._serial_write_q = serial_write_q
 
@@ -45,7 +45,7 @@ class Led(OutputModule):
         if not (red is None and green is None and blue is None):
             self._serial_write_q.put(
                 self._command.set_property(
-                    self.id,
+                    self._module_id,
                     16,
                     (
                         red if red is not None else self.red(),

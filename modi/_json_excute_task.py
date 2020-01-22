@@ -127,6 +127,7 @@ class ExcutableTask(object):
                 module_instance = module_template(
                     module_id, module_uuid, self, self._serial_write_q
                 )
+
                 self.__set_pnp(module_id=module_instance.id, pnp_on=False)
                 self._modules.append(module_instance)
                 self._modules.sort(key=lambda module: module.uuid)

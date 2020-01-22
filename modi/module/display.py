@@ -21,10 +21,11 @@ class Display(OutputModule):
         CURSOR_X = 2
         CURSOR_Y = 3
 
-    def __init__(self, id, uuid, modi, serial_write_q):
-        super(Display, self).__init__(id, uuid, modi, serial_write_q)
+    def __init__(self, module_id, uuid, modi, serial_write_q):
+        super(Display, self).__init__(module_id, uuid, modi, serial_write_q)
         self._type = "display"
         self._serial_write_q = serial_write_q
+        self._module_id = module_id
 
     def text(self, text):
         """
@@ -32,7 +33,7 @@ class Display(OutputModule):
         """
         self.clear()
         msgs = self._command.set_property(
-            self.id, 17, text, self._command.PropertyDataType.STRING
+            self._module_id, 17, text, self._command.PropertyDataType.STRING
         )
         for msg_str in msgs:
             self._serial_write_q.put(msg_str)
@@ -44,7 +45,10 @@ class Display(OutputModule):
         """
         self.clear()
         msg = self._command.set_property(
-            self.id, 22, (var, pos_x, pos_y), self._command.PropertyDataType.DISPLAY_Var
+            self._module_id,
+            22,
+            (var, pos_x, pos_y),
+            self._command.PropertyDataType.DISPLAY_Var,
         )
         self._serial_write_q.put(msg)
         return msg
@@ -54,6 +58,6 @@ class Display(OutputModule):
         """
         self._serial_write_q.put(
             self._command.set_property(
-                self.id, 21, bytes(2), self._command.PropertyDataType.RAW
+                self._module_id, 21, bytes(2), self._command.PropertyDataType.RAW
             )
         )

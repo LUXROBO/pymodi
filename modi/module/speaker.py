@@ -107,8 +107,8 @@ class Speaker(OutputModule):
         F_SOL_S_7 = 3322
         F_RA_S_7 = 3729
 
-    def __init__(self, id, uuid, modi, serial_write_q):
-        super(Speaker, self).__init__(id, uuid, modi, serial_write_q)
+    def __init__(self, module_id, uuid, modi, serial_write_q):
+        super(Speaker, self).__init__(module_id, uuid, modi, serial_write_q)
         self._type = "speaker"
         self._serial_write_q = serial_write_q
 
@@ -129,7 +129,7 @@ class Speaker(OutputModule):
         if frequency is not None or volume is not None:
             self._serial_write_q.put(
                 self._command.set_property(
-                    self.id,
+                    self._module_id,
                     16,
                     (
                         frequency if frequency is not None else self.frequency(),

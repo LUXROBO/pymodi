@@ -69,8 +69,6 @@ class SerialTask(object):
         self.__write_serial()
         time.sleep(0.008)
 
-    ##################################################################
-
     def __read_serial(self):
         if self._serial.in_waiting != 0:
             msg_to_read = self._serial.read(self._serial.in_waiting).decode()
