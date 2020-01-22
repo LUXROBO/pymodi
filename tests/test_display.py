@@ -42,7 +42,6 @@ class TestDisplay(unittest.TestCase):
     def test_variable(self):
         """Test variable method"""
         # display var range: -99999 ~ +99999
-        # TODO: display cannot represent decimal points when -10,000 < x < 10,000
         expected_number = "-812.23"
         pos_x, pos_y = 5, 5
         msg_str = self.display.variable(expected_number, pos_x, pos_y)
