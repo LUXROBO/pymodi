@@ -15,8 +15,20 @@ from modi.module.motor import Motor
 from modi.module.speaker import Speaker
 from modi.module.ultrasonic import Ultrasonic
 
-__author__ = """Jinsoo Heo"""
-__email__ = 'koriel@luxrobo.com'
-__version__ = '0.6.0'
+__author__ = """Jinsung Ha"""
+__email__ = "jinsung@luxrobo.com"
+__version__ = "0.7.0"
 
-__all__ = ["env", "gyro", "mic", "button", "dial", "ultrasonic", "ir", "display", "motor", "led", "speaker"]
+__all__ = [
+    "env",
+    "gyro",
+    "mic",
+    "button",
+    "dial",
+    "ultrasonic",
+    "ir",
+    "display",
+    "motor",
+    "led",
+    "speaker",
+]
