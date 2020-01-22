@@ -67,7 +67,7 @@ class Command(object):
         else:
             raise RuntimeError("The type of state is not ModuleState")
 
-    def set_property(self, dst_id, property_type, property_values, datatype=None):
+    def set_property(self, dst_id, property_type, property_values, data_type=None):
         msg = dict()
 
         msg["c"] = 0x04
@@ -75,19 +75,19 @@ class Command(object):
         msg["d"] = dst_id
 
         property_values_bytes = bytearray(8)
-        if datatype is None or datatype == self.PropertyDataType.INT:
+        if data_type is None or data_type == self.PropertyDataType.INT:
             for index, property_value in enumerate(property_values):
                 property_value = int(property_value)
                 property_values_bytes[index * 2] = property_value & 0xFF
                 property_values_bytes[index * 2 + 1] = (property_value & 0xFF00) >> 8
 
-        elif datatype == self.PropertyDataType.FLOAT:
+        elif data_type == self.PropertyDataType.FLOAT:
             for index, property_value in enumerate(property_values):
                 property_values_bytes[index * 4 : index * 4 + 4] = struct.pack(
                     "f", float(property_value)
                 )
 
-        elif datatype == self.PropertyDataType.STRING:
+        elif data_type == self.PropertyDataType.STRING:
             msgs = list()
             property_value = str(property_values)[:27]
             num_of_chunks = int(len(property_value) / 8) + 1
@@ -103,11 +103,11 @@ class Command(object):
                 msgs.append(json.dumps(msg, separators=(",", ":")))
             return msgs
 
-        elif datatype == self.PropertyDataType.RAW:
+        elif data_type == self.PropertyDataType.RAW:
             msg["b"] = base64.b64encode(bytearray(property_values)).decode("utf-8")
             msg["l"] = len(property_values)
 
-        elif datatype == self.PropertyDataType.DISPLAY_Var:
+        elif data_type == self.PropertyDataType.DISPLAY_Var:
             property_values_bytes[:4] = struct.pack("f", float(property_values[0]))
             property_values_bytes[4] = property_values[1]
             property_values_bytes[5] = 0x00
