@@ -76,6 +76,7 @@ class ExecutorTask(object):
         """ Update information by health message
         """
 
+        # Record current time and uuid, timestamp, battery information
         module_id = message["s"]
         curr_time_ms = int(time.time() * 1000)
         message_decoded = bytearray(base64.b64decode(message["b"]))
@@ -98,8 +99,8 @@ class ExecutorTask(object):
         for module_id, module_info in list(self._module_ids.items()):
             if curr_time_ms - module_info["timestamp"] > 2000:
                 for module in self._modules:
-                    if module.uuid == module_info["uuid"]:
-                        module.set_connection_state(state=True)
+                    if module.module_uuid == module_info["uuid"]:
+                        module.set_connection_state(connection_state=True)
                         print("disconnecting : ", module)
 
     def __update_modules(self, message):
@@ -127,8 +128,8 @@ class ExecutorTask(object):
         module_category_idx = module_info >> 13
         module_type_idx = (module_info >> 4) & 0x1FF
 
-        category = self.module_categories[module_category_idx]
-        module_type = self.module_types[category][module_type_idx]
+        module_category = self.module_categories[module_category_idx]
+        module_type = self.module_types[module_category][module_type_idx]
         module_uuid = self.__fit_module_uuid(
             module_info,
             (
@@ -143,23 +144,25 @@ class ExecutorTask(object):
 
         # Handle re-connected modules
         for module in self._modules:
-            if module.uuid == module_uuid and not module.connected:
-                module.set_connection_state(state=True)
+            if module.module_uuid == module_uuid and not module.connected:
+                module.set_connection_state(connection_state=True)
 
         # Handle newly-connected modules
         if not next(
-            (module for module in self._modules if module.uuid == module_uuid), None
+            (module for module in self._modules if module.module_uuid == module_uuid),
+            None,
         ):
-            if category != "network":
+            if module_category != "network":
                 module_template = self.__init_module(module_type)
                 module_instance = module_template(
                     module_id, module_uuid, self, self._serial_write_q
                 )
                 self.__set_pnp(
-                    module_id=module_instance.id, module_pnp_state=Module.ModulePnp.OFF
+                    module_id=module_instance.module_id,
+                    module_pnp_state=Module.ModulePnp.OFF,
                 )
                 self._modules.append(module_instance)
-                self._modules.sort(key=lambda module: module.uuid)
+                self._modules.sort(key=lambda module: module.module_uuid)
 
     def __init_module(self, module_type):
         """ Find module type for module initialize
@@ -191,7 +194,7 @@ class ExecutorTask(object):
 
         # Decode message of module id and module property for update property
         for module in self._modules:
-            if module.id == message["s"]:
+            if module.module_id == message["s"]:
                 message_decoded = bytearray(base64.b64decode(message["b"]))
                 property_type = module.PropertyType(property_number)
                 module.update_property(
@@ -228,7 +231,7 @@ class ExecutorTask(object):
         sizeof_module_uuid += sizeof_module_uuid % 4
         return (module_info << sizeof_module_uuid) | module_uuid
 
-    def __set_module_state(self, dst_id, module_state, pnp_state):
+    def __set_module_state(self, destination_id, module_state, pnp_state):
         """ Generate message for set module state and pnp state          
         """
 
@@ -237,7 +240,7 @@ class ExecutorTask(object):
 
             message["c"] = 0x09
             message["s"] = 0
-            message["d"] = dst_id
+            message["d"] = destination_id
 
             state_bytes = bytearray(2)
             state_bytes[0] = module_state.value
@@ -257,22 +260,22 @@ class ExecutorTask(object):
         BROADCAST_ID = 0xFFF
 
         # Reboot module
-        message_to_send = self.__set_module_state(
+        reboot_message = self.__set_module_state(
             BROADCAST_ID, Module.ModuleState.REBOOT, Module.ModulePnp.OFF
         )
-        self._serial_write_q.put(message_to_send)
+        self._serial_write_q.put(reboot_message)
         self.__delay()
 
         # Command module pnp off
-        message_to_send = self.__set_module_state(
+        pnp_off_message = self.__set_module_state(
             BROADCAST_ID, Module.ModuleState.RUN, Module.ModulePnp.OFF
         )
-        self._serial_write_q.put(message_to_send)
+        self._serial_write_q.put(pnp_off_message)
         self.__delay()
 
         # Command module uuid
-        message_to_send = self.__request_uuid(BROADCAST_ID)
-        self._serial_write_q.put(message_to_send)
+        request_uuid_message = self.__request_uuid(BROADCAST_ID)
+        self._serial_write_q.put(request_uuid_message)
         self.__delay()
 
     def __delay(self):

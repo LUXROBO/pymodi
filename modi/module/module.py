@@ -48,11 +48,11 @@ class Module:
         self._serial_write_q = serial_write_q
 
     @property
-    def id(self):
+    def module_id(self):
         return self._module_id
 
     @property
-    def uuid(self):
+    def module_uuid(self):
         return self._module_uuid
 
     @property
