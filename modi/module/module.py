@@ -11,7 +11,7 @@ from enum import Enum
 
 
 class Module:
-    class Property:
+    class ModuleProperty:
         def __init__(self):
             self.value = 0
             self.last_update_time = 0
@@ -64,7 +64,7 @@ class Module:
 
     def _get_property(self, property_type):
         if not property_type in self._properties.keys():
-            self._properties[property_type] = self.Property()
+            self._properties[property_type] = self.ModuleProperty()
             modi_serialtemp = self.request_property(
                 self._module_id, property_type.value
             )

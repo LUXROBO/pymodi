@@ -114,14 +114,14 @@ class Speaker(OutputModule):
         """
         * If either *frequency* or *volume* is not ``None``,
 
-        :param float frequency: Frequency to set or ``None``.
-        :param float volume: Volume to set or ``None``.
+        :param float frequency_value: Frequency to set or ``None``.
+        :param float volume_value: Volume to set or ``None``.
 
         The ``None`` component retains its previous value.
 
-        * If *frequency* and *volume* are ``None``,
+        * If *frequency_value* and *volume_value* are ``None``,
 
-        :return: Tuple of frequency and volume.
+        :return: Tuple of frequency_value and volume_value.
         :rtype: tuple
         """
         if frequency_value is not None or volume_value is not None:

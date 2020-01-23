@@ -4,6 +4,9 @@ from modi._executor_task import ExecutorTask
 
 
 class ExecutorThread(threading.Thread):
+    """ This thread run excutor task
+    """
+
     def __init__(self, serial_write_q, json_recv_q, module_ids, modules):
         super(ExecutorThread, self).__init__()
         self.__exe_task = ExecutorTask(serial_write_q, json_recv_q, module_ids, modules)

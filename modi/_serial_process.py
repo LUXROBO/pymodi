@@ -6,6 +6,9 @@ from modi._serial_task import SerialTask
 
 
 class SerialProcess(multiprocessing.Process):
+    """ This process run serial task
+    """
+
     def __init__(self, serial_read_q, serial_write_q):
         super(SerialProcess, self).__init__()
         self.__ser_task = SerialTask(serial_read_q, serial_write_q)

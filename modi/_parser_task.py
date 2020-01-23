@@ -4,7 +4,12 @@ import time
 import queue
 
 
-class ParserTask:
+class ParserTask(object):
+    """ This task buffering serial data and parsing serial data to json message
+    param: serial_read_q: Multiprocessing Queue for serial reading data
+    param: json_recv_q: Multiprocessing Queue for parsed json data
+    """
+
     def __init__(self, serial_read_q, json_recv_q):
         super(ParserTask, self).__init__()
         self._serial_read_q = serial_read_q
@@ -18,6 +23,9 @@ class ParserTask:
         time.sleep(0.008)
 
     def read_json(self):
+        """ Read serial data and put json message to json receive queue
+        """
+
         try:
             serial_raw_data = self._serial_read_q.get_nowait()
         except queue.Empty:
@@ -29,6 +37,9 @@ class ParserTask:
             self._json_recv_q.put(self.__json_message)
 
     def has_json(self):
+        """ Parsing serial data and make json message
+        """
+
         end = self.__raw_data_buffer.find("}")
         if end >= 0:
             start = self.__raw_data_buffer.rfind("{", 0, end)

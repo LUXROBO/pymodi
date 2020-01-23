@@ -26,9 +26,12 @@ from modi.module import (
 from modi.module.module import Module
 
 
-class ExecutorTask:
-    """
-    This task execute incoming commands
+class ExecutorTask(object):
+    """ This task execute incoming commands
+    param: serial_write_q: Multiprocessing Queue for serial writing data
+    param: json_recv_q: Multiprocessing Queue for parsed json data
+    param: module_ids:
+    param: modules:
     """
 
     # variables shared across all class instances
@@ -47,6 +50,9 @@ class ExecutorTask:
         self._modules = modules
 
     def start_thread(self):
+        """ Run in ExecutorThread
+        """
+
         try:
             message = json.loads(self._json_recv_q.get_nowait())
         except queue.Empty:
@@ -56,6 +62,9 @@ class ExecutorTask:
             time.sleep(0.004)
 
     def __handler(self, command):
+        """ Excute task based on command message
+        """
+
         return {
             0x00: self.__update_health,
             0x0A: self.__update_health,
@@ -64,6 +73,9 @@ class ExecutorTask:
         }.get(command, lambda _: None)
 
     def __update_health(self, message):
+        """ Update information by health message
+        """
+
         module_id = message["s"]
         curr_time_ms = int(time.time() * 1000)
         message_decoded = bytearray(base64.b64decode(message["b"]))
@@ -75,12 +87,14 @@ class ExecutorTask:
         )
         self._module_ids[module_id]["battery"] = int(message_decoded[3])
 
+        # Request uui from network modules and other modules
         if not self._module_ids[module_id]["uuid"]:
             message_to_write = self.__request_uuid(module_id, is_network_module=False)
             self._serial_write_q.put(message_to_write)
             message_to_write = self.__request_uuid(module_id, is_network_module=True)
             self._serial_write_q.put(message_to_write)
 
+        # Disconnect modules that have no health message for more than 2 seconds
         for module_id, module_info in list(self._module_ids.items()):
             if curr_time_ms - module_info["timestamp"] > 2000:
                 for module in self._modules:
@@ -89,8 +103,13 @@ class ExecutorTask:
                         print("disconnecting : ", module)
 
     def __update_modules(self, message):
+        """ Update module information
+        """
+
+        # set time variable for timestamp
         curr_time_ms = int(time.time() * 1000)
 
+        # Record information by module id
         module_id = message["s"]
         self._module_ids[module_id] = self._module_ids.get(module_id, dict())
         self._module_ids[module_id]["timestamp"] = curr_time_ms
@@ -98,6 +117,7 @@ class ExecutorTask:
             "uuid", str()
         )
 
+        # Extract uuid from message "b"
         message_decoded = bytearray(base64.b64decode(message["b"]))
         module_uuid_bytes = message_decoded[:4]
         module_info_bytes = message_decoded[-4:]
@@ -121,12 +141,12 @@ class ExecutorTask:
 
         self._module_ids[module_id]["uuid"] = module_uuid
 
-        # handling re-connected modules
+        # Handle re-connected modules
         for module in self._modules:
             if module.uuid == module_uuid and not module.connected:
                 module.set_connection_state(state=True)
 
-        # handling newly-connected modules
+        # Handle newly-connected modules
         if not next(
             (module for module in self._modules if module.uuid == module_uuid), None
         ):
@@ -158,6 +178,9 @@ class ExecutorTask:
         return module
 
     def __update_property(self, message):
+        """ Update module property
+        """
+
         # TODO: comment
         property_number = message["d"]
         if property_number == 0 or property_number == 1:
@@ -174,6 +197,9 @@ class ExecutorTask:
                 )
 
     def __set_pnp(self, module_id, module_pnp_state):
+        """ Generate module pnp on/off command
+        """
+
         # if no module_id is specified, it will broadcast incoming pnp state
         if module_id is None:
             for curr_module_id in self._module_ids:
@@ -189,7 +215,9 @@ class ExecutorTask:
             self._serial_write_q.put(message_to_write)
 
     def __append_hex(self, a, b):
-        # TODO: comment
+        """ Generate uuid using bitwise operation
+        """
+
         sizeof_b = 0
         while (b >> sizeof_b) > 0:
             sizeof_b += 1
@@ -197,6 +225,9 @@ class ExecutorTask:
         return (a << sizeof_b) | b
 
     def __set_module_state(self, dst_id, module_state, pnp_state):
+        """ Generate message for set module state and pnp state          
+        """
+
         if type(module_state) is Module.ModuleState:
             message = dict()
 
@@ -216,30 +247,39 @@ class ExecutorTask:
             raise RuntimeError("The type of state is not ModuleState")
 
     def init_modules(self):
-        """        
+        """ Initialize module on first run          
         """
+
         BROADCAST_ID = 0xFFF
 
+        # reboot module
         message_to_send = self.__set_module_state(
             BROADCAST_ID, Module.ModuleState.REBOOT, Module.ModulePnp.OFF
         )
         self._serial_write_q.put(message_to_send)
         self.__delay()
 
+        # command module pnp off
         message_to_send = self.__set_module_state(
             BROADCAST_ID, Module.ModuleState.RUN, Module.ModulePnp.OFF
         )
         self._serial_write_q.put(message_to_send)
         self.__delay()
 
+        # command module uuid
         message_to_send = self.__request_uuid(BROADCAST_ID)
         self._serial_write_q.put(message_to_send)
         self.__delay()
 
     def __delay(self):
+        """ Wait for delay
+        """
         time.sleep(1)
 
     def __request_uuid(self, source_id, is_network_module=False):
+        """ Generate broadcasting message for request uuid
+        """
+
         BROADCAST_ID = 0xFFF
 
         message = dict()

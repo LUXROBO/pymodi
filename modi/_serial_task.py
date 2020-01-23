@@ -8,9 +8,10 @@ import serial
 import serial.tools.list_ports as stl
 
 
-class SerialTask:
-    """
-    This task read and write serial data
+class SerialTask(object):
+    """ This task read and write serial data
+    param: serial_read_q: Multiprocessing Queue for serial reading data
+    param: serial_write_q: Multiprocessing Queue for serial writing data
     """
 
     def __init__(self, serial_read_q, serial_write_q):

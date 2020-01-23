@@ -20,7 +20,7 @@ class TestSpeaker(unittest.TestCase):
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
-        self.speaker.tune(0, 0)
+        self.speaker.set_tune(0, 0)
         self.modi_inst.exit()
         time.sleep(1)
 
@@ -31,34 +31,34 @@ class TestSpeaker(unittest.TestCase):
     def test_basic_tune(self):
         """Test tune method with pre-defined inputs"""
         expected_values = (self.speaker.Scale.F_RA_6.value, 50)
-        self.speaker.tune(*expected_values)
+        self.speaker.set_tune(*expected_values)
         # TODO: remove delaying function
         time.sleep(2)
-        actual_values = self.speaker.tune()
+        actual_values = self.speaker.set_tune()
         self.assertEqual(expected_values, actual_values)
 
     def test_custom_tune(self):
         """Test tune method with custom inputs"""
         expected_values = (2350, 50)
-        self.speaker.tune(*expected_values)
+        self.speaker.set_tune(*expected_values)
         time.sleep(2)
-        actual_values = self.speaker.tune()
+        actual_values = self.speaker.set_tune()
         self.assertEqual(expected_values, actual_values)
 
     def test_get_frequency(self):
         """Test frequency method"""
         expected_frequncy = self.speaker.Scale.F_RA_6.value
-        self.speaker.frequency(frequency=expected_frequncy)
+        self.speaker.set_frequency(frequency_value=expected_frequncy)
         time.sleep(2)
-        actual_frequency = self.speaker.frequency()
+        actual_frequency = self.speaker.set_frequency()
         self.assertEqual(expected_frequncy, actual_frequency)
 
     def test_get_volume(self):
         """Test volume method"""
         expected_volume = 70
-        self.speaker.volume(expected_volume)
+        self.speaker.set_volume(expected_volume)
         time.sleep(2)
-        actual_volume = self.speaker.volume()
+        actual_volume = self.speaker.set_volume()
         self.assertEqual(expected_volume, actual_volume)
 
 
