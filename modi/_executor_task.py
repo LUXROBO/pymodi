@@ -166,10 +166,11 @@ class ExecutorTask:
         # TODO: comment
         for module in self._modules:
             if module.id == message["s"]:
-                decoded = bytearray(base64.b64decode(message["b"]))
+                message_decoded = bytearray(base64.b64decode(message["b"]))
                 property_type = module.PropertyType(property_number)
                 module.update_property(
-                    property_type, round(struct.unpack("f", bytes(decoded[:4]))[0], 2)
+                    property_type,
+                    round(struct.unpack("f", bytes(message_decoded[:4]))[0], 2),
                 )
 
     def __set_pnp(self, module_id, module_pnp_state):

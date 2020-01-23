@@ -156,11 +156,12 @@ class OutputModule(Module):
         elif property_data_type == self.PropertyDataType.STRING:
             messages = list()
             property_value = str(property_values)[:27]
-            num_of_chunks = int(len(property_value) / 8) + 1
+            number_of_chunks = int(len(property_value) / 8) + 1
 
-            for i in range(num_of_chunks):
+            for index in range(number_of_chunks):
                 property_values_bytes[:] = [
-                    ord(i) for i in property_value[i * 8 : i * 8 + 8]
+                    ord(character)
+                    for character in property_value[index * 8 : index * 8 + 8]
                 ]
                 message["b"] = base64.b64encode(bytes(property_values_bytes)).decode(
                     "utf-8"

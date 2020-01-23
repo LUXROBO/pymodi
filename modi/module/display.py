@@ -33,13 +33,16 @@ class Display(OutputModule):
             self._serial_write_q.put(message)
         return messages
 
-    def variable(self, var, pos_x, pos_y):
+    def variable(self, variable, position_x, position_y):
         """
         :param variable: variable to display.
         """
         self.clear()
         message = self._set_property(
-            self._module_id, 22, (var, pos_x, pos_y), self.PropertyDataType.DISPLAY_Var
+            self._module_id,
+            22,
+            (variable, position_x, position_y),
+            self.PropertyDataType.DISPLAY_Var,
         )
         self._serial_write_q.put(message)
         return message
