@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 
-"""Serial Parsing Task module."""
-
-from __future__ import absolute_import
-
-import json
 import time
 import queue
 
 
-class ParserTask(object):
+class ParserTask:
     def __init__(self, serial_read_q, recv_q):
         super(ParserTask, self).__init__()
         self._serial_read_q = serial_read_q

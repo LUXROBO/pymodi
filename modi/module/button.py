@@ -2,15 +2,12 @@
 
 """Button module."""
 
-from __future__ import absolute_import
-
 from enum import Enum
 
 from modi.module.module import InputModule
 
 
 class Button(InputModule):
-
     """
     :param int id: The id of the module.
     :param int uuid: The uuid of the module.

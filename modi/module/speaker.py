@@ -2,8 +2,6 @@
 
 """Speaker module."""
 
-from __future__ import absolute_import
-
 from enum import Enum
 
 from modi.module.module import OutputModule
@@ -128,14 +126,14 @@ class Speaker(OutputModule):
         """
         if frequency is not None or volume is not None:
             self._serial_write_q.put(
-                self._command.set_property(
+                self._set_property(
                     self._module_id,
                     16,
                     (
                         frequency if frequency is not None else self.frequency(),
                         volume if volume is not None else self.volume(),
                     ),
-                    self._command.PropertyDataType.FLOAT,
+                    self.PropertyDataType.FLOAT,
                 )
             )
         return self.frequency(), self.volume()

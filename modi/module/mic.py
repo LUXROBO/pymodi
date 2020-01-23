@@ -2,8 +2,6 @@
 
 """Mic module."""
 
-from __future__ import absolute_import
-
 from enum import Enum
 
 from modi.module.module import InputModule

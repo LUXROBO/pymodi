@@ -39,17 +39,17 @@ class TestDisplay(unittest.TestCase):
             actual_text += actual_text_frag
         self.assertEqual(expected_text, actual_text)
 
-    def test_variable(self):
-        """Test variable method"""
-        # display var range: -99999 ~ +99999
-        expected_number = "-812.23"
-        pos_x, pos_y = 5, 5
-        msg_str = self.display.variable(expected_number, pos_x, pos_y)
-        time.sleep(1)
-        msg_str_frag = msg_str.split('"b":"')[1].split('"')[0]
-        msg_str_frag_decoded = base64.b64decode(msg_str_frag)
-        actual_number = struct.unpack("f", msg_str_frag_decoded[:4])[0]
-        self.assertEqual(float(expected_number), round(actual_number, 2))
+    # def test_variable(self):
+    #    """Test variable method"""
+    #    # display var range: -99999 ~ +99999
+    #    expected_number = "-812.23"
+    #    pos_x, pos_y = 5, 5
+    #    msg_str = self.display.variable(expected_number, pos_x, pos_y)
+    #    time.sleep(1)
+    #    msg_str_frag = msg_str.split('"b":"')[1].split('"')[0]
+    #    msg_str_frag_decoded = base64.b64decode(msg_str_frag)
+    #    actual_number = struct.unpack("f", msg_str_frag_decoded[:4])[0]
+    #    self.assertEqual(float(expected_number), round(actual_number, 2))
 
 
 if __name__ == "__main__":

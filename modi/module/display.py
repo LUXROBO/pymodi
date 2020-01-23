@@ -2,8 +2,6 @@
 
 """Display module."""
 
-from __future__ import absolute_import
-
 from enum import Enum
 
 from modi.module.module import OutputModule
@@ -17,13 +15,9 @@ class Display(OutputModule):
     :type modi: :class:`~modi.modi.MODI`
     """
 
-    class PropertyType(Enum):
-        CURSOR_X = 2
-        CURSOR_Y = 3
-
-    def __init__(self, module_id, uuid, modi, serial_write_q):
-        super(Display, self).__init__(module_id, uuid, modi, serial_write_q)
-        self._type = "display"
+    def __init__(self, module_id, module_uuid, modi, serial_write_q):
+        super(Display, self).__init__(module_id, module_uuid, modi, serial_write_q)
+        self._module_type = "display"
         self._serial_write_q = serial_write_q
         self._module_id = module_id
 
@@ -32,8 +26,8 @@ class Display(OutputModule):
         :param text: Text to display.
         """
         self.clear()
-        msgs = self._command.set_property(
-            self._module_id, 17, text, self._command.PropertyDataType.STRING
+        msgs = self._set_property(
+            self._module_id, 17, text, self.PropertyDataType.STRING
         )
         for msg_str in msgs:
             self._serial_write_q.put(msg_str)
@@ -44,11 +38,8 @@ class Display(OutputModule):
         :param variable: variable to display.
         """
         self.clear()
-        msg = self._command.set_property(
-            self._module_id,
-            22,
-            (var, pos_x, pos_y),
-            self._command.PropertyDataType.DISPLAY_Var,
+        msg = self._set_property(
+            self._module_id, 22, (var, pos_x, pos_y), self.PropertyDataType.DISPLAY_Var
         )
         self._serial_write_q.put(msg)
         return msg
@@ -57,7 +48,5 @@ class Display(OutputModule):
         """Clear the screen.
         """
         self._serial_write_q.put(
-            self._command.set_property(
-                self._module_id, 21, bytes(2), self._command.PropertyDataType.RAW
-            )
+            self._set_property(self._module_id, 21, bytes(2), self.PropertyDataType.RAW)
         )

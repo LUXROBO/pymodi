@@ -2,8 +2,6 @@
 
 """Top-level package for pyMODI."""
 
-from __future__ import absolute_import
-
 from modi.modi import MODI
 
 __author__ = """Jinsung Ha"""

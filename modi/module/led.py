@@ -2,8 +2,6 @@
 
 """Led module."""
 
-from __future__ import absolute_import
-
 from enum import Enum
 
 from modi.module.module import OutputModule
@@ -44,7 +42,7 @@ class Led(OutputModule):
         """
         if not (red is None and green is None and blue is None):
             self._serial_write_q.put(
-                self._command.set_property(
+                self._set_property(
                     self._module_id,
                     16,
                     (

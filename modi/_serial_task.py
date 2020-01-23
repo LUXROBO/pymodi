@@ -2,23 +2,23 @@
 
 """Serial Task module."""
 
-from __future__ import absolute_import
-
 import time
+import queue
 import serial
 import serial.tools.list_ports as stl
 
-import queue
 
+class SerialTask:
+    """
+    This task read and write serial data
+    """
 
-class SerialTask(object):
-    def __init__(self, serial_read_q, serial_write_q, port):
+    def __init__(self, serial_read_q, serial_write_q):
         super(SerialTask, self).__init__()
         self._serial_read_q = serial_read_q
         self._serial_write_q = serial_write_q
-        self.__port = port
 
-    def list_ports(self):
+    def __list_ports(self):
         """
         :return: an iterable that yields :py:class:`~serial.tools.list_ports.ListPortInfo` objects.
 
@@ -37,9 +37,9 @@ class SerialTask(object):
         :platform: OSX (iokit)
         :platform: Windows (setupapi, registry)
         """
-        ports = stl.comports()
-        modi_ports = list()
 
+        modi_ports = list()
+        ports = stl.comports()
         for port in ports:
             if (
                 port.manufacturer == "LUXROBO"
@@ -52,14 +52,11 @@ class SerialTask(object):
         return modi_ports
 
     def open_serial(self):
-        if self.__port is None:
-            ports = self.list_ports()
-            if len(ports) > 0:
-                self._serial = serial.Serial(ports[0].device, 921600)
-            else:
-                raise serial.SerialException("No MODI network module connected.")
+        ports = self.__list_ports()
+        if len(ports) > 0:
+            self._serial = serial.Serial(ports[0].device, 921600)
         else:
-            self._serial = serial.Serial(self.__port, 921600)
+            raise serial.SerialException("No MODI network module connected.")
 
     def close_serial(self):
         self._serial.close()
