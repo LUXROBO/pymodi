@@ -3,6 +3,7 @@
 """Env module."""
 
 from enum import Enum
+
 from modi.module.module import InputModule
 
 

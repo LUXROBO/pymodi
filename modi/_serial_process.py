@@ -7,8 +7,8 @@ from modi._serial_task import SerialTask
 
 class SerialProcess(multiprocessing.Process):
     """ This process open, close, read, write serial port
-    param: serial_read_q: Multiprocessing Queue for serial reading data
-    param: serial_write_q: Multiprocessing Queue for serial writing data
+    :param serial_read_q: Multiprocessing Queue for serial reading data
+    :param serial_write_q: Multiprocessing Queue for serial writing data
     """
 
     def __init__(self, serial_read_q, serial_write_q):

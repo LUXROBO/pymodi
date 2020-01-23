@@ -7,8 +7,8 @@ from modi._parser_task import ParserTask
 
 class ParserProcess(multiprocessing.Process):
     """ This process parse serial raw data to json message
-    param: serial_read_q: Multiprocessing Queue for serial reading data
-    param: json_recv_q: Multiprocessing Queue for json message
+    :param serial_read_q: Multiprocessing Queue for serial reading data
+    :param json_recv_q: Multiprocessing Queue for json message
     """
 
     def __init__(self, serial_read_q, json_recv_q):

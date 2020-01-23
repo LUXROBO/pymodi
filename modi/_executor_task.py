@@ -206,20 +206,20 @@ class ExecutorTask(object):
         """ Generate module pnp on/off command
         """
 
-        # if no module_id is specified, it will broadcast incoming pnp state
+        # If no module_id is specified, it will broadcast incoming pnp state
         if module_id is None:
             for curr_module_id in self._module_ids:
-                message_to_write = self.__set_module_state(
+                pnp_message = self.__set_module_state(
                     curr_module_id, Module.ModuleState.RUN, module_pnp_state
                 )
-                self._serial_write_q.put(message_to_write)
+                self._serial_write_q.put(pnp_message)
 
-        # otherwise, it sets pnp state of the given module
+        # Otherwise, it sets pnp state of the given module
         else:
-            message_to_write = self.__set_module_state(
+            pnp_message = self.__set_module_state(
                 module_id, Module.ModuleState.RUN, module_pnp_state
             )
-            self._serial_write_q.put(message_to_write)
+            self._serial_write_q.put(pnp_message)
 
     def __fit_module_uuid(self, module_info, module_uuid):
         """ Generate uuid using bitwise operation

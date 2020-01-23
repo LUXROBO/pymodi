@@ -5,10 +5,10 @@ from modi._executor_task import ExecutorTask
 
 class ExecutorThread(threading.Thread):
     """ This process parse serial raw message to json message
-    param: serial_write_q: Multiprocessing Queue for serial writing message
-    param: json_recv_q: Multiprocessing Queue for json message
-    param: module_ids: dict() of key: module_id, value: ['timestamp', 'uuid']
-    param: modules: list() of module instance
+    :param serial_write_q: Multiprocessing Queue for serial writing message
+    :param json_recv_q: Multiprocessing Queue for json message
+    :param module_ids: dict() of key: module_id, value: ['timestamp', 'uuid']
+    :param modules: list() of module instance
     """
 
     def __init__(self, serial_write_q, json_recv_q, module_ids, modules):

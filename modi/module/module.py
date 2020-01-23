@@ -71,6 +71,10 @@ class Module:
         self._connected = connection_state
 
     def _get_property(self, property_type):
+        """ Get module property value and request
+        """
+
+        # Register property if not exists
         if not property_type in self._properties.keys():
             self._properties[property_type] = self.ModuleProperty()
             modi_serialtemp = self.request_property(
@@ -79,6 +83,7 @@ class Module:
             self._serial_write_q.put(modi_serialtemp)
             self._properties[property_type].last_request_time = time.time()
 
+        # Request property value if not updated for 0.5 sec
         duration = time.time() - self._properties[property_type].last_update_time
         if duration > 0.5:
             modi_serialtemp = self.request_property(
@@ -90,11 +95,17 @@ class Module:
         return self._properties[property_type].value
 
     def update_property(self, property_type, property_value):
+        """ Update property value and time
+        """
+
         if property_type in self._properties.keys():
             self._properties[property_type].value = property_value
             self._properties[property_type].last_update_time = time.time()
 
     def request_property(self, destination_id, property_type):
+        """ Generate message for request property
+        """
+
         message = dict()
 
         message["c"] = 0x03
@@ -102,7 +113,6 @@ class Module:
         message["d"] = destination_id
 
         property_bytes = bytearray(4)
-
         property_bytes[0] = property_type
         property_bytes[2] = 95
 
@@ -139,12 +149,15 @@ class OutputModule(Module):
     def _set_property(
         self, destination_id, property_type, property_values, property_data_type=None
     ):
+        """ Generate message for setting property
+        """
         message = dict()
 
         message["c"] = 0x04
         message["s"] = property_type
         message["d"] = destination_id
 
+        # Generate property according to their property type
         property_values_bytes = bytearray(8)
         if (
             property_data_type is None
