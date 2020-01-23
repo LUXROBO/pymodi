@@ -41,9 +41,7 @@ class MODI:
     def __init__(self):
         self._serial_read_q = multiprocessing.Queue(100)
         self._serial_write_q = multiprocessing.Queue(100)
-
-        self._recv_q = multiprocessing.Queue(100)
-        self._send_q = multiprocessing.Queue(100)
+        self._json_recv_q = multiprocessing.Queue(100)
 
         self._modules = list()
         self._module_ids = dict()
@@ -52,12 +50,12 @@ class MODI:
         self._ser_proc.daemon = True
         self._ser_proc.start()
 
-        self._par_proc = ParserProcess(self._serial_read_q, self._recv_q)
+        self._par_proc = ParserProcess(self._serial_read_q, self._json_recv_q)
         self._par_proc.daemon = True
         self._par_proc.start()
 
         self._exe_thrd = ExecutorThread(
-            self._serial_write_q, self._recv_q, self._module_ids, self._modules
+            self._serial_write_q, self._json_recv_q, self._module_ids, self._modules
         )
         self._exe_thrd.daemon = True
         self._exe_thrd.start()

@@ -29,22 +29,27 @@ class Motor(OutputModule):
         DEGREE = 18
         INV = 19
 
-    def __init__(self, module_id, uuid, modi, serial_write_q):
-        super(Motor, self).__init__(module_id, uuid, modi, serial_write_q)
-        self._type = "motor"
+    def __init__(self, module_id, module_uuid, modi, serial_write_q):
+        super(Motor, self).__init__(module_id, module_uuid, modi, serial_write_q)
+        self._module_type = "motor"
         self._serial_write_q = serial_write_q
 
-    def motor_ch_ctrl(self, channel, mode, value=None):
+    def motor_ch_ctrl(self, motor_channel, control_mode, control_value=None):
         """
         Channel: 0/1 -> Top/Bot
         Mode: 0/1/2 -> Torque, Speed, Angle (Torque is not implemented yet)
         """
-        if value is not None:
+        if control_value is not None:
             self._serial_write_q.put(
                 self._set_property(
                     self._module_id,
                     self.ControlType.INV.value,
-                    (channel, mode, value, 0x00 if value >= 0 else 0xFFFF),
+                    (
+                        motor_channel,
+                        control_mode,
+                        control_value,
+                        0x00 if control_value >= 0 else 0xFFFF,
+                    ),
                 )
             )
         # TODO: implement return statement below

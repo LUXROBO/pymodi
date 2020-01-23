@@ -20,10 +20,11 @@ class Led(OutputModule):
         GREEN = 3
         BLUE = 4
 
-    def __init__(self, module_id, uuid, modi, serial_write_q):
-        super(Led, self).__init__(module_id, uuid, modi, serial_write_q)
-        self._type = "led"
+    def __init__(self, module_id, module_uuid, modi, serial_write_q):
+        super(Led, self).__init__(module_id, module_uuid, modi, serial_write_q)
+        self._module_type = "led"
         self._serial_write_q = serial_write_q
+        self._module_id = module_id
 
     def rgb(self, red=None, green=None, blue=None):
         """

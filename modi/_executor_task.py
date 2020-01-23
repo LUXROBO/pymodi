@@ -39,10 +39,10 @@ class ExecutorTask:
         "output": ["display", "motor", "led", "speaker"],
     }
 
-    def __init__(self, serial_write_q, recv_q, module_ids, modules):
+    def __init__(self, serial_write_q, json_recv_q, module_ids, modules):
         super(ExecutorTask, self).__init__()
         self._serial_write_q = serial_write_q
-        self._recv_q = recv_q
+        self._json_recv_q = json_recv_q
         self._module_ids = module_ids
         self._modules = modules
 
@@ -52,7 +52,7 @@ class ExecutorTask:
 
     def start_thread(self):
         try:
-            msg = json.loads(self._recv_q.get_nowait())
+            msg = json.loads(self._json_recv_q.get_nowait())
         except queue.Empty:
             pass
         else:
@@ -93,11 +93,11 @@ class ExecutorTask:
                         print("disconnecting : ", module)
 
     def __update_modules(self, msg):
-        time_ms = int(time.time() * 1000)
+        curr_time_ms = int(time.time() * 1000)
 
         module_id = msg["s"]
         self._module_ids[module_id] = self._module_ids.get(module_id, dict())
-        self._module_ids[module_id]["timestamp"] = time_ms
+        self._module_ids[module_id]["timestamp"] = curr_time_ms
         self._module_ids[module_id]["uuid"] = self._module_ids[module_id].get(
             "uuid", str()
         )
@@ -240,12 +240,12 @@ class ExecutorTask:
     def __delay(self):
         time.sleep(1)
 
-    def __request_uuid(self, src_id, is_network_module=False):
+    def __request_uuid(self, source_id, is_network_module=False):
         BROADCAST_ID = 0xFFF
 
         msg = dict()
         msg["c"] = 0x28 if is_network_module else 0x08
-        msg["s"] = src_id
+        msg["s"] = source_id
         msg["d"] = BROADCAST_ID
 
         id_bytes = bytearray(8)

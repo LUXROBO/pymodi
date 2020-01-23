@@ -19,9 +19,9 @@ class Dial(InputModule):
         DEGREE = 2
         TURNSPEED = 3
 
-    def __init__(self, module_id, uuid, modi, serial_write_q):
-        super(Dial, self).__init__(module_id, uuid, modi, serial_write_q)
-        self._type = "dial"
+    def __init__(self, module_id, module_uuid, modi, serial_write_q):
+        super(Dial, self).__init__(module_id, module_uuid, modi, serial_write_q)
+        self._module_type = "dial"
 
     def degree(self):
         """

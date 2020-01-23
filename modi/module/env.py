@@ -22,9 +22,9 @@ class Env(InputModule):
         GREEN = 4
         BLUE = 5
 
-    def __init__(self, module_id, uuid, modi, serial_write_q):
-        super(Env, self).__init__(module_id, uuid, modi, serial_write_q)
-        self._type = "env"
+    def __init__(self, module_id, module_uuid, modi, serial_write_q):
+        super(Env, self).__init__(module_id, module_uuid, modi, serial_write_q)
+        self._module_type = "env"
 
     def temperature(self):
         """

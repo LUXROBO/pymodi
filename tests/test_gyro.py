@@ -35,9 +35,8 @@ class TestModi(unittest.TestCase):
                 gyro.acceleration_y(),
                 gyro.acceleration_z(),
                 gyro.vibration(),
-                bundle._recv_q.qsize(),
+                bundle._json_recv_q.qsize(),
             )
-            # print(bundle._recv_q.qsize())
             time.sleep(0.01)
         bundle.exit()
 

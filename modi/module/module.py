@@ -29,9 +29,9 @@ class Module:
         ON = 1
         OFF = 2
 
-    def __init__(self, id_, uuid, modi, serial_write_q):
-        self._id = id_
-        self._uuid = uuid
+    def __init__(self, module_id, module_uuid, modi, serial_write_q):
+        self._module_id = module_id
+        self._module_uuid = module_uuid
         self._modi = modi
         self._module_type = str()
         self._category = str()
@@ -41,11 +41,11 @@ class Module:
 
     @property
     def id(self):
-        return self._id
+        return self._module_id
 
     @property
     def uuid(self):
-        return self._uuid
+        return self._module_uuid
 
     @property
     def category(self):
@@ -59,35 +59,39 @@ class Module:
     def module_type(self):
         return self._module_type
 
-    def set_connection_state(self, state):
-        self._connected = state
+    def set_connection_state(self, connection_state):
+        self._connected = connection_state
 
-    def _get_property(self, property_):
-        if not property_ in self._properties.keys():
-            self._properties[property_] = self.Property()
-            modi_serialtemp = self.request_property(self._id, property_.value)
+    def _get_property(self, property_type):
+        if not property_type in self._properties.keys():
+            self._properties[property_type] = self.Property()
+            modi_serialtemp = self.request_property(
+                self._module_id, property_type.value
+            )
             self._serial_write_q.put(modi_serialtemp)
-            self._properties[property_].last_request_time = time.time()
+            self._properties[property_type].last_request_time = time.time()
 
-        duration = time.time() - self._properties[property_].last_update_time
+        duration = time.time() - self._properties[property_type].last_update_time
         if duration > 0.5:
-            modi_serialtemp = self.request_property(self._id, property_.value)
+            modi_serialtemp = self.request_property(
+                self._module_id, property_type.value
+            )
             self._serial_write_q.put(modi_serialtemp)
-            self._properties[property_].last_request_time = time.time()
+            self._properties[property_type].last_request_time = time.time()
 
-        return self._properties[property_].value
+        return self._properties[property_type].value
 
-    def update_property(self, prop, value):
-        if prop in self._properties.keys():
-            self._properties[prop].value = value
-            self._properties[prop].last_update_time = time.time()
+    def update_property(self, property_type, property_value):
+        if property_type in self._properties.keys():
+            self._properties[property_type].value = property_value
+            self._properties[property_type].last_update_time = time.time()
 
-    def request_property(self, dst_id, property_type):
+    def request_property(self, destination_id, property_type):
         msg = dict()
 
         msg["c"] = 0x03
         msg["s"] = 0
-        msg["d"] = dst_id
+        msg["d"] = destination_id
 
         property_bytes = bytearray(4)
 
@@ -124,27 +128,32 @@ class OutputModule(Module):
         RAW = 3
         DISPLAY_Var = 4
 
-    def _set_property(self, dst_id, property_type, property_values, data_type=None):
+    def _set_property(
+        self, destination_id, property_type, property_values, property_data_type=None
+    ):
         msg = dict()
 
         msg["c"] = 0x04
         msg["s"] = property_type
-        msg["d"] = dst_id
+        msg["d"] = destination_id
 
         property_values_bytes = bytearray(8)
-        if data_type is None or data_type == self.PropertyDataType.INT:
+        if (
+            property_data_type is None
+            or property_data_type == self.PropertyDataType.INT
+        ):
             for index, property_value in enumerate(property_values):
                 property_value = int(property_value)
                 property_values_bytes[index * 2] = property_value & 0xFF
                 property_values_bytes[index * 2 + 1] = (property_value & 0xFF00) >> 8
 
-        elif data_type == self.PropertyDataType.FLOAT:
+        elif property_data_type == self.PropertyDataType.FLOAT:
             for index, property_value in enumerate(property_values):
                 property_values_bytes[index * 4 : index * 4 + 4] = struct.pack(
                     "f", float(property_value)
                 )
 
-        elif data_type == self.PropertyDataType.STRING:
+        elif property_data_type == self.PropertyDataType.STRING:
             msgs = list()
             property_value = str(property_values)[:27]
             num_of_chunks = int(len(property_value) / 8) + 1
@@ -160,11 +169,11 @@ class OutputModule(Module):
                 msgs.append(json.dumps(msg, separators=(",", ":")))
             return msgs
 
-        elif data_type == self.PropertyDataType.RAW:
+        elif property_data_type == self.PropertyDataType.RAW:
             msg["b"] = base64.b64encode(bytearray(property_values)).decode("utf-8")
             msg["l"] = len(property_values)
 
-        elif data_type == self.PropertyDataType.DISPLAY_Var:
+        elif property_data_type == self.PropertyDataType.DISPLAY_Var:
             property_values_bytes[:4] = struct.pack("f", float(property_values[0]))
             property_values_bytes[4] = property_values[1]
             property_values_bytes[5] = 0x00

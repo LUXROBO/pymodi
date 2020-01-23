@@ -105,9 +105,9 @@ class Speaker(OutputModule):
         F_SOL_S_7 = 3322
         F_RA_S_7 = 3729
 
-    def __init__(self, module_id, uuid, modi, serial_write_q):
-        super(Speaker, self).__init__(module_id, uuid, modi, serial_write_q)
-        self._type = "speaker"
+    def __init__(self, module_id, module_uuid, modi, serial_write_q):
+        super(Speaker, self).__init__(module_id, module_uuid, modi, serial_write_q)
+        self._module_type = "speaker"
         self._serial_write_q = serial_write_q
 
     def tune(self, frequency=None, volume=None):
