@@ -68,13 +68,13 @@ class SerialTask:
 
     def __read_serial(self):
         if self._serial.in_waiting != 0:
-            msg_to_read = self._serial.read(self._serial.in_waiting).decode()
-            self._serial_read_q.put(msg_to_read)
+            message_to_read = self._serial.read(self._serial.in_waiting).decode()
+            self._serial_read_q.put(message_to_read)
 
     def __write_serial(self):
         try:
-            msg_to_write = self._serial_write_q.get_nowait().encode()
+            message_to_write = self._serial_write_q.get_nowait().encode()
         except queue.Empty:
             pass
         else:
-            self._serial.write(msg_to_write)
+            self._serial.write(message_to_write)

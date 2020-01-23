@@ -26,23 +26,23 @@ class Display(OutputModule):
         :param text: Text to display.
         """
         self.clear()
-        msgs = self._set_property(
+        messages = self._set_property(
             self._module_id, 17, text, self.PropertyDataType.STRING
         )
-        for msg_str in msgs:
-            self._serial_write_q.put(msg_str)
-        return msgs
+        for message in messages:
+            self._serial_write_q.put(message)
+        return messages
 
     def variable(self, var, pos_x, pos_y):
         """
         :param variable: variable to display.
         """
         self.clear()
-        msg = self._set_property(
+        message = self._set_property(
             self._module_id, 22, (var, pos_x, pos_y), self.PropertyDataType.DISPLAY_Var
         )
-        self._serial_write_q.put(msg)
-        return msg
+        self._serial_write_q.put(message)
+        return message
 
     def clear(self):
         """Clear the screen.

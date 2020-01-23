@@ -87,21 +87,21 @@ class Module:
             self._properties[property_type].last_update_time = time.time()
 
     def request_property(self, destination_id, property_type):
-        msg = dict()
+        message = dict()
 
-        msg["c"] = 0x03
-        msg["s"] = 0
-        msg["d"] = destination_id
+        message["c"] = 0x03
+        message["s"] = 0
+        message["d"] = destination_id
 
         property_bytes = bytearray(4)
 
         property_bytes[0] = property_type
         property_bytes[2] = 95
 
-        msg["b"] = base64.b64encode(bytes(property_bytes)).decode("utf-8")
-        msg["l"] = 4
+        message["b"] = base64.b64encode(bytes(property_bytes)).decode("utf-8")
+        message["l"] = 4
 
-        return json.dumps(msg, separators=(",", ":"))
+        return json.dumps(message, separators=(",", ":"))
 
 
 class SetupModule(Module):
@@ -131,11 +131,11 @@ class OutputModule(Module):
     def _set_property(
         self, destination_id, property_type, property_values, property_data_type=None
     ):
-        msg = dict()
+        message = dict()
 
-        msg["c"] = 0x04
-        msg["s"] = property_type
-        msg["d"] = destination_id
+        message["c"] = 0x04
+        message["s"] = property_type
+        message["d"] = destination_id
 
         property_values_bytes = bytearray(8)
         if (
@@ -154,7 +154,7 @@ class OutputModule(Module):
                 )
 
         elif property_data_type == self.PropertyDataType.STRING:
-            msgs = list()
+            messages = list()
             property_value = str(property_values)[:27]
             num_of_chunks = int(len(property_value) / 8) + 1
 
@@ -162,16 +162,16 @@ class OutputModule(Module):
                 property_values_bytes[:] = [
                     ord(i) for i in property_value[i * 8 : i * 8 + 8]
                 ]
-                msg["b"] = base64.b64encode(bytes(property_values_bytes)).decode(
+                message["b"] = base64.b64encode(bytes(property_values_bytes)).decode(
                     "utf-8"
                 )
-                msg["l"] = len(property_values_bytes)
-                msgs.append(json.dumps(msg, separators=(",", ":")))
-            return msgs
+                message["l"] = len(property_values_bytes)
+                messages.append(json.dumps(message, separators=(",", ":")))
+            return messages
 
         elif property_data_type == self.PropertyDataType.RAW:
-            msg["b"] = base64.b64encode(bytearray(property_values)).decode("utf-8")
-            msg["l"] = len(property_values)
+            message["b"] = base64.b64encode(bytearray(property_values)).decode("utf-8")
+            message["l"] = len(property_values)
 
         elif property_data_type == self.PropertyDataType.DISPLAY_Var:
             property_values_bytes[:4] = struct.pack("f", float(property_values[0]))
@@ -182,7 +182,7 @@ class OutputModule(Module):
         else:
             raise RuntimeError("Not supported property data type.")
 
-        msg["b"] = base64.b64encode(bytes(property_values_bytes)).decode("utf-8")
-        msg["l"] = 8
+        message["b"] = base64.b64encode(bytes(property_values_bytes)).decode("utf-8")
+        message["l"] = 8
 
-        return json.dumps(msg, separators=(",", ":"))
+        return json.dumps(message, separators=(",", ":"))

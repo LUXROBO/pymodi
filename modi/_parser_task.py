@@ -26,14 +26,14 @@ class ParserTask:
             self.__raw_data_buffer += serial_raw_data
 
         while self.has_json():
-            self._json_recv_q.put(self.__json_msg)
+            self._json_recv_q.put(self.__json_message)
 
     def has_json(self):
         end = self.__raw_data_buffer.find("}")
         if end >= 0:
             start = self.__raw_data_buffer.rfind("{", 0, end)
             if start >= 0:
-                self.__json_msg = self.__raw_data_buffer[start : end + 1]
+                self.__json_message = self.__raw_data_buffer[start : end + 1]
                 self.__raw_data_buffer = self.__raw_data_buffer[end + 1 :]
                 return True
             else:

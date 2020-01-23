@@ -46,17 +46,13 @@ class ExecutorTask:
         self._module_ids = module_ids
         self._modules = modules
 
-        # TODO: comment
-        time.sleep(2)
-        # self.__init_modules()
-
     def start_thread(self):
         try:
-            msg = json.loads(self._json_recv_q.get_nowait())
+            message = json.loads(self._json_recv_q.get_nowait())
         except queue.Empty:
             pass
         else:
-            self.__handler(msg["c"])(msg)
+            self.__handler(message["c"])(message)
             time.sleep(0.004)
 
     def __handler(self, command):
@@ -67,23 +63,23 @@ class ExecutorTask:
             0x1F: self.__update_property,
         }.get(command, lambda _: None)
 
-    def __update_health(self, msg):
-        module_id = msg["s"]
+    def __update_health(self, message):
+        module_id = message["s"]
         curr_time_ms = int(time.time() * 1000)
-        msg_decoded = bytearray(base64.b64decode(msg["b"]))
+        message_decoded = bytearray(base64.b64decode(message["b"]))
 
         self._module_ids[module_id] = self._module_ids.get(module_id, dict())
         self._module_ids[module_id]["timestamp"] = curr_time_ms
         self._module_ids[module_id]["uuid"] = self._module_ids[module_id].get(
             "uuid", str()
         )
-        self._module_ids[module_id]["battery"] = int(msg_decoded[3])
+        self._module_ids[module_id]["battery"] = int(message_decoded[3])
 
         if not self._module_ids[module_id]["uuid"]:
-            msg_to_write = self.__request_uuid(module_id, is_network_module=False)
-            self._serial_write_q.put(msg_to_write)
-            msg_to_write = self.__request_uuid(module_id, is_network_module=True)
-            self._serial_write_q.put(msg_to_write)
+            message_to_write = self.__request_uuid(module_id, is_network_module=False)
+            self._serial_write_q.put(message_to_write)
+            message_to_write = self.__request_uuid(module_id, is_network_module=True)
+            self._serial_write_q.put(message_to_write)
 
         for module_id, module_info in list(self._module_ids.items()):
             if curr_time_ms - module_info["timestamp"] > 2000:
@@ -92,19 +88,19 @@ class ExecutorTask:
                         module.set_connection_state(state=True)
                         print("disconnecting : ", module)
 
-    def __update_modules(self, msg):
+    def __update_modules(self, message):
         curr_time_ms = int(time.time() * 1000)
 
-        module_id = msg["s"]
+        module_id = message["s"]
         self._module_ids[module_id] = self._module_ids.get(module_id, dict())
         self._module_ids[module_id]["timestamp"] = curr_time_ms
         self._module_ids[module_id]["uuid"] = self._module_ids[module_id].get(
             "uuid", str()
         )
 
-        msg_decoded = bytearray(base64.b64decode(msg["b"]))
-        module_uuid_bytes = msg_decoded[:4]
-        module_info_bytes = msg_decoded[-4:]
+        message_decoded = bytearray(base64.b64decode(message["b"]))
+        module_uuid_bytes = message_decoded[:4]
+        module_info_bytes = message_decoded[-4:]
 
         module_info = (module_info_bytes[1] << 8) + module_info_bytes[0]
 
@@ -161,16 +157,16 @@ class ExecutorTask:
         }.get(module_type)
         return module
 
-    def __update_property(self, msg):
+    def __update_property(self, message):
         # TODO: comment
-        property_number = msg["d"]
+        property_number = message["d"]
         if property_number == 0 or property_number == 1:
             return
 
         # TODO: comment
         for module in self._modules:
-            if module.id == msg["s"]:
-                decoded = bytearray(base64.b64decode(msg["b"]))
+            if module.id == message["s"]:
+                decoded = bytearray(base64.b64decode(message["b"]))
                 property_type = module.PropertyType(property_number)
                 module.update_property(
                     property_type, round(struct.unpack("f", bytes(decoded[:4]))[0], 2)
@@ -180,16 +176,16 @@ class ExecutorTask:
         # if no module_id is specified, it will broadcast incoming pnp state
         if module_id is None:
             for curr_module_id in self._module_ids:
-                msg_to_write = self.__set_module_state(
+                message_to_write = self.__set_module_state(
                     curr_module_id, Module.ModuleState.RUN, module_pnp_state
                 )
-                self._serial_write_q.put(msg_to_write)
+                self._serial_write_q.put(message_to_write)
         # otherwise, it sets pnp state of the given module
         else:
-            msg_to_write = self.__set_module_state(
+            message_to_write = self.__set_module_state(
                 module_id, Module.ModuleState.RUN, module_pnp_state
             )
-            self._serial_write_q.put(msg_to_write)
+            self._serial_write_q.put(message_to_write)
 
     def __append_hex(self, a, b):
         # TODO: comment
@@ -201,40 +197,40 @@ class ExecutorTask:
 
     def __set_module_state(self, dst_id, module_state, pnp_state):
         if type(module_state) is Module.ModuleState:
-            msg = dict()
+            message = dict()
 
-            msg["c"] = 0x09
-            msg["s"] = 0
-            msg["d"] = dst_id
+            message["c"] = 0x09
+            message["s"] = 0
+            message["d"] = dst_id
 
             state_bytes = bytearray(2)
             state_bytes[0] = module_state.value
             state_bytes[1] = pnp_state.value
 
-            msg["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
-            msg["l"] = 2
+            message["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
+            message["l"] = 2
 
-            return json.dumps(msg, separators=(",", ":"))
+            return json.dumps(message, separators=(",", ":"))
         else:
             raise RuntimeError("The type of state is not ModuleState")
 
     def init_modules(self):
         BROADCAST_ID = 0xFFF
 
-        msg_to_send = self.__set_module_state(
+        message_to_send = self.__set_module_state(
             BROADCAST_ID, Module.ModuleState.REBOOT, Module.ModulePnp.OFF
         )
-        self._serial_write_q.put(msg_to_send)
+        self._serial_write_q.put(message_to_send)
         self.__delay()
 
-        msg_to_send = self.__set_module_state(
+        message_to_send = self.__set_module_state(
             BROADCAST_ID, Module.ModuleState.RUN, Module.ModulePnp.OFF
         )
-        self._serial_write_q.put(msg_to_send)
+        self._serial_write_q.put(message_to_send)
         self.__delay()
 
-        msg_to_send = self.__request_uuid(BROADCAST_ID)
-        self._serial_write_q.put(msg_to_send)
+        message_to_send = self.__request_uuid(BROADCAST_ID)
+        self._serial_write_q.put(message_to_send)
         self.__delay()
 
     def __delay(self):
@@ -243,16 +239,16 @@ class ExecutorTask:
     def __request_uuid(self, source_id, is_network_module=False):
         BROADCAST_ID = 0xFFF
 
-        msg = dict()
-        msg["c"] = 0x28 if is_network_module else 0x08
-        msg["s"] = source_id
-        msg["d"] = BROADCAST_ID
+        message = dict()
+        message["c"] = 0x28 if is_network_module else 0x08
+        message["s"] = source_id
+        message["d"] = BROADCAST_ID
 
         id_bytes = bytearray(8)
         id_bytes[0] = 0xFF
         id_bytes[1] = 0x0F
 
-        msg["b"] = base64.b64encode(bytes(id_bytes)).decode("utf-8")
-        msg["l"] = 8
+        message["b"] = base64.b64encode(bytes(id_bytes)).decode("utf-8")
+        message["l"] = 8
 
-        return json.dumps(msg, separators=(",", ":"))
+        return json.dumps(message, separators=(",", ":"))
