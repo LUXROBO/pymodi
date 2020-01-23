@@ -31,4 +31,8 @@ class Dial(InputModule):
         return self._get_property(self.PropertyType.DEGREE)
 
     def get_turnspeed(self):
+        """
+        :return: The dial's turn speed.
+        :rtype: float
+        """
         return self._get_property(self.PropertyType.TURNSPEED)

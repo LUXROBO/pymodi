@@ -56,12 +56,12 @@ class Led(OutputModule):
         return self.set_red(), self.set_green(), self.set_blue()
 
     def set_on(self):
-        """Turn on at maximum brightness.
+        """Turn on led at maximum brightness.
         """
         return self.set_rgb(255, 255, 255)
 
     def set_off(self):
-        """Turn off.
+        """Turn off led.
         """
         return self.set_rgb(0, 0, 0)
 

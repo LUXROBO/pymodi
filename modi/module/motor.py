@@ -36,8 +36,11 @@ class Motor(OutputModule):
 
     def set_motor_channel(self, motor_channel, control_mode, control_value=None):
         """
-        Channel: 0/1 -> Top/Bot
-        Mode: 0/1/2 -> Torque, Speed, Angle (Torque is not implemented yet)
+        :param motor_channel: Select motor channel for control
+        :param control_mode: Control mode of the motor to be selected
+        :param control_value: value to control
+        Channel: 0:Top 1:Bot
+        Mode: 0:Torque 1:Speed 2:Angle (Torque is not implemented yet)
         """
         if control_value is not None:
             self._serial_write_q.put(

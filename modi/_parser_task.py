@@ -11,7 +11,7 @@ class ParserTask:
         self._json_recv_q = json_recv_q
 
         self.__raw_data_buffer = str()
-        self.__json = str()
+        self.__json_message = str()
 
     def start_thread(self):
         self.read_json()

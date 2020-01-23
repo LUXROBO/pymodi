@@ -35,7 +35,7 @@ class Display(OutputModule):
 
     def set_variable(self, variable, position_x, position_y):
         """
-        :param variable: variable to display.
+        :param variable: Variable to display.
         """
         self.clear()
         message = self._set_property(

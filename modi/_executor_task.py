@@ -216,6 +216,8 @@ class ExecutorTask:
             raise RuntimeError("The type of state is not ModuleState")
 
     def init_modules(self):
+        """        
+        """
         BROADCAST_ID = 0xFFF
 
         message_to_send = self.__set_module_state(
