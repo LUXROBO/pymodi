@@ -67,3 +67,11 @@ History
 
 -   Performance improvement.
 -   Bug fixes.
+
+0.7.0 (2020-01-23)
+------------------
+
+-   Implement individual motor control.
+-   Implement set variable method in display.
+-   Improve performance by refacoring multithreading code to multiprocessing version.
+-   Bug fixes.
