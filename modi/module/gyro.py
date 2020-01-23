@@ -32,7 +32,7 @@ class Gyro(InputModule):
         super(Gyro, self).__init__(module_id, module_uuid, modi, serial_write_q)
         self._module_type = "gyro"
 
-    def roll(self):
+    def get_roll(self):
         """
         :return: Roll angle.
         :rtype: float
@@ -40,7 +40,7 @@ class Gyro(InputModule):
 
         return self._get_property(self.PropertyType.ROLL)
 
-    def pitch(self):
+    def get_pitch(self):
         """
         :return: Pitch angle.
         :rtype: float
@@ -48,7 +48,7 @@ class Gyro(InputModule):
 
         return self._get_property(self.PropertyType.PITCH)
 
-    def yaw(self):
+    def get_yaw(self):
         """
         :return: Yaw angle.
         :rtype: float
@@ -56,7 +56,7 @@ class Gyro(InputModule):
 
         return self._get_property(self.PropertyType.YAW)
 
-    def angular_vel_x(self):
+    def get_angular_vel_x(self):
         """
         :return: Angular velocity the about x-axis.
         :rtype: float
@@ -64,7 +64,7 @@ class Gyro(InputModule):
 
         return self._get_property(self.PropertyType.ANGULAR_VEL_X)
 
-    def angular_vel_y(self):
+    def get_angular_vel_y(self):
         """
         :return: Angular velocity the about y-axis.
         :rtype: float
@@ -72,7 +72,7 @@ class Gyro(InputModule):
 
         return self._get_property(self.PropertyType.ANGULAR_VEL_Y)
 
-    def angular_vel_z(self):
+    def get_angular_vel_z(self):
         """
         :return: Angular velocity the about z-axis.
         :rtype: float
@@ -80,7 +80,7 @@ class Gyro(InputModule):
 
         return self._get_property(self.PropertyType.ANGULAR_VEL_Z)
 
-    def acceleration_x(self):
+    def get_acceleration_x(self):
         """
         :return: X-axis acceleration.
         :rtype: float
@@ -88,7 +88,7 @@ class Gyro(InputModule):
 
         return self._get_property(self.PropertyType.ACCELERATION_X)
 
-    def acceleration_y(self):
+    def get_acceleration_y(self):
         """
         :return: Y-axis acceleration.
         :rtype: float
@@ -96,7 +96,7 @@ class Gyro(InputModule):
 
         return self._get_property(self.PropertyType.ACCELERATION_Y)
 
-    def acceleration_z(self):
+    def get_acceleration_z(self):
         """
         :return: Z-axis acceleration.
         :rtype: float
@@ -104,7 +104,7 @@ class Gyro(InputModule):
 
         return self._get_property(self.PropertyType.ACCELERATION_Z)
 
-    def vibration(self):
+    def get_vibration(self):
         """
         :return: Vibration.
         :rtype: float

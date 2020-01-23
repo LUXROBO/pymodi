@@ -26,7 +26,7 @@ class Led(OutputModule):
         self._serial_write_q = serial_write_q
         self._module_id = module_id
 
-    def rgb(self, red=None, green=None, blue=None):
+    def set_rgb(self, red=None, green=None, blue=None):
         """
         * If either *red*, *green*, or *blue* is not ``None``,
 
@@ -47,25 +47,25 @@ class Led(OutputModule):
                     self._module_id,
                     16,
                     (
-                        red if red is not None else self.red(),
-                        green if green is not None else self.green(),
-                        blue if blue is not None else self.blue(),
+                        red if red is not None else self.set_red(),
+                        green if green is not None else self.set_green(),
+                        blue if blue is not None else self.set_blue(),
                     ),
                 )
             )
-        return self.red(), self.green(), self.blue()
+        return self.set_red(), self.set_green(), self.set_blue()
 
-    def on(self):
+    def set_on(self):
         """Turn on at maximum brightness.
         """
-        return self.rgb(255, 255, 255)
+        return self.set_rgb(255, 255, 255)
 
-    def off(self):
+    def set_off(self):
         """Turn off.
         """
-        return self.rgb(0, 0, 0)
+        return self.set_rgb(0, 0, 0)
 
-    def red(self, red=None):
+    def set_red(self, red=None):
         """
         :param int red: Red component to set or ``None``.
 
@@ -75,10 +75,10 @@ class Led(OutputModule):
         :rtype: float
         """
         if red is not None:
-            self.rgb(red=red)
+            self.set_rgb(red=red)
         return self._get_property(self.PropertyType.RED)
 
-    def green(self, green=None):
+    def set_green(self, green=None):
         """
         :param int green: Green component to set or ``None``.
 
@@ -88,10 +88,10 @@ class Led(OutputModule):
         :rtype: float
         """
         if green is not None:
-            self.rgb(green=green)
+            self.set_rgb(green=green)
         return self._get_property(self.PropertyType.GREEN)
 
-    def blue(self, blue=None):
+    def set_blue(self, blue=None):
         """
         :param int blue: Blue component to set or ``None``.
 
@@ -101,5 +101,5 @@ class Led(OutputModule):
         :rtype: float
         """
         if blue is not None:
-            self.rgb(blue=blue)
+            self.set_rgb(blue=blue)
         return self._get_property(self.PropertyType.BLUE)

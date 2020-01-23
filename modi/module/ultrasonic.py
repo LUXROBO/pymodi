@@ -22,7 +22,7 @@ class Ultrasonic(InputModule):
         super(Ultrasonic, self).__init__(module_id, module_uuid, modi, serial_write_q)
         self._module_type = "ultrasonic"
 
-    def distance(self):
+    def get_distance(self):
         """
         :return: Distance to object.
         :rtype: float

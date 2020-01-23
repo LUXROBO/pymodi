@@ -25,28 +25,28 @@ class Button(InputModule):
         super(Button, self).__init__(module_id, module_uuid, modi, serial_write_q)
         self._module_type = "button"
 
-    def clicked(self):
+    def get_clicked(self):
         """
         :return: `True` if clicked or `False`.
         :rtype: bool
         """
         return self._get_property(self.PropertyType.CLICKED) == 100.0
 
-    def double_clicked(self):
+    def get_double_clicked(self):
         """
         :return: `True` if double clicked or `False`.
         :rtype: bool
         """
         return self._get_property(self.PropertyType.DOUBLE_CLICKED) == 100.0
 
-    def pressed(self):
+    def get_pressed(self):
         """
         :return: `True` if pressed or `False`.
         :rtype: bool    
         """
         return self._get_property(self.PropertyType.PRESSED) == 100.0
 
-    def toggled(self):
+    def get_toggled(self):
         """
         :return: `True` if toggled or `False`.
         :rtype: bool

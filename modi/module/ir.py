@@ -23,14 +23,14 @@ class Ir(InputModule):
         super(Ir, self).__init__(module_id, module_uuid, modi, serial_write_q)
         self._module_type = "ir"
 
-    def distance(self):
+    def get_distance(self):
         """
         :return: Distance to object.
         :rtype: float
         """
         return self._get_property(self.PropertyType.DISTANCE)
 
-    def brightness(self):
+    def get_brightness(self):
         """
         :return: Brightness.
         :rtype: float

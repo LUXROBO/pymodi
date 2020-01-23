@@ -26,42 +26,42 @@ class Env(InputModule):
         super(Env, self).__init__(module_id, module_uuid, modi, serial_write_q)
         self._module_type = "env"
 
-    def temperature(self):
+    def get_temperature(self):
         """
         :return: Temperature.
         :rtype: float
         """
         return self._get_property(self.PropertyType.TEMPERATURE)
 
-    def humidity(self):
+    def get_humidity(self):
         """
         :return: Humidity.
         :rtype: float
         """
         return self._get_property(self.PropertyType.HUMIDITY)
 
-    def brightness(self):
+    def get_brightness(self):
         """
         :return: Brightness.
         :rtype: float
         """
         return self._get_property(self.PropertyType.BRIGHTNESS)
 
-    def red(self):
+    def get_red(self):
         """
         :return: Red component of light.
         :rtype: float
         """
         return self._get_property(self.PropertyType.RED)
 
-    def green(self):
+    def get_green(self):
         """
         :return: Green component of light.
         :rtype: float
         """
         return self._get_property(self.PropertyType.GREEN)
 
-    def blue(self):
+    def get_blue(self):
         """
         :return: Blue component of light.
         :rtype: float

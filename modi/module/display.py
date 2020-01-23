@@ -21,7 +21,7 @@ class Display(OutputModule):
         self._serial_write_q = serial_write_q
         self._module_id = module_id
 
-    def text(self, text):
+    def set_text(self, text):
         """
         :param text: Text to display.
         """
@@ -33,7 +33,7 @@ class Display(OutputModule):
             self._serial_write_q.put(message)
         return messages
 
-    def variable(self, variable, position_x, position_y):
+    def set_variable(self, variable, position_x, position_y):
         """
         :param variable: variable to display.
         """

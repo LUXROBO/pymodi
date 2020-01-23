@@ -23,12 +23,12 @@ class Dial(InputModule):
         super(Dial, self).__init__(module_id, module_uuid, modi, serial_write_q)
         self._module_type = "dial"
 
-    def degree(self):
+    def get_degree(self):
         """
         :return: The dial's angle.
         :rtype: float
         """
         return self._get_property(self.PropertyType.DEGREE)
 
-    def turnspeed(self):
+    def get_turnspeed(self):
         return self._get_property(self.PropertyType.TURNSPEED)

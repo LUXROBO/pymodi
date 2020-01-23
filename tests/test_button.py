@@ -20,10 +20,10 @@ class TestModi(unittest.TestCase):
         button = bundle.buttons[0]
         for _ in range(100):
             print(
-                button.clicked(),
-                button.double_clicked(),
-                button.pressed(),
-                button.toggled(),
+                button.get_clicked(),
+                button.get_double_clicked(),
+                button.get_pressed(),
+                button.get_toggled(),
             )
             time.sleep(0.1)
         bundle.exit()

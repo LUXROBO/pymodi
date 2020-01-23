@@ -110,7 +110,7 @@ class Speaker(OutputModule):
         self._module_type = "speaker"
         self._serial_write_q = serial_write_q
 
-    def tune(self, frequency=None, volume=None):
+    def set_tune(self, frequency_value=None, volume_value=None):
         """
         * If either *frequency* or *volume* is not ``None``,
 
@@ -124,21 +124,23 @@ class Speaker(OutputModule):
         :return: Tuple of frequency and volume.
         :rtype: tuple
         """
-        if frequency is not None or volume is not None:
+        if frequency_value is not None or volume_value is not None:
             self._serial_write_q.put(
                 self._set_property(
                     self._module_id,
                     16,
                     (
-                        frequency if frequency is not None else self.frequency(),
-                        volume if volume is not None else self.volume(),
+                        frequency_value
+                        if frequency_value is not None
+                        else self.set_frequency(),
+                        volume_value if volume_value is not None else self.set_volume(),
                     ),
                     self.PropertyDataType.FLOAT,
                 )
             )
-        return self.frequency(), self.volume()
+        return self.set_frequency(), self.set_volume()
 
-    def frequency(self, frequency=None):
+    def set_frequency(self, frequency_value=None):
         """
         :param float frequency: Frequency to set or ``None``.
 
@@ -147,12 +149,12 @@ class Speaker(OutputModule):
         :return: Frequency.
         :rtype: float
         """
-        if frequency is None:
+        if frequency_value is None:
             return self._get_property(self.PropertyType.FREQUENCY)
         else:
-            return self.tune(frequency=frequency)
+            return self.set_tune(frequency_value=frequency_value)
 
-    def volume(self, volume=None):
+    def set_volume(self, volume_value=None):
         """
         :param float volume: Volume to set or ``None``.
 
@@ -161,12 +163,12 @@ class Speaker(OutputModule):
         :return: Volume.
         :rtype: float
         """
-        if volume is None:
+        if volume_value is None:
             return self._get_property(self.PropertyType.VOLUME)
         else:
-            return self.tune(volume=volume)
+            return self.set_tune(volume_value=volume_value)
 
-    def off(self):
+    def set_off(self):
         """Turn off.
         """
-        self.tune(0, 0)
+        self.set_tune(0, 0)
