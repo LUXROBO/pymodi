@@ -25,16 +25,16 @@ class TestModi(unittest.TestCase):
         while (now - past) < 10:
             now = time.time()
             print(
-                gyro.roll(),
-                gyro.pitch(),
-                gyro.yaw(),
-                gyro.angular_vel_x(),
-                gyro.angular_vel_y(),
-                gyro.angular_vel_z(),
-                gyro.acceleration_x(),
-                gyro.acceleration_y(),
-                gyro.acceleration_z(),
-                gyro.vibration(),
+                gyro.get_roll(),
+                gyro.get_pitch(),
+                gyro.get_yaw(),
+                gyro.get_angular_vel_x(),
+                gyro.get_angular_vel_y(),
+                gyro.get_angular_vel_z(),
+                gyro.get_acceleration_x(),
+                gyro.get_acceleration_y(),
+                gyro.get_acceleration_z(),
+                gyro.get_vibration(),
                 bundle._json_recv_q.qsize(),
             )
             time.sleep(0.01)

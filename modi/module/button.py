@@ -13,6 +13,7 @@ class Button(InputModule):
     :param int uuid: The uuid of the module.
     :param modi: The :class:`~modi.modi.MODI` instance.
     :type modi: :class:`~modi.modi.MODI  `
+    :param serial_write_q: multiprocessing.queue of the serial writing
     """
 
     class PropertyType(Enum):

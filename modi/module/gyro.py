@@ -8,12 +8,12 @@ from modi.module.module import InputModule
 
 
 class Gyro(InputModule):
-
     """
     :param int id: The id of the module.
     :param int uuid: The uuid of the module.
     :param modi: The :class:`~modi.modi.MODI` instance.
-    :type modi: :class:`~modi.modi.MODI`
+    :type modi: :class:`~modi.modi.MODI  `
+    :param serial_write_q: multiprocessing.queue of the serial writing
     """
 
     class PropertyType(Enum):

@@ -28,10 +28,10 @@ from modi.module.module import Module
 
 class ExecutorTask(object):
     """ This task execute incoming commands
-    param: serial_write_q: Multiprocessing Queue for serial writing data
-    param: json_recv_q: Multiprocessing Queue for parsed json data
-    param: module_ids:
-    param: modules:
+    param: serial_write_q: Multiprocessing Queue for serial writing message
+    param: json_recv_q: Multiprocessing Queue for parsed json message
+    param: module_ids: dict() of key: module_id, value: ['timestamp', 'uuid']
+    param: modules: list() of module instance
     """
 
     # variables shared across all class instances
@@ -49,7 +49,7 @@ class ExecutorTask(object):
         self._module_ids = module_ids
         self._modules = modules
 
-    def start_thread(self):
+    def run(self):
         """ Run in ExecutorThread
         """
 
@@ -87,7 +87,7 @@ class ExecutorTask(object):
         )
         self._module_ids[module_id]["battery"] = int(message_decoded[3])
 
-        # Request uui from network modules and other modules
+        # Request uuid from network modules and other modules
         if not self._module_ids[module_id]["uuid"]:
             message_to_write = self.__request_uuid(module_id, is_network_module=False)
             self._serial_write_q.put(message_to_write)
@@ -106,7 +106,7 @@ class ExecutorTask(object):
         """ Update module information
         """
 
-        # set time variable for timestamp
+        # Set time variable for timestamp
         curr_time_ms = int(time.time() * 1000)
 
         # Record information by module id
@@ -129,7 +129,7 @@ class ExecutorTask(object):
 
         category = self.module_categories[module_category_idx]
         module_type = self.module_types[category][module_type_idx]
-        module_uuid = self.__append_hex(
+        module_uuid = self.__fit_module_uuid(
             module_info,
             (
                 (module_uuid_bytes[3] << 24)
@@ -162,6 +162,9 @@ class ExecutorTask(object):
                 self._modules.sort(key=lambda module: module.uuid)
 
     def __init_module(self, module_type):
+        """ Find module type for module initialize
+        """
+
         module = {
             "button": button.Button,
             "dial": dial.Dial,
@@ -181,12 +184,12 @@ class ExecutorTask(object):
         """ Update module property
         """
 
-        # TODO: comment
+        # Do not update reserved property
         property_number = message["d"]
         if property_number == 0 or property_number == 1:
             return
 
-        # TODO: comment
+        # Decode message of module id and module property for update property
         for module in self._modules:
             if module.id == message["s"]:
                 message_decoded = bytearray(base64.b64decode(message["b"]))
@@ -207,6 +210,7 @@ class ExecutorTask(object):
                     curr_module_id, Module.ModuleState.RUN, module_pnp_state
                 )
                 self._serial_write_q.put(message_to_write)
+
         # otherwise, it sets pnp state of the given module
         else:
             message_to_write = self.__set_module_state(
@@ -214,15 +218,15 @@ class ExecutorTask(object):
             )
             self._serial_write_q.put(message_to_write)
 
-    def __append_hex(self, a, b):
+    def __fit_module_uuid(self, module_info, module_uuid):
         """ Generate uuid using bitwise operation
         """
 
-        sizeof_b = 0
-        while (b >> sizeof_b) > 0:
-            sizeof_b += 1
-        sizeof_b += sizeof_b % 4
-        return (a << sizeof_b) | b
+        sizeof_module_uuid = 0
+        while (module_uuid >> sizeof_module_uuid) > 0:
+            sizeof_module_uuid += 1
+        sizeof_module_uuid += sizeof_module_uuid % 4
+        return (module_info << sizeof_module_uuid) | module_uuid
 
     def __set_module_state(self, dst_id, module_state, pnp_state):
         """ Generate message for set module state and pnp state          
@@ -252,21 +256,21 @@ class ExecutorTask(object):
 
         BROADCAST_ID = 0xFFF
 
-        # reboot module
+        # Reboot module
         message_to_send = self.__set_module_state(
             BROADCAST_ID, Module.ModuleState.REBOOT, Module.ModulePnp.OFF
         )
         self._serial_write_q.put(message_to_send)
         self.__delay()
 
-        # command module pnp off
+        # Command module pnp off
         message_to_send = self.__set_module_state(
             BROADCAST_ID, Module.ModuleState.RUN, Module.ModulePnp.OFF
         )
         self._serial_write_q.put(message_to_send)
         self.__delay()
 
-        # command module uuid
+        # Command module uuid
         message_to_send = self.__request_uuid(BROADCAST_ID)
         self._serial_write_q.put(message_to_send)
         self.__delay()
@@ -274,6 +278,7 @@ class ExecutorTask(object):
     def __delay(self):
         """ Wait for delay
         """
+
         time.sleep(1)
 
     def __request_uuid(self, source_id, is_network_module=False):

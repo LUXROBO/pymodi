@@ -11,6 +11,14 @@ from enum import Enum
 
 
 class Module:
+    """
+    :param int id: The id of the module.
+    :param int uuid: The uuid of the module.
+    :param modi: The :class:`~modi.modi.MODI` instance.
+    :type modi: :class:`~modi.modi.MODI  `
+    :param serial_write_q: multiprocessing.queue of the serial writing
+    """
+
     class ModuleProperty:
         def __init__(self):
             self.value = 0

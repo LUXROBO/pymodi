@@ -64,6 +64,9 @@ class MODI:
         time.sleep(5)
 
     def exit(self):
+        """ Stop modi instance
+        """
+
         self._ser_proc.stop()
         self._par_proc.stop()
         self._exe_thrd.stop()
@@ -83,6 +86,7 @@ class MODI:
     def buttons(self):
         """Tuple of connected :class:`~modi.module.button.Button` modules.
         """
+
         return tuple(
             [module for module in self.modules if module.module_type == "button"]
         )
@@ -91,6 +95,7 @@ class MODI:
     def dials(self):
         """Tuple of connected :class:`~modi.module.dial.Dial` modules.
         """
+
         return tuple(
             [module for module in self.modules if module.module_type == "dial"]
         )
@@ -99,6 +104,7 @@ class MODI:
     def displays(self):
         """Tuple of connected :class:`~modi.module.display.Display` modules.
         """
+
         return tuple(
             [module for module in self.modules if module.module_type == "display"]
         )
@@ -107,12 +113,14 @@ class MODI:
     def envs(self):
         """Tuple of connected :class:`~modi.module.env.Env` modules.
         """
+
         return tuple([module for module in self.modules if module.module_type == "env"])
 
     @property
     def gyros(self):
         """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
         """
+
         return tuple(
             [module for module in self.modules if module.module_type == "gyro"]
         )
@@ -121,24 +129,28 @@ class MODI:
     def irs(self):
         """Tuple of connected :class:`~modi.module.ir.Ir` modules.
         """
+
         return tuple([module for module in self.modules if module.module_type == "ir"])
 
     @property
     def leds(self):
         """Tuple of connected :class:`~modi.module.led.Led` modules.
         """
+
         return tuple([module for module in self.modules if module.module_type == "led"])
 
     @property
     def mics(self):
         """Tuple of connected :class:`~modi.module.mic.Mic` modules.
         """
+
         return tuple([module for module in self.modules if module.module_type == "mic"])
 
     @property
     def motors(self):
         """Tuple of connected :class:`~modi.module.motor.Motor` modules.
         """
+
         return tuple(
             [module for module in self.modules if module.module_type == "motor"]
         )
@@ -147,6 +159,7 @@ class MODI:
     def speakers(self):
         """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
         """
+
         return tuple(
             [module for module in self.modules if module.module_type == "speaker"]
         )
@@ -155,6 +168,7 @@ class MODI:
     def ultrasonics(self):
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
+
         return tuple(
             [module for module in self.modules if module.module_type == "ultrasonic"]
         )

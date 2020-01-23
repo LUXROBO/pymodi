@@ -4,7 +4,11 @@ from modi._executor_task import ExecutorTask
 
 
 class ExecutorThread(threading.Thread):
-    """ This thread run excutor task
+    """ This process parse serial raw message to json message
+    param: serial_write_q: Multiprocessing Queue for serial writing message
+    param: json_recv_q: Multiprocessing Queue for json message
+    param: module_ids: dict() of key: module_id, value: ['timestamp', 'uuid']
+    param: modules: list() of module instance
     """
 
     def __init__(self, serial_write_q, json_recv_q, module_ids, modules):
@@ -13,12 +17,21 @@ class ExecutorThread(threading.Thread):
         self.__stop = threading.Event()
 
     def run(self):
+        """ Run executor task
+        """
+
         self.__exe_task.init_modules()
         while not self.stopped():
-            self.__exe_task.start_thread()
+            self.__exe_task.run()
 
     def stop(self):
+        """ Stop executor task
+        """
+
         self.__stop.set()
 
     def stopped(self):
+        """ Check executor task status
+        """
+
         return self.__stop.is_set()
