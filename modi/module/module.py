@@ -33,7 +33,7 @@ class Module:
         NO_FIRMWARE = 4
         REBOOT = 6
 
-    class ModulePnp(Enum):
+    class ModulePnpState(Enum):
         ON = 1
         OFF = 2
 

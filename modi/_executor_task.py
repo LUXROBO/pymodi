@@ -159,7 +159,7 @@ class ExecutorTask(object):
                 )
                 self.__set_pnp(
                     module_id=module_instance.module_id,
-                    module_pnp_state=Module.ModulePnp.OFF,
+                    module_pnp_state=Module.ModulePnpState.OFF,
                 )
                 self._modules.append(module_instance)
                 self._modules.sort(key=lambda module: module.module_uuid)
@@ -261,14 +261,14 @@ class ExecutorTask(object):
 
         # Reboot module
         reboot_message = self.__set_module_state(
-            BROADCAST_ID, Module.ModuleState.REBOOT, Module.ModulePnp.OFF
+            BROADCAST_ID, Module.ModuleState.REBOOT, Module.ModulePnpState.OFF
         )
         self._serial_write_q.put(reboot_message)
         self.__delay()
 
         # Command module pnp off
         pnp_off_message = self.__set_module_state(
-            BROADCAST_ID, Module.ModuleState.RUN, Module.ModulePnp.OFF
+            BROADCAST_ID, Module.ModuleState.RUN, Module.ModulePnpState.OFF
         )
         self._serial_write_q.put(pnp_off_message)
         self.__delay()
