@@ -9,8 +9,8 @@ from modi.module.module import OutputModule
 
 class Speaker(OutputModule):
     """
-    :param int id: The id of the module.
-    :param int uuid: The uuid of the module.
+    :param int module_id: The id of the module.
+    :param int module_uuid: The uuid of the module.
     :param modi: The :class:`~modi.modi.MODI` instance.
     :type modi: :class:`~modi.modi.MODI`
     """
@@ -108,7 +108,6 @@ class Speaker(OutputModule):
     def __init__(self, module_id, module_uuid, modi, serial_write_q):
         super(Speaker, self).__init__(module_id, module_uuid, modi, serial_write_q)
         self._module_type = "speaker"
-        self._serial_write_q = serial_write_q
 
     def set_tune(self, frequency_value=None, volume_value=None):
         """
