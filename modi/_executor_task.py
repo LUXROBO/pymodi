@@ -27,16 +27,16 @@ from modi.module.module import Module
 
 
 class ExecutorTask(object):
-    """ This task execute incoming commands
-    param: serial_write_q: Multiprocessing Queue for serial writing message
-    param: json_recv_q: Multiprocessing Queue for parsed json message
-    param: module_ids: dict() of key: module_id, value: ['timestamp', 'uuid']
-    param: modules: list() of module instance
+    """ 
+    :param queue serial_write_q: Multiprocessing Queue for serial writing message.
+    :param queue json_recv_q: Multiprocessing Queue for parsed json message.
+    :param dict() module_ids: dict() of key: module_id, value: ['timestamp', 'uuid'].
+    :param list() modules: list() of module instance.
     """
 
     # variables shared across all class instances
-    module_categories = ["network", "input", "output"]
-    module_types = {
+    __module_categories = ["network", "input", "output"]
+    __module_types = {
         "network": ["usb", "usb/wifi/ble"],
         "input": ["env", "gyro", "mic", "button", "dial", "ultrasonic", "ir"],
         "output": ["display", "motor", "led", "speaker"],
@@ -128,8 +128,8 @@ class ExecutorTask(object):
         module_category_idx = module_info >> 13
         module_type_idx = (module_info >> 4) & 0x1FF
 
-        module_category = self.module_categories[module_category_idx]
-        module_type = self.module_types[module_category][module_type_idx]
+        module_category = self.__module_categories[module_category_idx]
+        module_type = self.__module_types[module_category][module_type_idx]
         module_uuid = self.__fit_module_uuid(
             module_info,
             (

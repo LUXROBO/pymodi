@@ -5,9 +5,9 @@ import queue
 
 
 class ParserTask:
-    """ This task buffering serial message and parsing serial message to json message
-    :param serial_read_q: Multiprocessing Queue for serial reading message
-    :param json_recv_q: Multiprocessing Queue for parsed json message
+    """
+    :param queue serial_read_q: Multiprocessing Queue for serial reading message
+    :param queue json_recv_q: Multiprocessing Queue for parsed json message
     """
 
     def __init__(self, serial_read_q, json_recv_q):
