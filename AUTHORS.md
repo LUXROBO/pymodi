@@ -7,5 +7,5 @@ Development Lead
 
 Contributors
 ------------
-Jinsoo Heo \<<koriel@luxrobo.com\>>
-Hyeonwoo Park \<<patrick@luxrobo.com>\>
+-   Jinsoo Heo \<<koriel@luxrobo.com\>>
+-   Hyeonwoo Park \<<patrick@luxrobo.com>\>
