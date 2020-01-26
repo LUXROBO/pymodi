@@ -21,8 +21,8 @@ setup_requirements = [ ]
 test_requirements = [ ]
 
 setup(
-    author="Jinsoo Heo",
-    author_email='koriel@luxrobo.com',
+    author="Jinsung Ha",
+    author_email='jinsung@luxrobo.com',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Education',

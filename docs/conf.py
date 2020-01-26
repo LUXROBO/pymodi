@@ -56,7 +56,7 @@ master_doc = 'index'
 # General information about the project.
 project = u'pyMODI'
 copyright = u"2018, LUXROBO"
-author = u"Jinsoo Heo"
+author = u"Jinsung Ha"
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -137,7 +137,7 @@ latex_elements = {
 latex_documents = [
     (master_doc, 'modi.tex',
      u'pyMODI Documentation',
-     u'Jinsoo Heo', 'manual'),
+     u'Jinsung Ha', 'manual'),
 ]
 
 
