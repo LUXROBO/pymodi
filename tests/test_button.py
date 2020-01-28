@@ -3,36 +3,40 @@
 
 """Tests for `modi` package."""
 
-# must
 import modi
 import time
+import mock
 import unittest
 
-# from modi import a
+from modi.module.button import Button
 
 
 class TestModi(unittest.TestCase):
-    """Tests for `modi` package."""
+    """Tests for `button` class."""
 
-    def test_1(self):
-        """Set up test fixtures, if any."""
-        bundle = modi.MODI()
-        button = bundle.buttons[0]
-        for _ in range(100):
-            print(
-                button.get_clicked(),
-                button.get_double_clicked(),
-                button.get_pressed(),
-                button.get_toggled(),
-            )
-            time.sleep(0.1)
-        bundle.exit()
+    @mock.patch.object(Button, "get_clicked", return_value=True)
+    def test_get_clicked(self, button):
+        """Test get_clicked method."""
+        ret_val = button.get_clicked()
+        self.assertTrue(ret_val)
 
-    def test_2(self):
-        """Tear down test fixtures, if any."""
+    @mock.patch.object(Button, "get_double_clicked", return_value=True)
+    def test_get_double_clicked(self, button):
+        """Test get_double_clicked method."""
+        ret_val = button.get_double_clicked()
+        self.assertTrue(ret_val)
 
-    def test_something(self):
-        """Test something."""
+    @mock.patch.object(Button, "get_pressed", return_value=True)
+    def test_get_pressed(self, button):
+        """Test get_pressed method."""
+        ret_val = button.get_pressed()
+        self.assertTrue(ret_val)
+
+    @mock.patch.object(Button, "get_toggled", return_value=True)
+    def test_get_toggled(self, button):
+        """Test get_toggled method."""
+        ret_val = button.get_toggled()
+        self.assertTrue(ret_val)
 
 
 if __name__ == "__main__":
