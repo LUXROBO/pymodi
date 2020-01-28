@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `modi` package."""
-
 import modi
 import time
 import mock
@@ -11,8 +9,8 @@ import unittest
 from modi.module.button import Button
 
 
-class TestModi(unittest.TestCase):
-    """Tests for `button` class."""
+class TestButton(unittest.TestCase):
+    """Tests for 'Button' class."""
 
     @mock.patch.object(Button, "get_clicked", return_value=True)
     def test_get_clicked(self, button):
