@@ -1,34 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `modi` package."""
-
-# must
 import modi
 import time
+import mock
 import unittest
 
-# from modi import a
+from modi.module.dial import Dial
 
 
-class TestModi(unittest.TestCase):
-    """Tests for `modi` package."""
+class TestDial(unittest.TestCase):
+    """Tests for 'Dial' class."""
 
-    def test_1(self):
-        """Set up test fixtures, if any."""
-        bundle = modi.MODI()
-        dial = bundle.dials[0]
-        for _ in range(100):
+    @mock.patch.object(Dial, "get_degree", return_value=True)
+    def test_get_degree(self, dial):
+        """Test get_clicked method."""
+        ret_val = dial.get_degree()
+        self.assertTrue(ret_val)
 
-            print(dial.degree(), dial.turnspeed())
-            time.sleep(0.1)
-        bundle.exit()
-
-    def test_2(self):
-        """Tear down test fixtures, if any."""
-
-    def test_something(self):
-        """Test something."""
+    @mock.patch.object(Dial, "get_turnspeed", return_value=True)
+    def test_get_turnspeed(self, dial):
+        """Test get_clicked method."""
+        ret_val = dial.get_turnspeed()
+        self.assertTrue(ret_val)
 
 
 if __name__ == "__main__":
