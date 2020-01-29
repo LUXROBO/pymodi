@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import modi
-import time
 import mock
 import unittest
 
@@ -12,29 +11,43 @@ from modi.module.button import Button
 class TestButton(unittest.TestCase):
     """Tests for 'Button' class."""
 
-    @mock.patch.object(Button, "get_clicked", return_value=True)
-    def test_get_clicked(self, button):
+    def setUp(self):
+        """Set up test fixtures, if any."""
+        mock_args = (-1, -1, None, None)
+        self.button = Button(*mock_args)
+        self.button._get_property = mock.MagicMock()
+
+    def tearDown(self):
+        """Tear down test fixtures, if any."""
+        del self.button
+
+    def test_get_clicked(self):
         """Test get_clicked method."""
-        ret_val = button.get_clicked()
-        self.assertTrue(ret_val)
+        self.button.get_clicked()
+        self.button._get_property.assert_called_once_with(
+            self.button.PropertyType.CLICKED
+        )
 
-    @mock.patch.object(Button, "get_double_clicked", return_value=True)
-    def test_get_double_clicked(self, button):
+    def test_get_double_clicked(self):
         """Test get_double_clicked method."""
-        ret_val = button.get_double_clicked()
-        self.assertTrue(ret_val)
+        self.button.get_double_clicked()
+        self.button._get_property.assert_called_once_with(
+            self.button.PropertyType.DOUBLE_CLICKED
+        )
 
-    @mock.patch.object(Button, "get_pressed", return_value=True)
-    def test_get_pressed(self, button):
+    def test_get_pressed(self):
         """Test get_pressed method."""
-        ret_val = button.get_pressed()
-        self.assertTrue(ret_val)
+        self.button.get_pressed()
+        self.button._get_property.assert_called_once_with(
+            self.button.PropertyType.PRESSED
+        )
 
-    @mock.patch.object(Button, "get_toggled", return_value=True)
-    def test_get_toggled(self, button):
+    def test_get_toggled(self):
         """Test get_toggled method."""
-        ret_val = button.get_toggled()
-        self.assertTrue(ret_val)
+        self.button.get_toggled()
+        self.button._get_property.assert_called_once_with(
+            self.button.PropertyType.TOGGLED
+        )
 
 
 if __name__ == "__main__":
