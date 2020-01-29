@@ -1,34 +1,35 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `modi` package."""
-
-# must
 import modi
-import time
+import mock
 import unittest
 
-# from modi import a
+from modi.module.ir import Ir
 
 
-class TestModi(unittest.TestCase):
-    """Tests for `modi` package."""
+class TestIr(unittest.TestCase):
+    """Tests for 'Ir' package."""
 
-    def test_1(self):
+    def setUp(self):
         """Set up test fixtures, if any."""
-        bundle = modi.MODI()
-        ir = bundle.irs[0]
-        for _ in range(100):
+        mock_args = (-1, -1, None, None)
+        self.ir = Ir(*mock_args)
+        self.ir._get_property = mock.MagicMock()
 
-            print(ir.distance())
-            time.sleep(0.1)
-        bundle.exit()
-
-    def test_2(self):
+    def tearDown(self):
         """Tear down test fixtures, if any."""
+        del self.ir
 
-    def test_something(self):
-        """Test something."""
+    def test_get_distance(self):
+        """Test get_distance method."""
+        self.ir.get_distance()
+        self.ir._get_property.assert_called_once_with(self.ir.PropertyType.DISTANCE)
+
+    def test_get_brightness(self):
+        """Test get_brightness method."""
+        self.ir.get_brightness()
+        self.ir._get_property.assert_called_once_with(self.ir.PropertyType.BRIGHTNESS)
 
 
 if __name__ == "__main__":
