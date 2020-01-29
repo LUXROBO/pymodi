@@ -1,50 +1,89 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `modi` package."""
-
-# must
 import modi
-import time
+import mock
 import unittest
-import timeit
 
-# from modi import a
+from modi.module.gyro import Gyro
 
 
-class TestModi(unittest.TestCase):
-    """Tests for `modi` package."""
+class TestGyro(unittest.TestCase):
+    """Tests for 'Gyro' class."""
 
-    def test_1(self):
+    def setUp(self):
         """Set up test fixtures, if any."""
-        bundle = modi.MODI()
-        gyro = bundle.gyros[0]
-        now = time.time()
-        past = now
-        # for _ in range(100):
-        while (now - past) < 10:
-            now = time.time()
-            print(
-                gyro.get_roll(),
-                gyro.get_pitch(),
-                gyro.get_yaw(),
-                gyro.get_angular_vel_x(),
-                gyro.get_angular_vel_y(),
-                gyro.get_angular_vel_z(),
-                gyro.get_acceleration_x(),
-                gyro.get_acceleration_y(),
-                gyro.get_acceleration_z(),
-                gyro.get_vibration(),
-                bundle._json_recv_q.qsize(),
-            )
-            time.sleep(0.01)
-        bundle.exit()
+        mock_args = (-1, -1, None, None)
+        self.gyro = Gyro(*mock_args)
+        self.gyro._get_property = mock.MagicMock()
 
-    def test_2(self):
+    def tearDown(self):
         """Tear down test fixtures, if any."""
+        del self.gyro
 
-    def test_something(self):
-        """Test something."""
+    def test_get_roll(self):
+        """Test get_roll method."""
+        self.gyro.get_roll()
+        self.gyro._get_property.assert_called_once_with(self.gyro.PropertyType.ROLL)
+
+    def test_get_pitch(self):
+        """Test get_pitch method."""
+        self.gyro.get_pitch()
+        self.gyro._get_property.assert_called_once_with(self.gyro.PropertyType.PITCH)
+
+    def test_get_yaw(self):
+        """Test get_yaw method."""
+        self.gyro.get_yaw()
+        self.gyro._get_property.assert_called_once_with(self.gyro.PropertyType.YAW)
+
+    def test_get_angular_vel_x(self):
+        """Test get_angular_vel_x method."""
+        self.gyro.get_angular_vel_x()
+        self.gyro._get_property.assert_called_once_with(
+            self.gyro.PropertyType.ANGULAR_VEL_X
+        )
+
+    def test_get_angular_vel_y(self):
+        """Test get_angular_vel_y method."""
+        self.gyro.get_angular_vel_y()
+        self.gyro._get_property.assert_called_once_with(
+            self.gyro.PropertyType.ANGULAR_VEL_Y
+        )
+
+    def test_get_angular_vel_z(self):
+        """Test get_angular_vel_z method."""
+        self.gyro.get_angular_vel_z()
+        self.gyro._get_property.assert_called_once_with(
+            self.gyro.PropertyType.ANGULAR_VEL_Z
+        )
+
+    def test_get_acceleration_x(self):
+        """Test get_acceleration_x method."""
+        self.gyro.get_acceleration_x()
+        self.gyro._get_property.assert_called_once_with(
+            self.gyro.PropertyType.ACCELERATION_X
+        )
+
+    def test_get_acceleration_y(self):
+        """Test get_acceleration_x method."""
+        self.gyro.get_acceleration_y()
+        self.gyro._get_property.assert_called_once_with(
+            self.gyro.PropertyType.ACCELERATION_Y
+        )
+
+    def test_get_acceleration_z(self):
+        """Test get_acceleration_z method."""
+        self.gyro.get_acceleration_z()
+        self.gyro._get_property.assert_called_once_with(
+            self.gyro.PropertyType.ACCELERATION_Z
+        )
+
+    def test_get_vibration(self):
+        """Test get_vibration method."""
+        self.gyro.get_vibration()
+        self.gyro._get_property.assert_called_once_with(
+            self.gyro.PropertyType.VIBRATION
+        )
 
 
 if __name__ == "__main__":
