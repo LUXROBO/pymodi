@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import modi
-import time
 import mock
 import unittest
 
