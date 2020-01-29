@@ -1,41 +1,57 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `modi` package."""
-
-# must
 import modi
-import time
+import mock
 import unittest
 
-# from modi import a
+from modi.module.env import Env
 
 
-class TestModi(unittest.TestCase):
-    """Tests for `modi` package."""
+class TestEnv(unittest.TestCase):
+    """Tests for 'Env' class."""
 
-    def test_1(self):
+    def setUp(self):
         """Set up test fixtures, if any."""
-        bundle = modi.MODI()
-        env = bundle.envs[0]
-        for _ in range(100):
+        mock_args = (-1, -1, None, None)
+        self.env = Env(*mock_args)
+        self.env._get_property = mock.MagicMock()
 
-            print(
-                env.temperature(),
-                env.humidity(),
-                env.brightness(),
-                env.red(),
-                env.green(),
-                env.blue(),
-            )
-            time.sleep(0.1)
-        bundle.exit()
-
-    def test_2(self):
+    def tearDown(self):
         """Tear down test fixtures, if any."""
+        del self.env
 
-    def test_something(self):
-        """Test something."""
+    def test_get_temperature(self):
+        """Test get_temperature method."""
+        self.env.get_temperature()
+        self.env._get_property.assert_called_once_with(
+            self.env.PropertyType.TEMPERATURE
+        )
+
+    def test_get_humidity(self):
+        """Test get_humidity method."""
+        self.env.get_humidity()
+        self.env._get_property.assert_called_once_with(self.env.PropertyType.HUMIDITY)
+
+    def test_get_brightness(self):
+        """Test get_brightness method."""
+        self.env.get_brightness()
+        self.env._get_property.assert_called_once_with(self.env.PropertyType.BRIGHTNESS)
+
+    def test_get_red(self):
+        """Test get_red method."""
+        self.env.get_red()
+        self.env._get_property.assert_called_once_with(self.env.PropertyType.RED)
+
+    def test_get_green(self):
+        """Test get_green method."""
+        self.env.get_green()
+        self.env._get_property.assert_called_once_with(self.env.PropertyType.GREEN)
+
+    def test_get_blue(self):
+        """Test get_blue method."""
+        self.env.get_blue()
+        self.env._get_property.assert_called_once_with(self.env.PropertyType.BLUE)
 
 
 if __name__ == "__main__":
