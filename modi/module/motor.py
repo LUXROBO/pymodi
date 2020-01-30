@@ -206,13 +206,12 @@ class Motor(OutputModule):
                 if second_torque_value is None
                 else second_torque_value
             )
-            self._serial_write_q.put(
-                self._set_property(
-                    self._module_id,
-                    self.ControlType.TORQUE.value,
-                    (first_torque_value, second_torque_value, 0),
-                )
+            message = self._set_property(
+                self._module_id,
+                self.ControlType.TORQUE,
+                (first_torque_value, second_torque_value, 0),
             )
+            self._serial_write_q.put(message)
         return (
             self._get_property(self.PropertyType.FIRST_TORQUE),
             self._get_property(self.PropertyType.SECOND_TORQUE),
@@ -239,13 +238,12 @@ class Motor(OutputModule):
                 if second_speed_value is None
                 else second_speed_value
             )
-            self._serial_write_q.put(
-                self._set_property(
-                    self._module_id,
-                    self.ControlType.SPEED.value,
-                    (first_speed_value, second_speed_value, 0),
-                )
+            message = self._set_property(
+                self._module_id,
+                self.ControlType.SPEED,
+                (first_speed_value, second_speed_value, 0),
             )
+            self._serial_write_q.put(message)
         return (
             self._get_property(self.PropertyType.FIRST_SPEED),
             self._get_property(self.PropertyType.SECOND_SPEED),
@@ -272,13 +270,12 @@ class Motor(OutputModule):
                 if second_degree_value is None
                 else second_degree_value
             )
-            self._serial_write_q.put(
-                self._set_property(
-                    self._module_id,
-                    self.ControlType.DEGREE.value,
-                    (first_degree_value, second_degree_value, 0),
-                )
+            message = self._set_property(
+                self._module_id,
+                self.ControlType.DEGREE,
+                (first_degree_value, second_degree_value, 0),
             )
+            self._serial_write_q.put(message)
         return (
             self._get_property(self.PropertyType.FIRST_DEGREE),
             self._get_property(self.PropertyType.SECOND_DEGREE),

@@ -62,8 +62,8 @@ class TestLed(unittest.TestCase):
         self.led.set_rgb()
 
         # TODO: Ensure set_property and q.put have NOT been called
-        #self.led._set_property.assert_not_called_once_with()
-        #self.led._serial_write_q.put.assert_not_called_once_with()
+        # self.led._set_property.assert_not_called_once_with()
+        # self.led._serial_write_q.put.assert_not_called_once_with()
 
         mock_set_red.assert_called_once_with()
         mock_set_green.assert_called_once_with()
