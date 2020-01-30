@@ -144,7 +144,7 @@ class OutputModule(Module):
         FLOAT = 1
         STRING = 2
         RAW = 3
-        DISPLAY_Var = 4
+        DISPLAY_VAR = 4
 
     def _set_property(
         self, destination_id, property_type, property_values, property_data_type=None
@@ -195,7 +195,7 @@ class OutputModule(Module):
             message["b"] = base64.b64encode(bytearray(property_values)).decode("utf-8")
             message["l"] = len(property_values)
 
-        elif property_data_type == self.PropertyDataType.DISPLAY_Var:
+        elif property_data_type == self.PropertyDataType.DISPLAY_VAR:
             property_values_bytes[:4] = struct.pack("f", float(property_values[0]))
             property_values_bytes[4] = property_values[1]
             property_values_bytes[5] = 0x00

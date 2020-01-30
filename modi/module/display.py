@@ -46,7 +46,7 @@ class Display(OutputModule):
             self._module_id,
             self.PropertyType.VARIABLE,
             (variable, position_x, position_y),
-            self.PropertyDataType.DISPLAY_Var,
+            self.PropertyDataType.DISPLAY_VAR,
         )
         self._serial_write_q.put(message)
         return message
