@@ -20,6 +20,9 @@ class Speaker(OutputModule):
         FREQUENCY = 3
         VOLUME = 2
 
+    class CommandType(Enum):
+        SET_TUNE = 16
+
     class Scale(Enum):
         F_DO_1 = 32
         F_RE_1 = 36
@@ -124,20 +127,19 @@ class Speaker(OutputModule):
         :return: Tuple of frequency_value and volume_value.
         :rtype: tuple
         """
-        if frequency_value is not None or volume_value is not None:
-            self._serial_write_q.put(
-                self._set_property(
-                    self._module_id,
-                    16,
-                    (
-                        frequency_value
-                        if frequency_value is not None
-                        else self.set_frequency(),
-                        volume_value if volume_value is not None else self.set_volume(),
-                    ),
-                    self.PropertyDataType.FLOAT,
-                )
+        if not (frequency_value is None and volume_value is None):
+            message = self._set_property(
+                self._module_id,
+                self.CommandType.SET_TUNE,
+                (
+                    frequency_value
+                    if frequency_value is not None
+                    else self.set_frequency(),
+                    volume_value if volume_value is not None else self.set_volume(),
+                ),
+                self.PropertyDataType.FLOAT,
             )
+            self._serial_write_q.put(message)
         return self.set_frequency(), self.set_volume()
 
     def set_frequency(self, frequency_value=None):
