@@ -1,65 +1,67 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `modi` package."""
-
 import modi
+import mock
 import unittest
-import time
 
 from modi.module.speaker import Speaker
 
 
 class TestSpeaker(unittest.TestCase):
-    """Tests for `Speaker` class."""
+    """Tests for 'Speaker' class."""
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.modi_inst = modi.MODI()
-        self.speaker = self.modi_inst.speakers[0]
+        self.mock_kwargs = {
+            "module_id": -1,
+            "module_uuid": -1,
+            "modi": None,
+            "serial_write_q": None,
+        }
+        self.speaker = Speaker(**self.mock_kwargs)
+
+        def eval_set_property(x):
+            pass
+
+        self.speaker._set_property = mock.Mock(side_effect=eval_set_property)
+        self.speaker._serial_write_q = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
-        self.speaker.set_tune(0, 0)
-        self.modi_inst.exit()
-        time.sleep(1)
+        del self.speaker
 
-    def test_init(self):
-        """Test initialization of speaker module"""
-        self.assertIsInstance(self.speaker, Speaker)
+    def test_set_tune(self):
+        """Test set_tune method."""
+        pass
 
-    def test_basic_tune(self):
-        """Test tune method with pre-defined inputs"""
-        expected_values = (self.speaker.Scale.F_RA_6.value, 50)
-        self.speaker.set_tune(*expected_values)
-        # TODO: remove delaying function
-        time.sleep(2)
-        actual_values = self.speaker.set_tune()
-        self.assertEqual(expected_values, actual_values)
+    def test_set_tune_with_none(self):
+        """Test set_tune method with none input."""
+        pass
 
-    def test_custom_tune(self):
-        """Test tune method with custom inputs"""
-        expected_values = (2350, 50)
-        self.speaker.set_tune(*expected_values)
-        time.sleep(2)
-        actual_values = self.speaker.set_tune()
-        self.assertEqual(expected_values, actual_values)
+    def test_set_frequency(self):
+        """Test set_frequency method."""
+        pass
 
-    def test_get_frequency(self):
-        """Test frequency method"""
-        expected_frequncy = self.speaker.Scale.F_RA_6.value
-        self.speaker.set_frequency(frequency_value=expected_frequncy)
-        time.sleep(2)
-        actual_frequency = self.speaker.set_frequency()
-        self.assertEqual(expected_frequncy, actual_frequency)
+    def test_set_frequency_with_none(self):
+        """Test set_frequency method with none input."""
+        pass
 
-    def test_get_volume(self):
-        """Test volume method"""
-        expected_volume = 70
-        self.speaker.set_volume(expected_volume)
-        time.sleep(2)
-        actual_volume = self.speaker.set_volume()
-        self.assertEqual(expected_volume, actual_volume)
+    def test_set_volume(self):
+        """Test set_volume method."""
+        pass
+
+    def test_set_volume_with_none(self):
+        """Test set_volume method with none input."""
+        pass
+
+    @mock.patch.object(Speaker, "set_tune")
+    def test_set_off(self, mock_set_tune):
+        """Test set_off method"""
+        self.speaker.set_off()
+
+        expeceted_values = frequency, volume = 0, 0
+        mock_set_tune.assert_called_once_with(*expeceted_values)
 
 
 if __name__ == "__main__":
