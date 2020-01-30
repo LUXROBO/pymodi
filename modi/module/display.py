@@ -16,6 +16,11 @@ class Display(OutputModule):
     :param serial_write_q: multiprocessing.queue of the serial writing
     """
 
+    class PropertyType(Enum):
+        TEXT = 17
+        CLEAR = 21
+        VARIABLE = 22
+
     def __init__(self, module_id, module_uuid, modi, serial_write_q):
         super(Display, self).__init__(module_id, module_uuid, modi, serial_write_q)
         self._module_type = "display"
@@ -26,7 +31,7 @@ class Display(OutputModule):
         """
         self.clear()
         messages = self._set_property(
-            self._module_id, 17, text, self.PropertyDataType.STRING
+            self._module_id, self.PropertyType.TEXT, text, self.PropertyDataType.STRING
         )
         for message in messages:
             self._serial_write_q.put(message)
@@ -39,7 +44,7 @@ class Display(OutputModule):
         self.clear()
         message = self._set_property(
             self._module_id,
-            22,
+            self.PropertyType.VARIABLE,
             (variable, position_x, position_y),
             self.PropertyDataType.DISPLAY_Var,
         )
@@ -49,6 +54,11 @@ class Display(OutputModule):
     def clear(self):
         """Clear the screen.
         """
-        self._serial_write_q.put(
-            self._set_property(self._module_id, 21, bytes(2), self.PropertyDataType.RAW)
+        message = self._set_property(
+            self._module_id,
+            self.PropertyType.CLEAR,
+            bytes(2),
+            self.PropertyDataType.RAW,
         )
+        self._serial_write_q.put(message)
+        return message
