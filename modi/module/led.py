@@ -21,6 +21,9 @@ class Led(OutputModule):
         GREEN = 3
         BLUE = 4
 
+    class CommandType(Enum):
+        SET_RGB = 16
+
     def __init__(self, module_id, module_uuid, modi, serial_write_q):
         super(Led, self).__init__(module_id, module_uuid, modi, serial_write_q)
         self._module_type = "led"
@@ -41,17 +44,16 @@ class Led(OutputModule):
         :rtype: tuple
         """
         if not (red is None and green is None and blue is None):
-            self._serial_write_q.put(
-                self._set_property(
-                    self._module_id,
-                    16,
-                    (
-                        red if red is not None else self.set_red(),
-                        green if green is not None else self.set_green(),
-                        blue if blue is not None else self.set_blue(),
-                    ),
-                )
+            message = self._set_property(
+                self._module_id,
+                self.CommandType.SET_RGB,
+                (
+                    red if red is not None else self.set_red(),
+                    green if green is not None else self.set_green(),
+                    blue if blue is not None else self.set_blue(),
+                ),
             )
+            self._serial_write_q.put(message)
         return self.set_red(), self.set_green(), self.set_blue()
 
     def set_on(self):
