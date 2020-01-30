@@ -23,47 +23,52 @@ class TestDisplay(unittest.TestCase):
             "serial_write_q": None,
         }
         self.display = Display(**self.mock_kwargs)
-        self.display._set_property = mock.MagicMock(
-            side_effect=self.__get_property_type
-        )
+
+        def eval_set_property(id, property_type, data, property_data_type):
+            eval_result = {
+                self.display.PropertyType.TEXT: [property_type],
+                self.display.PropertyType.VARIABLE: property_type,
+                self.display.PropertyType.CLEAR: property_type,
+            }.get(property_type)
+            return eval_result
+
+        self.display._set_property = mock.Mock(side_effect=eval_set_property)
         self.display._serial_write_q = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
         del self.display
 
-    # def test_set_text(self):
-    #    """Test set_text method."""
-    #    mock_text_input = "abcdef"
-    #    actual_return = self.display.set_text(text=mock_text_input)
+    def test_set_text(self):
+        """Test set_text method."""
+        mock_text_input = "abcd"
+        self.display.set_text(text=mock_text_input)
 
-    #    ## check if clear has been called once
-    #    # with mock.patch.object(Display, "clear") as mock_clear:
-    #    #    mock_clear.assert_called_once()
-    #    expected_clear_params = (
-    #        self.mock_kwargs["module_id"],
-    #        self.display.PropertyType.CLEAR,
-    #        bytes(2),
-    #        Display.PropertyDataType.RAW,
-    #    )
+        expected_clear_params = (
+            self.mock_kwargs["module_id"],
+            self.display.PropertyType.CLEAR,
+            bytes(2),
+            Display.PropertyDataType.RAW,
+        )
 
-    #    # check if set_property has been called once with the specified arguments
-    #    expected_text_params = (
-    #        self.mock_kwargs["module_id"],
-    #        self.display.PropertyType.TEXT,
-    #        mock_text_input,
-    #        Display.PropertyDataType.STRING,
-    #    )
-    #    # expected_return = self.display._set_property.assert_called_once_with(
-    #    #    *expected_text_params
-    #    # )
-    #    # self.display._serial_write_q.put.assert_called_once_with(expected_return)
-    #    self.assertEqual(self.display._set_property.call_count, 2)
-    #    a, b = self.display._set_property.call_args_list
-    #    self.display._set_property.assert_has_calls(a, b)
+        expected_text_params = (
+            self.mock_kwargs["module_id"],
+            self.display.PropertyType.TEXT,
+            mock_text_input,
+            Display.PropertyDataType.STRING,
+        )
 
-    #    # self.assertEqual(self.display._serial_write_q.call_count)
-    #    # self.assertEqual(expected_return, actual_return)
+        self.assertEqual(self.display._set_property.call_count, 2)
+
+        # TODO: Refactor two functions calls below to use assert_has_calls()
+        self.assertEqual(
+            mock.call(*expected_clear_params),
+            self.display._set_property.call_args_list[0],
+        )
+        self.assertEqual(
+            mock.call(*expected_text_params),
+            self.display._set_property.call_args_list[1],
+        )
 
     # def test_set_variable(self):
     #    """Test set_variable method."""
@@ -89,12 +94,11 @@ class TestDisplay(unittest.TestCase):
             Display.PropertyDataType.RAW,
         )
         self.display._set_property.assert_called_once_with(*expected_clear_params)
+
+        # check if correct message has been passed to serial_write_q
         self.display._serial_write_q.put.assert_called_once_with(
             self.display.PropertyType.CLEAR
         )
-
-    def __get_property_type(self, id, property_type, data, property_data_type):
-        return property_type
 
 
 if __name__ == "__main__":
