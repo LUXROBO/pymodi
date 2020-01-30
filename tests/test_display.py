@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import modi
 import mock
-import struct
-import base64
 import unittest
 
-import multiprocessing
 from modi.module.display import Display
 
 
@@ -41,21 +37,21 @@ class TestDisplay(unittest.TestCase):
 
     def test_set_text(self):
         """Test set_text method."""
-        mock_text_input = "abcd"
-        self.display.set_text(text=mock_text_input)
+        mock_text = "abcd"
+        self.display.set_text(text=mock_text)
 
         expected_clear_params = (
             self.mock_kwargs["module_id"],
             self.display.PropertyType.CLEAR,
             bytes(2),
-            Display.PropertyDataType.RAW,
+            self.display.PropertyDataType.RAW,
         )
 
         expected_text_params = (
             self.mock_kwargs["module_id"],
             self.display.PropertyType.TEXT,
-            mock_text_input,
-            Display.PropertyDataType.STRING,
+            mock_text,
+            self.display.PropertyDataType.STRING,
         )
 
         self.assertEqual(self.display._set_property.call_count, 2)
@@ -70,17 +66,37 @@ class TestDisplay(unittest.TestCase):
             self.display._set_property.call_args_list[1],
         )
 
-    # def test_set_variable(self):
-    #    """Test set_variable method."""
-    #    # display var range: -99999 ~ +99999
-    #    expected_number = "-812.23"
-    #    pos_x, pos_y = 5, 5
-    #    msg_str = self.display.set_variable(expected_number, pos_x, pos_y)
-    #    time.sleep(1)
-    #    msg_str_frag = msg_str.split('"b":"')[1].split('"')[0]
-    #    msg_str_frag_decoded = base64.b64decode(msg_str_frag)
-    #    actual_number = struct.unpack("f", msg_str_frag_decoded[:4])[0]
-    #    self.assertEqual(float(expected_number), round(actual_number, 2))
+    def test_set_variable(self):
+        """Test set_variable method."""
+        mock_variable = "12345"
+        mock_position = 5
+        self.display.set_variable(mock_variable, mock_position, mock_position)
+
+        expected_clear_params = (
+            self.mock_kwargs["module_id"],
+            self.display.PropertyType.CLEAR,
+            bytes(2),
+            self.display.PropertyDataType.RAW,
+        )
+
+        expected_variable_params = (
+            self.mock_kwargs["module_id"],
+            self.display.PropertyType.VARIABLE,
+            (mock_variable, mock_position, mock_position),
+            self.display.PropertyDataType.DISPLAY_VAR,
+        )
+
+        self.assertEqual(self.display._set_property.call_count, 2)
+
+        # TODO: Refactor two functions calls below to use assert_has_calls()
+        self.assertEqual(
+            mock.call(*expected_clear_params),
+            self.display._set_property.call_args_list[0],
+        )
+        self.assertEqual(
+            mock.call(*expected_variable_params),
+            self.display._set_property.call_args_list[1],
+        )
 
     def test_clear(self):
         """Test clear method."""
@@ -91,7 +107,7 @@ class TestDisplay(unittest.TestCase):
             self.mock_kwargs["module_id"],
             self.display.PropertyType.CLEAR,
             bytes(2),
-            Display.PropertyDataType.RAW,
+            self.display.PropertyDataType.RAW,
         )
         self.display._set_property.assert_called_once_with(*expected_clear_params)
 
