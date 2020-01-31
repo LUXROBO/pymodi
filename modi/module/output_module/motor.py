@@ -4,7 +4,7 @@
 
 from enum import Enum
 
-from modi.module.module import OutputModule
+from modi.module.output_module.output_module import OutputModule
 
 
 class Motor(OutputModule):

@@ -11,21 +11,11 @@ from modi._serial_process import SerialProcess
 from modi._parser_process import ParserProcess
 from modi._executor_thread import ExecutorThread
 
+from modi.module.input_module import button, dial, env, gyro, ir, mic, ultrasonic
+from modi.module.output_module import display, led, motor, speaker
+from modi.module.setup_module import network
+
 from modi.module.module import Module
-from modi.module import (
-    button,
-    dial,
-    display,
-    env,
-    gyro,
-    ir,
-    led,
-    mic,
-    motor,
-    network,
-    speaker,
-    ultrasonic,
-)
 
 import multiprocessing
 

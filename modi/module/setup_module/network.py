@@ -4,7 +4,7 @@
 
 from enum import Enum
 
-from modi.module.module import SetupModule
+from modi.module.setup_module.setup_module import SetupModule
 
 
 class Network(SetupModule):

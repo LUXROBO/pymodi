@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import modi
-import time
+import mock
 import unittest
 
 from modi.modi import MODI
@@ -13,19 +12,11 @@ class TestModi(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.modi = modi.MODI()
+        self.modi = MODI()
         pass
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
-        pass
-
-    def test_init(self):
-        """Test init method."""
-        pass
-
-    def test_exit(self):
-        """Test exit method."""
         pass
 
 

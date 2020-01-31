@@ -4,7 +4,7 @@
 
 from enum import Enum
 
-from modi.module.module import InputModule
+from modi.module.input_module.input_module import InputModule
 
 
 class Button(InputModule):

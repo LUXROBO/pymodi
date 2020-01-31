@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import modi
 import mock
 import unittest
 
-from modi.module.led import Led
+from modi.module.output_module.led import Led
 
 
 class TestLed(unittest.TestCase):

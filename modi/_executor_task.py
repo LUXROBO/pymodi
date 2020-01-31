@@ -8,20 +8,9 @@ import queue
 import base64
 import struct
 
-from modi.module import (
-    button,
-    dial,
-    display,
-    env,
-    gyro,
-    ir,
-    led,
-    mic,
-    motor,
-    network,
-    speaker,
-    ultrasonic,
-)
+from modi.module.input_module import button, dial, env, gyro, ir, mic, ultrasonic
+from modi.module.output_module import display, led, motor, speaker
+from modi.module.setup_module import network
 
 from modi.module.module import Module
 

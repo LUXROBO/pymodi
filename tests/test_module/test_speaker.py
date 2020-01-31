@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import modi
 import mock
 import unittest
 
-from modi.module.speaker import Speaker
+from modi.module.output_module.speaker import Speaker
 
 
 class TestSpeaker(unittest.TestCase):

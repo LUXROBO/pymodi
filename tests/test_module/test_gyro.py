@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import modi
 import mock
 import unittest
 
-from modi.module.gyro import Gyro
+from modi.module.input_module.gyro import Gyro
 
 
 class TestGyro(unittest.TestCase):

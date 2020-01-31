@@ -4,7 +4,7 @@
 import mock
 import unittest
 
-from modi.module.display import Display
+from modi.module.output_module.display import Display
 
 
 class TestDisplay(unittest.TestCase):

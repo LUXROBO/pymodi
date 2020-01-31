@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import modi
 import mock
 import unittest
 
-from modi.module.env import Env
+from modi.module.input_module.env import Env
 
 
 class TestEnv(unittest.TestCase):

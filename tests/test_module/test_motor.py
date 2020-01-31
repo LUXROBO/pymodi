@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import modi
 import mock
 import unittest
 
-from modi.module.motor import Motor
+from modi.module.output_module.motor import Motor
 
 
 class TestMotor(unittest.TestCase):

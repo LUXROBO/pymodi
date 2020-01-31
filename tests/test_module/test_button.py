@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import modi
 import mock
 import unittest
 
-from modi.module.button import Button
+from modi.module.input_module.button import Button
 
 
 class TestButton(unittest.TestCase):

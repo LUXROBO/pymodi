@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import modi
 import mock
 import unittest
 
-from modi.module.ir import Ir
+from modi.module.input_module.ir import Ir
 
 
 class TestIr(unittest.TestCase):

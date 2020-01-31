@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-"""IR module."""
+"""Dial module."""
 
 from enum import Enum
 
-from modi.module.module import InputModule
+from modi.module.input_module.input_module import InputModule
 
 
-class Ir(InputModule):
+class Dial(InputModule):
     """
     :param int id: The id of the module.
     :param int uuid: The uuid of the module.
@@ -17,23 +17,23 @@ class Ir(InputModule):
     """
 
     class PropertyType(Enum):
-        DISTANCE = 2
-        BRIGHTNESS = 3
+        DEGREE = 2
+        TURNSPEED = 3
 
     def __init__(self, module_id, module_uuid, modi, serial_write_q):
-        super(Ir, self).__init__(module_id, module_uuid, modi, serial_write_q)
-        self._module_type = "ir"
+        super(Dial, self).__init__(module_id, module_uuid, modi, serial_write_q)
+        self._module_type = "dial"
 
-    def get_distance(self):
+    def get_degree(self):
         """
-        :return: Distance to object.
+        :return: The dial's angle.
         :rtype: float
         """
-        return self._get_property(self.PropertyType.DISTANCE)
+        return self._get_property(self.PropertyType.DEGREE)
 
-    def get_brightness(self):
+    def get_turnspeed(self):
         """
-        :return: Brightness.
+        :return: The dial's turn speed.
         :rtype: float
         """
-        return self._get_property(self.PropertyType.BRIGHTNESS)
+        return self._get_property(self.PropertyType.TURNSPEED)

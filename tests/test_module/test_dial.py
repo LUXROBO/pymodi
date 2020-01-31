@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import modi
 import mock
 import unittest
 
-from modi.module.dial import Dial
+from modi.module.input_module.dial import Dial
 
 
 class TestDial(unittest.TestCase):
