@@ -15,7 +15,7 @@ from modi.module.setup_module import network
 from modi.module.module import Module
 
 
-class ExecutorTask(object):
+class ExecutorTask:
     """ 
     :param queue serial_write_q: Multiprocessing Queue for serial writing message.
     :param queue json_recv_q: Multiprocessing Queue for parsed json message.
