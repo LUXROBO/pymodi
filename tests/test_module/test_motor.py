@@ -1,8 +1,6 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-import mock
 import unittest
+
+from unittest import mock
 
 from modi.module.output_module.motor import Motor
 
