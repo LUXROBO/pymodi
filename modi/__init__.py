@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Top-level package for pyMODI."""
 
 from modi.modi import MODI

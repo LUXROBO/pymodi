@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Serial Task module."""
 
 import time

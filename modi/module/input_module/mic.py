@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Mic module."""
 
 from enum import Enum

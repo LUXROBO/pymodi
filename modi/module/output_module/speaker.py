@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Speaker module."""
 
 from enum import Enum

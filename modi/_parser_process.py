@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import multiprocessing
 
 from modi._parser_task import ParserTask

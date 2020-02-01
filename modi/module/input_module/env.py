@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Env module."""
 
 from enum import Enum

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Json Excute module."""
 
 import time

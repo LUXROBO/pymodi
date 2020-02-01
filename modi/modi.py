@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Main MODI module."""
 
 import os

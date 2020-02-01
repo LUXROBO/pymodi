@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import multiprocessing
 
 from modi._serial_task import SerialTask

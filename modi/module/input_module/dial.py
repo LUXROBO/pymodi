@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Dial module."""
 
 from enum import Enum

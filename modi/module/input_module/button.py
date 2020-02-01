@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Button module."""
 
 from enum import Enum
