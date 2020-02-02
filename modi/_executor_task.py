@@ -1,5 +1,3 @@
-"""Json Excute module."""
-
 import time
 import json
 import queue

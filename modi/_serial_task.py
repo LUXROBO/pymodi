@@ -1,5 +1,3 @@
-"""Serial Task module."""
-
 import time
 import queue
 import serial
