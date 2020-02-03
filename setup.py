@@ -2,50 +2,47 @@
 
 """The setup script."""
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
-with open('README.md','rt', encoding='UTF8') as readme_file:
+with open("README.md", "rt", encoding="UTF8") as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.md','rt', encoding='UTF8') as history_file:
+with open("HISTORY.md", "rt", encoding="UTF8") as history_file:
     history = history_file.read()
 
-requirements = [
-    'pyserial>=3.1.1',
-    'enum34>=1.1.6',
-    ]
+requirements = ["pyserial>=3.1.1", "enum34>=1.1.6"]
 
-setup_requirements = [ ]
-
-test_requirements = [ ]
+setup_requirements = []
+test_requirements = []
 
 setup(
     author="Jinsung Ha",
-    author_email='jinsung@luxrobo.com',
+    author_email="jinsung@luxrobo.com",
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Education',
-        'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Education",
+        "License :: OSI Approved :: MIT License",
+        "Natural Language :: English",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
     ],
     description="Easy😆 and fast💨 MODI Python API package.",
-    long_description=readme + '\n\n' + history,
+    long_description=readme + "\n\n" + history,
     long_description_content_type="text/markdown",
     install_requires=requirements,
     license="MIT license",
     include_package_data=True,
-    keywords=('pymodi', 'modi', 'luxrobo'),
-    name='pymodi',
-    packages=find_packages(include=['modi', 'modi.module']),
+    keywords=("pymodi", "modi", "luxrobo"),
+    name="pymodi",
+    packages=find_namespace_packages(),
     setup_requires=setup_requirements,
-    test_suite='tests',
+    test_suite="tests",
     tests_require=test_requirements,
-    url='https://github.com/LUXROBO/pyMODI',
-    version='0.7.0',
+    url="https://github.com/LUXROBO/pyMODI",
+    version="0.7.0",
     zip_safe=False,
 )
