@@ -44,7 +44,7 @@ class ExecutorTask:
             pass
         else:
             self.__handler(message["c"])(message)
-            time.sleep(0.004)
+            time.sleep(0.001)
 
     def __handler(self, command):
         """ Excute task based on command message
