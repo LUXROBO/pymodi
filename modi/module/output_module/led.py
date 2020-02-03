@@ -9,8 +9,6 @@ class Led(OutputModule):
     """
     :param int id: The id of the module.
     :param int uuid: The uuid of the module.
-    :param modi: The :class:`~modi.modi.MODI` instance.
-    :type modi: :class:`~modi.modi.MODI  `
     :param serial_write_q: multiprocessing.queue of the serial writing
     """
 
@@ -22,28 +20,24 @@ class Led(OutputModule):
     class CommandType(Enum):
         SET_RGB = 16
 
-    def __init__(self, module_id, module_uuid, modi, serial_write_q):
-        super(Led, self).__init__(module_id, module_uuid, modi, serial_write_q)
+    def __init__(self, id_, uuid, serial_write_q):
+        super(Led, self).__init__(id_, uuid, serial_write_q)
         self._module_type = "led"
 
     def set_rgb(self, red=None, green=None, blue=None):
         """
         * If either *red*, *green*, or *blue* is not ``None``,
-
         :param int red: Red component to set or ``None``.
         :param int green: Green component to set or ``None``.
         :param int blue: Blue component to set or ``None``.
-
         The ``None`` component retains its previous value.
-
         * If *red*, *green* and *blue* are ``None``,
-
         :return: Tuple of red, green and blue.
         :rtype: tuple
         """
         if not (red is None and green is None and blue is None):
             message = self._set_property(
-                self._module_id,
+                self._id,
                 self.CommandType.SET_RGB,
                 (
                     red if red is not None else self.set_red(),
@@ -67,9 +61,7 @@ class Led(OutputModule):
     def set_red(self, red=None):
         """
         :param int red: Red component to set or ``None``.
-
         If *red* is ``None``.
-
         :return: Red component.
         :rtype: float
         """
@@ -80,9 +72,7 @@ class Led(OutputModule):
     def set_green(self, green=None):
         """
         :param int green: Green component to set or ``None``.
-
         If *green* is ``None``.
-
         :return: Green component.
         :rtype: float
         """
@@ -93,9 +83,7 @@ class Led(OutputModule):
     def set_blue(self, blue=None):
         """
         :param int blue: Blue component to set or ``None``.
-
         If *blue* is ``None``.
-
         :return: Blue component.
         :rtype: float
         """

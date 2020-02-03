@@ -18,9 +18,9 @@ class Ir(InputModule):
         DISTANCE = 2
         BRIGHTNESS = 3
 
-    def __init__(self, module_id, module_uuid, modi, serial_write_q):
-        super(Ir, self).__init__(module_id, module_uuid, modi, serial_write_q)
-        self._module_type = "ir"
+    def __init__(self, id_, uuid, serial_write_q):
+        super(Ir, self).__init__(id_, uuid, serial_write_q)
+        self._type = "ir"
 
     def get_distance(self):
         """

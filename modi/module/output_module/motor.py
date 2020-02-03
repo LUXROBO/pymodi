@@ -9,8 +9,6 @@ class Motor(OutputModule):
     """
     :param int id: The id of the module.
     :param int uuid: The uuid of the module.
-    :param modi: The :class:`~modi.modi.MODI` instance.
-    :type modi: :class:`~modi.modi.MODI  `
     :param serial_write_q: multiprocessing.queue of the serial writing
     """
 
@@ -28,8 +26,8 @@ class Motor(OutputModule):
         DEGREE = 18
         INV = 19
 
-    def __init__(self, module_id, module_uuid, modi, serial_write_q):
-        super(Motor, self).__init__(module_id, module_uuid, modi, serial_write_q)
+    def __init__(self, id_, uuid, serial_write_q):
+        super(Motor, self).__init__(id_, uuid, serial_write_q)
         self._module_type = "motor"
 
     def set_motor_channel(self, motor_channel, control_mode, control_value=None):
@@ -43,7 +41,7 @@ class Motor(OutputModule):
         if control_value is not None:
             self._serial_write_q.put(
                 self._set_property(
-                    self._module_id,
+                    self._id,
                     self.ControlType.INV.value,
                     (
                         motor_channel,
@@ -62,16 +60,14 @@ class Motor(OutputModule):
     def set_first_degree(self, degree_value=None):
         """
         :param int degree: Angle to set the first motor.
-
         If *degree* is ``None``,
-
         :return: Angle of the first motor.
         :rtype: float
         """
         if degree_value is not None:
             self._serial_write_q.put(
                 self._set_property(
-                    self._module_id,
+                    self._id,
                     self.ControlType.DEGREE.value,
                     (
                         degree_value,
@@ -86,16 +82,14 @@ class Motor(OutputModule):
     def set_second_degree(self, degree_value=None):
         """
         :param int degree: Angle to set the second motor.
-
         If *degree* is ``None``,
-
         :return: Angle of the second motor.
         :rtype: float
         """
         if degree_value is not None:
             self._serial_write_q.put(
                 self._set_property(
-                    self._module_id,
+                    self._id,
                     self.ControlType.DEGREE,
                     (self.set_second_degree(), degree_value, 0),
                 )
@@ -106,16 +100,14 @@ class Motor(OutputModule):
     def set_first_speed(self, speed_value=None):
         """
         :param int degree: Angular speed to set the first motor.
-
         If *speed* is ``None``,
-
         :return: Angular speed of the first motor.
         :rtype: float
         """
         if speed_value is not None:
             self._serial_write_q.put(
                 self._set_property(
-                    self._module_id,
+                    self._id,
                     self.ControlType.SPEED.value,
                     (speed_value, self.set_first_speed(), 0),
                 )
@@ -126,16 +118,14 @@ class Motor(OutputModule):
     def set_second_speed(self, speed_value=None):
         """
         :param int degree: Angular speed to set the second motor.
-
         If *speed* is ``None``,
-
         :return: Angular speed of the second motor.
         :rtype: float
         """
         if speed_value is not None:
             self._serial_write_q.put(
                 self._set_property(
-                    self._module_id,
+                    self._id,
                     self.ControlType.SPEED.value,
                     (self.set_second_speed(), speed_value, 0),
                 )
@@ -146,16 +136,14 @@ class Motor(OutputModule):
     def set_first_torque(self, torque_value=None):
         """
         :param int degree: Torque to set the first motor.
-
         If *torque* is ``None``,
-
         :return: Torque of the first motor.
         :rtype: float
         """
         if torque_value is not None:
             self._serial_write_q.put(
                 self._set_property(
-                    self._module_id,
+                    self._id,
                     self.ControlType.TORQUE.value,
                     (torque_value, self.set_second_torque(), 0),
                 )
@@ -166,16 +154,14 @@ class Motor(OutputModule):
     def set_second_torque(self, torque_value=None):
         """
         :param int degree: Torque to set the second motor.
-
         If *torque* is ``None``,
-
         :return: Torque of the second motor.
         :rtype: float
         """
         if torque_value is not None:
             self._serial_write_q.put(
                 self._set_property(
-                    self._module_id,
+                    self._id,
                     self.ControlType.TORQUE.value,
                     (self.set_first_torque(), torque_value, 0),
                 )
@@ -187,9 +173,7 @@ class Motor(OutputModule):
         """
         :param int first_torque: Torque to set the first motor.
         :param int second_torque: Torque to set the second motor.
-
         If *first_torque* is ``None`` and *second_torque* is ``None``,
-
         :return: Torque of the first motor , Torque of the second motor.
         :rtype: float
         """
@@ -205,7 +189,7 @@ class Motor(OutputModule):
                 else second_torque_value
             )
             message = self._set_property(
-                self._module_id,
+                self._id,
                 self.ControlType.TORQUE,
                 (first_torque_value, second_torque_value, 0),
             )
@@ -219,9 +203,7 @@ class Motor(OutputModule):
         """
         :param int first_speed: Speed to set the first motor.
         :param int second_speed: Speed to set the second motor.
-
         If *first_speed* is ``None`` and *second_speed* is ``None``,
-
         :return: Speed of the first motor , Speed of the second motor.
         :rtype: float
         """
@@ -237,7 +219,7 @@ class Motor(OutputModule):
                 else second_speed_value
             )
             message = self._set_property(
-                self._module_id,
+                self._id,
                 self.ControlType.SPEED,
                 (first_speed_value, second_speed_value, 0),
             )
@@ -251,9 +233,7 @@ class Motor(OutputModule):
         """
         :param int first_degree: Degree to set the first motor.
         :param int second_degree: Degree to set the second motor.
-
         If *first_degree* is ``None`` and *second_degree* is ``None``,
-
         :return: Degree of the first motor , Degree of the second motor.
         :rtype: float
         """
@@ -269,7 +249,7 @@ class Motor(OutputModule):
                 else second_degree_value
             )
             message = self._set_property(
-                self._module_id,
+                self._id,
                 self.ControlType.DEGREE,
                 (first_degree_value, second_degree_value, 0),
             )

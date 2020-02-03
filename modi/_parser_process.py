@@ -32,4 +32,3 @@ class ParserProcess(multiprocessing.Process):
         """
 
         return self.__stop.is_set()
-

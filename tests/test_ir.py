@@ -10,7 +10,7 @@ class TestIr(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        mock_args = (-1, -1, None, None)
+        mock_args = (-1, -1, None)
         self.ir = Ir(*mock_args)
         self.ir._get_property = mock.MagicMock()
 

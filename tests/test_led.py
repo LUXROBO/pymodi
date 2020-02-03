@@ -10,12 +10,7 @@ class TestLed(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.mock_kwargs = {
-            "module_id": -1,
-            "module_uuid": -1,
-            "modi": None,
-            "serial_write_q": None,
-        }
+        self.mock_kwargs = {"id_": -1, "uuid": -1, "serial_write_q": None}
         self.led = Led(**self.mock_kwargs)
 
         def eval_set_property(id, command_type, data):
@@ -38,7 +33,7 @@ class TestLed(unittest.TestCase):
         self.led.set_rgb(*expected_color)
 
         expected_rgb_params = (
-            self.mock_kwargs["module_id"],
+            self.mock_kwargs["id_"],
             self.led.CommandType.SET_RGB,
             expected_color,
         )

@@ -44,7 +44,7 @@ class ExecutorTask:
             pass
         else:
             self.__handler(message["c"])(message)
-            time.sleep(0.001)
+            time.sleep(0.004)
 
     def __handler(self, command):
         """ Excute task based on command message
@@ -84,9 +84,8 @@ class ExecutorTask:
         for module_id, module_info in list(self._module_ids.items()):
             if curr_time_ms - module_info["timestamp"] > 2000:
                 for module in self._modules:
-                    if module.module_uuid == module_info["uuid"]:
+                    if module.uuid == module_info["uuid"]:
                         module.set_connection_state(connection_state=True)
-                        print("disconnecting : ", module)
 
     def __update_modules(self, message):
         """ Update module information
@@ -129,25 +128,23 @@ class ExecutorTask:
 
         # Handle re-connected modules
         for module in self._modules:
-            if module.module_uuid == module_uuid and not module.connected:
+            if module.uuid == module_uuid and not module.connected:
                 module.set_connection_state(connection_state=True)
 
         # Handle newly-connected modules
         if not next(
-            (module for module in self._modules if module.module_uuid == module_uuid),
-            None,
+            (module for module in self._modules if module.uuid == module_uuid), None
         ):
             if module_category != "network":
                 module_template = self.__init_module(module_type)
                 module_instance = module_template(
-                    module_id, module_uuid, self, self._serial_write_q
+                    module_id, module_uuid, self._serial_write_q
                 )
                 self.__set_pnp(
-                    module_id=module_instance.module_id,
-                    module_pnp_state=Module.ModulePnpState.OFF,
+                    module_id=module_instance.id, module_pnp_state=Module.State.PNP_OFF
                 )
                 self._modules.append(module_instance)
-                self._modules.sort(key=lambda module: module.module_uuid)
+                # self._modules.sort(key=lambda module: module.uuid)
 
     def __init_module(self, module_type):
         """ Find module type for module initialize
@@ -179,7 +176,7 @@ class ExecutorTask:
 
         # Decode message of module id and module property for update property
         for module in self._modules:
-            if module.module_id == message["s"]:
+            if module.id == message["s"]:
                 message_decoded = bytearray(base64.b64decode(message["b"]))
                 property_type = module.PropertyType(property_number)
                 module.update_property(
@@ -195,14 +192,14 @@ class ExecutorTask:
         if module_id is None:
             for curr_module_id in self._module_ids:
                 pnp_message = self.__set_module_state(
-                    curr_module_id, Module.ModuleState.RUN, module_pnp_state
+                    curr_module_id, Module.State.RUN, module_pnp_state
                 )
                 self._serial_write_q.put(pnp_message)
 
         # Otherwise, it sets pnp state of the given module
         else:
             pnp_message = self.__set_module_state(
-                module_id, Module.ModuleState.RUN, module_pnp_state
+                module_id, Module.State.RUN, module_pnp_state
             )
             self._serial_write_q.put(pnp_message)
 
@@ -220,7 +217,7 @@ class ExecutorTask:
         """ Generate message for set module state and pnp state          
         """
 
-        if type(module_state) is Module.ModuleState:
+        if type(module_state) is Module.State:
             message = dict()
 
             message["c"] = 0x09
@@ -246,14 +243,14 @@ class ExecutorTask:
 
         # Reboot module
         reboot_message = self.__set_module_state(
-            BROADCAST_ID, Module.ModuleState.REBOOT, Module.ModulePnpState.OFF
+            BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
         )
         self._serial_write_q.put(reboot_message)
         self.__delay()
 
         # Command module pnp off
         pnp_off_message = self.__set_module_state(
-            BROADCAST_ID, Module.ModuleState.RUN, Module.ModulePnpState.OFF
+            BROADCAST_ID, Module.State.RUN, Module.State.PNP_OFF
         )
         self._serial_write_q.put(pnp_off_message)
         self.__delay()

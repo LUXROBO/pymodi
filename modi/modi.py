@@ -21,7 +21,6 @@ import multiprocessing
 class MODI:
     """
     Example:
-
     >>> import modi
     >>> bundle = modi.MODI()
     """
@@ -62,9 +61,7 @@ class MODI:
     @property
     def modules(self):
         """Tuple of connected modules except network module.
-
         Example:
-
         >>> bundle = modi.MODI()
         >>> modules = bundle.modules # (<modi.module.button.Button object at 0x1009455c0>, <modi.module.led.Led object at 0x100945630>)
         """
@@ -75,88 +72,74 @@ class MODI:
         """Tuple of connected :class:`~modi.module.button.Button` modules.
         """
 
-        return tuple(
-            [module for module in self.modules if module.module_type == "button"]
-        )
+        return tuple([module for module in self.modules if module.type == "button"])
 
     @property
     def dials(self):
         """Tuple of connected :class:`~modi.module.dial.Dial` modules.
         """
 
-        return tuple(
-            [module for module in self.modules if module.module_type == "dial"]
-        )
+        return tuple([module for module in self.modules if module.type == "dial"])
 
     @property
     def displays(self):
         """Tuple of connected :class:`~modi.module.display.Display` modules.
         """
 
-        return tuple(
-            [module for module in self.modules if module.module_type == "display"]
-        )
+        return tuple([module for module in self.modules if module.type == "display"])
 
     @property
     def envs(self):
         """Tuple of connected :class:`~modi.module.env.Env` modules.
         """
 
-        return tuple([module for module in self.modules if module.module_type == "env"])
+        return tuple([module for module in self.modules if module.type == "env"])
 
     @property
     def gyros(self):
         """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
         """
 
-        return tuple(
-            [module for module in self.modules if module.module_type == "gyro"]
-        )
+        return tuple([module for module in self.modules if module.type == "gyro"])
 
     @property
     def irs(self):
         """Tuple of connected :class:`~modi.module.ir.Ir` modules.
         """
 
-        return tuple([module for module in self.modules if module.module_type == "ir"])
+        return tuple([module for module in self.modules if module.type == "ir"])
 
     @property
     def leds(self):
         """Tuple of connected :class:`~modi.module.led.Led` modules.
         """
 
-        return tuple([module for module in self.modules if module.module_type == "led"])
+        return tuple([module for module in self.modules if module.type == "led"])
 
     @property
     def mics(self):
         """Tuple of connected :class:`~modi.module.mic.Mic` modules.
         """
 
-        return tuple([module for module in self.modules if module.module_type == "mic"])
+        return tuple([module for module in self.modules if module.type == "mic"])
 
     @property
     def motors(self):
         """Tuple of connected :class:`~modi.module.motor.Motor` modules.
         """
 
-        return tuple(
-            [module for module in self.modules if module.module_type == "motor"]
-        )
+        return tuple([module for module in self.modules if module.type == "motor"])
 
     @property
     def speakers(self):
         """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
         """
 
-        return tuple(
-            [module for module in self.modules if module.module_type == "speaker"]
-        )
+        return tuple([module for module in self.modules if module.type == "speaker"])
 
     @property
     def ultrasonics(self):
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
 
-        return tuple(
-            [module for module in self.modules if module.module_type == "ultrasonic"]
-        )
+        return tuple([module for module in self.modules if module.type == "ultrasonic"])

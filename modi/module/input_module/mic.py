@@ -9,8 +9,6 @@ class Mic(InputModule):
     """
     :param int id: The id of the module.
     :param int uuid: The uuid of the module.
-    :param modi: The :class:`~modi.modi.MODI` instance.
-    :type modi: :class:`~modi.modi.MODI  `
     :param serial_write_q: multiprocessing.queue of the serial writing
     """
 
@@ -18,9 +16,9 @@ class Mic(InputModule):
         VOLUME = 2
         FREQUENCY = 3
 
-    def __init__(self, module_id, module_uuid, modi, serial_write_q):
-        super(Mic, self).__init__(module_id, module_uuid, modi, serial_write_q)
-        self._module_type = "mic"
+    def __init__(self, id_, uuid, serial_write_q):
+        super(Mic, self).__init__(id_, uuid, serial_write_q)
+        self._type = "mic"
 
     def get_volume(self):
         """

@@ -10,7 +10,7 @@ class TestEnv(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        mock_args = (-1, -1, None, None)
+        mock_args = (-1, -1, None)
         self.env = Env(*mock_args)
         self.env._get_property = mock.MagicMock()
 

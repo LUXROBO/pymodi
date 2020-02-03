@@ -18,17 +18,13 @@ class SerialTask:
     def __list_ports(self):
         """
         :return: an iterable that yields :py:class:`~serial.tools.list_ports.ListPortInfo` objects.
-
         The function returns an iterable that yields tuples of three strings:
-
         * port name as it can be passed to :py:class:`modi.modi.MODI`
         * description in human readable form
         * sort of hardware ID. E.g. may contain VID:PID of USB-serial adapters.
-
         Items are returned in no particular order. It may make sense to sort the items. Also note that the reported strings are different across platforms and operating systems, even for the same device.
         
         .. note:: Support is limited to a number of operating systems. On some systems description and hardware ID will not be available (``None``).
-
         :platform: Posix (/dev files)
         :platform: Linux (/dev files, sysfs)
         :platform: OSX (iokit)

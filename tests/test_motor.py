@@ -10,12 +10,7 @@ class TestMotor(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.mock_kwargs = {
-            "module_id": -1,
-            "module_uuid": -1,
-            "modi": None,
-            "serial_write_q": None,
-        }
+        self.mock_kwargs = {"id_": -1, "uuid": -1, "serial_write_q": None}
         self.motor = Motor(**self.mock_kwargs)
 
         def eval_set_property(id, command_type, data):
@@ -69,7 +64,7 @@ class TestMotor(unittest.TestCase):
         self.motor.set_speed(*expected_values)
 
         expected_speed_params = (
-            self.mock_kwargs["module_id"],
+            self.mock_kwargs["id_"],
             self.motor.ControlType.SPEED,
             (*expected_values, 0),
         )
@@ -103,7 +98,7 @@ class TestMotor(unittest.TestCase):
         self.motor.set_degree(*expected_values)
 
         expected_degree_params = (
-            self.mock_kwargs["module_id"],
+            self.mock_kwargs["id_"],
             self.motor.ControlType.DEGREE,
             (*expected_values, 0),
         )

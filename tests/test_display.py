@@ -10,12 +10,7 @@ class TestDisplay(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.mock_kwargs = {
-            "module_id": -1,
-            "module_uuid": -1,
-            "modi": None,
-            "serial_write_q": None,
-        }
+        self.mock_kwargs = {"id_": -1, "uuid": -1, "serial_write_q": None}
         self.display = Display(**self.mock_kwargs)
 
         def eval_set_property(id, property_type, data, property_data_type):
@@ -39,14 +34,14 @@ class TestDisplay(unittest.TestCase):
         self.display.set_text(text=mock_text)
 
         expected_clear_params = (
-            self.mock_kwargs["module_id"],
+            self.mock_kwargs["id_"],
             self.display.PropertyType.CLEAR,
             bytes(2),
             self.display.PropertyDataType.RAW,
         )
 
         expected_text_params = (
-            self.mock_kwargs["module_id"],
+            self.mock_kwargs["id_"],
             self.display.PropertyType.TEXT,
             mock_text,
             self.display.PropertyDataType.STRING,
@@ -71,14 +66,14 @@ class TestDisplay(unittest.TestCase):
         self.display.set_variable(mock_variable, mock_position, mock_position)
 
         expected_clear_params = (
-            self.mock_kwargs["module_id"],
+            self.mock_kwargs["id_"],
             self.display.PropertyType.CLEAR,
             bytes(2),
             self.display.PropertyDataType.RAW,
         )
 
         expected_variable_params = (
-            self.mock_kwargs["module_id"],
+            self.mock_kwargs["id_"],
             self.display.PropertyType.VARIABLE,
             (mock_variable, mock_position, mock_position),
             self.display.PropertyDataType.DISPLAY_VAR,
@@ -102,7 +97,7 @@ class TestDisplay(unittest.TestCase):
 
         # check if set_property has been called once with the specified arguments
         expected_clear_params = (
-            self.mock_kwargs["module_id"],
+            self.mock_kwargs["id_"],
             self.display.PropertyType.CLEAR,
             bytes(2),
             self.display.PropertyDataType.RAW,

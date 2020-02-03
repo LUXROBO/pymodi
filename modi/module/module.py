@@ -12,46 +12,43 @@ class Module:
     """
     :param int id: The id of the module.
     :param int uuid: The uuid of the module.
-    :param modi: The :class:`~modi.modi.MODI` instance.
-    :type modi: :class:`~modi.modi.MODI  `
     :param serial_write_q: multiprocessing.queue of the serial writing
     """
 
-    class ModuleProperty:
+    class Property:
         def __init__(self):
             self.value = 0
             self.last_update_time = 0
             self.last_request_time = 0
 
-    class ModuleState(Enum):
+    class State(Enum):
         RUN = 0
         IDLE = 1
         PAUSE = 2
         ERROR = 3
         NO_FIRMWARE = 4
         REBOOT = 6
+        PNP_ON = 7
+        PNP_OFF = 8
 
-    class ModulePnpState(Enum):
-        ON = 1
-        OFF = 2
-
-    def __init__(self, module_id, module_uuid, modi, serial_write_q):
-        self._module_id = module_id
-        self._module_uuid = module_uuid
-        self._modi = modi
-        self._module_type = str()
-        self._category = str()
-        self._properties = dict()
-        self._connected = True
+    def __init__(self, id_, uuid, serial_write_q):
+        self._id = id_
+        self._uuid = uuid
         self._serial_write_q = serial_write_q
 
-    @property
-    def module_id(self):
-        return self._module_id
+        self._type = str()
+        self._category = str()
+        self._properties = dict()
+
+        self._is_connected = True
 
     @property
-    def module_uuid(self):
-        return self._module_uuid
+    def id(self):
+        return self._id
+
+    @property
+    def uuid(self):
+        return self._uuid
 
     @property
     def category(self):
@@ -59,14 +56,14 @@ class Module:
 
     @property
     def connected(self):
-        return self._connected
+        return self._is_connected
 
     @property
-    def module_type(self):
-        return self._module_type
+    def type(self):
+        return self._type
 
     def set_connection_state(self, connection_state):
-        self._connected = connection_state
+        self._is_connected = connection_state
 
     def _get_property(self, property_type):
         """ Get module property value and request
@@ -74,19 +71,15 @@ class Module:
 
         # Register property if not exists
         if not property_type in self._properties.keys():
-            self._properties[property_type] = self.ModuleProperty()
-            modi_serialtemp = self.request_property(
-                self._module_id, property_type.value
-            )
+            self._properties[property_type] = self.Property()
+            modi_serialtemp = self.request_property(self._id, property_type.value)
             self._serial_write_q.put(modi_serialtemp)
             self._properties[property_type].last_request_time = time.time()
 
         # Request property value if not updated for 0.5 sec
         duration = time.time() - self._properties[property_type].last_update_time
         if duration > 0.5:
-            modi_serialtemp = self.request_property(
-                self._module_id, property_type.value
-            )
+            modi_serialtemp = self.request_property(self._id, property_type.value)
             self._serial_write_q.put(modi_serialtemp)
             self._properties[property_type].last_request_time = time.time()
 
@@ -118,4 +111,3 @@ class Module:
         message["l"] = 4
 
         return json.dumps(message, separators=(",", ":"))
-

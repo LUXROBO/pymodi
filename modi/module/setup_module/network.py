@@ -9,6 +9,6 @@ class Network(SetupModule):
     class PropertyType(Enum):
         RESERVED = 0
 
-    def __init__(self, module_id, uuid, modi):
-        super(Network, self).__init__(module_id, uuid, modi)
+    def __init__(self, id_, uuid, serial_write_q):
+        super(Network, self).__init__(id_, uuid, serial_write_q)
         self._type = "network"

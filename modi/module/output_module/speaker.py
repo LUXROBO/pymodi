@@ -9,8 +9,6 @@ class Speaker(OutputModule):
     """
     :param int id: The id of the module.
     :param int uuid: The uuid of the module.
-    :param modi: The :class:`~modi.modi.MODI` instance.
-    :type modi: :class:`~modi.modi.MODI  `
     :param serial_write_q: multiprocessing.queue of the serial writing
     """
 
@@ -107,27 +105,23 @@ class Speaker(OutputModule):
         F_SOL_S_7 = 3322
         F_RA_S_7 = 3729
 
-    def __init__(self, module_id, module_uuid, modi, serial_write_q):
-        super(Speaker, self).__init__(module_id, module_uuid, modi, serial_write_q)
-        self._module_type = "speaker"
+    def __init__(self, id_, uuid, serial_write_q):
+        super(Speaker, self).__init__(id_, uuid, serial_write_q)
+        self._type = "speaker"
 
     def set_tune(self, frequency_value=None, volume_value=None):
         """
         * If either *frequency* or *volume* is not ``None``,
-
         :param float frequency_value: Frequency to set or ``None``.
         :param float volume_value: Volume to set or ``None``.
-
         The ``None`` component retains its previous value.
-
         * If *frequency_value* and *volume_value* are ``None``,
-
         :return: Tuple of frequency_value and volume_value.
         :rtype: tuple
         """
         if not (frequency_value is None and volume_value is None):
             message = self._set_property(
-                self._module_id,
+                self._id,
                 self.CommandType.SET_TUNE,
                 (
                     frequency_value
@@ -143,9 +137,7 @@ class Speaker(OutputModule):
     def set_frequency(self, frequency_value=None):
         """
         :param float frequency: Frequency to set or ``None``.
-
         If *frequency* is ``None``.
-
         :return: Frequency.
         :rtype: float
         """
@@ -157,9 +149,7 @@ class Speaker(OutputModule):
     def set_volume(self, volume_value=None):
         """
         :param float volume: Volume to set or ``None``.
-
         If *volume* is ``None``.
-
         :return: Volume.
         :rtype: float
         """

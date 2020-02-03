@@ -10,12 +10,7 @@ class TestSpeaker(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.mock_kwargs = {
-            "module_id": -1,
-            "module_uuid": -1,
-            "modi": None,
-            "serial_write_q": None,
-        }
+        self.mock_kwargs = {"id_": -1, "uuid": -1, "serial_write_q": None}
         self.speaker = Speaker(**self.mock_kwargs)
 
         def eval_set_property(id, command_type, data, property_data_type):
@@ -37,7 +32,7 @@ class TestSpeaker(unittest.TestCase):
         self.speaker.set_tune(*expected_values)
 
         expected_tune_params = (
-            self.mock_kwargs["module_id"],
+            self.mock_kwargs["id_"],
             self.speaker.CommandType.SET_TUNE,
             expected_values,
             self.speaker.PropertyDataType.FLOAT,

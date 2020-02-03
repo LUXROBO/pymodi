@@ -10,7 +10,7 @@ class TestButton(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        mock_args = (-1, -1, None, None)
+        mock_args = (-1, -1, None)
         self.button = Button(*mock_args)
         self.button._get_property = mock.MagicMock()
 
