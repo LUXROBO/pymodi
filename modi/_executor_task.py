@@ -128,7 +128,7 @@ class ExecutorTask:
 
         # Handle re-connected modules
         for module in self._modules:
-            if module.uuid == module_uuid and not module.connected:
+            if module.uuid == module_uuid and not module.is_connected:
                 module.set_connection_state(connection_state=True)
 
         # Handle newly-connected modules

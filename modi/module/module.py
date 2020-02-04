@@ -55,7 +55,7 @@ class Module:
         return self._category
 
     @property
-    def connected(self):
+    def is_connected(self):
         return self._is_connected
 
     @property
