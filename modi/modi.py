@@ -26,12 +26,12 @@ class MODI:
     """
 
     def __init__(self, test=False):
+        self._modules = list()
+        self._module_ids = dict()
+
         self._serial_read_q = multiprocessing.Queue(100)
         self._serial_write_q = multiprocessing.Queue(100)
         self._json_recv_q = multiprocessing.Queue(100)
-
-        self._modules = list()
-        self._module_ids = dict()
 
         self._ser_proc = None
         self._par_proc = None
