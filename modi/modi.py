@@ -25,7 +25,7 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self):
+    def __init__(self, test=False):
         self._serial_read_q = multiprocessing.Queue(100)
         self._serial_write_q = multiprocessing.Queue(100)
         self._json_recv_q = multiprocessing.Queue(100)
@@ -33,22 +33,27 @@ class MODI:
         self._modules = list()
         self._module_ids = dict()
 
-        self._ser_proc = SerialProcess(self._serial_read_q, self._serial_write_q)
-        self._ser_proc.daemon = True
-        self._ser_proc.start()
+        self._ser_proc = None
+        self._par_proc = None
+        self._exe_thrd = None
 
-        self._par_proc = ParserProcess(self._serial_read_q, self._json_recv_q)
-        self._par_proc.daemon = True
-        self._par_proc.start()
+        if not test:
+            self._ser_proc = SerialProcess(self._serial_read_q, self._serial_write_q)
+            self._ser_proc.daemon = True
+            self._ser_proc.start()
 
-        self._exe_thrd = ExecutorThread(
-            self._serial_write_q, self._json_recv_q, self._module_ids, self._modules
-        )
-        self._exe_thrd.daemon = True
-        self._exe_thrd.start()
+            self._par_proc = ParserProcess(self._serial_read_q, self._json_recv_q)
+            self._par_proc.daemon = True
+            self._par_proc.start()
 
-        # TODO: receive flag from executor thread
-        time.sleep(5)
+            self._exe_thrd = ExecutorThread(
+                self._serial_write_q, self._json_recv_q, self._module_ids, self._modules
+            )
+            self._exe_thrd.daemon = True
+            self._exe_thrd.start()
+
+            # TODO: receive flag from executor thread
+            time.sleep(5)
 
     def exit(self):
         """ Stop modi instance
@@ -65,6 +70,7 @@ class MODI:
         >>> bundle = modi.MODI()
         >>> modules = bundle.modules # (<modi.module.button.Button object at 0x1009455c0>, <modi.module.led.Led object at 0x100945630>)
         """
+
         return tuple(self._modules)
 
     @property
