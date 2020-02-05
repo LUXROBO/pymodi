@@ -8,17 +8,6 @@ from modi.module.setup_module.setup_module import SetupModule
 from modi.module.input_module.input_module import InputModule
 from modi.module.output_module.output_module import OutputModule
 
-from modi.module.input_module.button import Button
-from modi.module.input_module.dial import Dial
-from modi.module.input_module.env import Env
-from modi.module.input_module.gyro import Gyro
-from modi.module.input_module.ir import Ir
-
-from modi.module.output_module.display import Display
-from modi.module.output_module.led import Led
-from modi.module.output_module.motor import Motor
-from modi.module.output_module.speaker import Speaker
-
 
 class TestModi(unittest.TestCase):
     """Tests for 'modi' class."""

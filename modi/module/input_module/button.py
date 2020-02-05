@@ -39,7 +39,7 @@ class Button(InputModule):
     def get_pressed(self):
         """
         :return: `True` if pressed or `False`.
-        :rtype: bool    
+        :rtype: bool
         """
         return self._get_property(self.PropertyType.PRESSED) == 100.0
 

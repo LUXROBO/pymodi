@@ -127,7 +127,9 @@ class Speaker(OutputModule):
                     frequency_value
                     if frequency_value is not None
                     else self.set_frequency(),
-                    volume_value if volume_value is not None else self.set_volume(),
+                    volume_value
+                    if volume_value is not None
+                    else self.set_volume(),
                 ),
                 self.PropertyDataType.FLOAT,
             )

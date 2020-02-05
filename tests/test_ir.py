@@ -21,12 +21,14 @@ class TestIr(unittest.TestCase):
     def test_get_distance(self):
         """Test get_distance method."""
         self.ir.get_distance()
-        self.ir._get_property.assert_called_once_with(self.ir.PropertyType.DISTANCE)
+        self.ir._get_property.assert_called_once_with(
+            self.ir.PropertyType.DISTANCE)
 
     def test_get_brightness(self):
         """Test get_brightness method."""
         self.ir.get_brightness()
-        self.ir._get_property.assert_called_once_with(self.ir.PropertyType.BRIGHTNESS)
+        self.ir._get_property.assert_called_once_with(
+            self.ir.PropertyType.BRIGHTNESS)
 
 
 if __name__ == "__main__":

@@ -27,7 +27,10 @@ class Display(OutputModule):
         """
         self.clear()
         messages = self._set_property(
-            self._id, self.PropertyType.TEXT, text, self.PropertyDataType.STRING
+            self._id,
+            self.PropertyType.TEXT,
+            text,
+            self.PropertyDataType.STRING
         )
         for message in messages:
             self._serial_write_q.put(message)
@@ -51,7 +54,10 @@ class Display(OutputModule):
         """Clear the screen.
         """
         message = self._set_property(
-            self._id, self.PropertyType.CLEAR, bytes(2), self.PropertyDataType.RAW
+            self._id,
+            self.PropertyType.CLEAR,
+            bytes(2),
+            self.PropertyDataType.RAW
         )
         self._serial_write_q.put(message)
         return message

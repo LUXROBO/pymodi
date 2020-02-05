@@ -3,7 +3,6 @@
 import json
 import time
 import base64
-import struct
 
 from enum import Enum
 
@@ -70,16 +69,19 @@ class Module:
         """
 
         # Register property if not exists
-        if not property_type in self._properties.keys():
+        if property_type not in self._properties.keys():
             self._properties[property_type] = self.Property()
-            modi_serialtemp = self.request_property(self._id, property_type.value)
+            modi_serialtemp = self.request_property(
+                self._id, property_type.value)
             self._serial_write_q.put(modi_serialtemp)
             self._properties[property_type].last_request_time = time.time()
 
         # Request property value if not updated for 0.5 sec
-        duration = time.time() - self._properties[property_type].last_update_time
+        duration = time.time() - \
+            self._properties[property_type].last_update_time
         if duration > 0.5:
-            modi_serialtemp = self.request_property(self._id, property_type.value)
+            modi_serialtemp = self.request_property(
+                self._id, property_type.value)
             self._serial_write_q.put(modi_serialtemp)
             self._properties[property_type].last_request_time = time.time()
 

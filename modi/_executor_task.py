@@ -4,18 +4,20 @@ import queue
 import base64
 import struct
 
-from modi.module.input_module import button, dial, env, gyro, ir, mic, ultrasonic
+from modi.module.input_module import (
+    button, dial, env, gyro, ir, mic, ultrasonic
+)
 from modi.module.output_module import display, led, motor, speaker
-from modi.module.setup_module import network
 
 from modi.module.module import Module
 
 
 class ExecutorTask:
-    """ 
-    :param queue serial_write_q: Multiprocessing Queue for serial writing message.
-    :param queue json_recv_q: Multiprocessing Queue for parsed json message.
-    :param dict() module_ids: dict() of key: module_id, value: ['timestamp', 'uuid'].
+    """
+    :param queue serial_write_q: Inter-process queue for writing serial
+    message.
+    :param queue json_recv_q: Inter-process queue for parsing json message.
+    :param dict() module_ids: dict() of module_id : ['timestamp', 'uuid'].
     :param list() modules: list() of module instance.
     """
 
@@ -75,12 +77,14 @@ class ExecutorTask:
 
         # Request uuid from network modules and other modules
         if not self._module_ids[module_id]["uuid"]:
-            message_to_write = self.__request_uuid(module_id, is_network_module=False)
+            message_to_write = self.__request_uuid(
+                module_id, is_network_module=False)
             self._serial_write_q.put(message_to_write)
-            message_to_write = self.__request_uuid(module_id, is_network_module=True)
+            message_to_write = self.__request_uuid(
+                module_id, is_network_module=True)
             self._serial_write_q.put(message_to_write)
 
-        # Disconnect modules that have no health message for more than 2 seconds
+        # Disconnect modules with no health message for more than 2 seconds
         for module_id, module_info in list(self._module_ids.items()):
             if curr_time_ms - module_info["timestamp"] > 1000:
                 for module in self._modules:
@@ -138,7 +142,8 @@ class ExecutorTask:
 
         # Handle newly-connected modules
         if not next(
-            (module for module in self._modules if module.uuid == module_uuid), None
+            (module for module in self._modules if module.uuid == module_uuid),
+            None
         ):
             if module_category != "network":
                 module_template = self.__init_module(module_type)
@@ -146,7 +151,8 @@ class ExecutorTask:
                     module_id, module_uuid, self._serial_write_q
                 )
                 self.__set_pnp(
-                    module_id=module_instance.id, module_pnp_state=Module.State.PNP_OFF
+                    module_id=module_instance.id,
+                    module_pnp_state=Module.State.PNP_OFF
                 )
                 self._modules.append(module_instance)
                 # self._modules.sort(key=lambda module: module.uuid)
@@ -186,7 +192,8 @@ class ExecutorTask:
                 property_type = module.PropertyType(property_number)
                 module.update_property(
                     property_type,
-                    round(struct.unpack("f", bytes(message_decoded[:4]))[0], 2),
+                    round(struct.unpack("f", bytes(
+                        message_decoded[:4]))[0], 2),
                 )
 
     def __set_pnp(self, module_id, module_pnp_state):
@@ -219,7 +226,7 @@ class ExecutorTask:
         return (module_info << sizeof_module_uuid) | module_uuid
 
     def __set_module_state(self, destination_id, module_state, pnp_state):
-        """ Generate message for set module state and pnp state          
+        """ Generate message for set module state and pnp state
         """
 
         if type(module_state) is Module.State:
@@ -241,7 +248,7 @@ class ExecutorTask:
             raise RuntimeError("The type of state is not ModuleState")
 
     def init_modules(self):
-        """ Initialize module on first run          
+        """ Initialize module on first run
         """
 
         BROADCAST_ID = 0xFFF

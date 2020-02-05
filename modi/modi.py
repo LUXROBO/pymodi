@@ -1,17 +1,16 @@
 """Main MODI module."""
 
-import os
 import time
-import json
-import base64
 
 from modi._serial_process import SerialProcess
 from modi._parser_process import ParserProcess
 from modi._executor_thread import ExecutorThread
 
-from modi.module.input_module import button, dial, env, gyro, ir, mic, ultrasonic
-from modi.module.output_module import display, led, motor, speaker
 from modi.module.setup_module import network
+from modi.module.input_module import (
+    button, dial, env, gyro, ir, mic, ultrasonic
+)
+from modi.module.output_module import display, led, motor, speaker
 
 from modi.module.module import Module
 
@@ -38,16 +37,21 @@ class MODI:
         self._exe_thrd = None
 
         if not test:
-            self._ser_proc = SerialProcess(self._serial_read_q, self._serial_write_q)
+            self._ser_proc = SerialProcess(
+                self._serial_read_q, self._serial_write_q)
             self._ser_proc.daemon = True
             self._ser_proc.start()
 
-            self._par_proc = ParserProcess(self._serial_read_q, self._json_recv_q)
+            self._par_proc = ParserProcess(
+                self._serial_read_q, self._json_recv_q)
             self._par_proc.daemon = True
             self._par_proc.start()
 
             self._exe_thrd = ExecutorThread(
-                self._serial_write_q, self._json_recv_q, self._module_ids, self._modules
+                self._serial_write_q,
+                self._json_recv_q,
+                self._module_ids,
+                self._modules
             )
             self._exe_thrd.daemon = True
             self._exe_thrd.start()
@@ -68,7 +72,7 @@ class MODI:
         """Tuple of connected modules except network module.
         Example:
         >>> bundle = modi.MODI()
-        >>> modules = bundle.modules # (<modi.module.button.Button object at 0x1009455c0>, <modi.module.led.Led object at 0x100945630>)
+        >>> modules = bundle.modules
         """
 
         return tuple(self._modules)

@@ -21,17 +21,20 @@ class TestGyro(unittest.TestCase):
     def test_get_roll(self):
         """Test get_roll method."""
         self.gyro.get_roll()
-        self.gyro._get_property.assert_called_once_with(self.gyro.PropertyType.ROLL)
+        self.gyro._get_property.assert_called_once_with(
+            self.gyro.PropertyType.ROLL)
 
     def test_get_pitch(self):
         """Test get_pitch method."""
         self.gyro.get_pitch()
-        self.gyro._get_property.assert_called_once_with(self.gyro.PropertyType.PITCH)
+        self.gyro._get_property.assert_called_once_with(
+            self.gyro.PropertyType.PITCH)
 
     def test_get_yaw(self):
         """Test get_yaw method."""
         self.gyro.get_yaw()
-        self.gyro._get_property.assert_called_once_with(self.gyro.PropertyType.YAW)
+        self.gyro._get_property.assert_called_once_with(
+            self.gyro.PropertyType.YAW)
 
     def test_get_angular_vel_x(self):
         """Test get_angular_vel_x method."""
