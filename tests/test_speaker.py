@@ -33,13 +33,13 @@ class TestSpeaker(unittest.TestCase):
 
         expected_tune_params = (
             self.mock_kwargs["id_"],
-            self.speaker.CommandType.SET_TUNE,
+            self.speaker.CommandType.SET_TUNE.value,
             expected_values,
             self.speaker.PropertyDataType.FLOAT,
         )
         self.speaker._set_property.assert_called_once_with(*expected_tune_params)
         self.speaker._serial_write_q.put.assert_called_once_with(
-            self.speaker.CommandType.SET_TUNE
+            self.speaker.CommandType.SET_TUNE.value
         )
 
         mock_set_frequency.assert_called_once_with()

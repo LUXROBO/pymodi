@@ -34,12 +34,12 @@ class TestLed(unittest.TestCase):
 
         expected_rgb_params = (
             self.mock_kwargs["id_"],
-            self.led.CommandType.SET_RGB,
+            self.led.CommandType.SET_RGB.value,
             expected_color,
         )
         self.led._set_property.assert_called_once_with(*expected_rgb_params)
         self.led._serial_write_q.put.assert_called_once_with(
-            self.led.CommandType.SET_RGB
+            self.led.CommandType.SET_RGB.value
         )
 
         mock_set_red.assert_called_once_with()
