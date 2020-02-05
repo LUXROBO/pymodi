@@ -130,6 +130,11 @@ class ExecutorTask:
         for module in self._modules:
             if module.uuid == module_uuid and not module.is_connected:
                 module.set_connection_state(connection_state=True)
+                # When reconnected, turn-off module pnp state
+                pnp_off_message = self.__set_module_state(
+                    0xFFF, Module.State.RUN, Module.State.PNP_OFF
+                )
+                self._serial_write_q.put(pnp_off_message)
 
         # Handle newly-connected modules
         if not next(
