@@ -82,10 +82,10 @@ class ExecutorTask:
 
         # Disconnect modules that have no health message for more than 2 seconds
         for module_id, module_info in list(self._module_ids.items()):
-            if curr_time_ms - module_info["timestamp"] > 2000:
+            if curr_time_ms - module_info["timestamp"] > 1000:
                 for module in self._modules:
                     if module.uuid == module_info["uuid"]:
-                        module.set_connection_state(connection_state=True)
+                        module.set_connection_state(connection_state=False)
 
     def __update_modules(self, message):
         """ Update module information
