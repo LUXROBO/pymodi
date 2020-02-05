@@ -19,15 +19,6 @@ modi.modi module
     :undoc-members:
     :show-inheritance:
 
-modi.serial module
-------------------
-
-.. automodule:: modi.serial
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
 Module contents
 ---------------
 

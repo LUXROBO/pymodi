@@ -1,18 +1,46 @@
-# -*- coding: utf-8 -*-
-
 """Module module."""
 
-from __future__ import absolute_import
+import json
+import time
+import base64
+import struct
 
-import weakref
+from enum import Enum
 
-class Module(object):
-    def __init__(self, id, uuid, modi):
-        self._id = id
+
+class Module:
+    """
+    :param int id: The id of the module.
+    :param int uuid: The uuid of the module.
+    :param serial_write_q: multiprocessing.queue of the serial writing
+    """
+
+    class Property:
+        def __init__(self):
+            self.value = 0
+            self.last_update_time = 0
+            self.last_request_time = 0
+
+    class State(Enum):
+        RUN = 0
+        IDLE = 1
+        PAUSE = 2
+        ERROR = 3
+        NO_FIRMWARE = 4
+        REBOOT = 6
+        PNP_ON = 7
+        PNP_OFF = 8
+
+    def __init__(self, id_, uuid, serial_write_q):
+        self._id = id_
         self._uuid = uuid
-        self._modi = weakref.ref(modi)
-        self._category = str()
+        self._serial_write_q = serial_write_q
+
         self._type = str()
+        self._category = str()
+        self._properties = dict()
+
+        self._is_connected = True
 
     @property
     def id(self):
@@ -27,29 +55,59 @@ class Module(object):
         return self._category
 
     @property
+    def is_connected(self):
+        return self._is_connected
+
+    @property
     def type(self):
         return self._type
 
-class SetupModule(Module):
-    def __init__(self, id, uuid, modi):
-        super(SetupModule, self).__init__(id, uuid, modi)
-        self._category = "setup"
+    def set_connection_state(self, connection_state):
+        self._is_connected = connection_state
 
-class InputModule(Module):
-    def __init__(self, id, uuid, modi):
-        super(InputModule, self).__init__(id, uuid, modi)
-        self._category = "input"
-        self._properties = dict()
-        
-        for property_type in self.property_types:
-            self._properties[property_type] = float()
+    def _get_property(self, property_type):
+        """ Get module property value and request
+        """
 
-class OutputModule(Module):
-    def __init__(self, id, uuid, modi):
-        super(OutputModule, self).__init__(id, uuid, modi)
-        self._category = "output"
-        self._properties = dict()
-        
-        for property_type in self.property_types:
-            self._properties[property_type] = float()
-        
+        # Register property if not exists
+        if not property_type in self._properties.keys():
+            self._properties[property_type] = self.Property()
+            modi_serialtemp = self.request_property(self._id, property_type.value)
+            self._serial_write_q.put(modi_serialtemp)
+            self._properties[property_type].last_request_time = time.time()
+
+        # Request property value if not updated for 0.5 sec
+        duration = time.time() - self._properties[property_type].last_update_time
+        if duration > 0.5:
+            modi_serialtemp = self.request_property(self._id, property_type.value)
+            self._serial_write_q.put(modi_serialtemp)
+            self._properties[property_type].last_request_time = time.time()
+
+        return self._properties[property_type].value
+
+    def update_property(self, property_type, property_value):
+        """ Update property value and time
+        """
+
+        if property_type in self._properties.keys():
+            self._properties[property_type].value = property_value
+            self._properties[property_type].last_update_time = time.time()
+
+    def request_property(self, destination_id, property_type):
+        """ Generate message for request property
+        """
+
+        message = dict()
+
+        message["c"] = 0x03
+        message["s"] = 0
+        message["d"] = destination_id
+
+        property_bytes = bytearray(4)
+        property_bytes[0] = property_type
+        property_bytes[2] = 95
+
+        message["b"] = base64.b64encode(bytes(property_bytes)).decode("utf-8")
+        message["l"] = 4
+
+        return json.dumps(message, separators=(",", ":"))

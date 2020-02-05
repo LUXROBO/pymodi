@@ -3,10 +3,9 @@ Credits
 
 Development Lead
 ----------------
-
--   Jinsoo Heo \<<koriel@luxrobo.com>\>
+-   Jinsung Ha (jinsung@luxrobo.com)
 
 Contributors
 ------------
-
-None yet. Why not be the first?
+-   Jinsoo Heo (koriel@luxrobo.com)
+-   Hyeonwoo Park (patrick@luxrobo.com)

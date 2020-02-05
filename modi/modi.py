@@ -1,199 +1,151 @@
-# -*- coding: utf-8 -*-
+"""Main MODI module."""
 
-"""Main module."""
-
-from __future__ import absolute_import
-
-import serial
+import os
 import time
-from modi.serial import list_ports
-from modi._json_box import JsonBox
-import modi._cmd as md_cmd
-from modi._tasks import *
+import json
+import base64
 
-import sys
-IS_PY2 = sys.version_info < (3, 0)
+from modi._serial_process import SerialProcess
+from modi._parser_process import ParserProcess
+from modi._executor_thread import ExecutorThread
 
-if IS_PY2:
-    from Queue import Queue
-else:
-    from queue import Queue
+from modi.module.input_module import button, dial, env, gyro, ir, mic, ultrasonic
+from modi.module.output_module import display, led, motor, speaker
+from modi.module.setup_module import network
+
+from modi.module.module import Module
+
+import multiprocessing
+
 
 class MODI:
     """
-    :param str port: MODI network module device name or ``None``.
-
-    :raises SerialException: In case the device can not be found or can not be configured.
-
-    The port is immediately opened on object creation, when a *port* is given. It is configured automatically when *port* is ``None`` and a successive call to :meth:`~modi.modi.MODI.open` is required.
-
-    *port* is a device name: depending on operating system. e.g. ``/dev/ttyUSB0`` on GNU/Linux or ``COM3`` on Windows.
-
     Example:
-
     >>> import modi
     >>> bundle = modi.MODI()
-
-    It can also be used with :meth:`modi.serial.list_ports`.
-
-    >>> import modi
-    >>> import modi.serial
-    >>> ports = modi.serial.list_ports() # [<serial.tools.list_ports_common.ListPortInfo object at 0x1026e95c0>]
-    >>> bundle = modi.MODI(ports[0].device)
     """
-    def __init__(self, port=None):
-        self._recv_q = Queue()
-        self._send_q = Queue()
-        self._display_send_q = Queue()
 
-        self._json_box = JsonBox()
-
-        self._ids = dict()
+    def __init__(self, test=False):
         self._modules = list()
+        self._module_ids = dict()
 
-        if port == None:
-            ports = list_ports()
+        self._serial_read_q = multiprocessing.Queue(100)
+        self._serial_write_q = multiprocessing.Queue(100)
+        self._json_recv_q = multiprocessing.Queue(100)
 
-            if len(ports) > 0:
-                self._serial = serial.Serial(ports[0].device, 115200)
-            else:
-                raise serial.SerialException("No MODI network module connected.")
+        self._ser_proc = None
+        self._par_proc = None
+        self._exe_thrd = None
 
-        else:
-            self._serial = serial.Serial(port, 115200)
+        if not test:
+            self._ser_proc = SerialProcess(self._serial_read_q, self._serial_write_q)
+            self._ser_proc.daemon = True
+            self._ser_proc.start()
 
-        self._threads = list()
-        tasks = [ReadDataTask, ParseDataTask, ProcDataTask, WriteDataTask, WriteDisplayDataTask]
+            self._par_proc = ParserProcess(self._serial_read_q, self._json_recv_q)
+            self._par_proc.daemon = True
+            self._par_proc.start()
 
-        for task in tasks:
-            thread = task(self) 
-            thread.daemon = True
-            thread.start()
-            self._threads.append(thread)
-        
-        time.sleep(1)
-        
-    def open(self):
-        """Open port.
+            self._exe_thrd = ExecutorThread(
+                self._serial_write_q, self._json_recv_q, self._module_ids, self._modules
+            )
+            self._exe_thrd.daemon = True
+            self._exe_thrd.start()
+
+            # TODO: receive flag from executor thread
+            time.sleep(5)
+
+    def exit(self):
+        """ Stop modi instance
         """
-        self._serial.open()
 
-    def close(self):
-        """Close port immediately.
-        """
-        self._serial.close()
-
-    def write(self, msg, is_display=False):
-        """
-        :param str msg: Data to send.
-            
-        Put the string to the sending data queue. This should be of type ``str``.
-        """
-        if is_display:
-            self._display_send_q.put(msg)
-        else:
-            self._send_q.put(msg)
-
-    def pnp_on(self, id=None):
-        """Turn on PnP mode of the module.
-
-        :param int id: The id of the module to turn on PnP mode or ``None``.
-
-        All connected modules' PnP mode will be turned on if the `id` is ``None``.
-        """
-        if id == None:
-            for _id in self._ids:
-                self.write(md_cmd.module_state(_id, md_cmd.ModuleState.RUN))
-        else:
-            self.write(md_cmd.module_state(id, md_cmd.ModuleState.RUN))
-
-    def pnp_off(self, id=None):
-        """Turn off PnP mode of the module.
-
-        :param int id: The id of the module to turn off PnP mode or ``None``.
-
-        All connected modules' PnP mode will be turned off if the `id` is ``None``.
-        """
-        if id == None:
-            for _id in self._ids:
-                self.write(md_cmd.module_state(_id, md_cmd.ModuleState.PAUSE))
-        else:
-            self.write(md_cmd.module_state(id, md_cmd.ModuleState.PAUSE))
+        self._ser_proc.stop()
+        self._par_proc.stop()
+        self._exe_thrd.stop()
 
     @property
     def modules(self):
         """Tuple of connected modules except network module.
-
         Example:
-
         >>> bundle = modi.MODI()
         >>> modules = bundle.modules # (<modi.module.button.Button object at 0x1009455c0>, <modi.module.led.Led object at 0x100945630>)
         """
+
         return tuple(self._modules)
 
     @property
     def buttons(self):
         """Tuple of connected :class:`~modi.module.button.Button` modules.
         """
-        return tuple([x for x in self.modules if x.type == "button"])
+
+        return tuple([module for module in self.modules if module.type == "button"])
 
     @property
     def dials(self):
         """Tuple of connected :class:`~modi.module.dial.Dial` modules.
         """
-        return tuple([x for x in self.modules if x.type == "dial"])
+
+        return tuple([module for module in self.modules if module.type == "dial"])
 
     @property
     def displays(self):
         """Tuple of connected :class:`~modi.module.display.Display` modules.
         """
-        return tuple([x for x in self.modules if x.type == "display"])
+
+        return tuple([module for module in self.modules if module.type == "display"])
 
     @property
     def envs(self):
         """Tuple of connected :class:`~modi.module.env.Env` modules.
         """
-        return tuple([x for x in self.modules if x.type == "env"])
+
+        return tuple([module for module in self.modules if module.type == "env"])
 
     @property
     def gyros(self):
         """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
         """
-        return tuple([x for x in self.modules if x.type == "gyro"])
+
+        return tuple([module for module in self.modules if module.type == "gyro"])
 
     @property
     def irs(self):
         """Tuple of connected :class:`~modi.module.ir.Ir` modules.
         """
-        return tuple([x for x in self.modules if x.type == "ir"])
+
+        return tuple([module for module in self.modules if module.type == "ir"])
 
     @property
     def leds(self):
         """Tuple of connected :class:`~modi.module.led.Led` modules.
         """
-        return tuple([x for x in self.modules if x.type == "led"])
+
+        return tuple([module for module in self.modules if module.type == "led"])
 
     @property
     def mics(self):
         """Tuple of connected :class:`~modi.module.mic.Mic` modules.
         """
-        return tuple([x for x in self.modules if x.type == "mic"])
+
+        return tuple([module for module in self.modules if module.type == "mic"])
 
     @property
     def motors(self):
         """Tuple of connected :class:`~modi.module.motor.Motor` modules.
         """
-        return tuple([x for x in self.modules if x.type == "motor"])
+
+        return tuple([module for module in self.modules if module.type == "motor"])
 
     @property
     def speakers(self):
         """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
         """
-        return tuple([x for x in self.modules if x.type == "speaker"])
+
+        return tuple([module for module in self.modules if module.type == "speaker"])
 
     @property
     def ultrasonics(self):
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
-        return tuple([x for x in self.modules if x.type == "ultrasonic"])
 
+        return tuple([module for module in self.modules if module.type == "ultrasonic"])
