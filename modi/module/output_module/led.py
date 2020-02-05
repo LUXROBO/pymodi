@@ -38,7 +38,7 @@ class Led(OutputModule):
         if not (red is None and green is None and blue is None):
             message = self._set_property(
                 self._id,
-                self.CommandType.SET_RGB,
+                self.CommandType.SET_RGB.value,
                 (
                     red if red is not None else self.set_red(),
                     green if green is not None else self.set_green(),

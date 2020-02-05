@@ -122,7 +122,7 @@ class Speaker(OutputModule):
         if not (frequency_value is None and volume_value is None):
             message = self._set_property(
                 self._id,
-                self.CommandType.SET_TUNE,
+                self.CommandType.SET_TUNE.value,
                 (
                     frequency_value
                     if frequency_value is not None

@@ -90,7 +90,7 @@ class Motor(OutputModule):
             self._serial_write_q.put(
                 self._set_property(
                     self._id,
-                    self.ControlType.DEGREE,
+                    self.ControlType.DEGREE.value,
                     (self.set_second_degree(), degree_value, 0),
                 )
             )
@@ -190,7 +190,7 @@ class Motor(OutputModule):
             )
             message = self._set_property(
                 self._id,
-                self.ControlType.TORQUE,
+                self.ControlType.TORQUE.value,
                 (first_torque_value, second_torque_value, 0),
             )
             self._serial_write_q.put(message)
@@ -220,7 +220,7 @@ class Motor(OutputModule):
             )
             message = self._set_property(
                 self._id,
-                self.ControlType.SPEED,
+                self.ControlType.SPEED.value,
                 (first_speed_value, second_speed_value, 0),
             )
             self._serial_write_q.put(message)
@@ -250,7 +250,7 @@ class Motor(OutputModule):
             )
             message = self._set_property(
                 self._id,
-                self.ControlType.DEGREE,
+                self.ControlType.DEGREE.value,
                 (first_degree_value, second_degree_value, 0),
             )
             self._serial_write_q.put(message)
