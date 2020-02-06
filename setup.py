@@ -2,7 +2,7 @@
 
 """The setup script."""
 
-from setuptools import setup, find_namespace_packages
+from setuptools import setup, find_packages
 
 with open("README.md", "rt", encoding="UTF8") as readme_file:
     readme = readme_file.read()
@@ -38,7 +38,10 @@ setup(
     include_package_data=True,
     keywords=["pymodi", "modi", "luxrobo"],
     name="pymodi",
-    packages=find_namespace_packages(),
+    packages=find_packages(include=['modi', 'modi.module',
+                                    'modi.module.setup_module',
+                                    'modi.module.input_module',
+                                    'modi.module.output_module']),
     setup_requires=setup_requirements,
     test_suite="tests",
     tests_require=test_requirements,
