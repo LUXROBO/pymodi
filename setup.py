@@ -36,7 +36,7 @@ setup(
     install_requires=requirements,
     license="MIT license",
     include_package_data=True,
-    keywords=("pymodi", "modi", "luxrobo"),
+    keywords=["pymodi", "modi", "luxrobo"],
     name="pymodi",
     packages=find_namespace_packages(),
     setup_requires=setup_requirements,
