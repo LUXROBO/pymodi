@@ -4,98 +4,98 @@ modi.module package
 Submodules
 ----------
 
-modi.module.button module
--------------------------
+modi.module.input_module.button module
+--------------------------------------
 
-.. automodule:: modi.module.button
+.. automodule:: modi.module.input_module.button
     :members:
     :undoc-members:
     :show-inheritance:
 
-modi.module.dial module
------------------------
+modi.module.input_module.dial module
+------------------------------------
 
-.. automodule:: modi.module.dial
+.. automodule:: modi.module.input_module.dial
     :members:
     :undoc-members:
     :show-inheritance:
 
-modi.module.display module
---------------------------
+modi.module.output_module.display module
+----------------------------------------
 
-.. automodule:: modi.module.display
+.. automodule:: modi.module.output_module.display
     :members:
     :undoc-members:
     :show-inheritance:
 
-modi.module.env module
-----------------------
+modi.module.input_module.env module
+-----------------------------------
 
-.. automodule:: modi.module.env
+.. automodule:: modi.module.input_module.env
     :members:
     :undoc-members:
     :show-inheritance:
 
-modi.module.gyro module
------------------------
+modi.module.input_module.gyro module
+------------------------------------
 
-.. automodule:: modi.module.gyro
+.. automodule:: modi.module.input_module.gyro
     :members:
     :undoc-members:
     :show-inheritance:
 
-modi.module.ir module
----------------------
+modi.module.input_module.ir module
+----------------------------------
 
-.. automodule:: modi.module.ir
+.. automodule:: modi.module.input_module.ir
     :members:
     :undoc-members:
     :show-inheritance:
 
-modi.module.led module
-----------------------
+modi.module.output_module.led module
+------------------------------------
 
-.. automodule:: modi.module.led
+.. automodule:: modi.module.output_module.led
     :members:
     :undoc-members:
     :show-inheritance:
 
-modi.module.mic module
-----------------------
+modi.module.input_module.mic module
+-----------------------------------
 
-.. automodule:: modi.module.mic
+.. automodule:: modi.module.input_module.mic
     :members:
     :undoc-members:
     :show-inheritance:
 
-modi.module.motor module
-------------------------
+modi.module.output_module.motor module
+--------------------------------------
 
-.. automodule:: modi.module.motor
+.. automodule:: modi.module.output_module.motor
     :members:
     :undoc-members:
     :show-inheritance:
 
-modi.module.network module
---------------------------
+modi.module.setup_module.network module
+---------------------------------------
 
-.. automodule:: modi.module.network
+.. automodule:: modi.module.setup_module.network
     :members:
     :undoc-members:
     :show-inheritance:
 
-modi.module.speaker module
---------------------------
+modi.module.output_module.speaker module
+----------------------------------------
 
-.. automodule:: modi.module.speaker
+.. automodule:: modi.module.output_module.speaker
     :members:
     :undoc-members:
     :show-inheritance:
 
-modi.module.ultrasonic module
------------------------------
+modi.module.input_module.ultrasonic module
+------------------------------------------
 
-.. automodule:: modi.module.ultrasonic
+.. automodule:: modi.module.input_module.ultrasonic
     :members:
     :undoc-members:
     :show-inheritance:
