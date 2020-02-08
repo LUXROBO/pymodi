@@ -5,9 +5,6 @@ from setuptools import setup, find_packages
 with open("README.md", "r", encoding="UTF8") as readme_file:
     readme = readme_file.read()
 
-setup_requirements = []
-test_requirements = []
-
 setup(
     version="0.7.0",
     author="Jinsung Ha",
@@ -27,9 +24,7 @@ setup(
                                     'modi.module.setup_module',
                                     'modi.module.input_module',
                                     'modi.module.output_module']),
-    setup_requires=setup_requirements,
     test_suite="tests",
-    tests_require=test_requirements,
     url="https://github.com/LUXROBO/pyMODI",
     classifiers=[
         "Natural Language :: English",
