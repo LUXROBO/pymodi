@@ -2,15 +2,22 @@
 
 from setuptools import setup, find_packages
 
-with open("README.md", "r", encoding="UTF8") as readme_file:
-    readme = readme_file.read()
+from os import path
+
+
+def get_readme():
+    here = path.abspath(path.dirname(__file__))
+    with open(path.join(here, 'README.md'), encoding='utf-8') as readme_file:
+        readme = readme_file.read()
+    return readme
+
 
 setup(
     version="0.7.0",
     author="Jinsung Ha",
     author_email="jinsung@luxrobo.com",
     description="Easy😆 and fast💨 MODI Python API package.",
-    long_description=readme,
+    long_description=get_readme(),
     long_description_content_type="text/markdown",
     install_requires=[
         "pyserial>=3.1.1", 
