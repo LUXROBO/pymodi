@@ -13,7 +13,7 @@ def get_readme():
 
 
 setup(
-    version="0.7.0",
+    version="0.7.1",
     author="Jinsung Ha",
     author_email="jinsung@luxrobo.com",
     description="Easy😆 and fast💨 MODI Python API package.",
