@@ -10,8 +10,18 @@ class TestUltrasonic(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        pass
+        mock_args = (-1, -1, None)
+        self.ultrasonic = Ultrasonic(*mock_args)
+        self.ultrasonic._get_property = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
-        pass
+        del self.ultrasonic
+
+    def test_get_distance(self):
+        """Test get_distance method."""
+        self.ultrasonic.get_distance()
+
+        self.ultrasonic._get_property.assert_called_once_with(
+            self.ultrasonic.PropertyType.DISTANCE
+        )
