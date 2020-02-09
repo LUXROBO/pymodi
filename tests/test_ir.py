@@ -12,7 +12,7 @@ class TestIr(unittest.TestCase):
         """Set up test fixtures, if any."""
         mock_args = (-1, -1, None)
         self.ir = Ir(*mock_args)
-        self.ir._get_property = mock.MagicMock()
+        self.ir._get_property = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""

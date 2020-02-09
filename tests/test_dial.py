@@ -12,7 +12,7 @@ class TestDial(unittest.TestCase):
         """Set up test fixtures, if any."""
         mock_args = (-1, -1, None)
         self.dial = Dial(*mock_args)
-        self.dial._get_property = mock.MagicMock()
+        self.dial._get_property = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
