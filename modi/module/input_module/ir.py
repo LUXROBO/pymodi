@@ -20,7 +20,6 @@ class Ir(InputModule):
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Ir, self).__init__(id_, uuid, serial_write_q)
-        self._type = "ir"
 
     def get_distance(self):
         """

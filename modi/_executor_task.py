@@ -4,10 +4,18 @@ import queue
 import base64
 import struct
 
-from modi.module.input_module import (
-    button, dial, env, gyro, ir, mic, ultrasonic
-)
-from modi.module.output_module import display, led, motor, speaker
+from modi.module.input_module.button import Button
+from modi.module.input_module.dial import Dial
+from modi.module.input_module.env import Env
+from modi.module.input_module.gyro import Gyro
+from modi.module.input_module.ir import Ir
+from modi.module.input_module.mic import Mic
+from modi.module.input_module.ultrasonic import Ultrasonic
+
+from modi.module.output_module.display import Display
+from modi.module.output_module.led import Led
+from modi.module.output_module.motor import Motor
+from modi.module.output_module.speaker import Speaker
 
 from modi.module.module import Module
 
@@ -155,24 +163,23 @@ class ExecutorTask:
                     module_pnp_state=Module.State.PNP_OFF
                 )
                 self._modules.append(module_instance)
-                # self._modules.sort(key=lambda module: module.uuid)
 
     def __init_module(self, module_type):
         """ Find module type for module initialize
         """
 
         module = {
-            "button": button.Button,
-            "dial": dial.Dial,
-            "display": display.Display,
-            "env": env.Env,
-            "gyro": gyro.Gyro,
-            "ir": ir.Ir,
-            "led": led.Led,
-            "mic": mic.Mic,
-            "motor": motor.Motor,
-            "speaker": speaker.Speaker,
-            "ultrasonic": ultrasonic.Ultrasonic,
+            "button": Button,
+            "dial": Dial,
+            "display": Display,
+            "env": Env,
+            "gyro": Gyro,
+            "ir": Ir,
+            "led": Led,
+            "mic": Mic,
+            "motor": Motor,
+            "speaker": Speaker,
+            "ultrasonic": Ultrasonic,
         }.get(module_type)
         return module
 

@@ -35,8 +35,6 @@ class Module:
         self._uuid = uuid
         self._serial_write_q = serial_write_q
 
-        self._type = str()
-        self._category = str()
         self._properties = dict()
 
         self._is_connected = True
@@ -50,16 +48,8 @@ class Module:
         return self._uuid
 
     @property
-    def category(self):
-        return self._category
-
-    @property
     def is_connected(self):
         return self._is_connected
-
-    @property
-    def type(self):
-        return self._type
 
     def set_connection_state(self, connection_state):
         self._is_connected = connection_state

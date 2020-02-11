@@ -11,4 +11,3 @@ class Network(SetupModule):
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Network, self).__init__(id_, uuid, serial_write_q)
-        self._type = "network"

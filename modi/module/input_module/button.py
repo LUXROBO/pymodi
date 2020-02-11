@@ -20,7 +20,6 @@ class Button(InputModule):
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Button, self).__init__(id_, uuid, serial_write_q)
-        self._type = "button"
 
     def get_clicked(self):
         """

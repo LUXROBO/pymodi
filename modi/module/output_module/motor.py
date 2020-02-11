@@ -28,7 +28,6 @@ class Motor(OutputModule):
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Motor, self).__init__(id_, uuid, serial_write_q)
-        self._type = "motor"
 
     def set_motor_channel(self,
                           motor_channel, control_mode, control_value=None):

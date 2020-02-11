@@ -10,7 +10,6 @@ from modi.module.module import Module
 class OutputModule(Module):
     def __init__(self, id_, uuid, serial_write_q):
         super(OutputModule, self).__init__(id_, uuid, serial_write_q)
-        self._category = "output"
 
     class PropertyDataType(Enum):
         INT = 0

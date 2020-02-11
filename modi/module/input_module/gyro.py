@@ -26,7 +26,6 @@ class Gyro(InputModule):
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Gyro, self).__init__(id_, uuid, serial_write_q)
-        self._type = "gyro"
 
     def get_roll(self):
         """

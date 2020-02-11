@@ -19,7 +19,6 @@ class Display(OutputModule):
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Display, self).__init__(id_, uuid, serial_write_q)
-        self._type = "display"
 
     def set_text(self, text):
         """

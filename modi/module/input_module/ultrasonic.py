@@ -17,7 +17,6 @@ class Ultrasonic(InputModule):
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Ultrasonic, self).__init__(id_, uuid, serial_write_q)
-        self._type = "ultrasonic"
 
     def get_distance(self):
         """
