@@ -24,12 +24,6 @@ class TestIr(unittest.TestCase):
         self.ir._get_property.assert_called_once_with(
             self.ir.PropertyType.DISTANCE)
 
-    def test_get_brightness(self):
-        """Test get_brightness method."""
-        self.ir.get_brightness()
-        self.ir._get_property.assert_called_once_with(
-            self.ir.PropertyType.BRIGHTNESS)
-
 
 if __name__ == "__main__":
     unittest.main()

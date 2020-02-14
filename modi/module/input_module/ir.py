@@ -16,7 +16,6 @@ class Ir(InputModule):
 
     class PropertyType(Enum):
         DISTANCE = 2
-        BRIGHTNESS = 3
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Ir, self).__init__(id_, uuid, serial_write_q)
@@ -27,10 +26,3 @@ class Ir(InputModule):
         :rtype: float
         """
         return self._get_property(self.PropertyType.DISTANCE)
-
-    def get_brightness(self):
-        """
-        :return: Brightness.
-        :rtype: float
-        """
-        return self._get_property(self.PropertyType.BRIGHTNESS)
