@@ -43,20 +43,20 @@ class MODI:
 
         if not test:
             self._ser_proc = SerialProcess(
-                self._serial_read_q, self._serial_write_q)
+                self._serial_read_q, self._serial_write_q,)
             self._ser_proc.daemon = True
             self._ser_proc.start()
 
             self._par_proc = ParserProcess(
-                self._serial_read_q, self._json_recv_q)
+                self._serial_read_q, self._json_recv_q,)
             self._par_proc.daemon = True
             self._par_proc.start()
 
             self._exe_thrd = ExecutorThread(
+                self._modules,
+                self._module_ids,
                 self._serial_write_q,
                 self._json_recv_q,
-                self._module_ids,
-                self._modules
             )
             self._exe_thrd.daemon = True
             self._exe_thrd.start()

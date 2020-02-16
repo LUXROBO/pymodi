@@ -37,7 +37,7 @@ class ExecutorTask:
         "output": ["display", "motor", "led", "speaker"],
     }
 
-    def __init__(self, serial_write_q, json_recv_q, module_ids, modules):
+    def __init__(self, modules, module_ids, serial_write_q, json_recv_q):
         super(ExecutorTask, self).__init__()
         self._serial_write_q = serial_write_q
         self._json_recv_q = json_recv_q

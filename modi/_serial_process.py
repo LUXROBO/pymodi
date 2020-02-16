@@ -1,3 +1,5 @@
+import setproctitle
+
 import multiprocessing as mp
 
 from modi._serial_task import SerialTask
@@ -13,6 +15,8 @@ class SerialProcess(mp.Process):
         super(SerialProcess, self).__init__()
         self.__ser_task = SerialTask(serial_read_q, serial_write_q)
         self.__stop = mp.Event()
+
+        setproctitle.setproctitle('pymodi-serial')
 
     def run(self):
         """ Run serial task
