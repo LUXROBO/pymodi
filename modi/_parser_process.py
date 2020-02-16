@@ -1,9 +1,9 @@
-import multiprocessing
+import multiprocessing as mp
 
 from modi._parser_task import ParserTask
 
 
-class ParserProcess(multiprocessing.Process):
+class ParserProcess(mp.Process):
     """
     :param queue serial_read_q: Multiprocessing Queue for serial reading data
     :param queue json_recv_q: Multiprocessing Queue for json message
@@ -12,7 +12,7 @@ class ParserProcess(multiprocessing.Process):
     def __init__(self, serial_read_q, json_recv_q):
         super(ParserProcess, self).__init__()
         self.__par_task = ParserTask(serial_read_q, json_recv_q)
-        self.__stop = multiprocessing.Event()
+        self.__stop = mp.Event()
 
     def run(self):
         """ Run parser task
