@@ -14,7 +14,7 @@ from modi.module.input_module.env import Env
 from modi.module.input_module.gyro import Gyro
 from modi.module.input_module.ir import Ir
 from modi.module.input_module.mic import Mic
-from modi.module.input_module.ultrasonic import Ultrasonic 
+from modi.module.input_module.ultrasonic import Ultrasonic
 
 from modi.module.output_module.display import Display
 from modi.module.output_module.led import Led
@@ -75,7 +75,7 @@ class TestModi(unittest.TestCase):
         actual_modules = self.modi.modules
         self.assertIsInstance(actual_modules, tuple)
         self.assertTupleEqual(actual_modules, tuple(self.modi._modules))
-    
+
     def test_get_buttons(self):
         """Test buttons getter method."""
         actual_modules = self.modi.buttons
@@ -116,7 +116,6 @@ class TestModi(unittest.TestCase):
         self.assertIsInstance(actual_modules, tuple)
         self.assertTupleEqual(actual_modules, expected_modules)
 
-
     def test_get_irs(self):
         """Test irs getter method."""
         actual_modules = self.modi.irs
@@ -146,7 +145,7 @@ class TestModi(unittest.TestCase):
 
         self.assertIsInstance(actual_modules, tuple)
         self.assertTupleEqual(actual_modules, expected_modules)
-    
+
     def test_get_displays(self):
         """Test displays getter method."""
         actual_modules = self.modi.displays
