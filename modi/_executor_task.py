@@ -53,10 +53,10 @@ class ExecutorTask:
         except queue.Empty:
             pass
         else:
-            self.__handler(message["c"])(message)
+            self.__command_handler(message["c"])(message)
         time.sleep(0.004)
 
-    def __handler(self, command):
+    def __command_handler(self, command):
         """ Excute task based on command message
         """
 
