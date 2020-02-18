@@ -10,9 +10,13 @@ python:
 
 install: 
   - pip install tox-travis
+  - pip install coveralls
 
 script: 
   - tox
+
+after_succes:
+  - coveralls
 
 deploy:
   provider: pypi
@@ -24,9 +28,8 @@ deploy:
     repo: LUXROBO/pyMODI
     branch: develop
     tags: true
-    python: 3.7
-
-notifications:
-  email:
-    recipients:
-      - jinsung@luxrobo.com
+    python: 3.8
+  notifications:
+    email:
+      recipients:
+        - jinsung@luxrobo.com
