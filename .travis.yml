@@ -1,14 +1,19 @@
-language: python
+language: 
+  - python
+
 python:
   - "3.4"
   - "3.5"
   - "3.6"
   - "3.7"
   - "3.8"
+
 install: 
   - pip install tox-travis
+
 script: 
   - tox
+
 deploy:
   provider: pypi
   user: LUXROBO
@@ -20,6 +25,7 @@ deploy:
     branch: develop
     tags: true
     python: 3.7
+
 notifications:
   email:
     recipients:
