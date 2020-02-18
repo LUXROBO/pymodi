@@ -1,5 +1,4 @@
-language: 
-  - python
+language: python
 
 python:
   - "3.4"
@@ -15,7 +14,7 @@ install:
 script: 
   - tox
 
-after_succes:
+after_success:
   - coveralls
 
 deploy:
@@ -29,7 +28,3 @@ deploy:
     branch: develop
     tags: true
     python: 3.8
-  notifications:
-    email:
-      recipients:
-        - jinsung@luxrobo.com
