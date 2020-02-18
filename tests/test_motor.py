@@ -66,9 +66,11 @@ class TestMotor(unittest.TestCase):
         expected_speed_params = (
             self.mock_kwargs["id_"],
             self.motor.ControlType.SPEED.value,
-            (*expected_values, 0),
+            (first_speed_value, second_speed_value, 0),
         )
-        self.motor._set_property.assert_called_once_with(*expected_speed_params)
+        self.motor._set_property.assert_called_once_with(
+            *expected_speed_params
+        )
 
         self.assertEqual(
             mock.call(self.motor.PropertyType.FIRST_SPEED),
@@ -100,9 +102,10 @@ class TestMotor(unittest.TestCase):
         expected_degree_params = (
             self.mock_kwargs["id_"],
             self.motor.ControlType.DEGREE.value,
-            (*expected_values, 0),
+            (first_degree_value, second_degree_value, 0),
         )
-        self.motor._set_property.assert_called_once_with(*expected_degree_params)
+        self.motor._set_property.assert_called_once_with(
+            *expected_degree_params)
 
         self.assertEqual(
             mock.call(self.motor.PropertyType.FIRST_DEGREE),

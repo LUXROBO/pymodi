@@ -107,7 +107,6 @@ class Speaker(OutputModule):
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Speaker, self).__init__(id_, uuid, serial_write_q)
-        self._type = "speaker"
 
     def set_tune(self, frequency_value=None, volume_value=None):
         """
@@ -127,7 +126,9 @@ class Speaker(OutputModule):
                     frequency_value
                     if frequency_value is not None
                     else self.set_frequency(),
-                    volume_value if volume_value is not None else self.set_volume(),
+                    volume_value
+                    if volume_value is not None
+                    else self.set_volume(),
                 ),
                 self.PropertyDataType.FLOAT,
             )

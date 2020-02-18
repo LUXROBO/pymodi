@@ -12,7 +12,7 @@ class TestDial(unittest.TestCase):
         """Set up test fixtures, if any."""
         mock_args = (-1, -1, None)
         self.dial = Dial(*mock_args)
-        self.dial._get_property = mock.MagicMock()
+        self.dial._get_property = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -21,7 +21,8 @@ class TestDial(unittest.TestCase):
     def test_get_degree(self):
         """Test get_degree method."""
         self.dial.get_degree()
-        self.dial._get_property.assert_called_once_with(self.dial.PropertyType.DEGREE)
+        self.dial._get_property.assert_called_once_with(
+            self.dial.PropertyType.DEGREE)
 
     def test_get_turnspeed(self):
         """Test get_turnspeed method."""

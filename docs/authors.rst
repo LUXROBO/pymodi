@@ -1,1 +1,4 @@
+AUTHORS
+=======
+
 .. mdinclude:: ../AUTHORS.md

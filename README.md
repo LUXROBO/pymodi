@@ -1,15 +1,9 @@
 pyMODI
 ======
+| build | pyversion | distribution | documentation | dependency | coverage | maintainability | license |
+|-|-|-|-|-|-|-|-|
+| [![image](https://img.shields.io/travis/LUXROBO/pyMODI.svg)](https://travis-ci.org/LUXROBO/pyMODI) | [![image](https://img.shields.io/pypi/pyversions/pymodi.svg)](https://pypi.python.org/pypi/pymodi) | [![image](https://img.shields.io/pypi/v/pymodi.svg)](https://pypi.python.org/pypi/pymodi) | [![Documentation Status](https://readthedocs.org/projects/pymodi/badge/?version=latest)](https://pymodi.readthedocs.io/en/latest/?badge=latest) | [![Updates](https://pyup.io/repos/github/LUXROBO/pyMODI/shield.svg)](https://pyup.io/repos/github/LUXROBO/pyMODI/) | [![Coverage Status](https://coveralls.io/repos/github/LUXROBO/pyMODI/badge.svg?branch=master)](https://coveralls.io/github/LUXROBO/pyMODI?branch=master) | [![Maintainability](https://api.codeclimate.com/v1/badges/3e5f0248ac50d580cb3f/maintainability)](https://codeclimate.com/github/LUXROBO/pyMODI/maintainability) | [![](https://img.shields.io/pypi/l/pymodi.svg?color=blue)](https://github.com/LUXROBO/pyMODI/blob/master/LICENSE) |
 
-[![image](https://img.shields.io/pypi/v/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
-
-[![image](https://img.shields.io/pypi/pyversions/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
-
-[![image](https://img.shields.io/travis/LUXROBO/pyMODI.svg)](https://travis-ci.org/LUXROBO/pyMODI)
-
-[![Documentation Status](https://readthedocs.org/projects/pymodi/badge/?version=latest)](https://pymodi.readthedocs.io/en/latest/?badge=latest)
-
-[![Updates](https://pyup.io/repos/github/LUXROBO/pyMODI/shield.svg)](https://pyup.io/repos/github/LUXROBO/pyMODI/)
 
 Easy😆 and fast💨 MODI Python API package.
 
@@ -18,7 +12,6 @@ Easy😆 and fast💨 MODI Python API package.
 
 Features
 --------
-
 -   Connect to the MODI network module and control input & output
     modules.
 -   List serial ports of MODI network modules.
@@ -28,13 +21,9 @@ Features
 Build Status
 --------
 
-master:
-
-[![image](https://travis-ci.org/LUXROBO/pyMODI.svg?branch=master)](https://travis-ci.org/LUXROBO/pyMODI)
-
-develop:
-
-[![image](https://travis-ci.org/LUXROBO/pyMODI.svg?branch=develop)](https://travis-ci.org/LUXROBO/pyMODI)
+|master|develop|
+|:---:|:---:|
+|[![image](https://travis-ci.org/LUXROBO/pyMODI.svg?branch=master)](https://travis-ci.org/LUXROBO/pyMODI)|[![image](https://travis-ci.org/LUXROBO/pyMODI.svg?branch=develop)](https://travis-ci.org/LUXROBO/pyMODI)|
 
 Quickstart
 --------
@@ -65,9 +54,9 @@ Let\'s blink the LED\'s light 5 times:
     led = bundle.leds[0]
 
     for _ in range(10):
-        led.on()
+        led.set_on()
         time.sleep(1)
-        led.off()
+        led.set_off()
         time.sleep(1)
 
 Credits

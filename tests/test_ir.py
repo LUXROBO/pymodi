@@ -12,7 +12,7 @@ class TestIr(unittest.TestCase):
         """Set up test fixtures, if any."""
         mock_args = (-1, -1, None)
         self.ir = Ir(*mock_args)
-        self.ir._get_property = mock.MagicMock()
+        self.ir._get_property = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -21,12 +21,8 @@ class TestIr(unittest.TestCase):
     def test_get_distance(self):
         """Test get_distance method."""
         self.ir.get_distance()
-        self.ir._get_property.assert_called_once_with(self.ir.PropertyType.DISTANCE)
-
-    def test_get_brightness(self):
-        """Test get_brightness method."""
-        self.ir.get_brightness()
-        self.ir._get_property.assert_called_once_with(self.ir.PropertyType.BRIGHTNESS)
+        self.ir._get_property.assert_called_once_with(
+            self.ir.PropertyType.DISTANCE)
 
 
 if __name__ == "__main__":

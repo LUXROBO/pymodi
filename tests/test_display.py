@@ -95,16 +95,17 @@ class TestDisplay(unittest.TestCase):
         """Test clear method."""
         self.display.clear()
 
-        # check if set_property has been called once with the specified arguments
+        # Check if set_property is called once with the specified arguments
         expected_clear_params = (
             self.mock_kwargs["id_"],
             self.display.PropertyType.CLEAR,
             bytes(2),
             self.display.PropertyDataType.RAW,
         )
-        self.display._set_property.assert_called_once_with(*expected_clear_params)
+        self.display._set_property.assert_called_once_with(
+            *expected_clear_params)
 
-        # check if correct message has been passed to serial_write_q
+        # Check if correct message has been passed to serial_write_q
         self.display._serial_write_q.put.assert_called_once_with(
             self.display.PropertyType.CLEAR
         )

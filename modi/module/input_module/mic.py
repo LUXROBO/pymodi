@@ -18,7 +18,6 @@ class Mic(InputModule):
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Mic, self).__init__(id_, uuid, serial_write_q)
-        self._type = "mic"
 
     def get_volume(self):
         """

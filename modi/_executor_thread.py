@@ -1,20 +1,24 @@
 import threading
+import setproctitle
 
 from modi._executor_task import ExecutorTask
 
 
 class ExecutorThread(threading.Thread):
     """
-    :param queue serial_write_q: Multiprocessing Queue for serial writing message
-    :param queue json_recv_q: Multiprocessing Queue for json message
-    :param dict() module_ids: dict() of key: module_id, value: ['timestamp', 'uuid']
+    :param queue serial_write_q: Inter-process queue for serial writing message
+    :param queue json_recv_q: Inter-process queue for receiving json message
+    :param dict() module_ids: dict() of module_id : ['timestamp', 'uuid']
     :param list() modules: list() of module instance
     """
 
-    def __init__(self, serial_write_q, json_recv_q, module_ids, modules):
+    def __init__(self, modules, module_ids, serial_write_q, json_recv_q):
         super(ExecutorThread, self).__init__()
-        self.__exe_task = ExecutorTask(serial_write_q, json_recv_q, module_ids, modules)
+        self.__exe_task = ExecutorTask(
+            modules, module_ids, serial_write_q, json_recv_q)
         self.__stop = threading.Event()
+
+        setproctitle.setproctitle('pymodi-executor')
 
     def run(self):
         """ Run executor task

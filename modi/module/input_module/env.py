@@ -22,7 +22,6 @@ class Env(InputModule):
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Env, self).__init__(id_, uuid, serial_write_q)
-        self._type = "env"
 
     def get_temperature(self):
         """

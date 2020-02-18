@@ -49,7 +49,8 @@ class TestLed(unittest.TestCase):
     @mock.patch.object(Led, "set_blue")
     @mock.patch.object(Led, "set_green")
     @mock.patch.object(Led, "set_red")
-    def test_set_rgb_with_none(self, mock_set_red, mock_set_green, mock_set_blue):
+    def test_set_rgb_with_none(self,
+                               mock_set_red, mock_set_green, mock_set_blue):
         """Test set_rgb method with none input"""
         self.led.set_rgb()
 
@@ -87,7 +88,8 @@ class TestLed(unittest.TestCase):
     def test_set_red_with_none(self):
         """Test set_red method with none input."""
         self.led.set_red(red=None)
-        self.led._get_property.assert_called_once_with(self.led.PropertyType.RED)
+        self.led._get_property.assert_called_once_with(
+            self.led.PropertyType.RED)
 
     @mock.patch.object(Led, "set_rgb")
     def test_get_green(self, mock_set_rgb):
@@ -99,7 +101,8 @@ class TestLed(unittest.TestCase):
     def test_get_green_with_none(self):
         """Test set_green method with none input."""
         self.led.set_green(green=None)
-        self.led._get_property.assert_called_once_with(self.led.PropertyType.GREEN)
+        self.led._get_property.assert_called_once_with(
+            self.led.PropertyType.GREEN)
 
     @mock.patch.object(Led, "set_rgb")
     def test_get_blue(self, mock_set_rgb):
@@ -111,7 +114,8 @@ class TestLed(unittest.TestCase):
     def test_get_blue_with_none(self):
         """Test blue method with none input."""
         self.led.set_blue(blue=None)
-        self.led._get_property.assert_called_once_with(self.led.PropertyType.BLUE)
+        self.led._get_property.assert_called_once_with(
+            self.led.PropertyType.BLUE)
 
 
 if __name__ == "__main__":

@@ -20,7 +20,6 @@ class Button(InputModule):
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Button, self).__init__(id_, uuid, serial_write_q)
-        self._type = "button"
 
     def get_clicked(self):
         """
@@ -39,7 +38,7 @@ class Button(InputModule):
     def get_pressed(self):
         """
         :return: `True` if pressed or `False`.
-        :rtype: bool    
+        :rtype: bool
         """
         return self._get_property(self.PropertyType.PRESSED) == 100.0
 

@@ -18,7 +18,6 @@ class Dial(InputModule):
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Dial, self).__init__(id_, uuid, serial_write_q)
-        self._type = "dial"
 
     def get_degree(self):
         """
