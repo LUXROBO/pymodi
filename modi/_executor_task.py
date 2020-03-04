@@ -283,6 +283,11 @@ class ExecutorTask:
         self._serial_write_q.put(request_uuid_message)
         self.__delay()
 
+        # Request topology data
+        request_topology_message = self.__request_topology()
+        self._serial_write_q.put(request_topology_message)
+        self.__delay
+
     def __delay(self):
         """ Wait for delay
         """
@@ -305,6 +310,19 @@ class ExecutorTask:
         id_bytes[1] = 0x0F
 
         message["b"] = base64.b64encode(bytes(id_bytes)).decode("utf-8")
+        message["l"] = 8
+
+        return json.dumps(message, separators=(",", ":"))
+
+    def __request_topology(self):
+
+        message = dict()
+        message["c"] = 0x07
+        message["s"] = 0
+        message["d"] = 0xFFF
+
+        direction_data = bytearray(8)
+        message["b"] = base64.b64decode(bytes(direction_data)).decode("utf-8")
         message["l"] = 8
 
         return json.dumps(message, separators=(",", ":"))
