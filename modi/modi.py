@@ -32,6 +32,7 @@ class MODI:
     def __init__(self, test=False):
         self._modules = list()
         self._module_ids = dict()
+        self._topology_map = dict()
 
         self._serial_read_q = mp.Queue()
         self._serial_write_q = mp.Queue()

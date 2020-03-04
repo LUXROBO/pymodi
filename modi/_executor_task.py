@@ -64,8 +64,12 @@ class ExecutorTask:
             0x00: self.__update_health,
             0x0A: self.__update_health,
             0x05: self.__update_modules,
+            0x07: self.__update_topology,
             0x1F: self.__update_property,
         }.get(command, lambda _: None)
+
+    def __update_topology(self, message):
+        print(message)
 
     def __update_health(self, message):
         """ Update information by health message
