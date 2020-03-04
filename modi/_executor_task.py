@@ -69,7 +69,27 @@ class ExecutorTask:
         }.get(command, lambda _: None)
 
     def __update_topology(self, message):
-        print(message)
+        message_decoded = bytearray(base64.b64decode(message["b"]))
+
+        # LEFT ID
+        message_decoded[0]
+        message_decoded[1]
+        left_id = message_decoded[1] << 8 | message_decoded[0]
+
+        # BOTTOM ID
+        message_decoded[2]
+        message_decoded[3]
+        bottom_id = message_decoded[3] << 8 | message_decoded[2]
+
+        # RIGHT ID
+        message_decoded[4]
+        message_decoded[5]
+        right_id = message_decoded[5] << 8 | message_decoded[4]
+
+        # TOP
+        message_decoded[6]
+        message_decoded[7]
+        top_id = message_decoded[7] << 8 | message_decoded[6]
 
     def __update_health(self, message):
         """ Update information by health message
@@ -284,9 +304,9 @@ class ExecutorTask:
         self.__delay()
 
         # Request topology data
-        request_topology_message = self.__request_topology()
-        self._serial_write_q.put(request_topology_message)
-        self.__delay
+        # request_topology_message = self.__request_topology()
+        # self._serial_write_q.put(request_topology_message)
+        # self.__delay()
 
     def __delay(self):
         """ Wait for delay
