@@ -37,12 +37,14 @@ class ExecutorTask:
         "output": ["display", "motor", "led", "speaker"],
     }
 
-    def __init__(self, modules, module_ids, serial_write_q, json_recv_q):
+    def __init__(self, modules, module_ids, topology_data,
+                 serial_write_q, json_recv_q):
         super(ExecutorTask, self).__init__()
+        self._modules = modules
+        self._module_ids = module_ids
+        self._topology_data = topology_data
         self._serial_write_q = serial_write_q
         self._json_recv_q = json_recv_q
-        self._module_ids = module_ids
-        self._modules = modules
 
     def run(self):
         """ Run in ExecutorThread
@@ -69,27 +71,43 @@ class ExecutorTask:
         }.get(command, lambda _: None)
 
     def __update_topology(self, message):
-        message_decoded = bytearray(base64.b64decode(message["b"]))
+        #print('topology_msg:', message)
 
-        # LEFT ID
-        message_decoded[0]
-        message_decoded[1]
-        left_id = message_decoded[1] << 8 | message_decoded[0]
+        # Setup prerequisites
+        src_id = message["s"]
+        byte_data = message["b"]
+        broadcast_id = 2**16-1
+        topology_by_id = {}
 
-        # BOTTOM ID
-        message_decoded[2]
-        message_decoded[3]
-        bottom_id = message_decoded[3] << 8 | message_decoded[2]
+        message_decoded = bytearray(base64.b64decode(byte_data))
+        #print('topology_msg_dec:', message_decoded)
 
         # RIGHT ID
+        message_decoded[0]
+        message_decoded[1]
+        right_id = message_decoded[1] << 8 | message_decoded[0]
+        topology_by_id['r'] = right_id if right_id != broadcast_id else None
+
+        # TOP ID
+        message_decoded[2]
+        message_decoded[3]
+        top_id = message_decoded[3] << 8 | message_decoded[2]
+        topology_by_id['t'] = top_id if top_id != broadcast_id else None
+
+        # LEFT ID
         message_decoded[4]
         message_decoded[5]
-        right_id = message_decoded[5] << 8 | message_decoded[4]
+        left_id = message_decoded[5] << 8 | message_decoded[4]
+        topology_by_id['l'] = left_id if left_id != broadcast_id else None
 
-        # TOP
+        # BOTTOM ID
         message_decoded[6]
         message_decoded[7]
-        top_id = message_decoded[7] << 8 | message_decoded[6]
+        bottom_id = message_decoded[7] << 8 | message_decoded[6]
+        topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
+
+        # save topology data for current module
+        self._topology_data[src_id] = topology_by_id
 
     def __update_health(self, message):
         """ Update information by health message
@@ -304,9 +322,9 @@ class ExecutorTask:
         self.__delay()
 
         # Request topology data
-        # request_topology_message = self.__request_topology()
-        # self._serial_write_q.put(request_topology_message)
-        # self.__delay()
+        request_topology_message = self.__request_topology()
+        self._serial_write_q.put(request_topology_message)
+        self.__delay()
 
     def __delay(self):
         """ Wait for delay
