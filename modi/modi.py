@@ -4,6 +4,8 @@ import time
 
 import multiprocessing as mp
 
+from pprint import pprint
+
 from modi._serial_process import SerialProcess
 from modi._parser_process import ParserProcess
 from modi._executor_thread import ExecutorThread
@@ -32,7 +34,7 @@ class MODI:
     def __init__(self, test=False):
         self._modules = list()
         self._module_ids = dict()
-        self._topology_map = dict()
+        self._topology_data = dict()
 
         self._serial_read_q = mp.Queue()
         self._serial_write_q = mp.Queue()
@@ -56,6 +58,7 @@ class MODI:
             self._exe_thrd = ExecutorThread(
                 self._modules,
                 self._module_ids,
+                self._topology_data,
                 self._serial_write_q,
                 self._json_recv_q,
             )
@@ -72,6 +75,12 @@ class MODI:
         self._ser_proc.stop()
         self._par_proc.stop()
         self._exe_thrd.stop()
+
+    def print_ids(self):
+        """ Print each module type and its id
+        """
+        for module in self.modules:
+            pprint('module: {}, module_id: {}'.format(module, module.id))
 
     @property
     def modules(self):
