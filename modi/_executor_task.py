@@ -82,32 +82,36 @@ class ExecutorTask:
         message_decoded = bytearray(base64.b64decode(byte_data))
         #print('topology_msg_dec:', message_decoded)
 
+        # UUID
+        src_uuid = self.__get_uuid_by_id(src_id)
+        topology_by_id['uuid'] = src_uuid
+
         # RIGHT ID
-        message_decoded[0]
-        message_decoded[1]
         right_id = message_decoded[1] << 8 | message_decoded[0]
         topology_by_id['r'] = right_id if right_id != broadcast_id else None
 
         # TOP ID
-        message_decoded[2]
-        message_decoded[3]
         top_id = message_decoded[3] << 8 | message_decoded[2]
         topology_by_id['t'] = top_id if top_id != broadcast_id else None
 
         # LEFT ID
-        message_decoded[4]
-        message_decoded[5]
         left_id = message_decoded[5] << 8 | message_decoded[4]
         topology_by_id['l'] = left_id if left_id != broadcast_id else None
 
         # BOTTOM ID
-        message_decoded[6]
-        message_decoded[7]
         bottom_id = message_decoded[7] << 8 | message_decoded[6]
         topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
 
-        # save topology data for current module
+        # Save topology data for current module
         self._topology_data[src_id] = topology_by_id
+
+    def __get_uuid_by_id(self, id_):
+
+        # find id of a module which has corresponding uuid
+        for module in self._modules:
+            if module.id == id_:
+                return module.uuid
+        return None
 
     def __update_health(self, message):
         """ Update information by health message
