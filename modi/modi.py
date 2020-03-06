@@ -75,6 +75,7 @@ class MODI:
         self._ser_proc.stop()
         self._par_proc.stop()
         self._exe_thrd.stop()
+        time.sleep(1)
 
     def print_ids(self):
         """ Print each module type and its id
