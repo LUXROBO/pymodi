@@ -7,6 +7,11 @@ python:
   - "3.7"
   - "3.8"
 
+os:
+  - linux
+  - osx
+  - windows
+
 install: 
   - pip install tox-travis coveralls
 
