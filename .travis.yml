@@ -40,25 +40,40 @@ jobs:
       python: 3.4
 
     - name: "Python 3.8.0 on Windows"
-      os: Windows
+      os: windows
       language: shell
-      python: 3.8
+      before_install:
+        - choco install python --version 3.8.0
+        - python -m pip install --upgrade pip
+      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
     - name: "Python 3.7.0 on Windows"
-      os: Windows
+      os: windows
       language: shell
-      python: 3.7
+      before_install:
+        - choco install python --version 3.7.0
+        - python -m pip install --upgrade pip
+      env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
     - name: "Python 3.6.0 on Windows"
-      os: Windows
+      os: windows
       language: shell
-      python: 3.6
+      before_install:
+        - choco install python --version 3.6.0
+        - python -m pip install --upgrade pip
+      env: PATH=/c/Python36:/c/Python36/Scripts:$PATH
     - name: "Python 3.5.0 on Windows"
-      os: Windows
+      os: windows
       language: shell
-      python: 3.5
+      before_install:
+        - choco install python --version 3.5.0
+        - python -m pip install --upgrade pip
+      env: PATH=/c/Python35:/c/Python35/Scripts:$PATH
     - name: "Python 3.4.0 on Windows"
-      os: Windows
+      os: windows
       language: shell
-      python: 3.4
+      before_install:
+        - choco install python --version 3.4.0
+        - python -m pip install --upgrade pip
+      env: PATH=/c/Python34:/c/Python34/Scripts:$PATH
 
 install:
   - pip3 install tox-travis coveralls
