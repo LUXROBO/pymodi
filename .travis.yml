@@ -1,13 +1,6 @@
 language: python
 
-python:
-  - "3.4"
-  - "3.5"
-  - "3.6"
-  - "3.7"
-  - "3.8"
-
-matrix:
+jobs:
   include:
     - name: "Python 3.8.0 on Linux"
       python: 3.8
@@ -67,10 +60,10 @@ matrix:
       language: shell
       python: 3.4
 
-install: 
-  - pip install tox-travis coveralls
+install:
+  - pip3 install tox-travis coveralls
 
-script: 
+script:
   - tox
 
 after_success:
