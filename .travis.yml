@@ -7,8 +7,65 @@ python:
   - "3.7"
   - "3.8"
 
-os:
-  - linux
+matrix:
+  include:
+    - name: "Python 3.8.0 on Linux"
+      python: 3.8
+    - name: "Python 3.7.0 on Linux"
+      python: 3.7
+    - name: "Python 3.6.0 on Linux"
+      python: 3.6
+    - name: "Python 3.5.0 on Linux"
+      python: 3.5
+    - name: "Python 3.4.0 on Linux"
+      python: 3.4
+    
+    - name: "Python 3.8.0 on macOS"
+      os: osx
+      osx_image: xcode11.3
+      language: shell
+      python: 3.8
+    - name: "Python 3.7.0 on macOS"
+      os: osx
+      osx_image: xcode11.3
+      language: shell
+      python: 3.7
+    - name: "Python 3.6.0 on macOS"
+      os: osx
+      osx_image: xcode11.3
+      language: shell
+      python: 3.6
+    - name: "Python 3.5.0 on macOS"
+      os: osx
+      osx_image: xcode11.3
+      language: shell
+      python: 3.5
+    - name: "Python 3.4.0 on macOS"
+      os: osx
+      osx_image: xcode11.3
+      language: shell
+      python: 3.4
+
+    - name: "Python 3.8.0 on Windows"
+      os: Windows
+      language: shell
+      python: 3.8
+    - name: "Python 3.7.0 on Windows"
+      os: Windows
+      language: shell
+      python: 3.7
+    - name: "Python 3.6.0 on Windows"
+      os: Windows
+      language: shell
+      python: 3.6
+    - name: "Python 3.5.0 on Windows"
+      os: Windows
+      language: shell
+      python: 3.5
+    - name: "Python 3.4.0 on Windows"
+      os: Windows
+      language: shell
+      python: 3.4
 
 install: 
   - pip install tox-travis coveralls
