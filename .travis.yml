@@ -9,8 +9,6 @@ python:
 
 os:
   - linux
-  - osx
-  - windows
 
 install: 
   - pip install tox-travis coveralls
