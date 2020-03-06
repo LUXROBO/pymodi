@@ -76,7 +76,7 @@ jobs:
       env: PATH=/c/Python34:/c/Python34/Scripts:$PATH
 
 install:
-  - pip3 install tox-travis coveralls
+  - pip install tox-travis coveralls
 
 script:
   - tox
