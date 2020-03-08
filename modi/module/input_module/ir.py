@@ -15,14 +15,14 @@ class Ir(InputModule):
     """
 
     class PropertyType(Enum):
-        DISTANCE = 2
+        PROXIMITY = 2
 
     def __init__(self, id_, uuid, serial_write_q):
         super(Ir, self).__init__(id_, uuid, serial_write_q)
 
-    def get_distance(self):
+    def get_proximity(self):
         """
         :return: Distance to object.
         :rtype: float
         """
-        return self._get_property(self.PropertyType.DISTANCE)
+        return self._get_property(self.PropertyType.PROXIMITY)

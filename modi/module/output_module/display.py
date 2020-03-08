@@ -27,7 +27,7 @@ class Display(OutputModule):
         self.clear()
         messages = self._set_property(
             self._id,
-            self.PropertyType.TEXT,
+            self.PropertyType.TEXT.value,
             text,
             self.PropertyDataType.STRING
         )
@@ -42,7 +42,7 @@ class Display(OutputModule):
         self.clear()
         message = self._set_property(
             self._id,
-            self.PropertyType.VARIABLE,
+            self.PropertyType.VARIABLE.value,
             (variable, position_x, position_y),
             self.PropertyDataType.DISPLAY_VAR,
         )
@@ -54,7 +54,7 @@ class Display(OutputModule):
         """
         message = self._set_property(
             self._id,
-            self.PropertyType.CLEAR,
+            self.PropertyType.CLEAR.value,
             bytes(2),
             self.PropertyDataType.RAW
         )
