@@ -14,7 +14,7 @@ class SerialTask:
 
     def __init__(self, serial_read_q, serial_write_q):
         super(SerialTask, self).__init__()
-        self.__serial = None
+        self.__ser = None
 
         self._serial_read_q = serial_read_q
         self._serial_write_q = serial_write_q
@@ -48,16 +48,16 @@ class SerialTask:
                 raise SerialException(
                     "Current MODI port {} is in use".format(curr_ser.port)
                 )
-            else:
-                curr_ser.open()
-            # TODO: Refactor code to support multiple MODI network module here
-            self.__serial = curr_ser
+            curr_ser.open()
+
+            # TODO: Refactor code to support multiple MODI network modules here
+            self.__ser = curr_ser
 
     def close_serial(self):
         """ Close serial port
         """
 
-        self.__serial.close()
+        self.__ser.close()
 
     def run(self):
         """ Run serial task
@@ -73,9 +73,9 @@ class SerialTask:
         """ Read serial message and put message to serial read queue
         """
 
-        if self.__serial.in_waiting != 0:
-            message_to_read = self.__serial.read(
-                self.__serial.in_waiting).decode()
+        if self.__ser.in_waiting != 0:
+            message_to_read = self.__ser.read(
+                self.__ser.in_waiting).decode()
             self._serial_read_q.put(message_to_read)
 
     def __write_serial(self):
@@ -87,5 +87,4 @@ class SerialTask:
         except queue.Empty:
             pass
         else:
-            self.__serial.write(message_to_write)
-
+            self.__ser.write(message_to_write)
