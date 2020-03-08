@@ -3,6 +3,8 @@ import queue
 import serial
 import serial.tools.list_ports as stl
 
+from serial import SerialException
+
 
 class SerialTask:
     """
@@ -33,11 +35,23 @@ class SerialTask:
         """ Open serial port
         """
 
-        ports = self.__list_modi_ports()
-        if len(ports) > 0:
-            self.__serial = serial.Serial(ports[0].device, 921600)
-        else:
-            raise serial.SerialException("No MODI network module connected.")
+        modi_ports = self.__list_modi_ports()
+        if not modi_ports:
+            raise SerialException("No MODI network module is connected.")
+
+        # Check if any modi port(i.e. MODI network module) is in use
+        for modi_port in modi_ports:
+            curr_ser = serial.Serial()
+            curr_ser.baudrate = 921600
+            curr_ser.port = modi_port.device
+            if curr_ser.isOpen():
+                raise SerialException(
+                    "Current MODI port {} is in use".format(curr_ser.port)
+                )
+            else:
+                curr_ser.open()
+            # TODO: Refactor code to support multiple MODI network module here
+            self.__serial = curr_ser
 
     def close_serial(self):
         """ Close serial port
