@@ -73,9 +73,9 @@ class SerialTask:
         """ Read serial message and put message to serial read queue
         """
 
-        if self.__ser.in_waiting != 0:
-            message_to_read = self.__ser.read(
-                self.__ser.in_waiting).decode()
+        buffer = self.__ser.in_waiting
+        if buffer:
+            message_to_read = self.__ser.read(buffer).decode()
             self._serial_read_q.put(message_to_read)
 
     def __write_serial(self):
