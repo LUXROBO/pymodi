@@ -22,7 +22,6 @@ class SerialProcess(mp.Process):
         """ Run serial task
         """
 
-        self.__ser_task.open_serial()
         while not self.stopped():
             self.__ser_task.run()
         self.__ser_task.close_serial()

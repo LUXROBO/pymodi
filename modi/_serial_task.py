@@ -14,7 +14,7 @@ class SerialTask:
 
     def __init__(self, serial_read_q, serial_write_q):
         super(SerialTask, self).__init__()
-        self.__ser = None
+        self.__ser = self.__open_serial()
 
         self._serial_read_q = serial_read_q
         self._serial_write_q = serial_write_q
@@ -31,7 +31,7 @@ class SerialTask:
 
         return [port for port in stl.comports() if __is_modi_port(port)]
 
-    def open_serial(self):
+    def __open_serial(self):
         """ Open serial port
         """
 
@@ -39,20 +39,20 @@ class SerialTask:
         if not modi_ports:
             raise SerialException("No MODI network module is connected.")
 
-        # Check if any modi port(i.e. MODI network module) is in use
-        for modi_port in modi_ports:
-            curr_ser = serial.Serial()
-            curr_ser.baudrate = 921600
-            curr_ser.port = modi_port.device
-            if curr_ser.isOpen():
-                raise SerialException(
-                    "Current MODI port {} is in use".format(curr_ser.port)
-                )
-            curr_ser.open()
+        # TODO: Refactor code to support multiple MODI network modules here
+        modi_port = modi_ports.pop()
+        ser = serial.Serial()
+        ser.baudrate = 921600
+        ser.port = modi_port.device
 
-            # TODO: Refactor code to support multiple MODI network modules here
-            self.__ser = curr_ser
-
+        # Check if the modi port(i.e. MODI network module) is in use
+        if ser.is_open:
+            raise SerialException(
+                "The MODI port {} is already in use".format(ser.port)
+            )
+        ser.open()
+        return ser
+        
     def close_serial(self):
         """ Close serial port
         """
