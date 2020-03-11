@@ -49,11 +49,13 @@ class MODI:
                 self._serial_read_q, self._serial_write_q,)
             self._ser_proc.daemon = True
             self._ser_proc.start()
+            time.sleep(1)
 
             self._par_proc = ParserProcess(
                 self._serial_read_q, self._json_recv_q,)
             self._par_proc.daemon = True
             self._par_proc.start()
+            time.sleep(1)
 
             self._exe_thrd = ExecutorThread(
                 self._modules,
@@ -64,6 +66,7 @@ class MODI:
             )
             self._exe_thrd.daemon = True
             self._exe_thrd.start()
+            time.sleep(1)
 
             # TODO: receive flag from executor thread
             time.sleep(5)
