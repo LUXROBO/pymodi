@@ -29,7 +29,7 @@ Quickstart
 
 Install the latest pyMODI if you haven\'t installed it yet:
 
-    pip install -U pymodi
+    python -m pip install --upgrade pymodi
 
 Import [modi]{.title-ref} package and create [MODI]{.title-ref}
 instance:
