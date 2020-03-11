@@ -1,5 +1,6 @@
 """Main MODI module."""
 
+import sys
 import time
 
 import multiprocessing as mp
@@ -51,6 +52,9 @@ class MODI:
             self._ser_proc.start()
             time.sleep(1)
 
+            if not self._ser_proc.is_alive():
+                sys.exit("SerialProcess has not started properly!")
+
             self._par_proc = ParserProcess(
                 self._serial_read_q, self._json_recv_q,)
             self._par_proc.daemon = True
@@ -70,7 +74,7 @@ class MODI:
 
             # TODO: receive flag from executor thread
             time.sleep(5)
-
+            
     def exit(self):
         """ Stop modi instance
         """
