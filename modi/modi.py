@@ -94,7 +94,7 @@ class MODI:
             pprint('module: {}, module_id: {}'.format(module, module.id))
 
     def print_topology_map(self):
-        start_time = time.time()
+        #start_time = time.time()
         tp_data = self._topology_data
         graph = nx.Graph()
 
@@ -132,6 +132,7 @@ class MODI:
         #print('graph.edges():', graph.edges())
 
         labeled_graph = nx.relabel_nodes(graph, labels)
+        #print('total time taken:', time.time() - start_time)
 
         nx.draw(labeled_graph, with_labels=True)
         plt.show()
