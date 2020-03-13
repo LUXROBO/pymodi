@@ -128,7 +128,7 @@ class MODI:
                 curr_edges.append(edge_to_bottom)
 
             graph.add_edges_from(curr_edges)
-        print('graph.edges():', graph.nodes())
+        print('graph.edges():', graph.edges())
 
         nx.draw(graph)
         plt.show()

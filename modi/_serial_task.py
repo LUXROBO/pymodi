@@ -52,7 +52,7 @@ class SerialTask:
             )
         ser.open()
         return ser
-        
+
     def close_serial(self):
         """ Close serial port
         """
