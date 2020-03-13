@@ -5,6 +5,9 @@ import time
 
 import multiprocessing as mp
 
+import networkx as nx
+import matplotlib.pyplot as plt
+
 from pprint import pprint
 
 from modi._serial_process import SerialProcess
@@ -74,7 +77,7 @@ class MODI:
 
             # TODO: receive flag from executor thread
             time.sleep(5)
-            
+
     def exit(self):
         """ Stop modi instance
         """
@@ -89,6 +92,46 @@ class MODI:
         """
         for module in self.modules:
             pprint('module: {}, module_id: {}'.format(module, module.id))
+
+    def print_topology_map(self):
+        tp_data = self._topology_data
+
+        graph = nx.Graph()
+
+        # Init graph nodes and find the network node
+        start_node = None
+        for module_id in tp_data:
+            graph.add_node(module_id)
+
+            curr_module_tp_data = tp_data[module_id]
+            if curr_module_tp_data.get('uuid') is None:
+                start_node = module_id
+        print('graph.nodes():', graph.nodes())
+
+        # Init graph edges
+        for module_id in tp_data:
+            curr_edges = []
+            curr_module_tp_data = tp_data[module_id]
+
+            # Check if module exists at R (Right) T (Top) L (Left) B (Bottom)
+            if curr_module_tp_data['r'] is not None:
+                edge_to_right = (module_id, curr_module_tp_data['r'])
+                curr_edges.append(edge_to_right)
+            if curr_module_tp_data['t'] is not None:
+                edge_to_top = (module_id, curr_module_tp_data['t'])
+                curr_edges.append(edge_to_top)
+            if curr_module_tp_data['l'] is not None:
+                edge_to_left = (module_id, curr_module_tp_data['t'])
+                curr_edges.append(edge_to_left)
+            if curr_module_tp_data['b'] is not None:
+                edge_to_bottom = (module_id, curr_module_tp_data['t'])
+                curr_edges.append(edge_to_bottom)
+
+            graph.add_edges_from(curr_edges)
+        print('graph.edges():', graph.nodes())
+
+        nx.draw(graph)
+        plt.show()
 
     @property
     def modules(self):

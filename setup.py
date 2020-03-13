@@ -20,9 +20,10 @@ setup(
     long_description=get_readme(),
     long_description_content_type="text/markdown",
     install_requires=[
-        "pyserial>=3.1.1", 
+        "pyserial>=3.1.1",
         "enum34>=1.1.6",
         "setproctitle>=1.1.10",
+        "networkx",
     ],
     license="MIT license",
     include_package_data=True,
