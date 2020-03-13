@@ -121,10 +121,10 @@ class MODI:
                 edge_to_top = (module_id, curr_module_tp_data['t'])
                 curr_edges.append(edge_to_top)
             if curr_module_tp_data['l'] is not None:
-                edge_to_left = (module_id, curr_module_tp_data['t'])
+                edge_to_left = (module_id, curr_module_tp_data['l'])
                 curr_edges.append(edge_to_left)
             if curr_module_tp_data['b'] is not None:
-                edge_to_bottom = (module_id, curr_module_tp_data['t'])
+                edge_to_bottom = (module_id, curr_module_tp_data['b'])
                 curr_edges.append(edge_to_bottom)
 
             graph.add_edges_from(curr_edges)
