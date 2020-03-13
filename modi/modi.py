@@ -94,19 +94,20 @@ class MODI:
             pprint('module: {}, module_id: {}'.format(module, module.id))
 
     def print_topology_map(self):
+        start_time = time.time()
         tp_data = self._topology_data
-
         graph = nx.Graph()
 
-        # Init graph nodes and find the network node
-        start_node = None
+        # Init graph nodes
+        labels = {}
         for module_id in tp_data:
-            graph.add_node(module_id)
-
             curr_module_tp_data = tp_data[module_id]
-            if curr_module_tp_data.get('uuid') is None:
-                start_node = module_id
-        print('graph.nodes():', graph.nodes())
+            module_type = self.__get_type_from_uuid(
+                curr_module_tp_data['uuid']
+            )
+            labels[module_id] = module_type
+            graph.add_node(module_id)
+        #print('graph.nodes():', graph.nodes())
 
         # Init graph edges
         for module_id in tp_data:
@@ -128,10 +129,36 @@ class MODI:
                 curr_edges.append(edge_to_bottom)
 
             graph.add_edges_from(curr_edges)
-        print('graph.edges():', graph.edges())
+        #print('graph.edges():', graph.edges())
 
-        nx.draw(graph)
+        labeled_graph = nx.relabel_nodes(graph, labels)
+
+        nx.draw(labeled_graph, with_labels=True)
         plt.show()
+
+    def __get_type_from_uuid(self, uuid):
+        if uuid is None:
+            return 'Network'
+
+        hexadecimal = hex(uuid).lstrip("0x")
+        type_indicator = str(hexadecimal)[:4]
+        module_type = {
+            # Input modules
+            '2000': 'Env',
+            '2010': 'Gyro',
+            '2020': 'Mic',
+            '2030': 'Button',
+            '2040': 'Dial',
+            '2050': 'Ultrasonic',
+            '2060': 'Infrared',
+
+            # Output modules
+            '4000': 'Display',
+            '4010': 'Motor',
+            '4020': 'Led',
+            '4030': 'Speaker',
+        }.get(type_indicator)
+        return module_type
 
     @property
     def modules(self):
