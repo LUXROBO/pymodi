@@ -12,12 +12,8 @@ from serial import SerialException
 
 
 class SerialTask:
-    """
-    :param queue serial_read_q: Multiprocessing Queue for serial reading data
-    :param queue serial_write_q: Multiprocessing Queue for serial writing data
-    """
 
-    def __init__(self, serial_read_q, serial_write_q):
+    def __init__(self, can_read_q, can_write_q):
         super(SerialTask, self).__init__()
         self.__can_mode = (
             self.__is_on_pi() and not self.__is_network_module_connected()
@@ -28,20 +24,33 @@ class SerialTask:
                 channel="can0", bustype="socketcan_ctypes"
             )
         else:
-            self.__ser = self.__open_serial()
+            raise Exception("Invalid Platform")
 
-        self._serial_read_q = serial_read_q
-        self._serial_write_q = serial_write_q
+        self._can_read_q = can_read_q
+        self._can_write_q = can_write_q
 
     def run(self):
         """ Run serial task
         """
 
-        self.__read_serial()
-        self.__write_serial()
+        self.__can_read()
+        self.__can_write()
 
         # TODO: Replace time.sleep below
         time.sleep(0.004)
+
+    def __can_read(self):
+        can_msg = self.__can_recv()
+        json_msg = self.__parse_can_msg(can_msg)
+        self._can_read_q.put(json_msg)
+
+    def __can_write(self):
+        try:
+            message_to_write = self._can_write_q.get_nowait().encode()
+        except queue.Empty:
+            pass
+        else:
+            self.__can_send(message_to_write)
 
     @staticmethod
     def __list_modi_ports():
@@ -59,8 +68,9 @@ class SerialTask:
     def __is_on_pi():
         return os.uname()[4][:3] == "arm"
 
-    def __is_network_module_connected(self):
-        return bool(self.__list_modi_ports())
+    @staticmethod
+    def __is_network_module_connected():
+        return bool(SerialTask.__list_modi_ports())
 
     #
     # Can Methods
@@ -78,6 +88,21 @@ class SerialTask:
             raise ValueError("Can message not received!")
         return can_msg
 
+    def __can_send(self, str_msg):
+        """ Given parsed binary string message in json format, 
+            convert and send the message as CAN format
+        """
+
+        json_msg = json.loads(str_msg)
+        can_msg = self.__compose_can_msg(json_msg)
+        try:
+            self.__can0.send(can_msg)
+        except can.CanError:
+            raise ValueError("Can message not sent!")
+
+    #
+    # Can helper methods
+    #
     @staticmethod
     def __parse_can_msg(can_msg):
         """ Parse a can message to json format
@@ -108,18 +133,6 @@ class SerialTask:
         did = int(can_id[DID_BEGIN_IDX:], BIN)
         return ins, sid, did
 
-    def __can_send(self, str_msg):
-        """ Given parsed binary string message in json format, 
-            convert and send the message as CAN format
-        """
-
-        json_msg = json.loads(str_msg)
-        can_msg = self.__compose_can_msg(json_msg)
-        try:
-            self.__can0.send(can_msg)
-        except can.CanError:
-            raise ValueError("Can message not sent!")
-
     @staticmethod
     def __compose_can_msg(json_msg):
         ins = format(json_msg["c"], '05b')
@@ -138,65 +151,3 @@ class SerialTask:
             extended_id=True,
         )
         return can_msg
-
-    #
-    # Serial Methods
-    #
-    def __open_serial(self):
-        """ Open serial port
-        """
-
-        modi_ports = self.__list_modi_ports()
-        if not modi_ports:
-            raise SerialException("No MODI network module is connected.")
-
-        # TODO: Refactor code to support multiple MODI network modules here
-        modi_port = modi_ports.pop()
-        ser = serial.Serial()
-        ser.baudrate = 921600
-        ser.port = modi_port.device
-
-        # Check if the modi port(i.e. MODI network module) is in use
-        if ser.is_open:
-            raise SerialException(
-                "The MODI port {} is already in use".format(ser.port)
-            )
-        ser.open()
-        return ser
-
-    def close_serial(self):
-        """ Close serial port
-        """
-
-        if self.__can_mode:
-            self.__can_down()
-        else:
-            self.__ser.close()
-
-    def __read_serial(self):
-        """ Read serial message and put message to serial read queue
-        """
-
-        if self.__can_mode:
-            # TODO: Recv all from the buffer and concat them in a string
-            message_to_read = self.__can_recv()
-            self._serial_read_q(message_to_read)
-        else:
-            buffer = self.__ser.in_waiting
-            if buffer:
-                message_to_read = self.__ser.read(buffer).decode()
-                self._serial_read_q.put(message_to_read)
-
-    def __write_serial(self):
-        """ Write serial message in serial write queue
-        """
-
-        try:
-            message_to_write = self._serial_write_q.get_nowait().encode()
-        except queue.Empty:
-            pass
-        else:
-            if self.__can_mode:
-                self.__can_send(message_to_write)
-            else:
-                self.__ser.write(message_to_write)
