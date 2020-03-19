@@ -20,7 +20,7 @@ class SerialTask:
     def __init__(self, serial_read_q, serial_write_q):
         super(SerialTask, self).__init__()
         self.__can_mode = (
-            self.__is_on_pi() and self.__is_network_module_connected()
+            self.__is_on_pi() and not self.__is_network_module_connected()
         )
         if self.__can_mode:
             self.__can_up()
