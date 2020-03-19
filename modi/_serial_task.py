@@ -108,7 +108,7 @@ class SerialTask:
         """ Parse a can message to json format
         """
         can_id = can_msg.arbitration_id
-        can_dlc = can_msg.can_dlc
+        can_dlc = can_msg.dlc
         can_data = can_msg.data
 
         can_id_in_bin_str = format(can_id, "029b")
