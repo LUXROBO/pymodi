@@ -27,10 +27,21 @@ class SerialTask:
             self.__can0 = can.interface.Bus(
                 channel="can0", bustype="socketcan_ctypes"
             )
-        self.__ser = self.__open_serial()
+        else:
+            self.__ser = self.__open_serial()
 
         self._serial_read_q = serial_read_q
         self._serial_write_q = serial_write_q
+
+    def run(self):
+        """ Run serial task
+        """
+
+        self.__read_serial()
+        self.__write_serial()
+
+        # TODO: Replace time.sleep below
+        time.sleep(0.004)
 
     @staticmethod
     def __list_modi_ports():
@@ -46,8 +57,8 @@ class SerialTask:
 
     @staticmethod
     def __is_on_pi():
-        return os.uname()[4][:3] == 'arm'
-    
+        return os.uname()[4][:3] == "arm"
+
     def __is_network_module_connected(self):
         return bool(self.__list_modi_ports())
 
@@ -57,7 +68,7 @@ class SerialTask:
     def __can_up(self):
         os.system("sudo ip link set can0 type can bitrate 1000000")
         os.system("sudo ifconfig can0 up")
-    
+
     def __can_down(self):
         os.system("sudo ifconfig can0 down")
 
@@ -66,7 +77,7 @@ class SerialTask:
         if can_msg is None:
             raise ValueError("Can message not received!")
         return can_msg
-    
+
     @staticmethod
     def __parse_can_msg(can_msg):
         """ Parse a can message to json format
@@ -108,7 +119,7 @@ class SerialTask:
             self.__can0.send(can_msg)
         except can.CanError:
             raise ValueError("Can message not sent!")
-    
+
     @staticmethod
     def __compose_can_msg(json_msg):
         ins = format(json_msg["c"], '05b')
@@ -157,16 +168,24 @@ class SerialTask:
         """ Close serial port
         """
 
-        self.__ser.close()
+        if self.__can_mode:
+            self.__can_down()
+        else:
+            self.__ser.close()
 
     def __read_serial(self):
         """ Read serial message and put message to serial read queue
         """
 
-        buffer = self.__ser.in_waiting
-        if buffer:
-            message_to_read = self.__ser.read(buffer).decode()
-            self._serial_read_q.put(message_to_read)
+        if self.__can_mode:
+            # TODO: Recv all from the buffer and concat them in a string
+            message_to_read = self.__can_recv()
+            self._serial_read_q(message_to_read)
+        else:
+            buffer = self.__ser.in_waiting
+            if buffer:
+                message_to_read = self.__ser.read(buffer).decode()
+                self._serial_read_q.put(message_to_read)
 
     def __write_serial(self):
         """ Write serial message in serial write queue
@@ -177,14 +196,7 @@ class SerialTask:
         except queue.Empty:
             pass
         else:
-            self.__ser.write(message_to_write)
-
-    def run(self):
-        """ Run serial task
-        """
-
-        self.__read_serial()
-        self.__write_serial()
-
-        # TODO: Replace time.sleep below
-        time.sleep(0.008)
+            if self.__can_mode:
+                self.__can_send(message_to_write)
+            else:
+                self.__ser.write(message_to_write)
