@@ -13,7 +13,7 @@ class CanProcess(mp.Process):
 
     def __init__(self, can_read_q, can_write_q):
         super(CanProcess, self).__init__()
-        self.__ser_task = CanTask(can_read_q, can_write_q)
+        self.__can_task = CanTask(can_read_q, can_write_q)
         self.__stop = mp.Event()
 
         setproctitle.setproctitle('pymodi-serial')
@@ -23,7 +23,7 @@ class CanProcess(mp.Process):
         """
 
         while not self.stopped():
-            self.__ser_task.run()
+            self.__can_task.run()
 
     def stop(self):
         """ Stop serial task
