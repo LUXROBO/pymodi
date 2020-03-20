@@ -78,6 +78,9 @@ class MODI:
             # TODO: receive flag from executor thread
             time.sleep(5)
 
+    def __del__(self):
+        self.exit()
+
     def exit(self):
         """ Stop modi instance
         """
@@ -85,6 +88,7 @@ class MODI:
         self._ser_proc.stop()
         self._par_proc.stop()
         self._exe_thrd.stop()
+
         time.sleep(1)
 
     def print_ids(self):
