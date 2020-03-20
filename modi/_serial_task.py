@@ -116,7 +116,7 @@ class SerialTask:
 
         json_msg = dict()
         json_msg["c"], json_msg["s"], json_msg["d"] = c, s, d
-        json_msg["b"] = base64.b64decode(can_data).decode("utf-8")
+        json_msg["b"] = base64.b64encode(can_data).decode("utf-8")
         json_msg["l"] = can_dlc
         return json.dumps(json_msg, separators=(",", ":"))
 
