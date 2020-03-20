@@ -13,10 +13,10 @@ class ExecutorThread(threading.Thread):
     """
 
     def __init__(self, modules, module_ids, topology_data,
-                 serial_write_q, json_recv_q):
+                 can_read_q, can_write_q):
         super(ExecutorThread, self).__init__()
         self.__exe_task = ExecutorTask(
-            modules, module_ids, topology_data, serial_write_q, json_recv_q)
+            modules, module_ids, topology_data, can_read_q, can_write_q)
         self.__stop = threading.Event()
 
         setproctitle.setproctitle('pymodi-executor')

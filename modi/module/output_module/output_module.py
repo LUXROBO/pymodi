@@ -8,8 +8,8 @@ from modi.module.module import Module
 
 
 class OutputModule(Module):
-    def __init__(self, id_, uuid, serial_write_q):
-        super(OutputModule, self).__init__(id_, uuid, serial_write_q)
+    def __init__(self, id_, uuid, can_write_q):
+        super(OutputModule, self).__init__(id_, uuid, can_write_q)
 
     class PropertyDataType(Enum):
         INT = 0

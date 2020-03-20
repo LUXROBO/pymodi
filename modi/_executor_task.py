@@ -38,20 +38,20 @@ class ExecutorTask:
     }
 
     def __init__(self, modules, module_ids, topology_data,
-                 serial_write_q, json_recv_q):
+                 can_read_q, can_write_q):
         super(ExecutorTask, self).__init__()
         self._modules = modules
         self._module_ids = module_ids
         self._topology_data = topology_data
-        self._serial_write_q = serial_write_q
-        self._json_recv_q = json_recv_q
+        self._can_read_q = can_read_q
+        self._can_write_q = can_write_q
 
     def run(self):
         """ Run in ExecutorThread
         """
 
         try:
-            message = json.loads(self._json_recv_q.get_nowait())
+            message = json.loads(self._can_read_q.get_nowait())
         except queue.Empty:
             pass
         else:
@@ -133,10 +133,10 @@ class ExecutorTask:
         if not self._module_ids[module_id]["uuid"]:
             message_to_write = self.__request_uuid(
                 module_id, is_network_module=False)
-            self._serial_write_q.put(message_to_write)
+            self._can_write_q.put(message_to_write)
             message_to_write = self.__request_uuid(
                 module_id, is_network_module=True)
-            self._serial_write_q.put(message_to_write)
+            self._can_write_q.put(message_to_write)
 
         # Disconnect modules with no health message for more than 2 seconds
         for module_id, module_info in list(self._module_ids.items()):
@@ -192,7 +192,7 @@ class ExecutorTask:
                 pnp_off_message = self.__set_module_state(
                     0xFFF, Module.State.RUN, Module.State.PNP_OFF
                 )
-                self._serial_write_q.put(pnp_off_message)
+                self._can_write_q.put(pnp_off_message)
 
         # Handle newly-connected modules
         if not next(
@@ -202,7 +202,7 @@ class ExecutorTask:
             if module_category != "network":
                 module_template = self.__init_module(module_type)
                 module_instance = module_template(
-                    module_id, module_uuid, self._serial_write_q
+                    module_id, module_uuid, self._can_write_q
                 )
                 self.__set_pnp(
                     module_id=module_instance.id,
@@ -259,14 +259,14 @@ class ExecutorTask:
                 pnp_message = self.__set_module_state(
                     curr_module_id, Module.State.RUN, module_pnp_state
                 )
-                self._serial_write_q.put(pnp_message)
+                self._can_write_q.put(pnp_message)
 
         # Otherwise, it sets pnp state of the given module
         else:
             pnp_message = self.__set_module_state(
                 module_id, Module.State.RUN, module_pnp_state
             )
-            self._serial_write_q.put(pnp_message)
+            self._can_write_q.put(pnp_message)
 
     def __fit_module_uuid(self, module_info, module_uuid):
         """ Generate uuid using bitwise operation
@@ -310,24 +310,24 @@ class ExecutorTask:
         reboot_message = self.__set_module_state(
             BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
         )
-        self._serial_write_q.put(reboot_message)
+        self._can_write_q.put(reboot_message)
         self.__delay()
 
         # Command module pnp off
         pnp_off_message = self.__set_module_state(
             BROADCAST_ID, Module.State.RUN, Module.State.PNP_OFF
         )
-        self._serial_write_q.put(pnp_off_message)
+        self._can_write_q.put(pnp_off_message)
         self.__delay()
 
         # Command module uuid
         request_uuid_message = self.__request_uuid(BROADCAST_ID)
-        self._serial_write_q.put(request_uuid_message)
+        self._can_write_q.put(request_uuid_message)
         self.__delay()
 
         # Request topology data
         request_topology_message = self.__request_topology()
-        self._serial_write_q.put(request_topology_message)
+        self._can_write_q.put(request_topology_message)
         self.__delay()
 
     def __delay(self):

@@ -1,20 +1,16 @@
 import os
 import can
+import time
 import json
+import queue
 import base64
 
-import time
-import queue
-import serial
 import serial.tools.list_ports as stl
 
-from serial import SerialException
 
-
-class SerialTask:
+class CanTask:
 
     def __init__(self, can_read_q, can_write_q):
-        super(SerialTask, self).__init__()
         self.__can_mode = (
             self.__is_on_pi() and not self.__is_network_module_connected()
         )
@@ -38,6 +34,9 @@ class SerialTask:
 
         # TODO: Replace time.sleep below
         time.sleep(0.004)
+
+    def __del__(self):
+        self.__can_down()
 
     def __can_read(self):
         can_msg = self.__can_recv()
@@ -70,7 +69,7 @@ class SerialTask:
 
     @staticmethod
     def __is_network_module_connected():
-        return bool(SerialTask.__list_modi_ports())
+        return bool(CanTask.__list_modi_ports())
 
     #
     # Can Methods
@@ -112,7 +111,7 @@ class SerialTask:
         can_data = can_msg.data
 
         can_id_in_bin_str = format(can_id, "029b")
-        c, s, d = SerialTask.__parse_can_id(can_id_in_bin_str)
+        c, s, d = CanTask.__parse_can_id(can_id_in_bin_str)
 
         json_msg = dict()
         json_msg["c"], json_msg["s"], json_msg["d"] = c, s, d

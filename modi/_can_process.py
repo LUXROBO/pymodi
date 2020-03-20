@@ -2,18 +2,18 @@ import setproctitle
 
 import multiprocessing as mp
 
-from modi._serial_task import SerialTask
+from modi._can_task import CanTask
 
 
-class SerialProcess(mp.Process):
+class CanProcess(mp.Process):
     """
     :param queue serial_read_q: Multiprocessing Queue for serial reading data
     :param queue serial_write_q: Multiprocessing Queue for serial writing data
     """
 
-    def __init__(self, serial_read_q, serial_write_q):
-        super(SerialProcess, self).__init__()
-        self.__ser_task = SerialTask(serial_read_q, serial_write_q)
+    def __init__(self, can_read_q, can_write_q):
+        super(CanProcess, self).__init__()
+        self.__ser_task = CanTask(can_read_q, can_write_q)
         self.__stop = mp.Event()
 
         setproctitle.setproctitle('pymodi-serial')
@@ -24,7 +24,6 @@ class SerialProcess(mp.Process):
 
         while not self.stopped():
             self.__ser_task.run()
-        self.__ser_task.close_serial()
 
     def stop(self):
         """ Stop serial task

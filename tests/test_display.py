@@ -10,7 +10,7 @@ class TestDisplay(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.mock_kwargs = {"id_": -1, "uuid": -1, "serial_write_q": None}
+        self.mock_kwargs = {"id_": -1, "uuid": -1, "can_write_q": None}
         self.display = Display(**self.mock_kwargs)
 
         def eval_set_property(id, property_type, data, property_data_type):
@@ -22,13 +22,13 @@ class TestDisplay(unittest.TestCase):
             return eval_result
 
         self.display._set_property = mock.Mock(side_effect=eval_set_property)
-        self.display._serial_write_q = mock.Mock()
+        self.display._can_write_q = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
         del self.display
 
-    #def test_set_text(self):
+    # def test_set_text(self):
     #    """Test set_text method."""
     #    mock_text = "abcd"
     #    self.display.set_text(text=mock_text)
@@ -59,7 +59,7 @@ class TestDisplay(unittest.TestCase):
     #        self.display._set_property.call_args_list[1],
     #    )
 
-    #def test_set_variable(self):
+    # def test_set_variable(self):
     #    """Test set_variable method."""
     #    mock_variable = "12345"
     #    mock_position = 5
@@ -91,7 +91,7 @@ class TestDisplay(unittest.TestCase):
     #        self.display._set_property.call_args_list[1],
     #    )
 
-    #def test_clear(self):
+    # def test_clear(self):
     #    """Test clear method."""
     #    self.display.clear()
 

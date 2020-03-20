@@ -26,8 +26,8 @@ class Motor(OutputModule):
         DEGREE = 18
         INV = 19
 
-    def __init__(self, id_, uuid, serial_write_q):
-        super(Motor, self).__init__(id_, uuid, serial_write_q)
+    def __init__(self, id_, uuid, can_write_q):
+        super(Motor, self).__init__(id_, uuid, can_write_q)
 
     def set_motor_channel(self,
                           motor_channel, control_mode, control_value=None):
@@ -39,7 +39,7 @@ class Motor(OutputModule):
         Mode: 0:Torque 1:Speed 2:Angle (Torque is not implemented yet)
         """
         if control_value is not None:
-            self._serial_write_q.put(
+            self._can_write_q.put(
                 self._set_property(
                     self._id,
                     self.ControlType.INV.value,
@@ -65,7 +65,7 @@ class Motor(OutputModule):
         :rtype: float
         """
         if degree_value is not None:
-            self._serial_write_q.put(
+            self._can_write_q.put(
                 self._set_property(
                     self._id,
                     self.ControlType.DEGREE.value,
@@ -87,7 +87,7 @@ class Motor(OutputModule):
         :rtype: float
         """
         if degree_value is not None:
-            self._serial_write_q.put(
+            self._can_write_q.put(
                 self._set_property(
                     self._id,
                     self.ControlType.DEGREE.value,
@@ -105,7 +105,7 @@ class Motor(OutputModule):
         :rtype: float
         """
         if speed_value is not None:
-            self._serial_write_q.put(
+            self._can_write_q.put(
                 self._set_property(
                     self._id,
                     self.ControlType.SPEED.value,
@@ -123,7 +123,7 @@ class Motor(OutputModule):
         :rtype: float
         """
         if speed_value is not None:
-            self._serial_write_q.put(
+            self._can_write_q.put(
                 self._set_property(
                     self._id,
                     self.ControlType.SPEED.value,
@@ -141,7 +141,7 @@ class Motor(OutputModule):
         :rtype: float
         """
         if torque_value is not None:
-            self._serial_write_q.put(
+            self._can_write_q.put(
                 self._set_property(
                     self._id,
                     self.ControlType.TORQUE.value,
@@ -159,7 +159,7 @@ class Motor(OutputModule):
         :rtype: float
         """
         if torque_value is not None:
-            self._serial_write_q.put(
+            self._can_write_q.put(
                 self._set_property(
                     self._id,
                     self.ControlType.TORQUE.value,
@@ -193,7 +193,7 @@ class Motor(OutputModule):
                 self.ControlType.TORQUE.value,
                 (first_torque_value, second_torque_value, 0),
             )
-            self._serial_write_q.put(message)
+            self._can_write_q.put(message)
         return (
             self._get_property(self.PropertyType.FIRST_TORQUE),
             self._get_property(self.PropertyType.SECOND_TORQUE),
@@ -223,7 +223,7 @@ class Motor(OutputModule):
                 self.ControlType.SPEED.value,
                 (first_speed_value, second_speed_value, 0),
             )
-            self._serial_write_q.put(message)
+            self._can_write_q.put(message)
         return (
             self._get_property(self.PropertyType.FIRST_SPEED),
             self._get_property(self.PropertyType.SECOND_SPEED),
@@ -253,7 +253,7 @@ class Motor(OutputModule):
                 self.ControlType.DEGREE.value,
                 (first_degree_value, second_degree_value, 0),
             )
-            self._serial_write_q.put(message)
+            self._can_write_q.put(message)
         return (
             self._get_property(self.PropertyType.FIRST_DEGREE),
             self._get_property(self.PropertyType.SECOND_DEGREE),
