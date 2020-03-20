@@ -70,7 +70,7 @@ class Module:
         # Request property value if not updated for 0.5 sec
         duration = time.time() - \
             self._properties[property_type].last_update_time
-        if duration > 0.5:
+        if duration > 1:
             modi_serialtemp = self.request_property(
                 self._id, property_type.value
             )
