@@ -60,10 +60,10 @@ class MODI:
             )
             self._exe_thrd.daemon = True
             self._exe_thrd.start()
-            time.sleep(.5)
 
+            time.sleep(5)
             # TODO: receive flag from executor thread
-            time.sleep(3)
+
 
     def exit(self):
         """ Stop modi instance

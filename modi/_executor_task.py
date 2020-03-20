@@ -324,7 +324,7 @@ class ExecutorTask:
         request_uuid_message = self.__request_uuid(BROADCAST_ID)
         self._can_write_q.put(request_uuid_message)
         self.__delay()
-
+        print('hi')
         # Request topology data
         request_topology_message = self.__request_topology()
         self._can_write_q.put(request_topology_message)
