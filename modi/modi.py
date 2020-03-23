@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 from pprint import pprint
 
 from modi._serial_process import SerialProcess
-from modi._parser_process import ParserProcess
 from modi._executor_thread import ExecutorThread
 
 from modi.module.input_module.button import Button
@@ -42,26 +41,16 @@ class MODI:
 
         self._serial_read_q = mp.Queue()
         self._serial_write_q = mp.Queue()
-        self._json_recv_q = mp.Queue()
 
         self._ser_proc = None
-        self._par_proc = None
         self._exe_thrd = None
 
         if not test:
             self._ser_proc = SerialProcess(
-                self._serial_read_q, self._serial_write_q,)
+                self._serial_read_q, self._serial_write_q,
+            )
             self._ser_proc.daemon = True
             self._ser_proc.start()
-            time.sleep(1)
-
-            if not self._ser_proc.is_alive():
-                sys.exit("SerialProcess has not started properly!")
-
-            self._par_proc = ParserProcess(
-                self._serial_read_q, self._json_recv_q,)
-            self._par_proc.daemon = True
-            self._par_proc.start()
             time.sleep(1)
 
             self._exe_thrd = ExecutorThread(
@@ -69,7 +58,7 @@ class MODI:
                 self._module_ids,
                 self._topology_data,
                 self._serial_write_q,
-                self._json_recv_q,
+                self._serial_read_q,
             )
             self._exe_thrd.daemon = True
             self._exe_thrd.start()
@@ -86,7 +75,6 @@ class MODI:
         """
 
         self._ser_proc.stop()
-        self._par_proc.stop()
         self._exe_thrd.stop()
 
         time.sleep(1)
