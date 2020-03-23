@@ -19,6 +19,8 @@ class SerialTask:
         self._serial_read_q = serial_read_q
         self._serial_write_q = serial_write_q
 
+        self.__json_buffer = ""
+
     @staticmethod
     def __list_modi_ports():
         def __is_modi_port(port):
@@ -73,10 +75,23 @@ class SerialTask:
         """ Read serial message and put message to serial read queue
         """
 
-        buffer = self.__ser.in_waiting
-        if buffer:
-            message_to_read = self.__ser.read(buffer).decode()
-            self._serial_read_q.put(message_to_read)
+        serial_buffer = self.__ser.in_waiting
+        if serial_buffer:
+            # Flush the serial buffer and concatenate it to json buffer
+            self.__json_buffer += self.__ser.read(
+                serial_buffer
+            ).decode("utf-8")
+
+            # While there is a valid json in the json buffer
+            while "{" in self.__json_buffer and "}" in self.__json_buffer:
+                split_index = self.__json_buffer.find("}") + 1
+
+                # Parse json message to send
+                json_msg = self.__json_buffer[:split_index]
+                self._serial_read_q.put(json_msg)
+
+                # Update json buffer, remove the json message sent
+                self.__json_buffer = self.__json_buffer[split_index:]
 
     def __write_serial(self):
         """ Write serial message in serial write queue
