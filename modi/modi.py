@@ -57,8 +57,8 @@ class MODI:
                 self._modules,
                 self._module_ids,
                 self._topology_data,
-                self._serial_write_q,
                 self._serial_read_q,
+                self._serial_write_q,
             )
             self._exe_thrd.daemon = True
             self._exe_thrd.start()

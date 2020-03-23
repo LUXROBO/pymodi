@@ -38,19 +38,20 @@ class ExecutorTask:
     }
 
     def __init__(self, modules, module_ids, topology_data,
-                 serial_write_q, json_recv_q):
+                 serial_read_q, serial_write_q):
         self._modules = modules
         self._module_ids = module_ids
         self._topology_data = topology_data
+
+        self._serial_read_q = serial_read_q
         self._serial_write_q = serial_write_q
-        self._json_recv_q = json_recv_q
 
     def run(self):
         """ Run in ExecutorThread
         """
 
         try:
-            message = json.loads(self._json_recv_q.get_nowait())
+            message = json.loads(self._serial_read_q.get_nowait())
         except queue.Empty:
             pass
         else:
