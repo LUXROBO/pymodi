@@ -13,7 +13,6 @@ class SerialTask:
     """
 
     def __init__(self, serial_read_q, serial_write_q):
-        super(SerialTask, self).__init__()
         self.__ser = self.__open_serial()
 
         self._serial_read_q = serial_read_q

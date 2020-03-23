@@ -39,7 +39,6 @@ class ExecutorTask:
 
     def __init__(self, modules, module_ids, topology_data,
                  serial_write_q, json_recv_q):
-        super(ExecutorTask, self).__init__()
         self._modules = modules
         self._module_ids = module_ids
         self._topology_data = topology_data
