@@ -82,16 +82,20 @@ class SerialTask:
                 serial_buffer
             ).decode("utf-8")
 
-            # While there is a valid json in the json buffer
-            while "{" in self.__json_buffer and "}" in self.__json_buffer:
-                split_index = self.__json_buffer.find("}") + 1
+            # Once json buffer is obtained, we parse and send json message
+            self.__send_serial()
 
-                # Parse json message to send
-                json_msg = self.__json_buffer[:split_index]
-                self._serial_read_q.put(json_msg)
+    def __send_serial(self):
+        # While there is a valid json in the json buffer
+        while "{" in self.__json_buffer and "}" in self.__json_buffer:
+            split_index = self.__json_buffer.find("}") + 1
 
-                # Update json buffer, remove the json message sent
-                self.__json_buffer = self.__json_buffer[split_index:]
+            # Parse json message and send it
+            json_msg = self.__json_buffer[:split_index]
+            self._serial_read_q.put(json_msg)
+
+            # Update json buffer, remove the json message sent
+            self.__json_buffer = self.__json_buffer[split_index:]
 
     def __write_serial(self):
         """ Write serial message in serial write queue
