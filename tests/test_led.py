@@ -10,7 +10,7 @@ class TestLed(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.mock_kwargs = {"id_": -1, "uuid": -1, "can_write_q": None}
+        self.mock_kwargs = {"id_": -1, "uuid": -1, "serial_write_q": None}
         self.led = Led(**self.mock_kwargs)
 
         def eval_set_property(id, command_type, data):
@@ -18,7 +18,7 @@ class TestLed(unittest.TestCase):
 
         self.led._set_property = mock.Mock(side_effect=eval_set_property)
         self.led._get_property = mock.Mock()
-        self.led._can_write_q = mock.Mock()
+        self.led._serial_write_q = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -38,7 +38,7 @@ class TestLed(unittest.TestCase):
             expected_color,
         )
         self.led._set_property.assert_called_once_with(*expected_rgb_params)
-        self.led._can_write_q.put.assert_called_once_with(
+        self.led._serial_write_q.put.assert_called_once_with(
             self.led.CommandType.SET_RGB.value
         )
 
