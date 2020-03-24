@@ -17,7 +17,7 @@ class Communicator(mp.Process):
         super().__init__()
         self.__task = CanTask(read_q, write_q) if (
             CommunicatorTask.is_on_pi() and
-            not CommunicatorTask.is_network_module_connected) \
+            not CommunicatorTask.is_network_module_connected()) \
             else SerTask(read_q, write_q)
         self.__delay = 0.001
 

@@ -29,8 +29,9 @@ class CommunicatorTask(ABC):
     def is_on_pi():
         return os.uname()[4][:3] == "arm"
 
-    def is_network_module_connected(self):
-        return bool(self._list_modi_ports())
+    @staticmethod
+    def is_network_module_connected():
+        return bool(CommunicatorTask._list_modi_ports())
 
     #
     # Abstract Methods
