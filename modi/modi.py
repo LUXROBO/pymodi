@@ -5,6 +5,8 @@ import time
 import threading as th
 import multiprocessing as mp
 
+import threading
+
 import networkx as nx
 
 from pprint import pprint
@@ -33,7 +35,7 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self, test=False):
+    def __init__(self, nb_modules, test=False):
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -43,6 +45,12 @@ class MODI:
 
         self._com_proc = None
         self._exe_thrd = None
+
+        # flag of the modi object initializing
+        self._init_event = threading.Event()
+
+        # number of the connected modi modules
+        self._nb_modules = nb_modules
 
         if not test:
             self._com_proc = Communicator(self._read_q, self._write_q)
@@ -56,22 +64,21 @@ class MODI:
                 self._topology_data,
                 self._read_q,
                 self._write_q,
+                self._init_event,
+                self._nb_modules
             )
             self._exe_thrd.daemon = True
             self._exe_thrd.start()
             time.sleep(1)
 
-            # TODO: receive flag from executor thread
-            time.sleep(5)
+        self._init_event.wait()
 
     def print_ids(self):
-        """ Print each module type and its id
-        """
         for module in self.modules:
             pprint('module: {}, module_id: {}'.format(module, module.id))
 
     def print_topology_map(self):
-        #start_time = time.time()
+        # start_time = time.time()
         tp_data = self._topology_data
         graph = nx.Graph()
 
@@ -84,7 +91,7 @@ class MODI:
             )
             labels[module_id] = module_type
             graph.add_node(module_id)
-        #print('graph.nodes():', graph.nodes())
+        # print('graph.nodes():', graph.nodes())
 
         # Init graph edges
         for module_id in tp_data:
@@ -106,10 +113,10 @@ class MODI:
                 curr_edges.append(edge_to_bottom)
 
             graph.add_edges_from(curr_edges)
-        #print('graph.edges():', graph.edges())
+        # print('graph.edges():', graph.edges())
 
         labeled_graph = nx.relabel_nodes(graph, labels)
-        #print('total time taken:', time.time() - start_time)
+        # print('total time taken:', time.time() - start_time)
 
         return labeled_graph
 

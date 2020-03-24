@@ -38,13 +38,15 @@ class ExecutorTask:
     }
 
     def __init__(self, modules, module_ids, topology_data,
-                 read_q, write_q):
+                 read_q, write_q, init_event, nb_modules):
+
         self._modules = modules
         self._module_ids = module_ids
         self._topology_data = topology_data
-
         self._read_q = read_q
         self._write_q = write_q
+        self._init_event = init_event
+        self._nb_modules = nb_modules
 
     def run(self, delay):
         """ Run in ExecutorThread
@@ -210,6 +212,15 @@ class ExecutorTask:
                     module_pnp_state=Module.State.PNP_OFF
                 )
                 self._modules.append(module_instance)
+
+                if self.__is_all_connected():
+                    self._init_event.set()
+
+    def __is_all_connected(self):
+        """ determine whether all modules are connected
+        """
+
+        return self._nb_modules == len(self._modules)
 
     def __init_module(self, module_type):
         """ Find module type for module initialize
