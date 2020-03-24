@@ -15,8 +15,8 @@ class Ultrasonic(InputModule):
     class PropertyType(Enum):
         DISTANCE = 2
 
-    def __init__(self, id_, uuid, serial_write_q):
-        super(Ultrasonic, self).__init__(id_, uuid, serial_write_q)
+    def __init__(self, id_, uuid, msg_write_q):
+        super(Ultrasonic, self).__init__(id_, uuid, msg_write_q)
 
     def get_distance(self):
         """
