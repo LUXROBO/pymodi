@@ -18,11 +18,11 @@ class TestIr(unittest.TestCase):
         """Tear down test fixtures, if any."""
         del self.ir
 
-    def test_get_proximity(self):
-        """Test get_proximity method."""
-        self.ir.get_proximity()
+    def test_get_distance(self):
+        """Test get_distance method."""
+        self.ir.get_distance()
         self.ir._get_property.assert_called_once_with(
-            self.ir.PropertyType.PROXIMITY)
+            self.ir.PropertyType.DISTANCE)
 
 
 if __name__ == "__main__":

@@ -30,6 +30,7 @@ class TestModi(unittest.TestCase):
         self.modi = MODI(test=True)
 
         self.modi._ser_proc = mock.Mock()
+        self.modi._par_proc = mock.Mock()
         self.modi._exe_thrd = mock.Mock()
 
         mock_input_values = (-1, -1, None)
@@ -66,6 +67,7 @@ class TestModi(unittest.TestCase):
         self.modi.exit()
 
         self.modi._ser_proc.stop.assert_called_once_with()
+        self.modi._par_proc.stop.assert_called_once_with()
         self.modi._exe_thrd.stop.assert_called_once_with()
 
     def test_get_modules(self):

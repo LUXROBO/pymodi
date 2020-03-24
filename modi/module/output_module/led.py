@@ -20,8 +20,8 @@ class Led(OutputModule):
     class CommandType(Enum):
         SET_RGB = 16
 
-    def __init__(self, id_, uuid, msg_write_q):
-        super(Led, self).__init__(id_, uuid, msg_write_q)
+    def __init__(self, id_, uuid, serial_write_q):
+        super(Led, self).__init__(id_, uuid, serial_write_q)
 
     def set_rgb(self, red=None, green=None, blue=None):
         """
@@ -44,7 +44,7 @@ class Led(OutputModule):
                     blue if blue is not None else self.set_blue(),
                 ),
             )
-            self._msg_write_q.put(message)
+            self._serial_write_q.put(message)
         return self.set_red(), self.set_green(), self.set_blue()
 
     def set_on(self):

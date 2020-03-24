@@ -10,7 +10,7 @@ class TestSpeaker(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.mock_kwargs = {"id_": -1, "uuid": -1, "can_write_q": None}
+        self.mock_kwargs = {"id_": -1, "uuid": -1, "serial_write_q": None}
         self.speaker = Speaker(**self.mock_kwargs)
 
         def eval_set_property(id, command_type, data, property_data_type):
@@ -18,7 +18,7 @@ class TestSpeaker(unittest.TestCase):
 
         self.speaker._set_property = mock.Mock(side_effect=eval_set_property)
         self.speaker._get_property = mock.Mock()
-        self.speaker._can_write_q = mock.Mock()
+        self.speaker._serial_write_q = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -41,7 +41,7 @@ class TestSpeaker(unittest.TestCase):
         )
         self.speaker._set_property.assert_called_once_with(
             *expected_tune_params)
-        self.speaker._can_write_q.put.assert_called_once_with(
+        self.speaker._serial_write_q.put.assert_called_once_with(
             self.speaker.CommandType.SET_TUNE.value
         )
 
