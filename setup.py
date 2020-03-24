@@ -24,6 +24,7 @@ setup(
         "enum34>=1.1.6",
         "networkx",
         "matplotlib",
+        "python-can",
     ],
     license="MIT license",
     include_package_data=True,

@@ -12,10 +12,10 @@ class ExecutorThread(threading.Thread):
     """
 
     def __init__(self, modules, module_ids, topology_data,
-                 serial_read_q, serial_write_q):
+                 read_q, write_q):
         super().__init__()
         self.__exe_task = ExecutorTask(
-            modules, module_ids, topology_data, serial_read_q, serial_write_q)
+            modules, module_ids, topology_data, read_q, write_q)
 
     def run(self):
         """ Run executor task

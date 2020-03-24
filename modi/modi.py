@@ -1,17 +1,15 @@
 """Main MODI module."""
 
-import sys
 import time
 
 import threading as th
 import multiprocessing as mp
 
 import networkx as nx
-import matplotlib.pyplot as plt
 
 from pprint import pprint
 
-from modi._serial_process import SerialProcess
+from modi._communicator import Communicator
 from modi._executor_thread import ExecutorThread
 
 from modi.module.input_module.button import Button
@@ -40,26 +38,24 @@ class MODI:
         self._module_ids = dict()
         self._topology_data = dict()
 
-        self._serial_read_q = mp.Queue()
-        self._serial_write_q = mp.Queue()
+        self._read_q = mp.Queue()
+        self._write_q = mp.Queue()
 
-        self._ser_proc = None
+        self._com_proc = None
         self._exe_thrd = None
 
         if not test:
-            self._ser_proc = SerialProcess(
-                self._serial_read_q, self._serial_write_q,
-            )
-            self._ser_proc.daemon = True
-            self._ser_proc.start()
+            self._com_proc = Communicator(self._read_q, self._write_q)
+            self._com_proc.daemon = True
+            self._com_proc.start()
             time.sleep(1)
 
             self._exe_thrd = ExecutorThread(
                 self._modules,
                 self._module_ids,
                 self._topology_data,
-                self._serial_read_q,
-                self._serial_write_q,
+                self._read_q,
+                self._write_q,
             )
             self._exe_thrd.daemon = True
             self._exe_thrd.start()
@@ -115,8 +111,7 @@ class MODI:
         labeled_graph = nx.relabel_nodes(graph, labels)
         #print('total time taken:', time.time() - start_time)
 
-        nx.draw(labeled_graph, with_labels=True)
-        plt.show()
+        return labeled_graph
 
     def __get_type_from_uuid(self, uuid):
         if uuid is None:
