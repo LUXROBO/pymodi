@@ -46,10 +46,10 @@ class MODI:
         self._com_proc = None
         self._exe_thrd = None
 
-        # flag of the modi object initializing
+        # Init flag used to notify initialization of MODI modules
         self._init_event = threading.Event()
 
-        # number of the connected modi modules
+        # Init number of the connected modi modules
         self._nb_modules = nb_modules
 
         if not test:
