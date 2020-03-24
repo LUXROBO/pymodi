@@ -70,7 +70,7 @@ class CanTask(CommunicatorTask):
             self.__can_read()
             time.sleep(delay)
 
-    def run_write(self, delay):
+    def run_write_data(self, delay):
         while 1:
             self.__can_write()
             time.sleep(delay)
