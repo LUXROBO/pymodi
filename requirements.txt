@@ -2,4 +2,4 @@ pyserial>=3.1.1
 enum34>=1.1.6
 networkx
 matplotlib
-python-can
+python-can==3.3.2
