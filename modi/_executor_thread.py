@@ -18,6 +18,7 @@ class ExecutorThread(threading.Thread):
         self.__exe_task = ExecutorTask(
             modules, module_ids, topology_data, can_read_q, can_write_q, init_event, nb_modules)
         self.__stop = threading.Event()
+        self.__is_stopped = False
 
         setproctitle.setproctitle('pymodi-executor')
 
@@ -27,13 +28,12 @@ class ExecutorThread(threading.Thread):
         self.__exe_task.init_modules()
         while not self.stopped():
             self.__exe_task.run()
-
+        
     def stop(self):
         """ Stop executor task
         """
         
         self.__stop.set()
-        print('stop set : ',self.__stop)
 
     def stopped(self):
         """ Check executor task status

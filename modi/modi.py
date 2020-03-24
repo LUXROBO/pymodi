@@ -74,12 +74,6 @@ class MODI:
             self._exe_thrd.start()
 
         self._init_event.wait()
-    
-    def is_init_completed(self):
-        """ determine whether initialing completed
-        """
-
-        return self._init_flag[0]
 
     def __del__(self):
         self.exit()
@@ -91,7 +85,7 @@ class MODI:
         print('in exit')
         self._exe_thrd.stop()
         self._can_proc.stop()
-        time.sleep(1)
+        time.sleep(5)
 
     def print_ids(self):
         """ Print each module type and its id
