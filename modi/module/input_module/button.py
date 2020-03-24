@@ -18,8 +18,8 @@ class Button(InputModule):
         PRESSED = 4
         TOGGLED = 5
 
-    def __init__(self, id_, uuid, serial_write_q):
-        super(Button, self).__init__(id_, uuid, serial_write_q)
+    def __init__(self, id_, uuid, msg_write_q):
+        super(Button, self).__init__(id_, uuid, msg_write_q)
 
     def get_clicked(self):
         """

@@ -37,24 +37,29 @@ class ExecutorTask:
         "output": ["display", "motor", "led", "speaker"],
     }
 
-    def __init__(self, modules, module_ids, serial_write_q, json_recv_q):
-        super(ExecutorTask, self).__init__()
-        self._serial_write_q = serial_write_q
-        self._json_recv_q = json_recv_q
-        self._module_ids = module_ids
-        self._modules = modules
+    def __init__(self, modules, module_ids, topology_data,
+                 read_q, write_q, init_event, nb_modules):
 
-    def run(self):
+        self._modules = modules
+        self._module_ids = module_ids
+        self._topology_data = topology_data
+        self._read_q = read_q
+        self._write_q = write_q
+        self._init_event = init_event
+        self._nb_modules = nb_modules
+
+    def run(self, delay):
         """ Run in ExecutorThread
         """
 
         try:
-            message = json.loads(self._json_recv_q.get_nowait())
+            message = json.loads(self._read_q.get_nowait())
         except queue.Empty:
             pass
         else:
             self.__command_handler(message["c"])(message)
-        time.sleep(0.004)
+
+        time.sleep(delay)
 
     def __command_handler(self, command):
         """ Excute task based on command message
@@ -64,8 +69,52 @@ class ExecutorTask:
             0x00: self.__update_health,
             0x0A: self.__update_health,
             0x05: self.__update_modules,
+            0x07: self.__update_topology,
             0x1F: self.__update_property,
         }.get(command, lambda _: None)
+
+    def __update_topology(self, message):
+        # print('topology_msg:', message)
+
+        # Setup prerequisites
+        src_id = message["s"]
+        byte_data = message["b"]
+        broadcast_id = 2**16-1
+        topology_by_id = {}
+
+        message_decoded = bytearray(base64.b64decode(byte_data))
+        # print('topology_msg_dec:', message_decoded)
+
+        # UUID
+        src_uuid = self.__get_uuid_by_id(src_id)
+        topology_by_id['uuid'] = src_uuid
+
+        # RIGHT ID
+        right_id = message_decoded[1] << 8 | message_decoded[0]
+        topology_by_id['r'] = right_id if right_id != broadcast_id else None
+
+        # TOP ID
+        top_id = message_decoded[3] << 8 | message_decoded[2]
+        topology_by_id['t'] = top_id if top_id != broadcast_id else None
+
+        # LEFT ID
+        left_id = message_decoded[5] << 8 | message_decoded[4]
+        topology_by_id['l'] = left_id if left_id != broadcast_id else None
+
+        # BOTTOM ID
+        bottom_id = message_decoded[7] << 8 | message_decoded[6]
+        topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
+
+        # Save topology data for current module
+        self._topology_data[src_id] = topology_by_id
+
+    def __get_uuid_by_id(self, id_):
+
+        # find id of a module which has corresponding uuid
+        for module in self._modules:
+            if module.id == id_:
+                return module.uuid
+        return None
 
     def __update_health(self, message):
         """ Update information by health message
@@ -87,10 +136,10 @@ class ExecutorTask:
         if not self._module_ids[module_id]["uuid"]:
             message_to_write = self.__request_uuid(
                 module_id, is_network_module=False)
-            self._serial_write_q.put(message_to_write)
+            self._write_q.put(message_to_write)
             message_to_write = self.__request_uuid(
                 module_id, is_network_module=True)
-            self._serial_write_q.put(message_to_write)
+            self._write_q.put(message_to_write)
 
         # Disconnect modules with no health message for more than 2 seconds
         for module_id, module_info in list(self._module_ids.items()):
@@ -146,7 +195,7 @@ class ExecutorTask:
                 pnp_off_message = self.__set_module_state(
                     0xFFF, Module.State.RUN, Module.State.PNP_OFF
                 )
-                self._serial_write_q.put(pnp_off_message)
+                self._write_q.put(pnp_off_message)
 
         # Handle newly-connected modules
         if not next(
@@ -156,13 +205,22 @@ class ExecutorTask:
             if module_category != "network":
                 module_template = self.__init_module(module_type)
                 module_instance = module_template(
-                    module_id, module_uuid, self._serial_write_q
+                    module_id, module_uuid, self._write_q
                 )
                 self.__set_pnp(
                     module_id=module_instance.id,
                     module_pnp_state=Module.State.PNP_OFF
                 )
                 self._modules.append(module_instance)
+
+                if self.__is_all_connected():
+                    self._init_event.set()
+
+    def __is_all_connected(self):
+        """ determine whether all modules are connected
+        """
+
+        return self._nb_modules == len(self._modules)
 
     def __init_module(self, module_type):
         """ Find module type for module initialize
@@ -213,14 +271,14 @@ class ExecutorTask:
                 pnp_message = self.__set_module_state(
                     curr_module_id, Module.State.RUN, module_pnp_state
                 )
-                self._serial_write_q.put(pnp_message)
+                self._write_q.put(pnp_message)
 
         # Otherwise, it sets pnp state of the given module
         else:
             pnp_message = self.__set_module_state(
                 module_id, Module.State.RUN, module_pnp_state
             )
-            self._serial_write_q.put(pnp_message)
+            self._write_q.put(pnp_message)
 
     def __fit_module_uuid(self, module_info, module_uuid):
         """ Generate uuid using bitwise operation
@@ -264,19 +322,24 @@ class ExecutorTask:
         reboot_message = self.__set_module_state(
             BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
         )
-        self._serial_write_q.put(reboot_message)
+        self._write_q.put(reboot_message)
         self.__delay()
 
         # Command module pnp off
         pnp_off_message = self.__set_module_state(
             BROADCAST_ID, Module.State.RUN, Module.State.PNP_OFF
         )
-        self._serial_write_q.put(pnp_off_message)
+        self._write_q.put(pnp_off_message)
         self.__delay()
 
         # Command module uuid
         request_uuid_message = self.__request_uuid(BROADCAST_ID)
-        self._serial_write_q.put(request_uuid_message)
+        self._write_q.put(request_uuid_message)
+        self.__delay()
+
+        # Request topology data
+        request_topology_message = self.__request_topology()
+        self._write_q.put(request_topology_message)
         self.__delay()
 
     def __delay(self):
@@ -301,6 +364,19 @@ class ExecutorTask:
         id_bytes[1] = 0x0F
 
         message["b"] = base64.b64encode(bytes(id_bytes)).decode("utf-8")
+        message["l"] = 8
+
+        return json.dumps(message, separators=(",", ":"))
+
+    def __request_topology(self):
+
+        message = dict()
+        message["c"] = 0x07
+        message["s"] = 0
+        message["d"] = 0xFFF
+
+        direction_data = bytearray(8)
+        message["b"] = base64.b64decode(bytes(direction_data)).decode("utf-8")
         message["l"] = 8
 
         return json.dumps(message, separators=(",", ":"))
