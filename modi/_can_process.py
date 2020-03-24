@@ -1,6 +1,7 @@
 import setproctitle
 
 import multiprocessing as mp
+import threading
 
 from modi._can_task import CanTask
 
@@ -22,8 +23,19 @@ class CanProcess(mp.Process):
         """ Run serial task
         """
 
-        while not self.stopped():
-            self.__can_task.run()
+        read_thread = threading.Thread(target=self.__can_task.run_read,args=(self.stopped(),))
+        read_thread.daemon = True
+        read_thread.start()
+
+        write_thread = threading.Thread(target=self.__can_task.run_write,args=(self.stopped(),))
+        write_thread.daemon = True
+        write_thread.start()
+
+        read_thread.join()
+        write_thread.join()
+
+        # while not self.stopped():
+        #     self.__can_task.run()
 
     def stop(self):
         """ Stop serial task

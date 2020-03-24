@@ -26,13 +26,28 @@ class CanTask:
         self._can_write_q = can_write_q
 
     def run(self):
-        """ Run serial task
-        """
 
         self.__can_read()
         self.__can_write()
 
+        time.sleep(0.004)
+
+    def run_read(self,stopped):
+        """ Run serial task
+        """
+
+        while not stopped:
+            self.__can_read()
+
         # TODO: Replace time.sleep below
+        time.sleep(0.004)
+
+    def run_write(self,stopped):
+        """ Run write task
+        """
+        while not stopped:
+            self.__can_write()
+
         time.sleep(0.004)
 
     def __del__(self):
