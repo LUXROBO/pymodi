@@ -22,9 +22,9 @@ setup(
     install_requires=[
         "pyserial>=3.1.1",
         "enum34>=1.1.6",
-        "setproctitle>=1.1.10",
         "networkx",
         "matplotlib",
+        "python-can",
     ],
     license="MIT license",
     include_package_data=True,

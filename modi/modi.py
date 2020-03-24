@@ -1,16 +1,17 @@
 """Main MODI module."""
 
-import sys
 import time
 
+import threading as th
 import multiprocessing as mp
 
+import threading
+
 import networkx as nx
-import matplotlib.pyplot as plt
 
 from pprint import pprint
 
-from modi._serial_process import SerialProcess
+from modi._communicator import Communicator
 from modi._executor_thread import ExecutorThread
 
 from modi.module.input_module.button import Button
@@ -34,59 +35,50 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self, test=False):
+    def __init__(self, nb_modules, test=False):
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
 
-        self._serial_read_q = mp.Queue()
-        self._serial_write_q = mp.Queue()
+        self._read_q = mp.Queue()
+        self._write_q = mp.Queue()
 
-        self._ser_proc = None
+        self._com_proc = None
         self._exe_thrd = None
 
+        # flag of the modi object initializing
+        self._init_event = threading.Event()
+
+        # number of the connected modi modules
+        self._nb_modules = nb_modules
+
         if not test:
-            self._ser_proc = SerialProcess(
-                self._serial_read_q, self._serial_write_q,
-            )
-            self._ser_proc.daemon = True
-            self._ser_proc.start()
+            self._com_proc = Communicator(self._read_q, self._write_q)
+            self._com_proc.daemon = True
+            self._com_proc.start()
             time.sleep(1)
 
             self._exe_thrd = ExecutorThread(
                 self._modules,
                 self._module_ids,
                 self._topology_data,
-                self._serial_read_q,
-                self._serial_write_q,
+                self._read_q,
+                self._write_q,
+                self._init_event,
+                self._nb_modules
             )
             self._exe_thrd.daemon = True
             self._exe_thrd.start()
             time.sleep(1)
 
-            # TODO: receive flag from executor thread
-            time.sleep(5)
-
-    def __del__(self):
-        self.exit()
-
-    def exit(self):
-        """ Stop modi instance
-        """
-
-        self._ser_proc.stop()
-        self._exe_thrd.stop()
-
-        time.sleep(1)
+        self._init_event.wait()
 
     def print_ids(self):
-        """ Print each module type and its id
-        """
         for module in self.modules:
             pprint('module: {}, module_id: {}'.format(module, module.id))
 
     def print_topology_map(self):
-        #start_time = time.time()
+        # start_time = time.time()
         tp_data = self._topology_data
         graph = nx.Graph()
 
@@ -99,7 +91,7 @@ class MODI:
             )
             labels[module_id] = module_type
             graph.add_node(module_id)
-        #print('graph.nodes():', graph.nodes())
+        # print('graph.nodes():', graph.nodes())
 
         # Init graph edges
         for module_id in tp_data:
@@ -121,13 +113,12 @@ class MODI:
                 curr_edges.append(edge_to_bottom)
 
             graph.add_edges_from(curr_edges)
-        #print('graph.edges():', graph.edges())
+        # print('graph.edges():', graph.edges())
 
         labeled_graph = nx.relabel_nodes(graph, labels)
-        #print('total time taken:', time.time() - start_time)
+        # print('total time taken:', time.time() - start_time)
 
-        nx.draw(labeled_graph, with_labels=True)
-        plt.show()
+        return labeled_graph
 
     def __get_type_from_uuid(self, uuid):
         if uuid is None:

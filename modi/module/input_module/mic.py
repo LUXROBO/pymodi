@@ -16,8 +16,8 @@ class Mic(InputModule):
         VOLUME = 2
         FREQUENCY = 3
 
-    def __init__(self, id_, uuid, serial_write_q):
-        super(Mic, self).__init__(id_, uuid, serial_write_q)
+    def __init__(self, id_, uuid, msg_write_q):
+        super(Mic, self).__init__(id_, uuid, msg_write_q)
 
     def get_volume(self):
         """
