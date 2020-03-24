@@ -3,6 +3,7 @@
 import sys
 import time
 
+import threading as th
 import multiprocessing as mp
 
 import networkx as nx
@@ -66,18 +67,6 @@ class MODI:
 
             # TODO: receive flag from executor thread
             time.sleep(5)
-
-    def __del__(self):
-        self.exit()
-
-    def exit(self):
-        """ Stop modi instance
-        """
-
-        self._ser_proc.stop()
-        self._exe_thrd.stop()
-
-        time.sleep(1)
 
     def print_ids(self):
         """ Print each module type and its id

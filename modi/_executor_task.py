@@ -46,7 +46,7 @@ class ExecutorTask:
         self._serial_read_q = serial_read_q
         self._serial_write_q = serial_write_q
 
-    def run(self):
+    def run(self, delay):
         """ Run in ExecutorThread
         """
 
@@ -56,7 +56,8 @@ class ExecutorTask:
             pass
         else:
             self.__command_handler(message["c"])(message)
-        time.sleep(0.004)
+
+        time.sleep(delay)
 
     def __command_handler(self, command):
         """ Excute task based on command message
