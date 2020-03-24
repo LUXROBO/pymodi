@@ -30,10 +30,10 @@ class Module:
         PNP_ON = 7
         PNP_OFF = 8
 
-    def __init__(self, id_, uuid, can_write_q):
+    def __init__(self, id_, uuid, msg_write_q):
         self._id = id_
         self._uuid = uuid
-        self._can_write_q = can_write_q
+        self._msg_write_q = msg_write_q
 
         self._properties = dict()
 
@@ -64,17 +64,17 @@ class Module:
             modi_serialtemp = self.request_property(
                 self._id, property_type.value
             )
-            self._can_write_q.put(modi_serialtemp)
+            self._msg_write_q.put(modi_serialtemp)
             self._properties[property_type].last_request_time = time.time()
 
         # Request property value if not updated for 0.5 sec
         duration = time.time() - \
             self._properties[property_type].last_update_time
-        if duration > 0.5:
+        if duration > 1:
             modi_serialtemp = self.request_property(
                 self._id, property_type.value
             )
-            self._can_write_q.put(modi_serialtemp)
+            self._msg_write_q.put(modi_serialtemp)
             self._properties[property_type].last_request_time = time.time()
 
         return self._properties[property_type].value

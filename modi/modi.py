@@ -2,13 +2,14 @@
 
 import time
 
+import threading as th
 import multiprocessing as mp
 
 import networkx as nx
 
 from pprint import pprint
 
-from modi._can_process import CanProcess
+from modi._communicator import Communicator
 from modi._executor_thread import ExecutorThread
 
 from modi.module.input_module.button import Button
@@ -37,26 +38,24 @@ class MODI:
         self._module_ids = dict()
         self._topology_data = dict()
 
-        self._can_read_q = mp.Queue()
-        self._can_write_q = mp.Queue()
+        self._read_q = mp.Queue()
+        self._write_q = mp.Queue()
 
-        self._can_proc = None
+        self._com_proc = None
         self._exe_thrd = None
 
         if not test:
-            self._can_proc = CanProcess(
-                self._can_read_q, self._can_write_q,
-            )
-            self._can_proc.daemon = True
-            self._can_proc.start()
+            self._com_proc = Communicator(self._read_q, self._write_q)
+            self._com_proc.daemon = True
+            self._com_proc.start()
             time.sleep(1)
 
             self._exe_thrd = ExecutorThread(
                 self._modules,
                 self._module_ids,
                 self._topology_data,
-                self._can_read_q,
-                self._can_write_q,
+                self._read_q,
+                self._write_q,
             )
             self._exe_thrd.daemon = True
             self._exe_thrd.start()
@@ -64,14 +63,6 @@ class MODI:
 
             # TODO: receive flag from executor thread
             time.sleep(5)
-
-    def exit(self):
-        """ Stop modi instance
-        """
-
-        self._exe_thrd.stop()
-        self._can_proc.stop()
-        time.sleep(1)
 
     def print_ids(self):
         """ Print each module type and its id

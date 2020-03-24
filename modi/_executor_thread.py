@@ -1,5 +1,4 @@
 import threading
-import setproctitle
 
 from modi._executor_task import ExecutorTask
 
@@ -13,30 +12,15 @@ class ExecutorThread(threading.Thread):
     """
 
     def __init__(self, modules, module_ids, topology_data,
-                 can_read_q, can_write_q):
-        super(ExecutorThread, self).__init__()
+                 read_q, write_q):
+        super().__init__()
         self.__exe_task = ExecutorTask(
-            modules, module_ids, topology_data, can_read_q, can_write_q)
-        self.__stop = threading.Event()
-
-        setproctitle.setproctitle('pymodi-executor')
+            modules, module_ids, topology_data, read_q, write_q)
 
     def run(self):
         """ Run executor task
         """
 
         self.__exe_task.init_modules()
-        while not self.stopped():
-            self.__exe_task.run()
-
-    def stop(self):
-        """ Stop executor task
-        """
-
-        self.__stop.set()
-
-    def stopped(self):
-        """ Check executor task status
-        """
-
-        return self.__stop.is_set()
+        while 1:
+            self.__exe_task.run(delay=0.001)

@@ -24,8 +24,8 @@ class Gyro(InputModule):
         ACCELERATION_Z = 10
         VIBRATION = 11
 
-    def __init__(self, id_, uuid, can_write_q):
-        super(Gyro, self).__init__(id_, uuid, can_write_q)
+    def __init__(self, id_, uuid, msg_write_q):
+        super(Gyro, self).__init__(id_, uuid, msg_write_q)
 
     def get_roll(self):
         """

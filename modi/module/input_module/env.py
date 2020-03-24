@@ -20,8 +20,8 @@ class Env(InputModule):
         GREEN = 4
         BLUE = 5
 
-    def __init__(self, id_, uuid, can_write_q):
-        super(Env, self).__init__(id_, uuid, can_write_q)
+    def __init__(self, id_, uuid, msg_write_q):
+        super(Env, self).__init__(id_, uuid, msg_write_q)
 
     def get_temperature(self):
         """

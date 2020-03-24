@@ -7,54 +7,25 @@ import base64
 
 import serial.tools.list_ports as stl
 
+from modi._communicator_task import CommunicatorTask
 
-class CanTask:
+
+class CanTask(CommunicatorTask):
 
     def __init__(self, can_read_q, can_write_q):
-        self.__can_mode = (
-            self.__is_on_pi() and not self.__is_network_module_connected()
-        )
-        if self.__can_mode:
-            self.__can_up()
-            self.__can0 = can.interface.Bus(
-                channel="can0", bustype="socketcan_ctypes"
-            )
-        else:
-            raise Exception("Invalid Platform")
-
         self._can_read_q = can_read_q
         self._can_write_q = can_write_q
 
-    def run(self):
-
-        self.__can_read()
-        self.__can_write()
-
-        time.sleep(0.004)
-
-    def run_read(self,stopped):
-        """ Run serial task
-        """
-
-        while not stopped:
-            self.__can_read()
-
-        # TODO: Replace time.sleep below
-        time.sleep(0.004)
-
-    def run_write(self,stopped):
-        """ Run write task
-        """
-        while not stopped:
-            self.__can_write()
-
-        time.sleep(0.004)
+        self._open_conn()
+        self.__can0 = can.interface.Bus(
+            channel="can0", bustype="socketcan_ctypes"
+        )
 
     def __del__(self):
-        self.__can_down()
+        self._close_conn()
 
     def __can_read(self):
-        can_msg = self.__can_recv()
+        can_msg = self._read_data()
         json_msg = self.__parse_can_msg(can_msg)
         self._can_read_q.put(json_msg)
 
@@ -64,45 +35,25 @@ class CanTask:
         except queue.Empty:
             pass
         else:
-            self.__can_send(message_to_write)
-
-    @staticmethod
-    def __list_modi_ports():
-        def __is_modi_port(port):
-            return (
-                port.manufacturer == "LUXROBO" or
-                port.product == "MODI Network Module" or
-                port.description == "MODI Network Module" or
-                (port.vid == 12254 and port.pid == 2)
-            )
-
-        return [port for port in stl.comports() if __is_modi_port(port)]
-
-    @staticmethod
-    def __is_on_pi():
-        return os.uname()[4][:3] == "arm"
-
-    @staticmethod
-    def __is_network_module_connected():
-        return bool(CanTask.__list_modi_ports())
+            self._write_data(message_to_write)
 
     #
     # Can Methods
     #
-    def __can_up(self):
+    def _open_conn(self):
         os.system("sudo ip link set can0 type can bitrate 1000000")
         os.system("sudo ifconfig can0 up")
 
-    def __can_down(self):
+    def _close_conn(self):
         os.system("sudo ifconfig can0 down")
 
-    def __can_recv(self, timeout=None):
+    def _read_data(self, timeout=None):
         can_msg = self.__can0.recv(timeout=timeout)
         if can_msg is None:
             raise ValueError("Can message not received!")
         return can_msg
 
-    def __can_send(self, str_msg):
+    def _write_data(self, str_msg):
         """ Given parsed binary string message in json format, 
             convert and send the message as CAN format
         """
@@ -113,6 +64,16 @@ class CanTask:
             self.__can0.send(can_msg)
         except can.CanError:
             raise ValueError("Can message not sent!")
+
+    def run_read_data(self, delay):
+        while 1:
+            self.__can_read()
+            time.sleep(delay)
+
+    def run_write(self, delay):
+        while 1:
+            self.__can_write()
+            time.sleep(delay)
 
     #
     # Can helper methods

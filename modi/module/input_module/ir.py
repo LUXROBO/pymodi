@@ -17,8 +17,8 @@ class Ir(InputModule):
     class PropertyType(Enum):
         PROXIMITY = 2
 
-    def __init__(self, id_, uuid, can_write_q):
-        super(Ir, self).__init__(id_, uuid, can_write_q)
+    def __init__(self, id_, uuid, msg_write_q):
+        super(Ir, self).__init__(id_, uuid, msg_write_q)
 
     def get_proximity(self):
         """
