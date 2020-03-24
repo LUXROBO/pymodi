@@ -2,7 +2,11 @@
 
 import time
 
+import asyncio
+
 import multiprocessing as mp
+
+import threading
 
 import networkx as nx
 
@@ -32,7 +36,7 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self, test=False):
+    def __init__(self, nb_modules, test=False):
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -42,6 +46,12 @@ class MODI:
 
         self._can_proc = None
         self._exe_thrd = None
+
+        # flag of the modi object initializing
+        self._init_event = threading.Event()
+
+        # number of the connected modi modules
+        self._nb_modules = nb_modules
 
         if not test:
             self._can_proc = CanProcess(
@@ -57,18 +67,28 @@ class MODI:
                 self._topology_data,
                 self._can_read_q,
                 self._can_write_q,
+                self._init_event,
+                self._nb_modules
             )
             self._exe_thrd.daemon = True
             self._exe_thrd.start()
 
-            time.sleep(5)
-            # TODO: receive flag from executor thread
+        self._init_event.wait()
+    
+    def is_init_completed(self):
+        """ determine whether initialing completed
+        """
 
+        return self._init_flag[0]
+
+    def __del__(self):
+        self.exit()
+        print('in __del__')
 
     def exit(self):
         """ Stop modi instance
         """
-
+        print('in exit')
         self._exe_thrd.stop()
         self._can_proc.stop()
         time.sleep(1)

@@ -38,17 +38,19 @@ class CanTask:
 
         while not stopped:
             self.__can_read()
+            time.sleep(0.001)
 
+        print('finish run_read')
         # TODO: Replace time.sleep below
-        time.sleep(0.004)
 
     def run_write(self,stopped):
         """ Run write task
         """
         while not stopped:
             self.__can_write()
+            time.sleep(0.001)
 
-        time.sleep(0.004)
+        print('finish run_write')
 
     def __del__(self):
         self.__can_down()

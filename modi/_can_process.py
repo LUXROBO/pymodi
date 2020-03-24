@@ -23,24 +23,23 @@ class CanProcess(mp.Process):
         """ Run serial task
         """
 
-        read_thread = threading.Thread(target=self.__can_task.run_read,args=(self.stopped(),))
-        read_thread.daemon = True
-        read_thread.start()
+        can_read_thread = threading.Thread(target=self.__can_task.run_read,args=(self.stopped(),))
+        can_read_thread.daemon = True
+        can_read_thread.start()
 
-        write_thread = threading.Thread(target=self.__can_task.run_write,args=(self.stopped(),))
-        write_thread.daemon = True
-        write_thread.start()
+        can_write_thread = threading.Thread(target=self.__can_task.run_write,args=(self.stopped(),))
+        can_write_thread.daemon = True
+        can_write_thread.start()
 
-        read_thread.join()
-        write_thread.join()
+        can_read_thread.join()
+        can_write_thread.join()
 
-        # while not self.stopped():
-        #     self.__can_task.run()
+        print('finish can process')
 
     def stop(self):
         """ Stop serial task
         """
-
+        print('process stop : ',self.__stop)
         self.__stop.set()
 
     def stopped(self):
