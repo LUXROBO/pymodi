@@ -82,9 +82,9 @@ class SerialTask:
             ).decode("utf-8")
 
             # Once json buffer is obtained, we parse and send json message
-            self.__send_serial()
+            self.__parse_serial()
 
-    def __send_serial(self):
+    def __parse_serial(self):
         # While there is a valid json in the json buffer
         while "{" in self.__json_buffer and "}" in self.__json_buffer:
             split_index = self.__json_buffer.find("}") + 1
@@ -96,6 +96,11 @@ class SerialTask:
             # Update json buffer, remove the json message sent
             self.__json_buffer = self.__json_buffer[split_index:]
 
+    def run_read_serial(self, delay):
+        while 1:
+            self.__read_serial()
+            time.sleep(delay)
+
     def __write_serial(self):
         """ Write serial message in serial write queue
         """
@@ -106,3 +111,8 @@ class SerialTask:
             pass
         else:
             self.__ser.write(message_to_write)
+
+    def run_write_serial(self, delay):
+        while 1:
+            self.__write_serial()
+            time.sleep(delay)

@@ -1,3 +1,4 @@
+import threading
 import setproctitle
 
 import multiprocessing as mp
@@ -12,19 +13,30 @@ class SerialProcess(mp.Process):
     """
 
     def __init__(self, serial_read_q, serial_write_q):
-        super(SerialProcess, self).__init__()
+        super().__init__()
         self.__ser_task = SerialTask(serial_read_q, serial_write_q)
         self.__stop = mp.Event()
 
         setproctitle.setproctitle('pymodi-serial')
 
+        self.__delay = 0.001
+
     def run(self):
         """ Run serial task
         """
 
-        while not self.stopped():
-            self.__ser_task.run()
-        self.__ser_task.close_serial()
+        read_thread = threading.Thread(
+            target=self.__ser_task.run_read_serial, args=(self.__delay,))
+        read_thread.daemon = True
+        read_thread.start()
+
+        write_thread = threading.Thread(
+            target=self.__ser_task.run_write_serial, args=(self.__delay,))
+        write_thread.daemon = True
+        write_thread.start()
+
+        read_thread.join()
+        write_thread.join()
 
     def stop(self):
         """ Stop serial task
