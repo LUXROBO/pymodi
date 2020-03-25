@@ -8,17 +8,13 @@ from modi._can_task import CanTask
 
 
 class Communicator(mp.Process):
-    """
-    :param queue read_q: Multiprocessing Queue for reading raw data
-    :param queue write_q: Multiprocessing Queue for writing raw data
-    """
 
-    def __init__(self, read_q, write_q):
+    def __init__(self, recv_q, send_q):
         super().__init__()
-        self.__task = CanTask(read_q, write_q) if (
+        self.__task = CanTask(recv_q, send_q) if (
             CommunicatorTask.is_on_pi() and
             not CommunicatorTask.is_network_module_connected()) \
-            else SerTask(read_q, write_q)
+            else SerTask(recv_q, send_q)
         self.__delay = 0.001
 
     def run(self):
