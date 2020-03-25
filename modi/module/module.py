@@ -22,10 +22,11 @@ class Module:
 
     class State(Enum):
         RUN = 0
-        IDLE = 1
-        PAUSE = 2
-        ERROR = 3
-        NO_FIRMWARE = 4
+        WARNING = 1
+        FORCED_PAUSE = 2
+        ERROR_STOP = 3
+        UPDATE_FIRMWARE = 4
+        UPDATE_FIRMWARE_READY = 5
         REBOOT = 6
         PNP_ON = 7
         PNP_OFF = 8
