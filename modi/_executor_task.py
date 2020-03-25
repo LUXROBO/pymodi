@@ -70,7 +70,7 @@ class ExecutorTask:
 
         return {
             0x00: self.__update_health,
-            0x0A: self.__update_health,
+            0x0A: self.__update_warning,
             0x05: self.__update_modules,
             0x07: self.__update_topology,
             0x1F: self.__update_property,
@@ -150,6 +150,26 @@ class ExecutorTask:
                 for module in self._modules:
                     if module.uuid == module_info["uuid"]:
                         module.set_connection_state(connection_state=False)
+
+    def __update_warning(self, message):
+        #print('Warning message:', message)
+
+        sid = message["s"]
+
+        WARNING_TYPE_INDEX = 6
+        warning_type = bytearray(base64.b64decode(message["b"]))[
+            WARNING_TYPE_INDEX
+        ]
+        if not warning_type:
+            None
+
+        if warning_type == 1:
+            self.update_firmware_ready(module_id=sid)
+            print('firmware removed?')
+        elif warning_type == 2:
+            print("sid {} is ready to update its firmware".format(sid))
+        else:
+            print("Unsupported warning type:", warning_type)
 
     def __update_modules(self, message):
         """ Update module information
@@ -385,6 +405,9 @@ class ExecutorTask:
         return json.dumps(message, separators=(",", ":"))
 
     def update_firmware(self):
+        """ Remove firmware of MODI modules
+        """
+
         BROADCAST_ID = 0xFFF
         firmware_update_message = self.__set_module_state(
             BROADCAST_ID, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
@@ -393,6 +416,9 @@ class ExecutorTask:
         self.__delay()
 
     def update_firmware_ready(self, module_id):
+        """ Check if modules with no firmware are ready to update its firmware
+        """
+
         firmware_update_ready_message = self.__set_module_state(
             module_id, Module.State.UPDATE_FIRMWARE_READY, Module.State.PNP_OFF
         )
