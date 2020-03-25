@@ -71,7 +71,8 @@ class MODI:
             self._exe_thrd.start()
             time.sleep(1)
 
-        self._init_event.wait()
+            self._init_event.wait()
+            print("MODI modules are initialized!")
 
     def print_ids(self):
         for module in self.modules:
