@@ -40,8 +40,8 @@ class MODI:
         self._module_ids = dict()
         self._topology_data = dict()
 
-        self._read_q = mp.Queue()
-        self._write_q = mp.Queue()
+        self._recv_q = mp.Queue()
+        self._send_q = mp.Queue()
 
         self._com_proc = None
         self._exe_thrd = None
@@ -53,7 +53,7 @@ class MODI:
         self._nb_modules = nb_modules
 
         if not test:
-            self._com_proc = Communicator(self._read_q, self._write_q)
+            self._com_proc = Communicator(self._recv_q, self._send_q)
             self._com_proc.daemon = True
             self._com_proc.start()
             time.sleep(1)
@@ -62,8 +62,8 @@ class MODI:
                 self._modules,
                 self._module_ids,
                 self._topology_data,
-                self._read_q,
-                self._write_q,
+                self._recv_q,
+                self._send_q,
                 self._init_event,
                 self._nb_modules
             )
