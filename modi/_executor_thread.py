@@ -16,12 +16,12 @@ class ExecutorThread(threading.Thread):
         super().__init__()
         self.__exe_task = ExecutorTask(
             modules, module_ids, topology_data, recv_q, send_q,
-            init_event, nb_modules)
+            init_event, nb_modules
+        )
 
     def run(self):
         """ Run executor task
         """
-        self.__exe_task.init_modules()
 
         while 1:
             self.__exe_task.run(delay=0.001)

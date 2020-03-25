@@ -48,6 +48,9 @@ class ExecutorTask:
         self._init_event = init_event
         self._nb_modules = nb_modules
 
+        self.__init_modules()
+        print('Start initializing connected MODI modules')
+
     def run(self, delay):
         """ Run in ExecutorThread
         """
@@ -312,7 +315,7 @@ class ExecutorTask:
         else:
             raise RuntimeError("The type of state is not ModuleState")
 
-    def init_modules(self):
+    def __init_modules(self):
         """ Initialize module on first run
         """
 
