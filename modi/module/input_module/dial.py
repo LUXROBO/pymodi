@@ -12,7 +12,7 @@ class Dial(InputModule):
         TURNSPEED = 3
 
     def __init__(self, id_, uuid, msg_send_q):
-        super(Dial, self).__init__(id_, uuid, msg_send_q)
+        super().__init__(id_, uuid, msg_send_q)
 
     def get_degree(self):
         """

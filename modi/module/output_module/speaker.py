@@ -101,7 +101,7 @@ class Speaker(OutputModule):
         F_RA_S_7 = 3729
 
     def __init__(self, id_, uuid, msg_send_q):
-        super(Speaker, self).__init__(id_, uuid, msg_send_q)
+        super().__init__(id_, uuid, msg_send_q)
 
     def set_tune(self, frequency_value=None, volume_value=None):
         """

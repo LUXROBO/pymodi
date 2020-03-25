@@ -22,7 +22,7 @@ class Motor(OutputModule):
         INV = 19
 
     def __init__(self, id_, uuid, msg_send_q):
-        super(Motor, self).__init__(id_, uuid, msg_send_q)
+        super().__init__(id_, uuid, msg_send_q)
 
     def set_motor_channel(self,
                           motor_channel, control_mode, control_value=None):

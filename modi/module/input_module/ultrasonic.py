@@ -11,7 +11,7 @@ class Ultrasonic(InputModule):
         DISTANCE = 2
 
     def __init__(self, id_, uuid, msg_send_q):
-        super(Ultrasonic, self).__init__(id_, uuid, msg_send_q)
+        super().__init__(id_, uuid, msg_send_q)
 
     def get_distance(self):
         """

@@ -10,4 +10,4 @@ class Network(SetupModule):
         RESERVED = 0
 
     def __init__(self, id_, uuid, msg_send_q):
-        super(Network, self).__init__(id_, uuid, msg_send_q)
+        super().__init__(id_, uuid, msg_send_q)

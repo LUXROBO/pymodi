@@ -9,7 +9,7 @@ from modi.module.module import Module
 
 class OutputModule(Module):
     def __init__(self, id_, uuid, msg_send_q):
-        super(OutputModule, self).__init__(id_, uuid, msg_send_q)
+        super().__init__(id_, uuid, msg_send_q)
 
     class PropertyDataType(Enum):
         INT = 0

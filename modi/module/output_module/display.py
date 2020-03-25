@@ -13,7 +13,7 @@ class Display(OutputModule):
         VARIABLE = 22
 
     def __init__(self, id_, uuid, msg_send_q):
-        super(Display, self).__init__(id_, uuid, msg_send_q)
+        super().__init__(id_, uuid, msg_send_q)
 
     def set_text(self, text):
         """
