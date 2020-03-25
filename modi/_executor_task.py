@@ -383,3 +383,18 @@ class ExecutorTask:
         message["l"] = 8
 
         return json.dumps(message, separators=(",", ":"))
+
+    def update_firmware(self):
+        BROADCAST_ID = 0xFFF
+        firmware_update_message = self.__set_module_state(
+            BROADCAST_ID, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
+        )
+        self._send_q.put(firmware_update_message)
+        self.__delay()
+
+    def update_firmware_ready(self, module_id):
+        firmware_update_ready_message = self.__set_module_state(
+            module_id, Module.State.UPDATE_FIRMWARE_READY, Module.State.PNP_OFF
+        )
+        self._send_q.put(firmware_update_ready_message)
+        self.__delay()
