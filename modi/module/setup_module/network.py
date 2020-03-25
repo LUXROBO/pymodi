@@ -9,5 +9,5 @@ class Network(SetupModule):
     class PropertyType(Enum):
         RESERVED = 0
 
-    def __init__(self, id_, uuid, msg_write_q):
-        super(Network, self).__init__(id_, uuid, msg_write_q)
+    def __init__(self, id_, uuid, msg_send_q):
+        super(Network, self).__init__(id_, uuid, msg_send_q)

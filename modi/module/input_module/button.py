@@ -6,11 +6,6 @@ from modi.module.input_module.input_module import InputModule
 
 
 class Button(InputModule):
-    """
-    :param int id: The id of the module.
-    :param int uuid: The uuid of the module.
-    :param serial_write_q: multiprocessing.queue of the serial writing
-    """
 
     class PropertyType(Enum):
         CLICKED = 2
@@ -18,8 +13,8 @@ class Button(InputModule):
         PRESSED = 4
         TOGGLED = 5
 
-    def __init__(self, id_, uuid, msg_write_q):
-        super(Button, self).__init__(id_, uuid, msg_write_q)
+    def __init__(self, id_, uuid, msg_send_q):
+        super(Button, self).__init__(id_, uuid, msg_send_q)
 
     def get_clicked(self):
         """

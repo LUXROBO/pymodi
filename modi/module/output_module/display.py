@@ -6,19 +6,14 @@ from modi.module.output_module.output_module import OutputModule
 
 
 class Display(OutputModule):
-    """
-    :param int id: The id of the module.
-    :param int uuid: The uuid of the module.
-    :param serial_write_q: multiprocessing.queue of the serial writing
-    """
 
     class PropertyType(Enum):
         TEXT = 17
         CLEAR = 21
         VARIABLE = 22
 
-    def __init__(self, id_, uuid, msg_write_q):
-        super(Display, self).__init__(id_, uuid, msg_write_q)
+    def __init__(self, id_, uuid, msg_send_q):
+        super(Display, self).__init__(id_, uuid, msg_send_q)
 
     def set_text(self, text):
         """
@@ -32,7 +27,7 @@ class Display(OutputModule):
             self.PropertyDataType.STRING
         )
         for message in messages:
-            self._msg_write_q.put(message)
+            self._msg_send_q.put(message)
         return messages
 
     def set_variable(self, variable, position_x, position_y):
@@ -46,7 +41,7 @@ class Display(OutputModule):
             (variable, position_x, position_y),
             self.PropertyDataType.DISPLAY_VAR,
         )
-        self._msg_write_q.put(message)
+        self._msg_send_q.put(message)
         return message
 
     def clear(self):
@@ -58,5 +53,5 @@ class Display(OutputModule):
             bytes(2),
             self.PropertyDataType.RAW
         )
-        self._msg_write_q.put(message)
+        self._msg_send_q.put(message)
         return message
