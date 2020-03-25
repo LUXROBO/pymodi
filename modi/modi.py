@@ -8,6 +8,7 @@ import multiprocessing as mp
 import threading
 
 import networkx as nx
+import sys
 
 from pprint import pprint
 
@@ -36,6 +37,7 @@ class MODI:
     """
 
     def __init__(self, nb_modules, test=False):
+
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -72,6 +74,9 @@ class MODI:
             time.sleep(1)
 
         self._init_event.wait()
+
+    def __del__(self):
+        pass
 
     def print_ids(self):
         for module in self.modules:
