@@ -23,5 +23,6 @@ class ExecutorThread(threading.Thread):
         """ Run executor task
         """
 
+        self.__exe_task.update_firmware_for_real(1)
         while 1:
             self.__exe_task.run(delay=0.001)

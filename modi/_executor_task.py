@@ -1,8 +1,10 @@
+import os
 import time
 import json
 import queue
 import base64
 import struct
+import pathlib
 
 from modi.module.input_module.button import Button
 from modi.module.input_module.dial import Dial
@@ -405,7 +407,7 @@ class ExecutorTask:
         return json.dumps(message, separators=(",", ":"))
 
     def update_firmware(self):
-        """ Remove firmware of MODI modules
+        """ Remove firmware of MODI modules (Removes EndFlash)
         """
 
         BROADCAST_ID = 0xFFF
@@ -424,3 +426,43 @@ class ExecutorTask:
         )
         self._send_q.put(firmware_update_ready_message)
         self.__delay()
+
+    def update_firmware_for_real(self, module_id):
+        module_type = "mic"
+
+        #
+        root_path = "/Users/jha/Downloads"
+        bin_path = os.path.join(root_path,
+                                "skeleton", module_type, "Base_module.bin")
+
+        buffer = open(bin_path, "rb")
+        bin_size = os.stat(bin_path).st_size
+        block_size = 0x800
+        bin_begin = 0x9000
+        bin_end = bin_size - ((bin_size - bin_begin) % block_size)
+
+        for byte in pathlib.Path(bin_path).read_bytes():
+            print(byte)
+
+        # bin_end or bin_end + 1?
+        for i in range(bin_begin, bin_end+1, block_size):
+            print(hex(i))
+            block_begin = i
+            block_end = buffer.end() if buffer.end() - \
+                block_begin < block_size else block_begin + block_size
+
+            # Skip current page if empty
+            if not sum(buffer[block_begin:block_end]):
+                continue
+
+            # Erase page
+            pass
+
+            # Send Data
+            pass
+
+            # Check CRC
+            pass
+
+        # print(type(buffer))
+        # buffer.close()
