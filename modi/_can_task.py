@@ -16,6 +16,7 @@ class CanTask(CommunicatorTask):
         self._can_read_q = can_read_q
         self._can_write_q = can_write_q
 
+        self.open_conn()
         self.__can0 = can.interface.Bus(
             channel="can0", bustype="socketcan_ctypes"
         )
