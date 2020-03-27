@@ -27,7 +27,7 @@ class CommunicatorTask(ABC):
 
     @staticmethod
     def is_on_pi():
-        return os.uname()[4][:3] == "arm"
+        return os.name != "nt" and os.uname()[4][:3] == "arm"
 
     @staticmethod
     def is_network_module_connected():
@@ -37,7 +37,7 @@ class CommunicatorTask(ABC):
     # Abstract Methods
     #
     @abstractmethod
-    def _open_conn(self):
+    def open_conn(self):
         pass
 
     @abstractmethod

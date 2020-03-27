@@ -14,7 +14,7 @@ class SerTask(CommunicatorTask):
         self._ser_read_q = ser_read_q
         self._ser_write_q = ser_write_q
 
-        self.__ser = self._open_conn()
+        self.__ser = None
         self.__json_buffer = ""
 
     def __del__(self):
@@ -23,7 +23,7 @@ class SerTask(CommunicatorTask):
     #
     # Inherited Methods
     #
-    def _open_conn(self):
+    def open_conn(self):
         """ Open serial port
         """
 
@@ -33,17 +33,16 @@ class SerTask(CommunicatorTask):
 
         # TODO: Refactor code to support multiple MODI network modules here
         modi_port = modi_ports.pop()
-        ser = serial.Serial()
-        ser.baudrate = 921600
-        ser.port = modi_port.device
+        self.__ser = serial.Serial()
+        self.__ser.baudrate = 921600
+        self.__ser.port = modi_port.device
 
         # Check if the modi port(i.e. MODI network module) is in use
-        if ser.is_open:
+        if self.__ser.is_open:
             raise SerialException(
-                "The MODI port {} is already in use".format(ser.port)
+                "The MODI port {} is already in use".format(self.__ser.port)
             )
-        ser.open()
-        return ser
+        self.__ser.open()
 
     def _close_conn(self):
         """ Close serial port
