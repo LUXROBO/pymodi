@@ -13,26 +13,6 @@ class CommunicatorTask(ABC):
         self._read_q = read_q
         self._write_q = write_q
 
-    @staticmethod
-    def _list_modi_ports():
-        def __is_modi_port(port):
-            return (
-                port.manufacturer == "LUXROBO" or
-                port.product == "MODI Network Module" or
-                port.description == "MODI Network Module" or
-                (port.vid == 12254 and port.pid == 2)
-            )
-
-        return [port for port in stl.comports() if __is_modi_port(port)]
-
-    @staticmethod
-    def is_on_pi():
-        return os.name != 'nt' and os.uname()[4][:3] == "arm"
-
-    @staticmethod
-    def is_network_module_connected():
-        return bool(CommunicatorTask._list_modi_ports())
-
     #
     # Abstract Methods
     #

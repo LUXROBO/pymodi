@@ -2,17 +2,19 @@ import time
 import queue
 import serial
 
+import serial.tools.list_ports as stl
+
 from serial import SerialException
+
 
 from modi._communicator_task import CommunicatorTask
 
 
-class SerTask(CommunicatorTask):
-
+class SerTask:
     def __init__(self, ser_read_q, ser_write_q):
-        super().__init__(ser_read_q, ser_write_q)
         self._ser_read_q = ser_read_q
         self._ser_write_q = ser_write_q
+        # self.__ports = ports
 
         self.__ser = self._open_conn()
         self.__json_buffer = ""
@@ -23,11 +25,12 @@ class SerTask(CommunicatorTask):
     #
     # Inherited Methods
     #
-    def _open_conn(self):
+    # def _open_conn(self):
         """ Open serial port
         """
+        """
+        modi_ports = self.__ports
 
-        modi_ports = self._list_modi_ports()
         if not modi_ports:
             raise SerialException("No MODI network module is connected.")
 
@@ -37,13 +40,38 @@ class SerTask(CommunicatorTask):
         ser.baudrate = 921600
         ser.port = modi_port.device
 
-        # Check if the modi port(i.e. MODI network module) is in use
+        #Check if the modi port(i.e. MODI network module) is in use
         if ser.is_open:
             raise SerialException(
                 "The MODI port {} is already in use".format(ser.port)
             )
         ser.open()
+
         return ser
+        """
+
+    def _open_conn(self):
+        """ Open serial port
+        """
+
+        ports = self._list_modi_ports()
+        if len(ports) > 0:
+            ser = serial.Serial(ports[0].device, 921600)
+        else:
+            raise serial.SerialException("No MODI network module connected.")
+
+        return ser
+
+    def _list_modi_ports(self):
+        def __is_modi_port(port):
+            return (
+                port.manufacturer == "LUXROBO" or
+                port.product == "MODI Network Module" or
+                port.description == "MODI Network Module" or
+                (port.vid == 12254 and port.pid == 2)
+            )
+
+        return [port for port in stl.comports() if __is_modi_port(port)]
 
     def _close_conn(self):
         """ Close serial port
