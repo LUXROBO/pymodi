@@ -17,34 +17,39 @@ class Communicator(mp.Process):
 
     def __init__(self, read_q, write_q):
         super(Communicator, self).__init__()
-        
-        # modi_ports = self._list_modi_ports()
+        modi_ports = self._list_modi_ports()
 
         self.__task = CanTask(read_q, write_q) if (
             self.is_on_pi() and
             not self.is_network_module_connected()) \
-            else SerTask(read_q, write_q)
+            else SerTask(read_q, write_q, modi_ports)
         self.__delay = 0.001
 
-    # def _list_modi_ports(self):
-    #     def __is_modi_port(port):
-    #         return (
-    #             port.manufacturer == "LUXROBO" or
-    #             port.product == "MODI Network Module" or
-    #             port.description == "MODI Network Module" or
-    #             (port.vid == 12254 and port.pid == 2)
-    #         )
+    def _list_modi_ports(self):
+        def __is_modi_port(port):
+            return (
+                port.manufacturer == "LUXROBO" or
+                port.product == "MODI Network Module" or
+                port.description == "MODI Network Module" or
+                (port.vid == 12254 and port.pid == 2)
+            )
 
-    #     return [port for port in stl.comports() if __is_modi_port(port)]
+        return [port for port in stl.comports() if __is_modi_port(port)]
+
+    # def run(self):
+    #     self.__task.open_conn()
+    #     print('run')
 
     def is_on_pi(self):
         return os.name != 'nt' and os.uname()[4][:3] == "arm"
 
     def is_network_module_connected(self):
-        # return bool(self._list_modi_ports())
-        return True
+        return bool(self._list_modi_ports())
 
     def run(self):
+        
+        self.__task.open_conn()
+
         read_thread = th.Thread(
             target=self.__task.run_read_data, args=(self.__delay,)
         )
