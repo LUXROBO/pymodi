@@ -15,6 +15,8 @@ class CanTask(CommunicatorTask):
     def __init__(self, can_recv_q, can_send_q):
         self._can_recv_q = can_recv_q
         self._can_send_q = can_send_q
+        
+        self.__can0 = None
 
     def __del__(self):
         self._close_conn()
@@ -47,6 +49,9 @@ class CanTask(CommunicatorTask):
         os.system("sudo ifconfig can0 down")
 
     def _read_data(self, timeout=None):
+        if self.__can0 is None:
+            raise ValueError("Can is not initialized")
+            
         can_msg = self.__can0.recv(timeout=timeout)
         if can_msg is None:
             raise ValueError("Can message not received!")
