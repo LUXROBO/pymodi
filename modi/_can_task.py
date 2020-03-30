@@ -15,11 +15,8 @@ class CanTask(CommunicatorTask):
     def __init__(self, can_recv_q, can_send_q):
         self._can_recv_q = can_recv_q
         self._can_send_q = can_send_q
-
-        self._open_conn()
-        self.__can0 = can.interface.Bus(
-            channel="can0", bustype="socketcan_ctypes"
-        )
+        
+        self.__can0 = None
 
     def __del__(self):
         self._close_conn()
@@ -40,14 +37,21 @@ class CanTask(CommunicatorTask):
     #
     # Can Methods
     #
-    def _open_conn(self):
+    def open_conn(self):
         os.system("sudo ip link set can0 type can bitrate 1000000")
         os.system("sudo ifconfig can0 up")
+        
+        self.__can0 = can.interface.Bus(
+            channel="can0", bustype="socketcan_ctypes"
+        )
 
     def _close_conn(self):
         os.system("sudo ifconfig can0 down")
 
     def _read_data(self, timeout=None):
+        if self.__can0 is None:
+            raise ValueError("Can is not initialized")
+            
         can_msg = self.__can0.recv(timeout=timeout)
         if can_msg is None:
             raise ValueError("Can message not received!")
