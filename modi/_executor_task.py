@@ -435,21 +435,15 @@ class ExecutorTask:
         bin_path = os.path.join(root_path,
                                 "skeleton", module_type, "Base_module.bin")
 
-        buffer = open(bin_path, "rb")
+        buffer = open(bin_path, "rb").read()
         bin_size = os.stat(bin_path).st_size
         block_size = 0x800
         bin_begin = 0x9000
         bin_end = bin_size - ((bin_size - bin_begin) % block_size)
 
-        for byte in pathlib.Path(bin_path).read_bytes():
-            print(byte)
-
         # bin_end or bin_end + 1?
-        for i in range(bin_begin, bin_end+1, block_size):
-            print(hex(i))
-            block_begin = i
-            block_end = buffer.end() if buffer.end() - \
-                block_begin < block_size else block_begin + block_size
+        for block_begin in range(bin_begin, bin_end+1, block_size):
+            block_end = block_begin + block_size
 
             # Skip current page if empty
             if not sum(buffer[block_begin:block_end]):
