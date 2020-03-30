@@ -17,9 +17,6 @@ class SerTask(CommunicatorTask):
         self.__ser = None
         self.__json_buffer = ""
 
-    def __del__(self):
-        self._close_conn()
-
     #
     # Inherited Methods
     #
