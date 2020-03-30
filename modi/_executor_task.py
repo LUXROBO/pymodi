@@ -430,33 +430,63 @@ class ExecutorTask:
     def update_firmware_for_real(self, module_id):
         module_type = "mic"
 
-        #
+        # Init path to binary file
         root_path = "/Users/jha/Downloads"
         bin_path = os.path.join(root_path,
                                 "skeleton", module_type, "Base_module.bin")
 
-        buffer = open(bin_path, "rb").read()
+        # Read bytes data from the given binary file of the current module
+        bin_buffer = open(bin_path, "rb").read()
+
+        # Init metadata of the bytes loaded
         bin_size = os.stat(bin_path).st_size
-        block_size = 0x800
         bin_begin = 0x9000
         bin_end = bin_size - ((bin_size - bin_begin) % block_size)
+        page_size = 0x800
 
-        # bin_end or bin_end + 1?
-        for block_begin in range(bin_begin, bin_end+1, block_size):
-            block_end = block_begin + block_size
+        for page_begin in range(bin_begin, bin_end+1, page_size):
+            page_end = page_begin + page_size
+            curr_page = bin_buffer[page_begin:page_end]
 
             # Skip current page if empty
-            if not sum(buffer[block_begin:block_end]):
+            if not sum(curr_page):
                 continue
 
-            # Erase page
-            pass
+            # Erase page (send erase request and receive erase response)
+            erase_message = self.command(
+                module_id, 1, 2, 0, page_begin+0x08000000
+            )
+            self._send_q.put(erase_message)
+            # TODO: Receive set flag for erase operation
 
             # Send Data
-            pass
 
-            # Check CRC
-            pass
+            # CRC on current page (send CRC request and receive CRC response)
+            crc_message = self.command(
+                module_id, 1, 1, ?, page_begin+0x08000000
+            )
+            self._send_q.put(crc_message)
+            # TODO: Receive set flag for crc operation
 
         # print(type(buffer))
         # buffer.close()
+
+    def command(self, did, write, cmd, crc, add):
+        """ Create a new command in json message format
+        """
+
+        message = dict()
+        message["c"] = cmd
+        message["s"] = (cmd << 8) | write
+        message["d"] = did
+
+        data = bytearray(8)
+        for i in range(4):
+            data[i] = crc & 0xFF
+            crc >>= 8
+            data[4 + i] = add & 0xFF
+            add >>= 8
+        message["b"] = base64.b64encode(bytes(data)).decode("utf-8")
+        message["l"] = 8
+
+        return json.dumps(message, separators=(",", ":"))
