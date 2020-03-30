@@ -436,7 +436,9 @@ class ExecutorTask:
                                 "skeleton", module_type, "Base_module.bin")
 
         # Read bytes data from the given binary file of the current module
-        bin_buffer = open(bin_path, "rb").read()
+        bin_buffer = None
+        with open(bin_path, "rb") as bf:
+            bin_buffer = bf.read()
 
         # Init metadata of the bytes loaded
         bin_size = os.stat(bin_path).st_size
@@ -459,7 +461,12 @@ class ExecutorTask:
             self._send_q.put(erase_message)
             # TODO: Receive set flag for erase operation
 
-            # Send Data
+            # Copy current page data to the module
+            for j in range(0, page_size, 8):
+                data = bytes(1)
+
+                # if (page_begin + j) & 0xFFFFF == bin_begin:
+                #    shifted = num_uuid
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_message = self.command(
@@ -467,9 +474,6 @@ class ExecutorTask:
             )
             self._send_q.put(crc_message)
             # TODO: Receive set flag for crc operation
-
-        # print(type(buffer))
-        # buffer.close()
 
     def command(self, did, write, cmd, crc, add):
         """ Create a new command in json message format
@@ -488,5 +492,18 @@ class ExecutorTask:
             add >>= 8
         message["b"] = base64.b64encode(bytes(data)).decode("utf-8")
         message["l"] = 8
+
+        return json.dumps(message, separators=(",", ":"))
+
+    def binary_data(did, add, data):
+        message = dict()
+        message["c"] = 0x0B
+        message["s"] = add
+        message["d"] = did
+
+        message["b"] = base64.b64encode(bytes(data)).decode("utf-8")
+        message["l"] = 8
+        # OA suggests the following:
+        # message["l"] = data.size()
 
         return json.dumps(message, separators=(",", ":"))
