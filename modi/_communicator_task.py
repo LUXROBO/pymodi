@@ -37,10 +37,6 @@ class CommunicatorTask(ABC):
     # Abstract Methods
     #
     @abstractmethod
-    def _open_conn(self):
-        pass
-
-    @abstractmethod
     def _close_conn(self):
         pass
 
@@ -50,6 +46,10 @@ class CommunicatorTask(ABC):
 
     @abstractmethod
     def _write_data(self):
+        pass
+
+    @abstractmethod
+    def open_conn(self):
         pass
 
     @abstractmethod
