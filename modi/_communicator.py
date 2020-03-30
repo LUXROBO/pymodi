@@ -17,12 +17,6 @@ class Communicator(mp.Process):
     def __is_modi_pi(self):
         return CommunicatorTask.is_on_pi() and not CommunicatorTask.is_network_module_connected()
 
-    def __open_interface(self):
-        if self.__is_modi_pi(): 
-            return
-
-        self.__task.open_conn()
-
     def run(self):
         self.__task.open_conn()
 
