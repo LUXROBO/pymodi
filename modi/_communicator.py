@@ -28,7 +28,7 @@ class Communicator(mp.Process):
         self.__task.open_conn()
 
     def run(self):
-        self.__open_interface()
+        self.__task.open_conn()
 
         read_thread = th.Thread(
             target=self.__task.run_read_data, args=(self.__delay,)

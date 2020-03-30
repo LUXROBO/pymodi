@@ -16,11 +16,6 @@ class CanTask(CommunicatorTask):
         self._can_read_q = can_read_q
         self._can_write_q = can_write_q
 
-        self.open_conn()
-        self.__can0 = can.interface.Bus(
-            channel="can0", bustype="socketcan_ctypes"
-        )
-
     def __del__(self):
         self._close_conn()
 
@@ -43,6 +38,10 @@ class CanTask(CommunicatorTask):
     def open_conn(self):
         os.system("sudo ip link set can0 type can bitrate 1000000")
         os.system("sudo ifconfig can0 up")
+        
+        self.__can0 = can.interface.Bus(
+            channel="can0", bustype="socketcan_ctypes"
+        )
 
     def _close_conn(self):
         os.system("sudo ifconfig can0 down")
