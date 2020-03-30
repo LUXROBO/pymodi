@@ -12,9 +12,9 @@ from modi._communicator_task import CommunicatorTask
 
 class CanTask(CommunicatorTask):
 
-    def __init__(self, can_read_q, can_write_q):
-        self._can_read_q = can_read_q
-        self._can_write_q = can_write_q
+    def __init__(self, can_recv_q, can_send_q):
+        self._can_recv_q = can_recv_q
+        self._can_send_q = can_send_q
 
     def __del__(self):
         self._close_conn()
@@ -22,11 +22,11 @@ class CanTask(CommunicatorTask):
     def __can_read(self):
         can_msg = self._read_data()
         json_msg = self.__parse_can_msg(can_msg)
-        self._can_read_q.put(json_msg)
+        self._can_recv_q.put(json_msg)
 
     def __can_write(self):
         try:
-            message_to_write = self._can_write_q.get_nowait().encode()
+            message_to_write = self._can_send_q.get_nowait().encode()
         except queue.Empty:
             pass
         else:

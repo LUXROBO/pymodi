@@ -52,7 +52,7 @@ Let\'s blink the LED\'s light 5 times:
 
     led = bundle.leds[0]
 
-    for _ in range(10):
+    for _ in range(5):
         led.set_on()
         time.sleep(1)
         led.set_off()

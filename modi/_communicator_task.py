@@ -9,9 +9,9 @@ from abc import abstractmethod
 
 class CommunicatorTask(ABC):
 
-    def __init__(self, read_q, write_q):
-        self._read_q = read_q
-        self._write_q = write_q
+    def __init__(self, recv_q, send_q):
+        self._recv_q = recv_q
+        self._send_q = send_q
 
     @staticmethod
     def _list_modi_ports():
