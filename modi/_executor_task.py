@@ -50,7 +50,6 @@ class ExecutorTask:
         self._init_event = init_event
         self._nb_modules = nb_modules
 
-        self.response_timeout = 3
         self.erase_flag = False
         self.crc_flag = False
 
@@ -452,7 +451,8 @@ class ExecutorTask:
         page_size = 0x800
         flash_memory_addr = 0x08000000
 
-        response_wait_time = 0
+        response_delay = 0.1
+        response_timeout = 0.1
         for page_begin in range(bin_begin, bin_end+1, page_size):
             page_end = page_begin + page_size
             curr_page = bin_buffer[page_begin:page_end]
@@ -462,45 +462,32 @@ class ExecutorTask:
                 continue
 
             # Erase page (send erase request and receive erase response)
+            erase_response_wait_time = 0
             erase_message = self.get_firmware_command(
                 module_id, 1, 2, 0, flash_memory_addr+page_begin
             )
             self._send_q.put(erase_message)
             while not self.erase_flag:
-                if response_wait_time > 3:
+                if erase_response_wait_time > response_timeout:
                     raise Exception("Erase timed-out")
-                time.sleep(self.response_timeout)
-                wait_time += self.response_timeout
+                time.sleep(response_delay)
+                erase_response_wait_time += response_delay
             self.erase_flag = False
-            response_wait_time = 0
 
             # Copy current page data to the module
-            # for j in range(0, page_size, 8):
-            #    if page_begin + j < bin_size:
-            #        break
-
-            #    data = bytes(1)
-            #    if (page_begin + j) & 0xFFFFF == bin_begin:
-            #        shifted = num_uuid
-            #    else:
-            #        slice_begin = page_begin + j
-            #        slice_end = slice_begin + 8
-            #        data = curr_page[slice_begin:slice_end]
-
-            #    copy_message = self.binary_data(module_id, j / 8, data)
 
             # CRC on current page (send CRC request and receive CRC response)
+            crc_response_wait_time = 0
             crc_message = self.get_firmware_command(
                 module_id, 1, 1, ?, flash_memory_addr+page_begin
             )
             self._send_q.put(crc_message)
             while not self.crc_flag:
-                if response_wait_time > 3:
+                if crc_response_wait_time > response_timeout:
                     raise Exception("CRC timed-out")
-                time.sleep(self.response_timeout)
-                wait_time += self.response_timeout
+                time.sleep(response_delay)
+                crc_response_wait_time += response_delay
             self.crc_flag = False
-            response_wait_time = 0
 
     def get_firmware_command(self, module_id, rot_stype, rot_scmd,
                              crc_32, page_addr):
