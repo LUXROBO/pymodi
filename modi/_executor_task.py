@@ -4,7 +4,6 @@ import json
 import queue
 import base64
 import struct
-import pathlib
 
 from modi.module.input_module.button import Button
 from modi.module.input_module.dial import Dial
@@ -445,11 +444,12 @@ class ExecutorTask:
             bin_buffer = bf.read()
 
         # Init metadata of the bytes loaded
-        bin_size = os.stat(bin_path).st_size
-        bin_begin = 0x9000
-        bin_end = bin_size - ((bin_size - bin_begin) % block_size)
         page_size = 0x800
         flash_memory_addr = 0x08000000
+
+        bin_size = os.stat(bin_path).st_size
+        bin_begin = 0x9000
+        bin_end = bin_size - ((bin_size - bin_begin) % page_size)
 
         response_delay = 0.1
         response_timeout = 0.1
@@ -475,18 +475,21 @@ class ExecutorTask:
             self.erase_flag = False
 
             # Copy current page data to the module
+            checksum = 0
             for curr_ptr in range(0, page_size, 8):
-                if page_begin + j >= bin_size:
+                if page_begin + curr_ptr >= bin_size:
                     break
 
+                curr_data = curr_page[curr_ptr:curr_ptr+8]
                 data_message = self.get_firmware_data(
-                    module_id, seq_num=curr_ptr/8, bin_data=data
+                    module_id, seq_num=curr_ptr//8, bin_data=curr_data
                 )
+            # TODO: CRC
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_response_wait_time = 0
             crc_message = self.get_firmware_command(
-                module_id, 1, 1, ?, flash_memory_addr+page_begin
+                module_id, 1, 1, checksum, flash_memory_addr + page_begin
             )
             self._send_q.put(crc_message)
             while not self.crc_flag:
@@ -497,7 +500,7 @@ class ExecutorTask:
             self.crc_flag = False
 
     def get_firmware_command(self, module_id, rot_stype, rot_scmd,
-                             crc_32, page_addr):
+                             crc32, page_addr):
         """ Create a new firmware command in json format
         """
 
@@ -510,20 +513,20 @@ class ExecutorTask:
             And the remaining bits represent rot_stype.
         """
         message["s"] = (rot_scmd << 8) | rot_stype
-        message["d"] = did
+        message["d"] = module_id
 
         """ The firmware command data to be sent is 8-bytes length.
             Where the first 4 bytes consist of CRC-32 information.
             Last 4 bytes represent page address information.
         """
-        crc_32_and_page_addr_data = bytearray(8)
+        crc32_and_page_addr_data = bytearray(8)
         for i in range(4):
-            data[i] = crc_32 & 0xFF
-            crc_32 >>= 8
-            data[4 + i] = page_addr & 0xFF
+            crc32_and_page_addr_data[i] = crc32 & 0xFF
+            crc32 >>= 8
+            crc32_and_page_addr_data[4 + i] = page_addr & 0xFF
             page_addr >>= 8
         message["b"] = base64.b64encode(
-            bytes(crc_32_and_page_addr_data)
+            bytes(crc32_and_page_addr_data)
         ).decode("utf-8")
         message["l"] = 8
 
@@ -553,3 +556,22 @@ class ExecutorTask:
             self.crc_flag = True
         elif stream_state == 7:
             self.erase_flag = True
+        elif stream_state == 4:
+            raise Exception("CRC Errored")
+
+    def crc32(self, data, crc):
+        # TODO: change crc
+        crc = 0
+        for k in range(2):
+            cnt = 0
+            # TODO: use to_uint32
+            crc ^= to_uint32(data, 4*k)
+
+            while cnt < 32:
+                if ((crc & (1 << 31)) != 0):
+                    crc = (crc << 1) ^ 0x4C11DB7
+                else:
+                    crc <<= 1
+                cnt += 1
+
+        return crc
