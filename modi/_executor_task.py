@@ -50,6 +50,10 @@ class ExecutorTask:
         self._init_event = init_event
         self._nb_modules = nb_modules
 
+        self.response_timeout = 3
+        self.erase_flag = False
+        self.crc_flag = False
+
         self.__init_modules()
         print('Start initializing connected MODI modules')
 
@@ -73,6 +77,7 @@ class ExecutorTask:
         return {
             0x00: self.__update_health,
             0x0A: self.__update_warning,
+            0x0C: self.__update_firmware_state,
             0x05: self.__update_modules,
             0x07: self.__update_topology,
             0x1F: self.__update_property,
@@ -447,6 +452,7 @@ class ExecutorTask:
         page_size = 0x800
         flash_memory_addr = 0x08000000
 
+        response_wait_time = 0
         for page_begin in range(bin_begin, bin_end+1, page_size):
             page_end = page_begin + page_size
             curr_page = bin_buffer[page_begin:page_end]
@@ -457,33 +463,44 @@ class ExecutorTask:
 
             # Erase page (send erase request and receive erase response)
             erase_message = self.get_firmware_command(
-                module_id, 1, 2, 0, page_begin+flash_memory_addr
+                module_id, 1, 2, 0, flash_memory_addr+page_begin
             )
             self._send_q.put(erase_message)
-            # TODO: Receive set flag for erase operation
+            while not self.erase_flag:
+                if response_wait_time > 3:
+                    raise Exception("Erase timed-out")
+                time.sleep(self.response_timeout)
+                wait_time += self.response_timeout
+            self.erase_flag = False
+            response_wait_time = 0
 
             # Copy current page data to the module
-            # 8 bytes
-            for j in range(0, page_size, 8):
-                if page_begin + j < bin_size:
-                    break
+            # for j in range(0, page_size, 8):
+            #    if page_begin + j < bin_size:
+            #        break
 
-                data = bytes(1)
-                if (page_begin + j) & 0xFFFFF == bin_begin:
-                    shifted = num_uuid
-                else:
-                    slice_begin = page_begin + j
-                    slice_end = slice_begin + 8
-                    data = curr_page[slice_begin:slice_end]
+            #    data = bytes(1)
+            #    if (page_begin + j) & 0xFFFFF == bin_begin:
+            #        shifted = num_uuid
+            #    else:
+            #        slice_begin = page_begin + j
+            #        slice_end = slice_begin + 8
+            #        data = curr_page[slice_begin:slice_end]
 
-                copy_message = self.binary_data(module_id, j / 8, data)
+            #    copy_message = self.binary_data(module_id, j / 8, data)
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_message = self.get_firmware_command(
-                module_id, 1, 1, ?, page_begin+flash_memory_addr
+                module_id, 1, 1, ?, flash_memory_addr+page_begin
             )
             self._send_q.put(crc_message)
-            # TODO: Receive set flag for crc operation
+            while not self.crc_flag:
+                if response_wait_time > 3:
+                    raise Exception("CRC timed-out")
+                time.sleep(self.response_timeout)
+                wait_time += self.response_timeout
+            self.crc_flag = False
+            response_wait_time = 0
 
     def get_firmware_command(self, module_id, rot_stype, rot_scmd,
                              crc_32, page_addr):
@@ -531,3 +548,14 @@ class ExecutorTask:
         message["l"] = 8
 
         return json.dumps(message, separators=(",", ":"))
+
+    def __update_firmware_state(self, message):
+        module_id = message["s"]
+        byte_data = message["b"]
+        message_decoded = bytearray(base64.b64decode(byte_data))
+
+        stream_state = message_decoded[4]
+        if stream_state == 5:
+            self.crc_flag = True
+        elif stream_state == 7:
+            self.erase_flag = True
