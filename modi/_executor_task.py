@@ -401,7 +401,7 @@ class ExecutorTask:
         message["d"] = 0xFFF
 
         direction_data = bytearray(8)
-        message["b"] = base64.b64decode(bytes(direction_data)).decode("utf-8")
+        message["b"] = base64.b64encode(bytes(direction_data)).decode("utf-8")
         message["l"] = 8
 
         return json.dumps(message, separators=(",", ":"))
@@ -445,6 +445,7 @@ class ExecutorTask:
         bin_begin = 0x9000
         bin_end = bin_size - ((bin_size - bin_begin) % block_size)
         page_size = 0x800
+        flash_memory_addr = 0x08000000
 
         for page_begin in range(bin_begin, bin_end+1, page_size):
             page_end = page_begin + page_size
@@ -455,55 +456,78 @@ class ExecutorTask:
                 continue
 
             # Erase page (send erase request and receive erase response)
-            erase_message = self.command(
-                module_id, 1, 2, 0, page_begin+0x08000000
+            erase_message = self.get_firmware_command(
+                module_id, 1, 2, 0, page_begin+flash_memory_addr
             )
             self._send_q.put(erase_message)
             # TODO: Receive set flag for erase operation
 
             # Copy current page data to the module
+            # 8 bytes
             for j in range(0, page_size, 8):
-                data = bytes(1)
+                if page_begin + j < bin_size:
+                    break
 
-                # if (page_begin + j) & 0xFFFFF == bin_begin:
-                #    shifted = num_uuid
+                data = bytes(1)
+                if (page_begin + j) & 0xFFFFF == bin_begin:
+                    shifted = num_uuid
+                else:
+                    slice_begin = page_begin + j
+                    slice_end = slice_begin + 8
+                    data = curr_page[slice_begin:slice_end]
+
+                copy_message = self.binary_data(module_id, j / 8, data)
 
             # CRC on current page (send CRC request and receive CRC response)
-            crc_message = self.command(
-                module_id, 1, 1, ?, page_begin+0x08000000
+            crc_message = self.get_firmware_command(
+                module_id, 1, 1, ?, page_begin+flash_memory_addr
             )
             self._send_q.put(crc_message)
             # TODO: Receive set flag for crc operation
 
-    def command(self, did, write, cmd, crc, add):
-        """ Create a new command in json message format
+    def get_firmware_command(self, module_id, rot_stype, rot_scmd,
+                             crc_32, page_addr):
+        """ Create a new firmware command in json format
         """
 
         message = dict()
-        message["c"] = cmd
-        message["s"] = (cmd << 8) | write
+        message["c"] = 0x0D
+
+        """ SID is 12-bits length in MODI CAN.
+            To fully utilize its capacity, we split 12-bits into 4 and 8 bits.
+            First 4 bits include rot_scmd information.
+            And the remaining bits represent rot_stype.
+        """
+        message["s"] = (rot_scmd << 8) | rot_stype
         message["d"] = did
 
-        data = bytearray(8)
+        """ The firmware command data to be sent is 8-bytes length.
+            Where the first 4 bytes consist of CRC-32 information.
+            Last 4 bytes represent page address information.
+        """
+        crc_32_and_page_addr_data = bytearray(8)
         for i in range(4):
-            data[i] = crc & 0xFF
-            crc >>= 8
-            data[4 + i] = add & 0xFF
-            add >>= 8
-        message["b"] = base64.b64encode(bytes(data)).decode("utf-8")
+            data[i] = crc_32 & 0xFF
+            crc_32 >>= 8
+            data[4 + i] = page_addr & 0xFF
+            page_addr >>= 8
+        message["b"] = base64.b64encode(
+            bytes(crc_32_and_page_addr_data)
+        ).decode("utf-8")
         message["l"] = 8
 
         return json.dumps(message, separators=(",", ":"))
 
-    def binary_data(did, add, data):
+    def get_firmware_data(module_id, seq_num, bin_data):
+        """ A data to be sent when updating firmware of a module
+        """
+
         message = dict()
         message["c"] = 0x0B
-        message["s"] = add
-        message["d"] = did
+        message["s"] = seq_num
+        message["d"] = module_id
 
-        message["b"] = base64.b64encode(bytes(data)).decode("utf-8")
+        message["b"] = base64.b64encode(bytes(bin_data)).decode("utf-8")
         message["l"] = 8
-        # OA suggests the following:
-        # message["l"] = data.size()
 
         return json.dumps(message, separators=(",", ":"))
