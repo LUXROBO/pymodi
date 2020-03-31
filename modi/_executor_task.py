@@ -475,6 +475,13 @@ class ExecutorTask:
             self.erase_flag = False
 
             # Copy current page data to the module
+            for curr_ptr in range(0, page_size, 8):
+                if page_begin + j >= bin_size:
+                    break
+
+                data_message = self.get_firmware_data(
+                    module_id, seq_num=curr_ptr/8, bin_data=data
+                )
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_response_wait_time = 0
@@ -522,7 +529,7 @@ class ExecutorTask:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def get_firmware_data(module_id, seq_num, bin_data):
+    def get_firmware_data(self, module_id, seq_num, bin_data):
         """ A data to be sent when updating firmware of a module
         """
 
