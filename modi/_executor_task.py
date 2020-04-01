@@ -4,6 +4,7 @@ import json
 import queue
 import base64
 import struct
+import threading
 
 from modi.module.input_module.button import Button
 from modi.module.input_module.dial import Dial
@@ -170,9 +171,11 @@ class ExecutorTask:
 
         if warning_type == 1:
             self.update_firmware_ready(module_id=sid)
-            print('firmware removed?')
         elif warning_type == 2:
-            print("sid {} is ready to update its firmware".format(sid))
+            self.t = threading.Thread(
+                target=self.update_firmware_for_real, args=(sid,)
+            )
+            self.t.start()
         else:
             print("Unsupported warning type:", warning_type)
 
@@ -452,7 +455,7 @@ class ExecutorTask:
         bin_end = bin_size - ((bin_size - bin_begin) % page_size)
 
         response_delay = 0.1
-        response_timeout = 0.1
+        response_timeout = 5
         for page_begin in range(bin_begin, bin_end+1, page_size):
             page_end = page_begin + page_size
             curr_page = bin_buffer[page_begin:page_end]
@@ -472,7 +475,8 @@ class ExecutorTask:
                     raise Exception("Erase timed-out")
                 time.sleep(response_delay)
                 erase_response_wait_time += response_delay
-            self.erase_flag = False
+            else:
+                self.erase_flag = False
 
             # Copy current page data to the module
             checksum = 0
@@ -500,11 +504,13 @@ class ExecutorTask:
                     raise Exception("CRC timed-out")
                 time.sleep(response_delay)
                 crc_response_wait_time += response_delay
-            self.crc_flag = False
+            else:
+                self.crc_flag = False
 
     def get_firmware_command(self, module_id, rot_stype, rot_scmd,
                              crc32, page_addr):
         """ Create a new firmware command in json format
+            ROT_StateType, ROT_StreamCommand
         """
 
         message = dict()
