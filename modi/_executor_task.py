@@ -484,7 +484,10 @@ class ExecutorTask:
                 data_message = self.get_firmware_data(
                     module_id, seq_num=curr_ptr//8, bin_data=curr_data
                 )
-            # TODO: CRC
+
+                # Calc CRC32 checksum
+                checksum = self.crc32(curr_data[:4], checksum)
+                checksum = self.crc32(curr_data[4:], checksum)
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_response_wait_time = 0
@@ -560,18 +563,14 @@ class ExecutorTask:
             raise Exception("CRC Errored")
 
     def crc32(self, data, crc):
-        # TODO: change crc
-        crc = 0
-        for k in range(2):
-            cnt = 0
-            # TODO: use to_uint32
-            crc ^= to_uint32(data, 4*k)
+        crc ^= int.from_bytes(data, byteorder='big', signed=False)
 
-            while cnt < 32:
-                if ((crc & (1 << 31)) != 0):
-                    crc = (crc << 1) ^ 0x4C11DB7
-                else:
-                    crc <<= 1
-                cnt += 1
+        cnt = 0
+        while cnt < 32:
+            if ((crc & (1 << 31)) != 0):
+                crc = (crc << 1) ^ 0x4C11DB7
+            else:
+                crc <<= 1
+            cnt += 1
 
         return crc
