@@ -455,7 +455,7 @@ class ExecutorTask:
         bin_end = bin_size - ((bin_size - bin_begin) % page_size)
 
         response_delay = 0.1
-        response_timeout = 5
+        response_timeout = 10
         for page_begin in range(bin_begin, bin_end+1, page_size):
             page_end = page_begin + page_size
             curr_page = bin_buffer[page_begin:page_end]
