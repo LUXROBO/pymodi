@@ -563,7 +563,7 @@ class ExecutorTask:
             raise Exception("CRC Errored")
 
     def crc32(self, data, crc):
-        crc ^= int.from_bytes(data, byteorder='big', signed=False)
+        crc ^= int.from_bytes(data, byteorder='little', signed=False)
 
         cnt = 0
         while cnt < 32:
