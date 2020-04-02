@@ -596,6 +596,11 @@ class ExecutorTask:
             self.end_flash_success = True
 
         # Reboot
+        reboot_message = self.__set_module_state(
+            module_id, Module.State.REBOOT, Module.State.PNP_OFF
+        )
+        self._send_q.put(reboot_message)
+        self.__delay()
 
         # Firmware update flag down
         print('Firmware update is done for current module', module_id)
