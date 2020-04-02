@@ -10,44 +10,16 @@ from modi._can_task import CanTask
 
 
 class Communicator(mp.Process):
-    """
-    :param queue read_q: Multiprocessing Queue for reading raw data
-    :param queue write_q: Multiprocessing Queue for writing raw data
-    """
 
-    def __init__(self, read_q, write_q):
-        super(Communicator, self).__init__()
-        modi_ports = self._list_modi_ports()
-
-        self.__task = CanTask(read_q, write_q) if (
-            self.is_on_pi() and
-            not self.is_network_module_connected()) \
-            else SerTask(read_q, write_q, modi_ports)
+    def __init__(self, recv_q, send_q):
+        super().__init__()
+        self.__task = CanTask(recv_q, send_q) if self.__is_modi_pi() else SerTask(recv_q, send_q)
         self.__delay = 0.001
 
-    def _list_modi_ports(self):
-        def __is_modi_port(port):
-            return (
-                port.manufacturer == "LUXROBO" or
-                port.product == "MODI Network Module" or
-                port.description == "MODI Network Module" or
-                (port.vid == 12254 and port.pid == 2)
-            )
-
-        return [port for port in stl.comports() if __is_modi_port(port)]
-
-    # def run(self):
-    #     self.__task.open_conn()
-    #     print('run')
-
-    def is_on_pi(self):
-        return os.name != 'nt' and os.uname()[4][:3] == "arm"
-
-    def is_network_module_connected(self):
-        return bool(self._list_modi_ports())
+    def __is_modi_pi(self):
+        return CommunicatorTask.is_on_pi() and not CommunicatorTask.is_network_module_connected()
 
     def run(self):
-        
         self.__task.open_conn()
 
         read_thread = th.Thread(

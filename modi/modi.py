@@ -42,20 +42,20 @@ class MODI:
         self._module_ids = dict()
         self._topology_data = dict()
 
-        self._read_q = mp.Queue()
-        self._write_q = mp.Queue()
+        self._recv_q = mp.Queue()
+        self._send_q = mp.Queue()
 
         self._com_proc = None
         self._exe_thrd = None
 
-        # flag of the modi object initializing
+        # Init flag used to notify initialization of MODI modules
         self._init_event = threading.Event()
 
-        # number of the connected modi modules
+        # Init number of the connected modi modules
         self._nb_modules = nb_modules
 
         if not test:
-            self._com_proc = Communicator(self._read_q, self._write_q)
+            self._com_proc = Communicator(self._recv_q, self._send_q)
             self._com_proc.daemon = True
             self._com_proc.start()
             time.sleep(1)
@@ -64,8 +64,8 @@ class MODI:
                 self._modules,
                 self._module_ids,
                 self._topology_data,
-                self._read_q,
-                self._write_q,
+                self._recv_q,
+                self._send_q,
                 self._init_event,
                 self._nb_modules
             )
@@ -73,7 +73,8 @@ class MODI:
             self._exe_thrd.start()
             time.sleep(1)
 
-        self._init_event.wait()
+            self._init_event.wait()
+            print("MODI modules are initialized!")
 
     def __del__(self):
         pass

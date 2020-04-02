@@ -6,11 +6,6 @@ from modi.module.output_module.output_module import OutputModule
 
 
 class Speaker(OutputModule):
-    """
-    :param int id: The id of the module.
-    :param int uuid: The uuid of the module.
-    :param serial_write_q: multiprocessing.queue of the serial writing
-    """
 
     class PropertyType(Enum):
         FREQUENCY = 3
@@ -105,8 +100,8 @@ class Speaker(OutputModule):
         F_SOL_S_7 = 3322
         F_RA_S_7 = 3729
 
-    def __init__(self, id_, uuid, msg_write_q):
-        super(Speaker, self).__init__(id_, uuid, msg_write_q)
+    def __init__(self, id_, uuid, msg_send_q):
+        super().__init__(id_, uuid, msg_send_q)
 
     def set_tune(self, frequency_value=None, volume_value=None):
         """
@@ -132,7 +127,7 @@ class Speaker(OutputModule):
                 ),
                 self.PropertyDataType.FLOAT,
             )
-            self._msg_write_q.put(message)
+            self._msg_send_q.put(message)
         return self.set_frequency(), self.set_volume()
 
     def set_frequency(self, frequency_value=None):

@@ -10,17 +10,13 @@ from serial import SerialException
 from modi._communicator_task import CommunicatorTask
 
 
-class SerTask:
-    def __init__(self, ser_read_q, ser_write_q, modi_ports):
-        self._ser_read_q = ser_read_q
-        self._ser_write_q = ser_write_q
+    def __init__(self, ser_recv_q, ser_send_q):
+        super().__init__(ser_recv_q, ser_send_q)
+        self._ser_recv_q = ser_recv_q
+        self._ser_send_q = ser_send_q
 
-        self.__modi_ports = modi_ports
+        self.__ser = None
         self.__json_buffer = ""
-
-
-    def __del__(self):
-        self._close_conn()
 
     #
     # Inherited Methods
@@ -33,53 +29,17 @@ class SerTask:
             raise SerialException("No MODI network module is connected.")
 
         # TODO: Refactor code to support multiple MODI network modules here
-        modi_port = self.__modi_ports.pop()
+        modi_port = modi_ports.pop()
         self.__ser = serial.Serial()
         self.__ser.baudrate = 921600
         self.__ser.port = modi_port.device
 
-        #Check if the modi port(i.e. MODI network module) is in use
+        # Check if the modi port(i.e. MODI network module) is in use
         if self.__ser.is_open:
             raise SerialException(
                 "The MODI port {} is already in use".format(self.__ser.port)
             )
         self.__ser.open()
-        
-
-    # def _open_conn(self):
-    #     """ Open serial port
-    #     """
-
-    #     ports = self._list_modi_ports()
-    #     if len(ports) > 0:
-    #         ser = serial.Serial(ports[0].device, 921600)
-    #     else:
-    #         raise serial.SerialException("No MODI network module connected.")
-
-    #     return ser
-
-    # def __is_modi_port(self, port):
-    #     return (
-    #         port.manufacturer == "LUXROBO" or
-    #         port.product == "MODI Network Module" or
-    #         port.description == "MODI Network Module" or
-    #         (port.vid == 12254 and port.pid == 2)
-    #     )
-
-    # def _list_modi_ports(self):
-
-    #     return [port for port in stl.comports() if self.__is_modi_port(port)]
-
-    # def _list_modi_ports(self):
-    #     def __is_modi_port(port):
-    #         return (
-    #             port.manufacturer == "LUXROBO" or
-    #             port.product == "MODI Network Module" or
-    #             port.description == "MODI Network Module" or
-    #             (port.vid == 12254 and port.pid == 2)
-    #         )
-
-    #     return [port for port in stl.comports() if __is_modi_port(port)]
 
     def _close_conn(self):
         """ Close serial port
@@ -105,7 +65,7 @@ class SerTask:
         """ Write serial message in serial write queue
         """
         try:
-            message_to_write = self._ser_write_q.get_nowait().encode()
+            message_to_write = self._ser_send_q.get_nowait().encode()
         except queue.Empty:
             pass
         else:
@@ -131,7 +91,7 @@ class SerTask:
 
             # Parse json message and send it
             json_msg = self.__json_buffer[:split_index]
-            self._ser_read_q.put(json_msg)
+            self._ser_recv_q.put(json_msg)
 
             # Update json buffer, remove the json message sent
             self.__json_buffer = self.__json_buffer[split_index:]
