@@ -65,6 +65,7 @@ class ExecutorTask:
         except queue.Empty:
             pass
         else:
+            print('message:', message)
             self.__command_handler(message["c"])(message)
 
         time.sleep(delay)
@@ -561,22 +562,35 @@ class ExecutorTask:
         message_decoded = bytearray(base64.b64decode(byte_data))
 
         stream_state = message_decoded[4]
-        if stream_state == 5:
+        firmware_state = self.get_firmware_state(stream_state)
+        if firmware_state == "CRC Error":
+            raise Exception("CRC Error Raised")
+        elif firmware_state == "CRC Complete":
             self.crc_flag = True
-        elif stream_state == 7:
+        elif firmware_state == "Erase Error":
+            raise Exception("Erase Error Raised")
+        elif firmware_state == "Erase Complete":
             self.erase_flag = True
-        elif stream_state == 4:
-            raise Exception("CRC Errored")
+    
+    def get_firmware_state(self, stream_state):
+        return {
+            0 : "No Error",
+            1 : "Update Ready",
+            2 : "Write Fail",
+            3 : "Verify Fail",
+            4 : "CRC Error",
+            5 : "CRC Complete",
+            6 : "Erase Error",
+            7 : "Erase Complete",
+        }.get(stream_state)
 
     def crc32(self, data, crc):
         crc ^= int.from_bytes(data, byteorder='little', signed=False)
 
-        cnt = 0
-        while cnt < 32:
+        for _ in range(32):
             if ((crc & (1 << 31)) != 0):
                 crc = (crc << 1) ^ 0x4C11DB7
             else:
                 crc <<= 1
-            cnt += 1
 
         return crc
