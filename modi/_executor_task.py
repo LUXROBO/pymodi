@@ -490,7 +490,7 @@ class ExecutorTask:
                     module_id, seq_num=curr_ptr//8, bin_data=curr_data
                 )
 
-                # Calc CRC32 checksum
+                # Calculate CRC64 using CRC32 twice
                 checksum = self.crc32(curr_data[:4], checksum)
                 checksum = self.crc32(curr_data[4:], checksum)
 
@@ -592,5 +592,6 @@ class ExecutorTask:
                 crc = (crc << 1) ^ 0x4C11DB7
             else:
                 crc <<= 1
+            crc &= 0xFFFFFFFF
 
         return crc
