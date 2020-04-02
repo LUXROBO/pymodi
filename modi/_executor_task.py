@@ -442,12 +442,12 @@ class ExecutorTask:
         self.__delay()
 
     def update_firmware_for_real(self, module_id):
-        module_type = "ir"
+        module_type_str = self.get_module_type(module_id)
 
         # Init path to binary file
         root_path = "/Users/jha/Downloads"
         bin_path = os.path.join(root_path,
-                                "skeleton", module_type, "Base_module.bin")
+                                "skeleton", module_type_str, "Base_module.bin")
 
         # Read bytes data from the given binary file of the current module
         bin_buffer = None
@@ -712,3 +712,34 @@ class ExecutorTask:
             crc &= 0xFFFFFFFF
 
         return crc
+
+    def get_module_type(self, module_id):
+        module_inst = self.get_module_inst(module_id)
+        if isinstance(module_inst, Button):
+            return "button"
+        elif isinstance(module_inst, Dial):
+            return "dial"
+        elif isinstance(module_inst, Env):
+            return "env"
+        elif isinstance(module_inst, Gyro):
+            return "gyro"
+        elif isinstance(module_inst, Ir):
+            return "ir"
+        elif isinstance(module_inst, Mic):
+            return "mic"
+        elif isinstance(module_inst, Ultrasonic):
+            return "ultrasonic"
+        elif isinstance(module_inst, Display):
+            return "display"
+        elif isinstance(module_inst, Led):
+            return "led"
+        elif isinstance(module_inst, Motor):
+            return "motor"
+        elif isinstance(module_inst, Speaker):
+            return "speaker"
+
+    def get_module_inst(self, module_id):
+        for module_inst in self._modules:
+            if module_inst.id == module_id:
+                return module_inst
+        raise ValueError("No module instance exist for module_id", module_id)
