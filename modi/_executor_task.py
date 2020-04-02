@@ -51,9 +51,12 @@ class ExecutorTask:
         self._nb_modules = nb_modules
 
         self.firmware_update_flag = False
-        self.firmware_update_error_flag = False
+        self.erase_error_flag = False
         self.erase_flag = False
+        self.erase_count = 0
+        self.crc_error_flag = False
         self.crc_flag = False
+        self.crc_count = 0
         self.end_flash_success = False
 
         self.__init_modules()
@@ -476,12 +479,21 @@ class ExecutorTask:
             )
             self._send_q.put(erase_message)
             while not self.erase_flag:
+                if self.erase_error_flag:
+                    self.erase_count += 1
+                    if self.erase_count > 5:
+                        raise Exception("Erase Errored")
+                    break
                 if erase_response_wait_time > response_timeout:
                     raise Exception("Erase timed-out")
                 time.sleep(response_delay)
                 erase_response_wait_time += response_delay
             else:
                 self.erase_flag = False
+            if self.erase_error_flag:
+                page_begin -= page_size
+                self.erase_error_flag = False
+                continue
 
             # Copy current page data to the module
             checksum = 0
@@ -506,12 +518,21 @@ class ExecutorTask:
             )
             self._send_q.put(crc_message)
             while not self.crc_flag:
+                if self.crc_error_flag:
+                    self.crc_count += 1
+                    if self.crc_count > 5:
+                        raise Exception("CRC Errored")
+                    break
                 if crc_response_wait_time > response_timeout:
                     raise Exception("CRC timed-out")
                 time.sleep(response_delay)
                 crc_response_wait_time += response_delay
             else:
                 self.crc_flag = False
+            if self.crc_error_flag:
+                page_begin -= page_size
+                self.crc_error_flag = False
+                continue
         
         # Write end-flash data until success
         while not self.end_flash_success:
@@ -525,12 +546,21 @@ class ExecutorTask:
             )
             self._send_q.put(erase_message)
             while not self.erase_flag:
+                if self.erase_error_flag:
+                    self.erase_count += 1
+                    if self.erase_count > 5:
+                        raise Exception("Erase Errored")
+                    break
                 if erase_response_wait_time > response_timeout:
                     raise Exception("Erase timed-out")
                 time.sleep(response_delay)
                 erase_response_wait_time += response_delay
             else:
                 self.erase_flag = False
+            if self.erase_error_flag:
+                page_begin -= page_size
+                self.erase_error_flag = False
+                continue
 
             data_message = self.get_firmware_data(
                 module_id, seq_num=0, bin_data=end_flash_data
@@ -547,18 +577,29 @@ class ExecutorTask:
             )
             self._send_q.put(crc_message)
             while not self.crc_flag:
+                if self.crc_error_flag:
+                    self.crc_count += 1
+                    if self.crc_count > 5:
+                        raise Exception("CRC Errored")
+                    break
                 if crc_response_wait_time > response_timeout:
                     raise Exception("CRC timed-out")
                 time.sleep(response_delay)
                 crc_response_wait_time += response_delay
             else:
                 self.crc_flag = False
+            if self.crc_error_flag:
+                page_begin -= page_size
+                self.crc_error_flag = False
+                continue
 
             self.end_flash_success = True
 
-        print('end_flash_success')
-
         # Reboot
+
+        # Firmware update flag down
+        print('Firmware update is done for current module', module_id)
+        self.firmware_update_flag = False
 
     def get_firmware_command(self, module_id, rot_stype, rot_scmd,
                              crc32, page_addr):
@@ -616,11 +657,11 @@ class ExecutorTask:
         stream_state = message_decoded[4]
         firmware_state = self.get_firmware_state(stream_state)
         if firmware_state == "CRC Error":
-            raise Exception("CRC Error Raised")
+            self.crc_error_flag = True
         elif firmware_state == "CRC Complete":
             self.crc_flag = True
         elif firmware_state == "Erase Error":
-            raise Exception("Erase Error Raised")
+            self.erase_error_flag = True
         elif firmware_state == "Erase Complete":
             self.erase_flag = True
     
