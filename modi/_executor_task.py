@@ -435,7 +435,7 @@ class ExecutorTask:
         self.__delay()
 
     def update_firmware_for_real(self, module_id):
-        module_type = "mic"
+        module_type = "ir"
 
         # Init path to binary file
         root_path = "/Users/jha/Downloads"
@@ -489,6 +489,7 @@ class ExecutorTask:
                 data_message = self.get_firmware_data(
                     module_id, seq_num=curr_ptr//8, bin_data=curr_data
                 )
+                self._send_q.put(data_message)
 
                 # Calculate CRC64 using CRC32 twice
                 checksum = self.crc32(curr_data[:4], checksum)
