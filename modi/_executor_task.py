@@ -481,7 +481,7 @@ class ExecutorTask:
             while not self.erase_flag:
                 if self.erase_error_flag:
                     self.erase_count += 1
-                    if self.erase_count > 5:
+                    if self.erase_count > 3:
                         raise Exception("Erase Errored")
                     break
                 if erase_response_wait_time > response_timeout:
@@ -506,6 +506,7 @@ class ExecutorTask:
                     module_id, seq_num=curr_ptr//8, bin_data=curr_data
                 )
                 self._send_q.put(data_message)
+                time.sleep(0.001)
 
                 # Calculate CRC64 using CRC32 twice
                 checksum = self.crc32(curr_data[:4], checksum)
@@ -520,7 +521,7 @@ class ExecutorTask:
             while not self.crc_flag:
                 if self.crc_error_flag:
                     self.crc_count += 1
-                    if self.crc_count > 5:
+                    if self.crc_count > 9:
                         raise Exception("CRC Errored")
                     break
                 if crc_response_wait_time > response_timeout:
@@ -548,7 +549,7 @@ class ExecutorTask:
             while not self.erase_flag:
                 if self.erase_error_flag:
                     self.erase_count += 1
-                    if self.erase_count > 5:
+                    if self.erase_count > 3:
                         raise Exception("Erase Errored")
                     break
                 if erase_response_wait_time > response_timeout:
@@ -565,6 +566,7 @@ class ExecutorTask:
             data_message = self.get_firmware_data(
                 module_id, seq_num=0, bin_data=end_flash_data
             )
+            self._send_q.put(data_message)
 
             checksum = 0
             checksum = self.crc32(curr_data[:4], checksum)
@@ -579,7 +581,7 @@ class ExecutorTask:
             while not self.crc_flag:
                 if self.crc_error_flag:
                     self.crc_count += 1
-                    if self.crc_count > 5:
+                    if self.crc_count > 9:
                         raise Exception("CRC Errored")
                     break
                 if crc_response_wait_time > response_timeout:
