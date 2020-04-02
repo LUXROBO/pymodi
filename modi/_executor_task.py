@@ -535,10 +535,27 @@ class ExecutorTask:
                 self.crc_error_flag = False
                 continue
         
+        # Include MODI firmware version when writing end flash
+        version_bits = None
+        version_path = os.path.join(root_path, "skeleton", "version.txt")
+        with open(version_path, "r") as vf:
+            version_buffer = vf.read()
+            version_bits = version_buffer.lstrip("v").rstrip().split(".")
+        """ Version number is formed by concatenating all three version bits
+            e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
+        """
+        version = (
+            version_bits[0] << 13 | version_bits[1] << 8 | version_bits[2]
+        )
+
+        # Set end flash data to be sent at the end of firmware update
+        end_flash_data = bytearray(8)
+        end_flash_data[0] = 0xAA
+        end_flash_data[6] = version & 0xFF
+        end_flash_data[7] = version >> 8
+
         # Write end-flash data until success
         while not self.end_flash_success:
-            end_flash_data = bytearray(8)
-            end_flash_data[0] = 0xAA
 
             # Erase page (send erase request and receive erase response)
             erase_response_wait_time = 0
