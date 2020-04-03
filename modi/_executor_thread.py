@@ -18,10 +18,25 @@ class ExecutorThread(threading.Thread):
             modules, module_ids, topology_data, recv_q, send_q,
             init_event, nb_modules
         )
+        self.__stop = threading.Event()
 
     def run(self):
         """ Run executor task
         """
 
-        while 1:
+        while not self.stopped():
             self.__exe_task.run(delay=0.001)
+
+    def stop(self):
+        """ Stop executor task
+        """
+
+        self.__stop.set()
+
+    def stopped(self):
+        """ Check executor task status
+        """
+
+        return self.__stop.is_set()
+
+        
