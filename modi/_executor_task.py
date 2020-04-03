@@ -54,6 +54,7 @@ class ExecutorTask:
 
         self.response_flag = False
         self.response_error_flag = False
+        self.response_error_count = 0
 
         self.__init_modules()
         print('Start initializing connected MODI modules')
@@ -68,7 +69,6 @@ class ExecutorTask:
             pass
         else:
             self.__command_handler(message["c"])(message)
-            print(message)
 
         time.sleep(delay)
 
@@ -182,6 +182,7 @@ class ExecutorTask:
                 self.t.start()
                 self.firmware_update_in_progress = True
         else:
+            # TODO: Handle warning_type of 7 and 10
             print("Unsupported warning type:", warning_type)
 
     def __update_modules(self, message):
@@ -442,7 +443,7 @@ class ExecutorTask:
         """
 
         print("Start updating firmware for module id:", module_id)
-        module_type_str = "gyro"
+        module_type_str = "button"
 
         # Init path to binary file
         root_path = "/Users/jha/Downloads"
@@ -490,7 +491,7 @@ class ExecutorTask:
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_page_success = self.send_firmware_command(
-                oper_type="crc", module_id=module_id, crc_val=0, 
+                oper_type="crc", module_id=module_id, crc_val=checksum, 
                 dest_addr=flash_memory_addr, page_addr=page_begin)
             if not crc_page_success:
                 page_begin -= page_size
@@ -554,8 +555,7 @@ class ExecutorTask:
                 continue
 
             end_flash_success = True
-        else:
-            print("End flash is written for", module_id)
+        print("End flash is written for", module_id)
 
     def get_firmware_command(self, module_id, rot_stype, rot_scmd,
                              crc32, page_addr):
@@ -651,8 +651,7 @@ class ExecutorTask:
         return checksum
 
     def send_firmware_command(self, oper_type, module_id,
-        crc_val, dest_addr, page_addr=0,
-        response_delay=0.1, response_timeout=10, max_response_error_count=2):
+        crc_val, dest_addr, page_addr=0):
 
         rot_scmd = 2 if oper_type == "erase" else 1
 
@@ -662,9 +661,15 @@ class ExecutorTask:
         )
         self._send_q.put(request_message)
 
+        return self.receive_command_response()
+
+    def receive_command_response(self, response_delay=0.1, response_timeout=5, 
+        max_response_error_count=50):
+        """ Block until receiving a response of the most recent message sent
+        """
+
         # Receive firmware command response
         response_wait_time = 0
-        response_error_count = 0
         while not self.response_flag:
             # Calculate timeout at each iteration
             time.sleep(response_delay)
@@ -672,13 +677,13 @@ class ExecutorTask:
 
             # If timed-out
             if response_wait_time > response_timeout:
-                raise Exception("Response timed-out for " + oper_type)
+                raise Exception("Response timed-out")
 
             # If error is raised
             if self.response_error_flag:
-                response_error_count += 1
-                if response_error_count > max_response_error_count:
-                    raise Exception("Response Errored for " + oper_type)
+                self.response_error_count += 1
+                if self.response_error_count > max_response_error_count:
+                    raise Exception("Response Errored")
                 self.response_error_flag = False
                 return False
 
