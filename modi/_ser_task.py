@@ -10,6 +10,8 @@ from serial import SerialException
 from modi._communicator_task import CommunicatorTask
 
 
+class SerTask(CommunicatorTask):
+    
     def __init__(self, ser_recv_q, ser_send_q):
         super().__init__(ser_recv_q, ser_send_q)
         self._ser_recv_q = ser_recv_q
@@ -24,8 +26,9 @@ from modi._communicator_task import CommunicatorTask
     def open_conn(self):
         """ Open serial port
         """
-        print('in open conn')
-        if not self.__modi_ports:
+        
+        modi_ports = self._list_modi_ports()
+        if not modi_ports:
             raise SerialException("No MODI network module is connected.")
 
         # TODO: Refactor code to support multiple MODI network modules here

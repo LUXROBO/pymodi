@@ -38,6 +38,8 @@ class MODI:
 
     def __init__(self, nb_modules, test=False):
 
+        print('init')
+
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -75,6 +77,7 @@ class MODI:
 
             self._init_event.wait()
             print("MODI modules are initialized!")
+            print('test')
 
     def __del__(self):
         pass
