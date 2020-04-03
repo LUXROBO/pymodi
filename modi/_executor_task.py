@@ -50,14 +50,10 @@ class ExecutorTask:
         self._init_event = init_event
         self._nb_modules = nb_modules
 
-        self.firmware_update_flag = False
-        self.erase_error_flag = False
-        self.erase_flag = False
-        self.erase_count = 0
-        self.crc_error_flag = False
-        self.crc_flag = False
-        self.crc_count = 0
-        self.end_flash_success = False
+        self.firmware_update_in_progress = False
+
+        self.response_flag = False
+        self.response_error_flag = False
 
         self.__init_modules()
         print('Start initializing connected MODI modules')
@@ -72,6 +68,7 @@ class ExecutorTask:
             pass
         else:
             self.__command_handler(message["c"])(message)
+            print(message)
 
         time.sleep(delay)
 
@@ -166,8 +163,6 @@ class ExecutorTask:
     def __update_warning(self, message):
         #print('Warning message:', message)
 
-        sid = message["s"]
-
         WARNING_TYPE_INDEX = 6
         warning_type = bytearray(base64.b64decode(message["b"]))[
             WARNING_TYPE_INDEX
@@ -175,15 +170,17 @@ class ExecutorTask:
         if not warning_type:
             None
 
+        module_id = message["s"]
+        print('warn:', warning_type)
+
         if warning_type == 1:
-            self.update_firmware_ready(module_id=sid)
+            self.is_ready_to_update_firmware(module_id)
         elif warning_type == 2:
-            if not self.firmware_update_flag:
+            if not self.firmware_update_in_progress:
                 self.t = threading.Thread(
-                    target=self.update_firmware_for_real, args=(sid,)
-                )
+                    target=self.update_firmware, args=(module_id,))
                 self.t.start()
-                self.firmware_update_flag = True
+                self.firmware_update_in_progress = True
         else:
             print("Unsupported warning type:", warning_type)
 
@@ -420,18 +417,17 @@ class ExecutorTask:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def update_firmware(self):
+    def request_to_update_firmware(self, module_id):
         """ Remove firmware of MODI modules (Removes EndFlash)
         """
 
-        BROADCAST_ID = 0xFFF
         firmware_update_message = self.__set_module_state(
-            BROADCAST_ID, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
+            module_id, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
         )
         self._send_q.put(firmware_update_message)
         self.__delay()
 
-    def update_firmware_ready(self, module_id):
+    def is_ready_to_update_firmware(self, module_id):
         """ Check if modules with no firmware are ready to update its firmware
         """
 
@@ -441,8 +437,12 @@ class ExecutorTask:
         self._send_q.put(firmware_update_ready_message)
         self.__delay()
 
-    def update_firmware_for_real(self, module_id):
-        module_type_str = self.get_module_type(module_id)
+    def update_firmware(self, module_id):
+        """ Update firmware of a given module
+        """
+
+        print("Start updating firmware for module id:", module_id)
+        module_type_str = "gyro"
 
         # Init path to binary file
         root_path = "/Users/jha/Downloads"
@@ -461,9 +461,6 @@ class ExecutorTask:
         bin_size = os.stat(bin_path).st_size
         bin_begin = 0x9000
         bin_end = bin_size - ((bin_size - bin_begin) % page_size)
-
-        response_delay = 0.1
-        response_timeout = 10
         for page_begin in range(bin_begin, bin_end+1, page_size):
             page_end = page_begin + page_size
             curr_page = bin_buffer[page_begin:page_end]
@@ -472,67 +469,31 @@ class ExecutorTask:
             if not sum(curr_page):
                 continue
 
-            # Erase page (send erase request and receive erase response)
-            erase_response_wait_time = 0
-            erase_message = self.get_firmware_command(
-                module_id, 1, 2, 0, flash_memory_addr+page_begin
-            )
-            self._send_q.put(erase_message)
-            while not self.erase_flag:
-                if self.erase_error_flag:
-                    self.erase_count += 1
-                    if self.erase_count > 3:
-                        raise Exception("Erase Errored")
-                    break
-                if erase_response_wait_time > response_timeout:
-                    raise Exception("Erase timed-out")
-                time.sleep(response_delay)
-                erase_response_wait_time += response_delay
-            else:
-                self.erase_flag = False
-            if self.erase_error_flag:
+            # Erase page (send erase request and receive its response)
+            erase_page_success = self.send_firmware_command(
+                oper_type="erase", module_id=module_id, crc_val=0, 
+                dest_addr=flash_memory_addr, page_addr=page_begin)
+            if not erase_page_success:
                 page_begin -= page_size
-                self.erase_error_flag = False
                 continue
 
-            # Copy current page data to the module
+            # Copy current page data to the module's memory
             checksum = 0
             for curr_ptr in range(0, page_size, 8):
                 if page_begin + curr_ptr >= bin_size:
                     break
 
                 curr_data = curr_page[curr_ptr:curr_ptr+8]
-                data_message = self.get_firmware_data(
-                    module_id, seq_num=curr_ptr//8, bin_data=curr_data
-                )
-                self._send_q.put(data_message)
+                checksum = self.send_firmware_data(module_id, 
+                    seq_num=curr_ptr//8, bin_data=curr_data, crc_val=checksum)
                 time.sleep(0.001)
 
-                # Calculate CRC64 using CRC32 twice
-                checksum = self.crc32(curr_data[:4], checksum)
-                checksum = self.crc32(curr_data[4:], checksum)
-
             # CRC on current page (send CRC request and receive CRC response)
-            crc_response_wait_time = 0
-            crc_message = self.get_firmware_command(
-                module_id, 1, 1, checksum, flash_memory_addr + page_begin
-            )
-            self._send_q.put(crc_message)
-            while not self.crc_flag:
-                if self.crc_error_flag:
-                    self.crc_count += 1
-                    if self.crc_count > 9:
-                        raise Exception("CRC Errored")
-                    break
-                if crc_response_wait_time > response_timeout:
-                    raise Exception("CRC timed-out")
-                time.sleep(response_delay)
-                crc_response_wait_time += response_delay
-            else:
-                self.crc_flag = False
-            if self.crc_error_flag:
+            crc_page_success = self.send_firmware_command(
+                oper_type="crc", module_id=module_id, crc_val=0, 
+                dest_addr=flash_memory_addr, page_addr=page_begin)
+            if not crc_page_success:
                 page_begin -= page_size
-                self.crc_error_flag = False
                 continue
         
         # Include MODI firmware version when writing end flash
@@ -540,7 +501,8 @@ class ExecutorTask:
         version_path = os.path.join(root_path, "skeleton", "version.txt")
         with open(version_path, "r") as vf:
             version_buffer = vf.read()
-            version_bits = version_buffer.lstrip("v").rstrip().split(".")
+            version_bits_str = version_buffer.lstrip("v").rstrip().split(".")
+            version_bits = [int(bit_char) for bit_char in version_bits_str]
         """ Version number is formed by concatenating all three version bits
             e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
         """
@@ -548,72 +510,13 @@ class ExecutorTask:
             version_bits[0] << 13 | version_bits[1] << 8 | version_bits[2]
         )
 
-        # Set end flash data to be sent at the end of firmware update
+        # Set end-flash data to be sent at the end of the firmware update
         end_flash_data = bytearray(8)
         end_flash_data[0] = 0xAA
         end_flash_data[6] = version & 0xFF
-        end_flash_data[7] = version >> 8
-
-        # Write end-flash data until success
-        while not self.end_flash_success:
-
-            # Erase page (send erase request and receive erase response)
-            erase_response_wait_time = 0
-            erase_message = self.get_firmware_command(
-                module_id, 1, 2, 0, 0x0801F800
-            )
-            self._send_q.put(erase_message)
-            while not self.erase_flag:
-                if self.erase_error_flag:
-                    self.erase_count += 1
-                    if self.erase_count > 3:
-                        raise Exception("Erase Errored")
-                    break
-                if erase_response_wait_time > response_timeout:
-                    raise Exception("Erase timed-out")
-                time.sleep(response_delay)
-                erase_response_wait_time += response_delay
-            else:
-                self.erase_flag = False
-            if self.erase_error_flag:
-                page_begin -= page_size
-                self.erase_error_flag = False
-                continue
-
-            data_message = self.get_firmware_data(
-                module_id, seq_num=0, bin_data=end_flash_data
-            )
-            self._send_q.put(data_message)
-
-            checksum = 0
-            checksum = self.crc32(curr_data[:4], checksum)
-            checksum = self.crc32(curr_data[4:], checksum)
-
-            # CRC on current page (send CRC request and receive CRC response)
-            crc_response_wait_time = 0
-            crc_message = self.get_firmware_command(
-                module_id, 1, 1, checksum, 0x0801F800
-            )
-            self._send_q.put(crc_message)
-            while not self.crc_flag:
-                if self.crc_error_flag:
-                    self.crc_count += 1
-                    if self.crc_count > 9:
-                        raise Exception("CRC Errored")
-                    break
-                if crc_response_wait_time > response_timeout:
-                    raise Exception("CRC timed-out")
-                time.sleep(response_delay)
-                crc_response_wait_time += response_delay
-            else:
-                self.crc_flag = False
-            if self.crc_error_flag:
-                page_begin -= page_size
-                self.crc_error_flag = False
-                continue
-
-            self.end_flash_success = True
-
+        end_flash_data[7] = (version >> 8) & 0xFF
+        self.send_end_flash_data(module_id, end_flash_data)
+        
         # Reboot
         reboot_message = self.__set_module_state(
             module_id, Module.State.REBOOT, Module.State.PNP_OFF
@@ -622,8 +525,37 @@ class ExecutorTask:
         self.__delay()
 
         # Firmware update flag down
-        print('Firmware update is done for current module', module_id)
+        print('Firmware update is done for module with id:', module_id)
         self.firmware_update_flag = False
+    
+    def send_end_flash_data(self, module_id, end_flash_data):
+        # Write end-flash data until success
+        end_flash_success = False
+        while not end_flash_success:
+
+            # Erase page (send erase request and receive erase response)
+            erase_page_success = self.send_firmware_command(
+                oper_type="erase", module_id=module_id, crc_val=0, 
+                dest_addr=0x0801F800)
+            if not erase_page_success:
+                continue
+            
+            # Send data
+            data_message = self.get_firmware_data(
+                module_id, seq_num=0, bin_data=end_flash_data)
+            self._send_q.put(data_message)
+            checksum = self.crc64(data=end_flash_data, checksum=0)
+
+            # CRC on current page (send CRC request and receive CRC response)
+            crc_page_success = self.send_firmware_command(
+                oper_type="crc", module_id=module_id, crc_val=checksum, 
+                dest_addr=0x0801F800)
+            if not crc_page_success:
+                continue
+
+            end_flash_success = True
+        else:
+            print("End flash is written for", module_id)
 
     def get_firmware_command(self, module_id, rot_stype, rot_scmd,
                              crc32, page_addr):
@@ -681,13 +613,13 @@ class ExecutorTask:
         stream_state = message_decoded[4]
         firmware_state = self.get_firmware_state(stream_state)
         if firmware_state == "CRC Error":
-            self.crc_error_flag = True
+            self.response_error_flag = True
         elif firmware_state == "CRC Complete":
-            self.crc_flag = True
+            self.response_flag = True
         elif firmware_state == "Erase Error":
-            self.erase_error_flag = True
+            self.response_error_flag = True
         elif firmware_state == "Erase Complete":
-            self.erase_flag = True
+            self.response_flag = True
     
     def get_firmware_state(self, stream_state):
         return {
@@ -712,6 +644,11 @@ class ExecutorTask:
             crc &= 0xFFFFFFFF
 
         return crc
+
+    def crc64(self, data, checksum):
+        checksum = self.crc32(data[:4], checksum)
+        checksum = self.crc32(data[4:], checksum)
+        return checksum
 
     def get_module_type(self, module_id):
         module_inst = self.get_module_inst(module_id)
@@ -743,3 +680,49 @@ class ExecutorTask:
             if module_inst.id == module_id:
                 return module_inst
         raise ValueError("No module instance exist for module_id", module_id)
+
+    def send_firmware_command(self, oper_type, module_id,
+        crc_val, dest_addr, page_addr=0,
+        response_delay=0.1, response_timeout=10, max_response_error_count=2):
+
+        rot_scmd = 2 if oper_type == "erase" else 1
+
+        # Send firmware command request
+        request_message = self.get_firmware_command(
+            module_id, 1, rot_scmd, crc_val, page_addr=dest_addr+page_addr
+        )
+        self._send_q.put(request_message)
+
+        # Receive firmware command response
+        response_wait_time = 0
+        response_error_count = 0
+        while not self.response_flag:
+            # Calculate timeout at each iteration
+            time.sleep(response_delay)
+            response_wait_time += response_delay
+
+            # If timed-out
+            if response_wait_time > response_timeout:
+                raise Exception("Response timed-out for " + oper_type)
+
+            # If error is raised
+            if self.response_error_flag:
+                response_error_count += 1
+                if response_error_count > max_response_error_count:
+                    raise Exception("Response Errored for " + oper_type)
+                self.response_error_flag = False
+                return False
+
+        self.response_flag = False
+        return True
+
+    def send_firmware_data(self, module_id, seq_num, bin_data, crc_val):
+        # Send firmware data
+        data_message = self.get_firmware_data(
+            module_id, seq_num=seq_num, bin_data=bin_data
+        )
+        self._send_q.put(data_message)
+
+        # Calculate crc32 checksum twice
+        checksum = self.crc64(data=bin_data, checksum=crc_val)
+        return checksum
