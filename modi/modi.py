@@ -14,19 +14,6 @@ from pprint import pprint
 from modi._communicator import Communicator
 from modi._executor_thread import ExecutorThread
 
-from modi.module.input_module.button import Button
-from modi.module.input_module.dial import Dial
-from modi.module.input_module.env import Env
-from modi.module.input_module.gyro import Gyro
-from modi.module.input_module.ir import Ir
-from modi.module.input_module.mic import Mic
-from modi.module.input_module.ultrasonic import Ultrasonic
-
-from modi.module.output_module.display import Display
-from modi.module.output_module.led import Led
-from modi.module.output_module.motor import Motor
-from modi.module.output_module.speaker import Speaker
-
 
 class MODI:
     """
@@ -162,7 +149,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Button)])
+                      if module.type == "button"])
 
     @property
     def dials(self):
@@ -170,7 +157,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Dial)])
+                      if module.type == "dial"])
 
     @property
     def displays(self):
@@ -178,7 +165,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Display)])
+                      if module.type == "display"])
 
     @property
     def envs(self):
@@ -186,7 +173,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Env)])
+                      if module.type == "env"])
 
     @property
     def gyros(self):
@@ -194,7 +181,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Gyro)])
+                      if module.type == "gyro"])
 
     @property
     def irs(self):
@@ -202,7 +189,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Ir)])
+                      if module.type == "ir"])
 
     @property
     def leds(self):
@@ -210,7 +197,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Led)])
+                      if module.type == "led"])
 
     @property
     def mics(self):
@@ -218,7 +205,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Mic)])
+                      if module.type == "mic"])
 
     @property
     def motors(self):
@@ -226,7 +213,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Motor)])
+                      if module.type == "motor"])
 
     @property
     def speakers(self):
@@ -234,7 +221,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Speaker)])
+                      if module.type == "speaker"])
 
     @property
     def ultrasonics(self):
@@ -242,4 +229,4 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Ultrasonic)])
+                      if module.type == "ultrasonic"])
