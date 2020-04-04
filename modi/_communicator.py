@@ -1,8 +1,6 @@
 
-import os
 import threading as th
 import multiprocessing as mp
-import serial.tools.list_ports as stl
 
 from modi._communicator_task import CommunicatorTask
 from modi._ser_task import SerTask
@@ -13,7 +11,8 @@ class Communicator(mp.Process):
 
     def __init__(self, recv_q, send_q):
         super().__init__()
-        self.__task = CanTask(recv_q, send_q) if self.__is_modi_pi() else SerTask(recv_q, send_q)
+        task = CanTask if self.__is_modi_pi() else SerTask
+        self.__task = task(recv_q, send_q)
         self.__delay = 0.001
         self.__stop = mp.Event()
 
