@@ -102,6 +102,7 @@ class Speaker(OutputModule):
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
+        self._type = "speaker"
 
     def set_tune(self, frequency_value=None, volume_value=None):
         """

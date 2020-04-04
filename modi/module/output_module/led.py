@@ -17,6 +17,7 @@ class Led(OutputModule):
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
+        self._type = "led"
 
     def set_rgb(self, red=None, green=None, blue=None):
         """

@@ -13,6 +13,7 @@ class Dial(InputModule):
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
+        self._type = "dial"
 
     def get_degree(self):
         """

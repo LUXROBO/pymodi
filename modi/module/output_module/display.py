@@ -14,6 +14,7 @@ class Display(OutputModule):
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
+        self._type = "display"
 
     def set_text(self, text):
         """
