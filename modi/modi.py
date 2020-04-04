@@ -52,27 +52,28 @@ class MODI:
         # Init number of the connected modi modules
         self._nb_modules = nb_modules
 
-        if not test:
-            self._com_proc = Communicator(self._recv_q, self._send_q)
-            self._com_proc.daemon = True
-            self._com_proc.start()
-            time.sleep(1)
+        if test: return
 
-            self._exe_thrd = ExecutorThread(
-                self._modules,
-                self._module_ids,
-                self._topology_data,
-                self._recv_q,
-                self._send_q,
-                self._init_event,
-                self._nb_modules
-            )
-            self._exe_thrd.daemon = True
-            self._exe_thrd.start()
-            time.sleep(1)
+        self._com_proc = Communicator(self._recv_q, self._send_q)
+        self._com_proc.daemon = True
+        self._com_proc.start()
+        time.sleep(1)
 
-            self._init_event.wait()
-            print("MODI modules are initialized!")
+        self._exe_thrd = ExecutorThread(
+            self._modules,
+            self._module_ids,
+            self._topology_data,
+            self._recv_q,
+            self._send_q,
+            self._init_event,
+            self._nb_modules
+        )
+        self._exe_thrd.daemon = True
+        self._exe_thrd.start()
+        time.sleep(1)
+
+        self._init_event.wait()
+        print("MODI modules are initialized!")
 
     def print_ids(self):
         for module in self.modules:
