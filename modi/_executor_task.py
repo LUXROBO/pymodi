@@ -90,13 +90,13 @@ class ExecutorTask:
         stream_state = message_decoded[4]
         # TODO: Remove this if and elif branches
         if stream_state == FirmwareUpdater.FirmwareState.CRC_ERROR.value:
-            self.response_error_flag = True
+            self.firmware_updater.update_response(response=True, is_error_response=True)
         elif stream_state == FirmwareUpdater.FirmwareState.CRC_COMPLETE.value:
-            self.response_flag = True
+            self.firmware_updater.update_response(response=True)
         elif stream_state == FirmwareUpdater.FirmwareState.ERASE_ERROR.value:
-            self.response_error_flag = True
+            self.firmware_updater.update_response(response=True, is_error_response=True)
         elif stream_state == FirmwareUpdater.FirmwareState.ERASE_COMPLETE.value:
-            self.response_flag = True
+            self.firmware_updater.update_response(response=True)
 
     def __update_topology(self, message):
         # print('topology_msg:', message)
@@ -190,10 +190,8 @@ class ExecutorTask:
             self.is_ready_to_update_firmware(module_id)
         elif warning_type == 2:
             if self.firmware_updater is None:
-                self.firmware_updater = FirmwareUpdater(self._send_q, module_id)
-                #self.t = threading.Thread(
-                #    target=self.update_firmware, args=(module_id,))
-                #self.t.start()
+                self.firmware_updater = FirmwareUpdater(self._send_q)
+                self.firmware_updater.update(module_id, "button")
         else:
             # TODO: Handle warning_type of 7 and 10
             print("Unsupported warning type:", warning_type)

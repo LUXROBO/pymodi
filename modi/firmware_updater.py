@@ -3,6 +3,7 @@ import os
 import time
 import json
 import base64
+import threading
 
 from enum import Enum
 
@@ -21,26 +22,28 @@ class FirmwareUpdater:
         ERASE_ERROR = 6
         ERASE_COMPLETE = 7
 
-    def __init__(self, send_q, module_id):
+    def __init__(self, send_q):
         self._send_q = send_q
-
-        self.firmware_update_in_progress = False
 
         self.response_flag = False
         self.response_error_flag = False
         self.response_error_count = 0
+    
+    def update(self, module_id, module_type):
+        updater_thread = threading.Thread(
+            target=self.__update_firmware, args=(module_id, module_type))
+        updater_thread.start()
 
-    def update_firmware(self, module_id):
+    def __update_firmware(self, module_id, module_type):
         """ Update firmware of a given module
         """
 
-        print("Start updating firmware for module id:", module_id)
-        module_type_str = "button"
+        print("Start updating the binary firmware for {}:{}".format(
+            module_type, module_id))
 
         # Init path to binary file
         root_path = "/Users/jha/Downloads"
-        bin_path = os.path.join(root_path,
-                                "skeleton", module_type_str, "Base_module.bin")
+        bin_path = os.path.join(root_path, "skeleton", module_type, "Base_module.bin")
 
         # Read bytes data from the given binary file of the current module
         bin_buffer = None
@@ -120,6 +123,12 @@ class FirmwareUpdater:
         print('Firmware update is done for module with id:', module_id)
         self.firmware_update_flag = False
     
+    def update_response(self, response, is_error_response=False):
+        if not is_error_response:
+            self.response_flag = response
+        else:
+            self.response_error_flag = response
+    
     def __set_module_state(self, destination_id, module_state, pnp_state):
         """ Generate message for set module state and pnp state
         """
@@ -139,6 +148,7 @@ class FirmwareUpdater:
 
         return json.dumps(message, separators=(",", ":"))
 
+    # TODO: Use retry decorator here
     def send_end_flash_data(self, module_id, end_flash_data):
         # Write end-flash data until success
         end_flash_success = False
@@ -152,10 +162,8 @@ class FirmwareUpdater:
                 continue
             
             # Send data
-            data_message = self.get_firmware_data(
-                module_id, seq_num=0, bin_data=end_flash_data)
-            self._send_q.put(data_message)
-            checksum = self.crc64(data=end_flash_data, checksum=0)
+            checksum = self.send_firmware_data(
+                module_id, seq_num=0, bin_data=end_flash_data, crc_val=0)
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_page_success = self.send_firmware_command(
@@ -214,21 +222,6 @@ class FirmwareUpdater:
         message["l"] = 8
 
         return json.dumps(message, separators=(",", ":"))
-
-    def __update_firmware_state(self, message):
-        byte_data = message["b"]
-        message_decoded = bytearray(base64.b64decode(byte_data))
-
-        stream_state = message_decoded[4]
-        # TODO: Remove this if and elif branches
-        if stream_state == self.FirmwareState.CRC_ERROR.value:
-            self.response_error_flag = True
-        elif stream_state == self.FirmwareState.CRC_COMPLETE.value:
-            self.response_flag = True
-        elif stream_state == self.FirmwareState.ERASE_ERROR.value:
-            self.response_error_flag = True
-        elif stream_state == self.FirmwareState.ERASE_COMPLETE.value:
-            self.response_flag = True
 
     def crc32(self, data, crc):
         crc ^= int.from_bytes(data, byteorder='little', signed=False)
