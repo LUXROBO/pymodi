@@ -121,7 +121,6 @@ class FirmwareUpdater:
 
         # Firmware update flag down
         print('Firmware update is done for module with id:', module_id)
-        self.firmware_update_flag = False
     
     def update_response(self, response, is_error_response=False):
         if not is_error_response:
