@@ -176,22 +176,26 @@ class ExecutorTask:
     def __update_warning(self, message):
         #print('Warning message:', message)
 
-        WARNING_TYPE_INDEX = 6
-        warning_type = bytearray(base64.b64decode(message["b"]))[
-            WARNING_TYPE_INDEX
-        ]
-        if not warning_type:
-            None
+        warning_data = bytearray(base64.b64decode(message["b"]))
+        warning_type = warning_data[6]
+
+        # If warning shows current module works fine, return immediately
+        if not warning_type: return
+
+        module_uuid = warning_data[:6]
+        module_uuid_res = 0
+        for i, v in enumerate(module_uuid):
+            module_uuid_res |= v << 8*i
 
         module_id = message["s"]
-        print('warn:', warning_type)
 
         if warning_type == 1:
             self.is_ready_to_update_firmware(module_id)
         elif warning_type == 2:
             if self.firmware_updater is None:
                 self.firmware_updater = FirmwareUpdater(self._send_q)
-                self.firmware_updater.update(module_id, "button")
+                module_type = self.__get_type_from_uuid(module_uuid_res)
+                self.firmware_updater.update(module_id, module_type)
         else:
             # TODO: Handle warning_type of 7 and 10
             print("Unsupported warning type:", warning_type)
@@ -443,3 +447,30 @@ class ExecutorTask:
             module_id, Module.State.UPDATE_FIRMWARE_READY, Module.State.PNP_OFF
         )
         self._send_q.put(firmware_update_ready_message)
+
+    #
+    # Helper Methods below
+    #
+    def __get_type_from_uuid(self, uuid):
+        if uuid is None:
+            return 'Network'
+
+        hexadecimal = hex(uuid).lstrip("0x")
+        type_indicator = str(hexadecimal)[:4]
+        module_type = {
+            # Input modules
+            '2000': 'env',
+            '2010': 'gyro',
+            '2020': 'mic',
+            '2030': 'button',
+            '2040': 'dial',
+            '2050': 'ultrasonic',
+            '2060': 'ir',
+
+            # Output modules
+            '4000': 'display',
+            '4010': 'motor',
+            '4020': 'led',
+            '4030': 'speaker',
+        }.get(type_indicator)
+        return module_type

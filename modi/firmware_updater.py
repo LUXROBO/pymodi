@@ -34,6 +34,12 @@ class FirmwareUpdater:
             target=self.__update_firmware, args=(module_id, module_type))
         updater_thread.start()
 
+    def update_response(self, response, is_error_response=False):
+        if not is_error_response:
+            self.response_flag = response
+        else:
+            self.response_error_flag = response
+    
     def __update_firmware(self, module_id, module_type):
         """ Update firmware of a given module
         """
@@ -122,12 +128,6 @@ class FirmwareUpdater:
         # Firmware update flag down
         print('Firmware update is done for module with id:', module_id)
     
-    def update_response(self, response, is_error_response=False):
-        if not is_error_response:
-            self.response_flag = response
-        else:
-            self.response_error_flag = response
-    
     def __set_module_state(self, destination_id, module_state, pnp_state):
         """ Generate message for set module state and pnp state
         """
@@ -157,6 +157,7 @@ class FirmwareUpdater:
             erase_page_success = self.send_firmware_command(
                 oper_type="erase", module_id=module_id, crc_val=0, 
                 dest_addr=0x0801F800)
+            # TODO: Remove magic number of dest_addr above, try using flash_mem
             if not erase_page_success:
                 continue
             
@@ -222,7 +223,7 @@ class FirmwareUpdater:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def crc32(self, data, crc):
+    def calc_crc32(self, data, crc):
         crc ^= int.from_bytes(data, byteorder='little', signed=False)
 
         for _ in range(32):
@@ -234,9 +235,9 @@ class FirmwareUpdater:
 
         return crc
 
-    def crc64(self, data, checksum):
-        checksum = self.crc32(data[:4], checksum)
-        checksum = self.crc32(data[4:], checksum)
+    def calc_crc64(self, data, checksum):
+        checksum = self.calc_crc32(data[:4], checksum)
+        checksum = self.calc_crc32(data[4:], checksum)
         return checksum
 
     def send_firmware_command(self, oper_type, module_id,
@@ -287,5 +288,5 @@ class FirmwareUpdater:
         self._send_q.put(data_message)
 
         # Calculate crc32 checksum twice
-        checksum = self.crc64(data=bin_data, checksum=crc_val)
+        checksum = self.calc_crc64(data=bin_data, checksum=crc_val)
         return checksum
