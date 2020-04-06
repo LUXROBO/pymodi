@@ -10,7 +10,7 @@ import serial.tools.list_ports as stl
 from modi._communicator_task import CommunicatorTask
 
 
-class CanTask:
+class CanTask(CommunicatorTask):
 
     def __init__(self, can_recv_q, can_send_q):
         self._can_recv_q = can_recv_q
