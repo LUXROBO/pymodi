@@ -23,7 +23,6 @@ setup(
         "pyserial>=3.1.1",
         "enum34>=1.1.6",
         "networkx",
-        "matplotlib",
         "python-can",
     ],
     license="MIT license",
