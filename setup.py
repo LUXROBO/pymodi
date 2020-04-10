@@ -11,6 +11,12 @@ def get_readme():
         readme = readme_file.read()
     return readme
 
+def get_requirements():
+    here = path.abspath(path.dirname(__file__))
+    with open(path.join(here, 'requirements.txt'), encoding='utf-8') as \
+        requirements_file:
+        requirements = requirements_file.read().splitlines()
+        return requirements
 
 setup(
     version="0.7.1",
@@ -19,12 +25,7 @@ setup(
     description="Easy😆 and fast💨 MODI Python API package.",
     long_description=get_readme(),
     long_description_content_type="text/markdown",
-    install_requires=[
-        "pyserial>=3.1.1",
-        "enum34>=1.1.6",
-        "networkx",
-        "python-can",
-    ],
+    install_requires=get_requirements(),
     license="MIT license",
     include_package_data=True,
     keywords=["pymodi", "modi", "luxrobo"],
