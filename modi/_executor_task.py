@@ -55,14 +55,14 @@ class ExecutorTask:
         """ Run in ExecutorThread
         """
 
+        time.sleep(delay)
+
         try:
             message = json.loads(self._recv_q.get_nowait())
         except queue.Empty:
             pass
         else:
             self.__command_handler(message["c"])(message)
-
-        time.sleep(delay)
 
     def __command_handler(self, command):
         """ Excute task based on command message
