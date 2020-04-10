@@ -8,7 +8,6 @@ import multiprocessing as mp
 import threading
 
 import networkx as nx
-import matplotlib.pyplot as plt
 
 from pprint import pprint
 
@@ -122,8 +121,6 @@ class MODI:
         labeled_graph = nx.relabel_nodes(graph, labels)
         # print('total time taken:', time.time() - start_time)
 
-        #nx.draw(labeled_graph, with_labels=True)
-        #plt.show()
         return labeled_graph
 
     def __get_type_from_uuid(self, uuid):
