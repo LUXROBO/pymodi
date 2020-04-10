@@ -399,7 +399,7 @@ class ExecutorTask:
         message["d"] = 0xFFF
 
         direction_data = bytearray(8)
-        message["b"] = base64.b64decode(bytes(direction_data)).decode("utf-8")
+        message["b"] = base64.b64encode(bytes(direction_data)).decode("utf-8")
         message["l"] = 8
 
         return json.dumps(message, separators=(",", ":"))
