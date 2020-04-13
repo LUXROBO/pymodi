@@ -9,7 +9,7 @@ def get_readme():
     here = path.abspath(path.dirname(__file__))
     with open(path.join(here, 'README.md'), encoding='utf-8') as readme_file:
         readme = readme_file.read()
-    return readme
+        return readme
 
 def get_requirements():
     here = path.abspath(path.dirname(__file__))
