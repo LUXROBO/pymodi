@@ -1,13 +1,17 @@
 import time
-
+import json
+import base64
 import pygatt
 
-from binascii import hexlify
 from pygatt.exceptions import NotConnectedError
 
 
 class BleTask:
-    def __init__(self):
+
+    def __init__(self, ble_recv_q, ble_send_q):
+        self._ble_recv_q = ble_recv_q
+        self._ble_send_q = ble_send_q
+
         self.adapter = pygatt.GATTToolBackend()
         self.device = None
 
@@ -63,18 +67,27 @@ class BleTask:
         return target_addr
 
     def subscribe(self, char_uuid):
-        self.device.subscribe(char_uuid, callback=self.handle_data)
+        self.device.subscribe(char_uuid, callback=self.recv_data)
 
-    def handle_data(self, handle, value):
+    def recv_data(self, handle, value):
         """
         handle -- integer, characteristic read handle the data was received on
         value -- bytearray, the data returned in the notification
         """
-        print("Received data: %s" % hexlify(value))
+
+        json_msg = dict()
+        json_msg["c"] = value[:2]
+        json_msg["s"] = value[2:4]
+        json_msg["d"] = value[4:6]
+        json_msg["l"] = value[6:8]
+        json_msg["b"] = base64.b64encode(value[8:]).decode("utf-8")
+
+        json_res = json.dumps(json_msg, separators=(",", ":"))
+        self._ble_recv_q.put(json_res)
 
 
 if __name__ == '__main__':
-    bt = BleTask()
+    bt = BleTask(None, None)
     bt.ble_up()
 
     target_name = 'MODI_1022889'
