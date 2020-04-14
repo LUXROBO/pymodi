@@ -84,18 +84,3 @@ class BleTask:
 
         json_res = json.dumps(json_msg, separators=(",", ":"))
         self._ble_recv_q.put(json_res)
-
-
-if __name__ == '__main__':
-    bt = BleTask(None, None)
-    bt.ble_up()
-
-    target_name = 'MODI_1022889'
-    bt.connect(target_name)
-
-    # characteristic UUID
-    CHAR_UUID = '00008421-0000-1000-8000-00805F9B34FB'
-    bt.subscribe(CHAR_UUID)
-
-    while True:
-        time.sleep(1)
