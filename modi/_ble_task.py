@@ -76,10 +76,10 @@ class BleTask:
         """
 
         json_msg = dict()
-        json_msg["c"] = value[:2]
-        json_msg["s"] = value[2:4]
-        json_msg["d"] = value[4:6]
-        json_msg["l"] = value[6:8]
+        json_msg["c"] = value[1] << 8 | value[0]
+        json_msg["s"] = value[3] << 8 | value[2]
+        json_msg["d"] = value[5] << 8 | value[4]
+        json_msg["l"] = value[7] << 8 | value[6]
         json_msg["b"] = base64.b64encode(value[8:]).decode("utf-8")
 
         json_res = json.dumps(json_msg, separators=(",", ":"))
