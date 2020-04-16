@@ -57,7 +57,7 @@ class ExecutorTask:
 
         try:
             message = json.loads(self._recv_q.get_nowait())
-            print('message : ',message)
+            print('recv message : ',message)
         except queue.Empty:
             pass
         else:

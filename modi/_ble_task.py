@@ -33,20 +33,23 @@ class BleTask:
     def ble_down(self):
         self.adapter.stop()
 
-    def ble_write(self):
-        try:
-            message_to_write = self._ble_send_q.get_nowait().encode()
-        except queue.Empty:
-            pass
-        else:
-            self._write_data(message_to_write)
+    def ble_write(self, char_uuid):
+        while True:
+            time.sleep(0.01)
+            try:
+                message_to_write = self._ble_send_q.get_nowait().encode()
+                print('write message : ',message_to_write)
+            except queue.Empty:
+                pass
+            else:
+                self._write_data(message_to_write, char_uuid)
     
-    def _write_data(self, str_msg):
+    def _write_data(self, str_msg, char_uuid):
         json_msg = json.loads(str_msg)
         ble_msg = self.__compose_ble_msg(json_msg)
 
         try:
-            self.device.send(ble_msg)
+            self.device.char_write(char_uuid, ble_msg, wait_for_response=True)
         # TODO: Raise explicit exception
         except:
             raise ValueError("Ble message not sent!")
@@ -60,14 +63,17 @@ class BleTask:
         dlc = json_msg["l"]
         data = json_msg["b"]
 
+        print(bin(did))
+        print(did)
+        print(bin(did&0xFF00))
         ble_msg[0] = ins & 0xFF
-        ble_msg[1] = ins & 0xFF00
+        ble_msg[1] = ins >> 8 & 0xFF
         ble_msg[2] = sid & 0xFF
-        ble_msg[3] = sid & 0xFF00
+        ble_msg[3] = sid >> 8 & 0xFF
         ble_msg[4] = did & 0xFF
-        ble_msg[5] = did & 0xFF00
+        ble_msg[5] = did >> 8 & 0xFF
         ble_msg[6] = dlc & 0xFF
-        ble_msg[7] = dlc & 0xFF00
+        ble_msg[7] = dlc >> 8 & 0xFF
         ble_msg[8:] = bytearray(base64.b64decode(data))
 
         return ble_msg
@@ -137,5 +143,5 @@ class BleTask:
         json_msg["b"] = base64.b64encode(value[8:]).decode("utf-8")
 
         json_res = json.dumps(json_msg, separators=(",", ":"))
-        print(json_res)
+
         self._ble_recv_q.put(json_res)
