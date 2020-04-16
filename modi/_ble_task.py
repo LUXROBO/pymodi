@@ -5,6 +5,8 @@ import queue
 import base64
 import pygatt
 
+from binascii import hexlify
+
 from pygatt.exceptions import NotConnectedError
 
 from modi._communicator_task import CommunicatorTask
@@ -21,8 +23,6 @@ class BleTask:
 
         self.adapter = pygatt.GATTToolBackend()
         self.device = None
-
-        self.ble_up()
 
     def __del__(self):
         self.ble_down()
@@ -81,7 +81,9 @@ class BleTask:
 
             try:
                 device = self.adapter.connect(address=target_addr, timeout=10)
+                print(device)
             except NotConnectedError:
+                print('in')
                 max_retries -= 1
                 continue
             break
@@ -119,7 +121,7 @@ class BleTask:
         self.device.subscribe(char_uuid, callback=self.recv_data)
 
         while True:
-            time.sleep(1)
+            time.sleep(0.01)
 
     def recv_data(self, handle, value):
         """
@@ -135,4 +137,5 @@ class BleTask:
         json_msg["b"] = base64.b64encode(value[8:]).decode("utf-8")
 
         json_res = json.dumps(json_msg, separators=(",", ":"))
+        print(json_res)
         self._ble_recv_q.put(json_res)
