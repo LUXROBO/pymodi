@@ -51,6 +51,7 @@ class BleTask:
         ins = json_msg["c"]
         sid = json_msg["s"]
         did = json_msg["d"]
+        dlc = json_msg["l"]
         data = json_msg["b"]
 
         ble_msg[0] = ins & 0xFF
@@ -59,7 +60,9 @@ class BleTask:
         ble_msg[3] = sid & 0xFF00
         ble_msg[4] = did & 0xFF
         ble_msg[5] = did & 0xFF00
-        ble_msg[6:] = bytearray(base64.b64decode(data))
+        ble_msg[6] = dlc & 0xFF
+        ble_msg[7] = dlc & 0xFF00
+        ble_msg[8:] = bytearray(base64.b64decode(data))
 
         return ble_msg
 
