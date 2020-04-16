@@ -5,6 +5,8 @@ import pygatt
 
 from pygatt.exceptions import NotConnectedError
 
+from modi._communicator_task import CommunicatorTask
+
 
 class BleTask:
 
