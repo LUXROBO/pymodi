@@ -40,7 +40,7 @@ class BleTask:
         ble_msg = self.__compose_ble_msg(json_msg)
 
         try:
-            self.device.send(ble_msg)
+            self.device.char_write('00008422-0000-1000-8000-00805F9B34FB', ble_msg)
         # TODO: Raise explicit exception
         except:
             raise ValueError("Ble message not sent!")
