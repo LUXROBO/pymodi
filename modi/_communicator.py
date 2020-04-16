@@ -36,7 +36,9 @@ class Communicator(mp.Process):
 
         #read_thread.join()
         #write_thread.join()
-        self.__task.connect('MODI_1022889')
+        self.__task.connect('MODI_996DC5B0')
+
+        
         self.__task.subscribe('00008421-0000-1000-8000-00805F9B34FB')
         
         while True:

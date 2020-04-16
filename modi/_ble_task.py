@@ -1,3 +1,4 @@
+import os
 import time
 import json
 import base64
@@ -14,8 +15,13 @@ class BleTask:
         self._ble_recv_q = ble_recv_q
         self._ble_send_q = ble_send_q
 
+        os.system('sudo hciconfig hci0 down')
+        os.system('sudo hciconfig hci0 up')
+
         self.adapter = pygatt.GATTToolBackend()
         self.device = None
+
+        self.ble_up()
 
     def __del__(self):
         self.ble_down()
@@ -28,6 +34,7 @@ class BleTask:
 
     def connect(self, target_name, max_retries=3):
         target_addr = self.find_addr(target_name)
+        print(target_addr)
 
         while max_retries <= 3:
             print('Try connecting to target address:', target_addr)
@@ -70,6 +77,9 @@ class BleTask:
 
     def subscribe(self, char_uuid):
         self.device.subscribe(char_uuid, callback=self.recv_data)
+
+        while True:
+            time.sleep(1)
 
     def recv_data(self, handle, value):
         """
