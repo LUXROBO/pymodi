@@ -1,6 +1,7 @@
 import os
 import time
 import json
+import queue
 import base64
 import pygatt
 
@@ -31,6 +32,45 @@ class BleTask:
 
     def ble_down(self):
         self.adapter.stop()
+
+    def ble_write(self):
+        try:
+            message_to_write = self._ble_send_q.get_nowait().encode()
+        except queue.Empty:
+            pass
+        else:
+            self._write_data(message_to_write)
+    
+    def _write_data(self, str_msg):
+        json_msg = json.loads(str_msg)
+        ble_msg = self.__compose_ble_msg(json_msg)
+
+        try:
+            self.device.send(ble_msg)
+        # TODO: Raise explicit exception
+        except:
+            raise ValueError("Ble message not sent!")
+    
+    def __compose_ble_msg(self, json_msg):
+        ble_msg = bytearray(16)
+
+        ins = json_msg["c"]
+        sid = json_msg["s"]
+        did = json_msg["d"]
+        dlc = json_msg["l"]
+        data = json_msg["b"]
+
+        ble_msg[0] = ins & 0xFF
+        ble_msg[1] = ins & 0xFF00
+        ble_msg[2] = sid & 0xFF
+        ble_msg[3] = sid & 0xFF00
+        ble_msg[4] = did & 0xFF
+        ble_msg[5] = did & 0xFF00
+        ble_msg[6] = dlc & 0xFF
+        ble_msg[7] = dlc & 0xFF00
+        ble_msg[8:] = bytearray(base64.b64decode(data))
+
+        return ble_msg
 
     def connect(self, target_name, max_retries=3):
         target_addr = self.find_addr(target_name)
