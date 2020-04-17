@@ -75,7 +75,6 @@ class BleTask:
 
     def connect(self, target_name, max_retries=3):
         target_addr = self.find_addr(target_name)
-        print(target_addr)
 
         while max_retries <= 3:
             print('Try connecting to target address:', target_addr)
@@ -84,7 +83,6 @@ class BleTask:
                 device = self.adapter.connect(address=target_addr, timeout=10)
                 print(device)
             except NotConnectedError:
-                print('in')
                 max_retries -= 1
                 continue
             break
@@ -114,7 +112,6 @@ class BleTask:
             for scanned_device in scanned_devices:
                 device_name = scanned_device['name']
                 device_addr = scanned_device['address']
-                print(device_name)
 
                 if device_name is None:
                     continue
@@ -129,9 +126,6 @@ class BleTask:
 
     def subscribe(self, char_uuid):
         self.device.subscribe(char_uuid, callback=self.recv_data)
-
-        while True:
-            time.sleep(0.01)
 
     def recv_data(self, handle, value):
         """
