@@ -27,20 +27,22 @@ class BleTask:
     def ble_down(self):
         self.adapter.stop()
 
-    def ble_write(self):
-        try:
-            message_to_write = self._ble_send_q.get_nowait().encode()
-        except queue.Empty:
-            pass
-        else:
-            self._write_data(message_to_write)
+    def ble_write(self, char_uuid):
+        while True:
+            time.sleep(0.01)
+            try:
+                message_to_write = self._ble_send_q.get_nowait().encode()
+            except queue.Empty:
+                pass
+            else:
+                self._write_data(message_to_write, char_uuid)
     
-    def _write_data(self, str_msg):
+    def _write_data(self, str_msg, char_uuid):
         json_msg = json.loads(str_msg)
         ble_msg = self.__compose_ble_msg(json_msg)
 
         try:
-            self.device.char_write('00008422-0000-1000-8000-00805F9B34FB', ble_msg)
+            self.device.char_write(char_uuid, ble_msg)
         # TODO: Raise explicit exception
         except:
             raise ValueError("Ble message not sent!")
