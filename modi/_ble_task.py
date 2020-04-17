@@ -1,3 +1,4 @@
+import os
 import time
 import json
 import queue
@@ -17,6 +18,9 @@ class BleTask:
 
         self.adapter = pygatt.GATTToolBackend()
         self.device = None
+
+        os.system('sudo hciconfig hci0 down')
+        os.system('sudo hciconfig hci0 up')
 
     def __del__(self):
         self.ble_down()
