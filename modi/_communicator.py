@@ -22,7 +22,7 @@ class Communicator(mp.Process):
     def run(self):
         # self.__task.open_conn()
         self.__task.ble_up()
-        self.__task.connect('MODI_996DC5B0')
+        self.__task.connect('MODI_680C1521')
 
         # read_thread = th.Thread(
         #    target=self.__task.run_read_data, args=(self.__delay,)

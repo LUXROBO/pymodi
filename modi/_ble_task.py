@@ -49,7 +49,7 @@ class BleTask:
         ble_msg = self.__compose_ble_msg(json_msg)
 
         try:
-            self.device.char_write(char_uuid, ble_msg, wait_for_response=True)
+            self.device.char_write(char_uuid ,ble_msg)
         # TODO: Raise explicit exception
         except:
             raise ValueError("Ble message not sent!")
