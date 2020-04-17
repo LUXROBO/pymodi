@@ -20,15 +20,15 @@ class Communicator(mp.Process):
         return CommunicatorTask.is_on_pi() and not CommunicatorTask.is_network_module_connected()
 
     def run(self):
-        #self.__task.open_conn()
+        # self.__task.open_conn()
 
-        #read_thread = th.Thread(
+        # read_thread = th.Thread(
         #    target=self.__task.run_read_data, args=(self.__delay,)
-        #)
-        #read_thread.daemon = True
-        #read_thread.start()
+        # )
+        # read_thread.daemon = True
+        # read_thread.start()
 
-        #write_thread = th.Thread(
+        # write_thread = th.Thread(
         #    target=self.__task.run_write_data, args=(self.__delay,)
         #)
         #write_thread.daemon = True
@@ -38,7 +38,7 @@ class Communicator(mp.Process):
         #write_thread.join()
 
         self.__task.ble_up()
-        self.__task.connect('MODI_1022889')
+        self.__task.connect('MODI_996DC5B0')
         
         read_thread = th.Thread(
             target=self.__task.subscribe, 

@@ -5,6 +5,9 @@ import queue
 import base64
 import pygatt
 
+from binascii import hexlify
+
+from pygatt.exceptions import BLEError
 from pygatt.exceptions import NotConnectedError
 
 from modi._communicator_task import CommunicatorTask
@@ -18,9 +21,6 @@ class BleTask:
 
         self.adapter = pygatt.GATTToolBackend()
         self.device = None
-
-        os.system('sudo hciconfig hci0 down')
-        os.system('sudo hciconfig hci0 up')
 
     def __del__(self):
         self.ble_down()
@@ -75,13 +75,16 @@ class BleTask:
 
     def connect(self, target_name, max_retries=3):
         target_addr = self.find_addr(target_name)
+        print(target_addr)
 
         while max_retries <= 3:
             print('Try connecting to target address:', target_addr)
 
             try:
                 device = self.adapter.connect(address=target_addr, timeout=10)
+                print(device)
             except NotConnectedError:
+                print('in')
                 max_retries -= 1
                 continue
             break
@@ -98,11 +101,20 @@ class BleTask:
             if max_retries < 0:
                 raise ValueError("Cannot connect to the target_device")
 
-            scanned_devices = self.adapter.scan(run_as_root=True)
+            # Re-initializing hci interface for re-scanning properly
+            os.system('sudo hciconfig hci0 down')
+            os.system('sudo hciconfig hci0 up')
+
+            try:
+                scanned_devices = self.adapter.scan(run_as_root=True)
+            except BLEError:
+                max_retries -= 1
+                continue
 
             for scanned_device in scanned_devices:
                 device_name = scanned_device['name']
                 device_addr = scanned_device['address']
+                print(device_name)
 
                 if device_name is None:
                     continue
@@ -118,6 +130,9 @@ class BleTask:
     def subscribe(self, char_uuid):
         self.device.subscribe(char_uuid, callback=self.recv_data)
 
+        while True:
+            time.sleep(0.01)
+
     def recv_data(self, handle, value):
         """
         handle -- integer, characteristic read handle the data was received on
@@ -132,4 +147,5 @@ class BleTask:
         json_msg["b"] = base64.b64encode(value[8:]).decode("utf-8")
 
         json_res = json.dumps(json_msg, separators=(",", ":"))
+
         self._ble_recv_q.put(json_res)

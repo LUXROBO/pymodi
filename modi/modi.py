@@ -74,6 +74,7 @@ class MODI:
             self._init_event.wait()
             if not self._init_event.is_set():
                 raise Exception("Modules are not initialized properly!")
+
             print("MODI modules are initialized!")
 
     def print_ids(self):
