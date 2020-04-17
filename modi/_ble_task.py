@@ -77,11 +77,11 @@ class BleTask:
         target_addr = self.find_addr(target_name)
 
         while max_retries <= 3:
-            print('Try connecting to target address:', target_addr)
+            print('Try connecting to name: {}, addr: {}'.format(
+                target_name, target_addr))
 
             try:
                 device = self.adapter.connect(address=target_addr, timeout=10)
-                print(device)
             except NotConnectedError:
                 max_retries -= 1
                 continue
