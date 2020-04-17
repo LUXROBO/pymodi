@@ -48,8 +48,8 @@ class ExecutorTask:
         self._init_event = init_event
         self._nb_modules = nb_modules
 
-        self.__init_modules()
         print('Start initializing connected MODI modules')
+        self.__init_modules()
 
     def run(self, delay):
         """ Run in ExecutorThread
@@ -399,7 +399,7 @@ class ExecutorTask:
         message["d"] = 0xFFF
 
         direction_data = bytearray(8)
-        message["b"] = base64.b64decode(bytes(direction_data)).decode("utf-8")
+        message["b"] = base64.b64encode(bytes(direction_data)).decode("utf-8")
         message["l"] = 8
 
         return json.dumps(message, separators=(",", ":"))
