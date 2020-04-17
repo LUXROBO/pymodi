@@ -48,8 +48,8 @@ class ExecutorTask:
         self._init_event = init_event
         self._nb_modules = nb_modules
 
-        self.__init_modules()
         print('Start initializing connected MODI modules')
+        self.__init_modules()
 
     def run(self, delay):
         """ Run in ExecutorThread

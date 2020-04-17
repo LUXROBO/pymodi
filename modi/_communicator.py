@@ -32,31 +32,29 @@ class Communicator(mp.Process):
 
         # write_thread = th.Thread(
         #    target=self.__task.run_write_data, args=(self.__delay,)
-        # )
-        # write_thread.daemon = True
-        # write_thread.start()
+        #)
+        #write_thread.daemon = True
+        #write_thread.start()
 
-        # read_thread.join()
-        # write_thread.join()
+        #read_thread.join()
+        #write_thread.join()
+
+        self.__task.ble_up()
+        self.__task.connect('MODI_1022889')
+        
         read_thread = th.Thread(
-                target=self.__task.subscribe, args=('00008421-0000-1000-8000-00805F9B34FB',)
+            target=self.__task.subscribe, 
+            args=('00008421-0000-1000-8000-00805F9B34FB',)
         )
         read_thread.daemon = True
         read_thread.start()
 
         write_thread = th.Thread(
-                target=self.__task.ble_write, args=('00008421-0000-1000-8000-00805F9B34FB',)
+            target=self.__task.ble_write, 
+            args=('00008421-0000-1000-8000-00805F9B34FB',)
         )
         write_thread.daemon = True
         write_thread.start()
 
         read_thread.join()
         write_thread.join()
-
-        # self.__task.ble_up()
-        # self.__task.connect('MODI_996DC5B0')
-        # self.__task.subscribe('00008421-0000-1000-8000-00805F9B34FB')
-        # print('out')
-        
-        while True:
-            time.sleep(0.01)

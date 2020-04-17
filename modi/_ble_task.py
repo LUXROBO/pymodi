@@ -24,6 +24,9 @@ class BleTask:
         self.adapter = pygatt.GATTToolBackend()
         self.device = None
 
+        os.system('sudo hciconfig hci0 down')
+        os.system('sudo hciconfig hci0 up')
+
     def __del__(self):
         self.ble_down()
 
@@ -38,7 +41,6 @@ class BleTask:
             time.sleep(0.01)
             try:
                 message_to_write = self._ble_send_q.get_nowait().encode()
-                print('write message : ',message_to_write)
             except queue.Empty:
                 pass
             else:
@@ -49,7 +51,7 @@ class BleTask:
         ble_msg = self.__compose_ble_msg(json_msg)
 
         try:
-            self.device.char_write(char_uuid ,ble_msg)
+            self.device.char_write(char_uuid, ble_msg)
         # TODO: Raise explicit exception
         except:
             raise ValueError("Ble message not sent!")
@@ -74,7 +76,8 @@ class BleTask:
         ble_msg[5] = did >> 8 & 0xFF
         ble_msg[6] = dlc & 0xFF
         ble_msg[7] = dlc >> 8 & 0xFF
-        ble_msg[8:] = bytearray(base64.b64decode(data))
+
+        ble_msg[8:8+dlc] = bytearray(base64.b64decode(data))
 
         return ble_msg
 
