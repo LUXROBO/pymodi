@@ -101,17 +101,20 @@ class BleTask:
             if max_retries < 0:
                 raise ValueError("Cannot connect to the target_device")
 
+            # Re-initializing hci interface for re-scanning properly
             os.system('sudo hciconfig hci0 down')
             os.system('sudo hciconfig hci0 up')
 
             try:
                 scanned_devices = self.adapter.scan(run_as_root=True)
             except BLEError:
-                pass
+                max_retries -= 1
+                continue
 
             for scanned_device in scanned_devices:
                 device_name = scanned_device['name']
                 device_addr = scanned_device['address']
+                print(device_name)
 
                 if device_name is None:
                     continue
