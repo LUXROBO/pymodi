@@ -45,7 +45,7 @@ class Communicator(mp.Process):
         read_thread.start()
 
         write_thread = th.Thread(
-                target=self.__task.ble_write, args=('00008422-0000-1000-8000-00805F9B34FB',)
+                target=self.__task.ble_write, args=('00008421-0000-1000-8000-00805F9B34FB',)
         )
         write_thread.daemon = True
         write_thread.start()
