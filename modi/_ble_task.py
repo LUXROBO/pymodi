@@ -7,6 +7,7 @@ import pygatt
 
 from binascii import hexlify
 
+from pygatt.exceptions import BLEError
 from pygatt.exceptions import NotConnectedError
 
 from modi._communicator_task import CommunicatorTask
@@ -18,14 +19,8 @@ class BleTask:
         self._ble_recv_q = ble_recv_q
         self._ble_send_q = ble_send_q
 
-        os.system('sudo hciconfig hci0 down')
-        os.system('sudo hciconfig hci0 up')
-
         self.adapter = pygatt.GATTToolBackend()
         self.device = None
-
-        os.system('sudo hciconfig hci0 down')
-        os.system('sudo hciconfig hci0 up')
 
     def __del__(self):
         self.ble_down()
@@ -65,9 +60,6 @@ class BleTask:
         dlc = json_msg["l"]
         data = json_msg["b"]
 
-        print(bin(did))
-        print(did)
-        print(bin(did&0xFF00))
         ble_msg[0] = ins & 0xFF
         ble_msg[1] = ins >> 8 & 0xFF
         ble_msg[2] = sid & 0xFF
@@ -109,7 +101,13 @@ class BleTask:
             if max_retries < 0:
                 raise ValueError("Cannot connect to the target_device")
 
-            scanned_devices = self.adapter.scan(run_as_root=True)
+            os.system('sudo hciconfig hci0 down')
+            os.system('sudo hciconfig hci0 up')
+
+            try:
+                scanned_devices = self.adapter.scan(run_as_root=True)
+            except BLEError:
+                pass
 
             for scanned_device in scanned_devices:
                 device_name = scanned_device['name']
