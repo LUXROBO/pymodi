@@ -5,8 +5,6 @@ import queue
 import base64
 import pygatt
 
-from binascii import hexlify
-
 from pygatt.exceptions import BLEError
 from pygatt.exceptions import NotConnectedError
 
