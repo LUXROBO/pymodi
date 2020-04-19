@@ -12,7 +12,7 @@ from modi._communicator_task import CommunicatorTask
 
 
 class BleTask(CommunicatorTask):
-    char_uuid = '00008421-0000-1000-8000-00805F9B34FB'
+    char_uuid = "00008421-0000-1000-8000-00805F9B34FB"
 
     def __init__(self, ble_recv_q, ble_send_q):
         self._ble_recv_q = ble_recv_q
@@ -25,11 +25,13 @@ class BleTask(CommunicatorTask):
         self._close_conn()
 
     def open_conn(self):
+        os.system("sudo hciconfig hci0 up")
         self.adapter.start()
         self.__connect("MODI_1022889")
 
     def _close_conn(self):
         self.adapter.stop()
+        os.system("sudo hciconfig hci0 down")
 
     def __ble_read(self, handle, value):
         """
@@ -106,7 +108,7 @@ class BleTask(CommunicatorTask):
         target_addr = self.__find_addr(target_name)
 
         while max_retries <= 3:
-            print('Try connecting to name: {}, addr: {}'.format(
+            print("Try connecting to name: {}, addr: {}".format(
                 target_name, target_addr))
 
             try:
@@ -116,7 +118,7 @@ class BleTask(CommunicatorTask):
                 continue
             break
 
-        print('Successfully connected to the target device')
+        print("Successfully connected to the target device")
         self.device = device
 
     def __find_addr(self, target_name, max_retries=5):
@@ -128,19 +130,19 @@ class BleTask(CommunicatorTask):
             if max_retries < 0:
                 raise ValueError("Cannot connect to the target_device")
 
-            # Re-initializing hci interface for re-scanning properly
-            os.system('sudo hciconfig hci0 down')
-            os.system('sudo hciconfig hci0 up')
-
             try:
                 scanned_devices = self.adapter.scan(run_as_root=True)
             except BLEError:
                 max_retries -= 1
+
+                # Re-initializing hci interface for re-scanning properly
+                os.system("sudo hciconfig hci0 down")
+                os.system("sudo hciconfig hci0 up")
                 continue
 
             for scanned_device in scanned_devices:
-                device_name = scanned_device['name']
-                device_addr = scanned_device['address']
+                device_name = scanned_device["name"]
+                device_addr = scanned_device["address"]
 
                 if device_name is None:
                     continue
