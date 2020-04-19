@@ -3,11 +3,8 @@ import os
 
 import serial.tools.list_ports as stl
 
-from abc import ABC
-from abc import abstractmethod
 
-
-class CommunicatorTask(ABC):
+class CommunicatorTask:
 
     def __init__(self, recv_q, send_q):
         self._recv_q = recv_q
@@ -36,26 +33,20 @@ class CommunicatorTask(ABC):
     #
     # Abstract Methods
     #
-    @abstractmethod
     def _close_conn(self):
-        pass
+        raise NotImplementedError
 
-    @abstractmethod
     def _read_data(self):
-        pass
+        raise NotImplementedError
 
-    @abstractmethod
     def _write_data(self):
-        pass
+        raise NotImplementedError
 
-    @abstractmethod
     def open_conn(self):
-        pass
+        raise NotImplementedError
 
-    @abstractmethod
     def run_read_data(self, delay):
-        pass
+        raise NotImplementedError
 
-    @abstractmethod
     def run_write_data(self, delay):
-        pass
+        raise NotImplementedError

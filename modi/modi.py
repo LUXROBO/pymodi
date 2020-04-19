@@ -35,7 +35,7 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self, nb_modules, test=False):
+    def __init__(self, nb_modules, conn_mode="serial", test=False):
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -53,7 +53,8 @@ class MODI:
         self._nb_modules = nb_modules
 
         if not test:
-            self._com_proc = Communicator(self._recv_q, self._send_q)
+            self._com_proc = Communicator(
+                self._recv_q, self._send_q, conn_mode)
             self._com_proc.daemon = True
             self._com_proc.start()
             time.sleep(1)

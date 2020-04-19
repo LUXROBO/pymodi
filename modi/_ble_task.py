@@ -11,7 +11,8 @@ from pygatt.exceptions import NotConnectedError
 from modi._communicator_task import CommunicatorTask
 
 
-class BleTask:
+class BleTask(CommunicatorTask):
+    char_uuid = '00008421-0000-1000-8000-00805F9B34FB'
 
     def __init__(self, ble_recv_q, ble_send_q):
         self._ble_recv_q = ble_recv_q
@@ -21,34 +22,55 @@ class BleTask:
         self.device = None
 
     def __del__(self):
-        self.ble_down()
+        self._close_conn()
 
-    def ble_up(self):
+    def open_conn(self):
         self.adapter.start()
+        self.__connect("MODI_1022889")
 
-    def ble_down(self):
+    def _close_conn(self):
         self.adapter.stop()
 
-    def ble_write(self, char_uuid):
-        while True:
-            time.sleep(0.01)
-            try:
-                message_to_write = self._ble_send_q.get_nowait().encode()
-            except queue.Empty:
-                pass
-            else:
-                self._write_data(message_to_write, char_uuid)
+    def __ble_read(self, handle, value):
+        """
+        handle -- integer, characteristic read handle the data was received on
+        value -- bytearray, the data returned in the notification
+        """
+
+        json_msg = self.__parse_ble_msg(value)
+        self._ble_recv_q.put(json_msg)
+
+    def __ble_write(self):
+        try:
+            message_to_write = self._ble_send_q.get_nowait().encode()
+        except queue.Empty:
+            pass
+        else:
+            self._write_data(message_to_write)
     
-    def _write_data(self, str_msg, char_uuid):
+    def _write_data(self, str_msg):
         json_msg = json.loads(str_msg)
         ble_msg = self.__compose_ble_msg(json_msg)
 
         try:
-            self.device.char_write(char_uuid, ble_msg)
+            self.device.char_write(self.char_uuid, ble_msg)
         # TODO: Raise explicit exception
         except:
             raise ValueError("Ble message not sent!")
     
+    def run_read_data(self, delay):
+        self.device.subscribe(self.char_uuid, callback=self.__ble_read)
+        while True:
+            time.sleep(delay)
+    
+    def run_write_data(self, delay):
+        while True:
+            self.__ble_write()
+            time.sleep(delay)
+
+    #
+    # Ble Helper Methods
+    #
     def __compose_ble_msg(self, json_msg):
         ble_msg = bytearray(16)
 
@@ -70,9 +92,18 @@ class BleTask:
         ble_msg[8:8+dlc] = bytearray(base64.b64decode(data))
 
         return ble_msg
+    
+    def __parse_ble_msg(self, ble_msg):
+        json_msg = dict()
+        json_msg["c"] = ble_msg[1] << 8 | ble_msg[0]
+        json_msg["s"] = ble_msg[3] << 8 | ble_msg[2]
+        json_msg["d"] = ble_msg[5] << 8 | ble_msg[4]
+        json_msg["l"] = ble_msg[7] << 8 | ble_msg[6]
+        json_msg["b"] = base64.b64encode(ble_msg[8:]).decode("utf-8")
+        return json.dumps(json_msg, separators=(",", ":"))
 
-    def connect(self, target_name, max_retries=3):
-        target_addr = self.find_addr(target_name)
+    def __connect(self, target_name, max_retries=3):
+        target_addr = self.__find_addr(target_name)
 
         while max_retries <= 3:
             print('Try connecting to name: {}, addr: {}'.format(
@@ -88,7 +119,7 @@ class BleTask:
         print('Successfully connected to the target device')
         self.device = device
 
-    def find_addr(self, target_name, max_retries=5):
+    def __find_addr(self, target_name, max_retries=5):
         """ Given target device name, find corresponding device address
         """
 
@@ -121,23 +152,3 @@ class BleTask:
             max_retries -= 1
 
         return target_addr
-
-    def subscribe(self, char_uuid):
-        self.device.subscribe(char_uuid, callback=self.recv_data)
-
-    def recv_data(self, handle, value):
-        """
-        handle -- integer, characteristic read handle the data was received on
-        value -- bytearray, the data returned in the notification
-        """
-
-        json_msg = dict()
-        json_msg["c"] = value[1] << 8 | value[0]
-        json_msg["s"] = value[3] << 8 | value[2]
-        json_msg["d"] = value[5] << 8 | value[4]
-        json_msg["l"] = value[7] << 8 | value[6]
-        json_msg["b"] = base64.b64encode(value[8:]).decode("utf-8")
-
-        json_res = json.dumps(json_msg, separators=(",", ":"))
-
-        self._ble_recv_q.put(json_res)
