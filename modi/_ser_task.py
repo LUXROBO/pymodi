@@ -4,10 +4,10 @@ import serial
 
 from serial import SerialException
 
-from modi._communicator_task import CommunicatorTask
+from modi._conn_task import ConnTask
 
 
-class SerTask(CommunicatorTask):
+class SerTask(ConnTask):
 
     def __init__(self, ser_recv_q, ser_send_q):
         super().__init__(ser_recv_q, ser_send_q)

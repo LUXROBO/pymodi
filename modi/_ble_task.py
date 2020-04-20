@@ -8,10 +8,10 @@ import pygatt
 from pygatt.exceptions import BLEError
 from pygatt.exceptions import NotConnectedError
 
-from modi._communicator_task import CommunicatorTask
+from modi._conn_task import ConnTask
 
 
-class BleTask(CommunicatorTask):
+class BleTask(ConnTask):
     char_uuid = "00008421-0000-1000-8000-00805F9B34FB"
 
     def __init__(self, ble_recv_q, ble_send_q):

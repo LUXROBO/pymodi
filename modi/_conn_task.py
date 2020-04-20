@@ -4,7 +4,7 @@ import os
 import serial.tools.list_ports as stl
 
 
-class CommunicatorTask:
+class ConnTask:
 
     def __init__(self, recv_q, send_q):
         self._recv_q = recv_q

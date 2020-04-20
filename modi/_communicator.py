@@ -4,7 +4,7 @@ import time
 import threading as th
 import multiprocessing as mp
 
-from modi._communicator_task import CommunicatorTask
+from modi._communicator_task import ConnTask
 from modi._ser_task import SerTask
 from modi._can_task import CanTask
 from modi._ble_task import BleTask
@@ -18,6 +18,7 @@ class Communicator(mp.Process):
         self.__delay = 0.001
     
     def __init_task(self, conn_mode):
+        # TODO: Replace if and else branches
         conn_mode_in_lower_case = conn_mode.lower()
         if conn_mode_in_lower_case.startswith("ser"):
             return SerTask
