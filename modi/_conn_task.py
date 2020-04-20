@@ -28,7 +28,7 @@ class ConnTask:
 
     @staticmethod
     def is_network_module_connected():
-        return bool(CommunicatorTask._list_modi_ports())
+        return bool(ConnTask._list_modi_ports())
 
     #
     # Abstract Methods

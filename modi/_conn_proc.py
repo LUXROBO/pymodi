@@ -4,13 +4,13 @@ import time
 import threading as th
 import multiprocessing as mp
 
-from modi._communicator_task import ConnTask
+from modi._conn_task import ConnTask
 from modi._ser_task import SerTask
 from modi._can_task import CanTask
 from modi._ble_task import BleTask
 
 
-class Communicator(mp.Process):
+class ConnProc(mp.Process):
 
     def __init__(self, recv_q, send_q, conn_mode):
         super().__init__()

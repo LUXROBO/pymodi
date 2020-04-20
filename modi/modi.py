@@ -11,7 +11,7 @@ import networkx as nx
 
 from pprint import pprint
 
-from modi._communicator import Communicator
+from modi._conn_proc import ConnProc
 from modi._executor_thread import ExecutorThread
 
 from modi.module.input_module.button import Button
@@ -53,8 +53,7 @@ class MODI:
         self._nb_modules = nb_modules
 
         if not test:
-            self._com_proc = Communicator(
-                self._recv_q, self._send_q, conn_mode)
+            self._com_proc = ConnProc(self._recv_q, self._send_q, conn_mode)
             self._com_proc.daemon = True
             self._com_proc.start()
             time.sleep(1)
