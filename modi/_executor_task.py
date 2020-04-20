@@ -57,10 +57,10 @@ class ExecutorTask:
 
         try:
             message = json.loads(self._recv_q.get_nowait())
-            print('recv message : ',message)
         except queue.Empty:
             pass
         else:
+            print('recv msg:',message)
             self.__command_handler(message["c"])(message)
 
         time.sleep(delay)

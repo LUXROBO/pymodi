@@ -49,6 +49,7 @@ class BleTask(ConnTask):
             pass
         else:
             self._write_data(message_to_write)
+            print("wrt msg:", message_to_write)
     
     def _write_data(self, str_msg):
         json_msg = json.loads(str_msg)
