@@ -1,8 +1,6 @@
-#!/usr/bin/env python
+from os import path
 
 from setuptools import setup, find_packages
-
-from os import path
 
 
 def get_readme():
@@ -19,6 +17,7 @@ def get_requirements():
         return requirements
 
 setup(
+    name="pymodi",
     version="0.7.1",
     author="Jinsung Ha",
     author_email="jinsung@luxrobo.com",
@@ -26,10 +25,9 @@ setup(
     long_description=get_readme(),
     long_description_content_type="text/markdown",
     install_requires=get_requirements(),
-    license="MIT license",
+    license="MIT",
     include_package_data=True,
     keywords=["pymodi", "modi", "luxrobo"],
-    name="pymodi",
     packages=find_packages(include=['modi', 'modi.module',
                                     'modi.module.setup_module',
                                     'modi.module.input_module',
@@ -38,7 +36,6 @@ setup(
     url="https://github.com/LUXROBO/pyMODI",
     classifiers=[
         "Natural Language :: English",
-        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Intended Audience :: Education",
         'Intended Audience :: Information Technology',
