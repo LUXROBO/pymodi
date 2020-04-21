@@ -100,7 +100,7 @@ class Module:
 
         property_bytes = bytearray(4)
         property_bytes[0] = property_type
-        property_bytes[2] = 95
+        property_bytes[2] = 90
 
         message["b"] = base64.b64encode(bytes(property_bytes)).decode("utf-8")
         message["l"] = 4
