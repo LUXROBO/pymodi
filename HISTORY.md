@@ -63,3 +63,8 @@ History
 -   Implement test cases for each modi modules.
 -   Implement multiprocessing version of pymodi.
 -   Bug fixes.
+
+0.7.1 (2020-02-07)
+------------------
+-   Refactor file structures
+-   Bug fixes.
