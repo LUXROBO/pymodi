@@ -101,8 +101,8 @@ class BleTask(ConnTask):
         json_msg["c"] = ble_msg[1] << 8 | ble_msg[0]
         json_msg["s"] = ble_msg[3] << 8 | ble_msg[2]
         json_msg["d"] = ble_msg[5] << 8 | ble_msg[4]
-        json_msg["l"] = ble_msg[7] << 8 | ble_msg[6]
         json_msg["b"] = base64.b64encode(ble_msg[8:]).decode("utf-8")
+        json_msg["l"] = ble_msg[7] << 8 | ble_msg[6]
         return json.dumps(json_msg, separators=(",", ":"))
 
     def __connect(self, target_name, max_retries=3):
