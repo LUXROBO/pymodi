@@ -13,28 +13,13 @@ class MacBleTask:
         self._ble_recv_q = ble_recv_q
         self._ble_send_q = ble_send_q
 
-        self.loop = asyncio.get_event_loop()
-        addr = self.loop.run_until_complete(
+        loop = asyncio.get_event_loop()
+        addr = loop.run_until_complete(
             self.get_target_device_addr("MODI_1022889")
         )
+        print('target addr:', addr)
 
-        self.client = self.loop.run_until_complete(
-            self.connect_to_client(addr, self.loop)
-        )
-
-        asyncio.gather(
-            self.recv_ble_data(addr, self.loop),
-            self.send_ble_data(addr, self.loop),
-        )
-
-    def __del__(self):
-        self.loop.run_until_complete(self.client.disconnect())
-        self.loop.close()
-    
-    async def connect_to_client(self, addr, loop):
-        client = await BleakClient(addr, loop=loop)
-        await client.connect()
-        return client
+        loop.run_until_complete(self.communicate(addr, loop))
 
     #
     # Async Methods
@@ -48,22 +33,20 @@ class MacBleTask:
                 device_addr, device_name = device_info.split()
                 if target_device_name == device_name:
                     return device_addr[:-1]
-    
-    async def recv_ble_data(self, device_addr, loop):
-        await self.client.start_notify(self.char_uuid, self.notification_handler)
+   
+    async def communicate(self, device_addr, loop):
+        """ Start communicate with MODI HW via BLE Conneciton
+        """
 
-        while True:
-            await asyncio.sleep(0.5, loop=loop)
-        #await client.stop_notify(self.char_uuid)
+        async with BleakClient(device_addr, loop=loop) as client:
+            await client.start_notify(self.char_uuid, self.notification_handler)
 
-    async def send_ble_data(self, device_addr, loop):
-
-        while True:
-            await self.client.write_gatt_char(self.char_uuid, None)
-            await asyncio.sleep(0.01)
+            while True:
+                #await client.write_gatt_char(self.char_uuid, None)
+                await asyncio.sleep(0.01)
 
     #
     # Non-Async Methods
     #
     def notification_handler(self, _, data):
-        print(data)
+        print(type(data), data)

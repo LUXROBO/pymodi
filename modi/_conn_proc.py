@@ -8,6 +8,7 @@ from modi._conn_task import ConnTask
 from modi._ser_task import SerTask
 from modi._can_task import CanTask
 from modi._ble_task import BleTask
+from modi._mac_ble_task import MacBleTask
 
 
 class ConnProc(mp.Process):
@@ -25,24 +26,26 @@ class ConnProc(mp.Process):
         elif conn_mode_in_lower_case.startswith("can"):
             return CanTask
         elif conn_mode_in_lower_case.startswith("ble"):
-            return BleTask
+            return MacBleTask
         else:
             raise Exception("No connection mode exists for:", conn_mode)
 
     def run(self):
-        self.__task.open_conn()
+        #self.__task.open_conn()
 
-        read_thread = th.Thread(
-            target=self.__task.run_read_data, args=(self.__delay,)
-        )
-        read_thread.daemon = True
-        read_thread.start()
+        #read_thread = th.Thread(
+        #    target=self.__task.run_read_data, args=(self.__delay,)
+        #)
+        #read_thread.daemon = True
+        #read_thread.start()
 
-        write_thread = th.Thread(
-            target=self.__task.run_write_data, args=(self.__delay,)
-        )
-        write_thread.daemon = True
-        write_thread.start()
+        #write_thread = th.Thread(
+        #    target=self.__task.run_write_data, args=(self.__delay,)
+        #)
+        #write_thread.daemon = True
+        #write_thread.start()
 
-        read_thread.join()
-        write_thread.join()
+        #read_thread.join()
+        #write_thread.join()
+
+        pass
