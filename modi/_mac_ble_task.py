@@ -3,6 +3,7 @@ import json
 import queue
 import base64
 import asyncio
+import threading 
 
 from bleak import discover
 from bleak import BleakScanner
@@ -16,17 +17,15 @@ class MacBleTask:
         self._ble_recv_q = ble_recv_q
         self._ble_send_q = ble_send_q
 
-        loop = asyncio.get_event_loop()
-        self.addr = loop.run_until_complete(
-            self.get_target_device_addr("MODI_1022889")
-        )
-        print('target addr:', self.addr)
-
-        self.loop = loop
+        self.run()
 
     def run(self):
-        self.loop.run_until_complete(self.communicate(self.addr, self.loop))
-        time.sleep(5)
+        loop = asyncio.get_event_loop()
+        addr = loop.create_task(
+            self.get_target_device_addr("MODI_1022889")
+        )
+
+        loop.create_task(self.communicate(addr, loop))
 
     #
     # Async Methods
@@ -40,6 +39,7 @@ class MacBleTask:
                 device_addr, device_name = device_info.split()
                 if target_device_name == device_name:
                     return device_addr[:-1]
+        raise Exception("No device exists")
    
     async def communicate(self, device_addr, loop):
         """ Start communicate with MODI HW via BLE Conneciton
@@ -50,12 +50,14 @@ class MacBleTask:
 
             while True:
                 await asyncio.sleep(0.01)
+                print('??')
 
                 try:
                     msg_to_send = self._ble_send_q.get_nowait().encode()
                 except queue.Empty:
                     pass
                 else:
+                    print('send msg', msg_to_send)
                     ble_msg = self.__compose_ble_msg(msg_to_send)
                     await client.write_gatt_char(self.char_uuid, ble_msg)
 
@@ -65,6 +67,7 @@ class MacBleTask:
     def notification_handler(self, _, data):
         json_msg = self.__parse_ble_msg(bytearray(data))
         self._ble_recv_q.put(json_msg)
+        #print('recv msg', json_msg)
 
     def __parse_ble_msg(self, ble_msg):
         json_msg = dict()

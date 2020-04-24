@@ -53,10 +53,12 @@ class MODI:
         self._nb_modules = nb_modules
 
         if not test:
+            print('XXX?')
             self._com_proc = ConnProc(self._recv_q, self._send_q, conn_mode)
             self._com_proc.daemon = True
             self._com_proc.start()
             time.sleep(1)
+            print('YYY?')
 
             self._exe_thrd = ExecutorThread(
                 self._modules,

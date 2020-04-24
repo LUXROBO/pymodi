@@ -15,7 +15,10 @@ class ConnProc(mp.Process):
 
     def __init__(self, recv_q, send_q, conn_mode):
         super().__init__()
-        self.__task = self.__init_task(conn_mode)(recv_q, send_q)
+        self._recv_q = recv_q
+        self._send_q = send_q
+
+        #self.__task = self.__init_task(conn_mode)(recv_q, send_q)
         self.__delay = 0.001
     
     def __init_task(self, conn_mode):
@@ -48,4 +51,7 @@ class ConnProc(mp.Process):
         #read_thread.join()
         #write_thread.join()
 
-        pass
+        #self.__task.run(), 
+
+        bletask = MacBleTask(self._recv_q, self._send_q)
+        print('hello')
