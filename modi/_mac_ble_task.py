@@ -1,5 +1,6 @@
 import time
 import json
+import queue
 import base64
 import asyncio
 
@@ -16,12 +17,16 @@ class MacBleTask:
         self._ble_send_q = ble_send_q
 
         loop = asyncio.get_event_loop()
-        addr = loop.run_until_complete(
+        self.addr = loop.run_until_complete(
             self.get_target_device_addr("MODI_1022889")
         )
-        print('target addr:', addr)
+        print('target addr:', self.addr)
 
-        loop.run_until_complete(self.communicate(addr, loop))
+        self.loop = loop
+
+    def run(self):
+        self.loop.run_until_complete(self.communicate(self.addr, self.loop))
+        time.sleep(5)
 
     #
     # Async Methods
@@ -44,8 +49,15 @@ class MacBleTask:
             await client.start_notify(self.char_uuid, self.notification_handler)
 
             while True:
-                #await client.write_gatt_char(self.char_uuid, None)
                 await asyncio.sleep(0.01)
+
+                try:
+                    msg_to_send = self._ble_send_q.get_nowait().encode()
+                except queue.Empty:
+                    pass
+                else:
+                    ble_msg = self.__compose_ble_msg(msg_to_send)
+                    await client.write_gatt_char(self.char_uuid, ble_msg)
 
     #
     # Non-Async Methods
@@ -62,3 +74,25 @@ class MacBleTask:
         json_msg["b"] = base64.b64encode(ble_msg[8:]).decode("utf-8")
         json_msg["l"] = ble_msg[7] << 8 | ble_msg[6]
         return json.dumps(json_msg, separators=(",", ":"))
+
+    def __compose_ble_msg(self, json_msg):
+        ble_msg = bytearray(16)
+
+        ins = json_msg["c"]
+        sid = json_msg["s"]
+        did = json_msg["d"]
+        dlc = json_msg["l"]
+        data = json_msg["b"]
+
+        ble_msg[0] = ins & 0xFF
+        ble_msg[1] = ins >> 8 & 0xFF
+        ble_msg[2] = sid & 0xFF
+        ble_msg[3] = sid >> 8 & 0xFF
+        ble_msg[4] = did & 0xFF
+        ble_msg[5] = did >> 8 & 0xFF
+        ble_msg[6] = dlc & 0xFF
+        ble_msg[7] = dlc >> 8 & 0xFF
+
+        ble_msg[8:8+dlc] = bytearray(base64.b64decode(data))
+
+        return ble_msg
