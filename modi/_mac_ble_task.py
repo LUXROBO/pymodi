@@ -17,40 +17,19 @@ class MacBleTask:
         self._ble_recv_q = ble_recv_q
         self._ble_send_q = ble_send_q
 
-        self.run()
-
-    def run(self):
         loop = asyncio.get_event_loop()
-        addr = loop.create_task(
-            self.get_target_device_addr("MODI_1022889")
-        )
+        loop.run_until_complete(self.communicate(loop))
 
-        loop.create_task(self.communicate(addr, loop))
-
-    #
-    # Async Methods
-    #
-    async def get_target_device_addr(self, target_device_name):
-        # TODO: Use BleakScanner.discover() later
-        devices = await discover()
-        for d in devices:
-            if 'uuids' in d.metadata:
-                device_info = d.__str__()
-                device_addr, device_name = device_info.split()
-                if target_device_name == device_name:
-                    return device_addr[:-1]
-        raise Exception("No device exists")
-   
-    async def communicate(self, device_addr, loop):
+    async def communicate(self, loop):
         """ Start communicate with MODI HW via BLE Conneciton
         """
+        addr = await self.__get_target_device_addr("MODI_BF7FDC2A")
 
-        async with BleakClient(device_addr, loop=loop) as client:
+        async with BleakClient(addr, loop=loop) as client:
             await client.start_notify(self.char_uuid, self.notification_handler)
 
             while True:
                 await asyncio.sleep(0.01)
-                print('??')
 
                 try:
                     msg_to_send = self._ble_send_q.get_nowait().encode()
@@ -61,6 +40,20 @@ class MacBleTask:
                     ble_msg = self.__compose_ble_msg(msg_to_send)
                     await client.write_gatt_char(self.char_uuid, ble_msg)
 
+    #
+    # Async Methods
+    #
+    async def __get_target_device_addr(self, target_device_name):
+        # TODO: Use BleakScanner.discover() later
+        devices = await discover()
+        for d in devices:
+            if 'uuids' in d.metadata:
+                print('hello')
+                device_info = d.__str__()
+                device_addr, device_name = device_info.split()
+                if target_device_name == device_name:
+                    return device_addr[:-1]
+   
     #
     # Non-Async Methods
     #

@@ -1,5 +1,6 @@
 
 import time
+import asyncio
 
 import threading as th
 import multiprocessing as mp
@@ -54,4 +55,3 @@ class ConnProc(mp.Process):
         #self.__task.run(), 
 
         bletask = MacBleTask(self._recv_q, self._send_q)
-        print('hello')
