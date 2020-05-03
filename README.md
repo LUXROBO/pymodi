@@ -58,10 +58,3 @@ Let\'s blink the LED\'s light 5 times:
         led.set_off()
         time.sleep(1)
 
-Credits
--------
-
-This package was created with
-[Cookiecutter](https://github.com/audreyr/cookiecutter) and the
-[audreyr/cookiecutter-pypackage](https://github.com/audreyr/cookiecutter-pypackage)
-project template.
