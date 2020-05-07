@@ -9,6 +9,12 @@ def get_readme():
         readme = readme_file.read()
         return readme
 
+def get_history():
+    here = path.abspath(path.dirname(__file__))
+    with open(path.join(here, 'HISTORY.md'), encoding='utf-8') as history_file:
+        history = history_file.read()
+        return history
+
 def get_requirements():
     here = path.abspath(path.dirname(__file__))
     with open(path.join(here, 'requirements.txt'), encoding='utf-8') as \
@@ -22,7 +28,7 @@ setup(
     author="Jinsung Ha",
     author_email="jinsung@luxrobo.com",
     description="Easy😆 and fast💨 MODI Python API package.",
-    long_description=get_readme(),
+    long_description=get_readme() + '\n' + get_history(),
     long_description_content_type="text/markdown",
     install_requires=get_requirements(),
     license="MIT",
