@@ -73,5 +73,5 @@ History
 ------------------
 -   Implement Can Message Handler.
 -   Implement Topology Manager.
--   Improve connection reliablity by separating receiving and sending operations.
+-   Improve connection reliability by separating receiving and sending operations.
 -   Bug fixes.
