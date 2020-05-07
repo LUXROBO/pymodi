@@ -71,6 +71,6 @@ deploy:
   distributions: sdist bdist_wheel
   on:
     repo: LUXROBO/pyMODI
-    branch: develop
+    branch: master
     tags: true
     python: 3.8
