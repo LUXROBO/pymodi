@@ -57,4 +57,3 @@ Let\'s blink the LED\'s light 5 times:
         time.sleep(1)
         led.set_off()
         time.sleep(1)
-
