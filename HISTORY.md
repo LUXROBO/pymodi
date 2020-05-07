@@ -66,5 +66,12 @@ History
 
 0.7.1 (2020-02-07)
 ------------------
--   Refactor file structures
+-   Refactor file structures.
+-   Bug fixes.
+
+0.8.0 (2020-05-07)
+------------------
+-   Implement Can Message Handler.
+-   Implement Topology 
+-   Improve connection reliablity by separating receiving and sending operations.
 -   Bug fixes.
