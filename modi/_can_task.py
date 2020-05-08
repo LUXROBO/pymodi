@@ -5,8 +5,6 @@ import json
 import queue
 import base64
 
-import serial.tools.list_ports as stl
-
 from modi._communicator_task import CommunicatorTask
 
 
@@ -15,7 +13,7 @@ class CanTask(CommunicatorTask):
     def __init__(self, can_recv_q, can_send_q):
         self._can_recv_q = can_recv_q
         self._can_send_q = can_send_q
-        
+
         self.__can0 = None
 
     def __del__(self):
@@ -40,7 +38,7 @@ class CanTask(CommunicatorTask):
     def open_conn(self):
         os.system("sudo ip link set can0 type can bitrate 1000000")
         os.system("sudo ifconfig can0 up")
-        
+
         self.__can0 = can.interface.Bus(
             channel="can0", bustype="socketcan_ctypes"
         )
@@ -51,14 +49,14 @@ class CanTask(CommunicatorTask):
     def _read_data(self, timeout=None):
         if self.__can0 is None:
             raise ValueError("Can is not initialized")
-            
+
         can_msg = self.__can0.recv(timeout=timeout)
         if can_msg is None:
             raise ValueError("Can message not received!")
         return can_msg
 
     def _write_data(self, str_msg):
-        """ Given parsed binary string message in json format, 
+        """ Given parsed binary string message in json format,
             convert and send the message as CAN format
         """
 
