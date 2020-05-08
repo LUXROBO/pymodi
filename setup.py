@@ -9,22 +9,25 @@ def get_readme():
         readme = readme_file.read()
         return readme
 
+
 def get_history():
     here = path.abspath(path.dirname(__file__))
     with open(path.join(here, 'HISTORY.md'), encoding='utf-8') as history_file:
         history = history_file.read()
         return history
 
+
 def get_requirements():
     here = path.abspath(path.dirname(__file__))
     with open(path.join(here, 'requirements.txt'), encoding='utf-8') as \
-        requirements_file:
+            requirements_file:
         requirements = requirements_file.read().splitlines()
         return requirements
 
+
 setup(
     name="pymodi",
-    version="0.8.0",
+    version="0.7.1",
     author="Jinsung Ha",
     author_email="jinsung@luxrobo.com",
     description="Easy😆 and fast💨 MODI Python API package.",
