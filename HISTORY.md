@@ -63,3 +63,15 @@ History
 -   Implement test cases for each modi modules.
 -   Implement multiprocessing version of pymodi.
 -   Bug fixes.
+
+0.7.1 (2020-02-07)
+------------------
+-   Refactor file structures.
+-   Bug fixes.
+
+0.8.0 (2020-05-07)
+------------------
+-   Implement Can Message Handler.
+-   Implement Topology Manager.
+-   Improve connection reliability by separating receiving and sending operations.
+-   Bug fixes.

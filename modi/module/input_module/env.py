@@ -6,11 +6,6 @@ from modi.module.input_module.input_module import InputModule
 
 
 class Env(InputModule):
-    """
-    :param int id: The id of the module.
-    :param int uuid: The uuid of the module.
-    :param serial_write_q: multiprocessing.queue of the serial writing
-    """
 
     class PropertyType(Enum):
         TEMPERATURE = 6
@@ -20,8 +15,8 @@ class Env(InputModule):
         GREEN = 4
         BLUE = 5
 
-    def __init__(self, id_, uuid, serial_write_q):
-        super(Env, self).__init__(id_, uuid, serial_write_q)
+    def __init__(self, id_, uuid, msg_send_q):
+        super().__init__(id_, uuid, msg_send_q)
 
     def get_temperature(self):
         """

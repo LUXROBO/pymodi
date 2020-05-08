@@ -10,7 +10,7 @@ class TestMotor(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.mock_kwargs = {"id_": -1, "uuid": -1, "serial_write_q": None}
+        self.mock_kwargs = {"id_": -1, "uuid": -1, "can_write_q": None}
         self.motor = Motor(**self.mock_kwargs)
 
         def eval_set_property(id, command_type, data):
@@ -18,7 +18,7 @@ class TestMotor(unittest.TestCase):
 
         self.motor._set_property = mock.Mock(side_effect=eval_set_property)
         self.motor._get_property = mock.Mock()
-        self.motor._serial_write_q = mock.Mock()
+        self.motor._can_write_q = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
