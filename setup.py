@@ -27,7 +27,7 @@ def get_requirements():
 
 setup(
     name="pymodi",
-    version="0.7.1",
+    version="0.8.0",
     author="Jinsung Ha",
     author_email="jinsung@luxrobo.com",
     description="Easy😆 and fast💨 MODI Python API package.",
