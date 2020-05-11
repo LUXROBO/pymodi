@@ -13,7 +13,7 @@ class Communicator(mp.Process):
     def __init__(self, recv_q, send_q, conn_mode):
         super().__init__()
         self.__task = self.__init_task(conn_mode)(recv_q, send_q)
-        self.__delay = 0.01 if isinstance(self.__task, SppTask) else 0.001
+        self.__delay = 0.05 if isinstance(self.__task, SppTask) else 0.001
 
     def __init_task(self, conn_mode):
         if conn_mode.startswith("bluetooth") or conn_mode.startswith("spp"):
