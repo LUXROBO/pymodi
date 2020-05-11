@@ -8,7 +8,7 @@ from serial import SerialException
 from modi._communicator_task import CommunicatorTask
 
 
-class SerTask(CommunicatorTask):
+class SppTask(CommunicatorTask):
 
     def __init__(self, ser_recv_q, ser_send_q):
         super().__init__(ser_recv_q, ser_send_q)
@@ -49,6 +49,7 @@ class SerTask(CommunicatorTask):
                 "The MODI port {} is already in use".format(self.__ser.port)
             )
         self.__ser.open()
+        time.sleep(5)
 
     def _close_conn(self):
         """ Close serial port
@@ -79,6 +80,7 @@ class SerTask(CommunicatorTask):
         except queue.Empty:
             pass
         else:
+            print("write msg:", message_to_write)
             self.__ser.write(message_to_write)
 
     def run_read_data(self, delay):
@@ -102,6 +104,7 @@ class SerTask(CommunicatorTask):
             # Parse json message and send it
             json_msg = self.__json_buffer[:split_index]
             self._ser_recv_q.put(json_msg)
+            print("ser recv msg", json_msg)
 
             # Update json buffer, remove the json message sent
             self.__json_buffer = self.__json_buffer[split_index:]
