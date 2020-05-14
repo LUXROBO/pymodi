@@ -62,6 +62,7 @@ class ExecutorTask:
         except queue.Empty:
             pass
         else:
+            print("exe msg:", message)
             self.__command_handler(message["c"])(message)
 
     def __command_handler(self, command):
