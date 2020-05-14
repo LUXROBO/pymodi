@@ -10,10 +10,10 @@ from modi._communicator_task import CommunicatorTask
 
 class SppTask(CommunicatorTask):
 
-    def __init__(self, ser_recv_q, ser_send_q):
-        super().__init__(ser_recv_q, ser_send_q)
-        self._ser_recv_q = ser_recv_q
-        self._ser_send_q = ser_send_q
+    def __init__(self, spp_recv_q, spp_send_q):
+        super().__init__(spp_recv_q, spp_send_q)
+        self._spp_recv_q = spp_recv_q
+        self._spp_send_q = spp_send_q
 
         self.__ser = None
         self.__json_buffer = ""
@@ -76,7 +76,7 @@ class SppTask(CommunicatorTask):
         """
 
         try:
-            message_to_write = self._ser_send_q.get_nowait().encode()
+            message_to_write = self._spp_send_q.get_nowait().encode()
         except queue.Empty:
             pass
         else:
@@ -103,7 +103,7 @@ class SppTask(CommunicatorTask):
 
             # Parse json message and send it
             json_msg = self.__json_buffer[:split_index]
-            self._ser_recv_q.put(json_msg)
+            self._spp_recv_q.put(json_msg)
             print("ser recv msg", json_msg)
 
             # Update json buffer, remove the json message sent
