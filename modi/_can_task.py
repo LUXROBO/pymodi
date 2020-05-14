@@ -68,12 +68,12 @@ class CanTask(CommunicatorTask):
             raise ValueError("Can message not sent!")
 
     def run_read_data(self, delay):
-        while 1:
+        while True:
             self.__can_read()
             time.sleep(delay)
 
     def run_write_data(self, delay):
-        while 1:
+        while True:
             self.__can_write()
             time.sleep(delay)
 

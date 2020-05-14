@@ -73,12 +73,12 @@ class SerTask(CommunicatorTask):
             self.__ser.write(message_to_write)
 
     def run_read_data(self, delay):
-        while 1:
+        while True:
             self._read_data()
             time.sleep(delay)
 
     def run_write_data(self, delay):
-        while 1:
+        while True:
             self._write_data()
             time.sleep(delay)
 

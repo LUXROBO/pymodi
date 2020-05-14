@@ -47,9 +47,6 @@ class MODI:
         # Init flag used to notify initialization of MODI modules
         module_init_flag = th.Event()
 
-        # Init number of the connected modi modules
-        self._nb_modules = nb_modules
-
         # If in test run, do not create process and thread
         if test:
             return
@@ -68,7 +65,7 @@ class MODI:
             self._recv_q,
             self._send_q,
             module_init_flag,
-            self._nb_modules
+            nb_modules,
         )
         self._exe_thrd.daemon = True
         self._exe_thrd.start()

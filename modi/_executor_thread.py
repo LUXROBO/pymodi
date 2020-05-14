@@ -23,5 +23,5 @@ class ExecutorThread(threading.Thread):
         """ Run executor task
         """
 
-        while 1:
+        while True:
             self.__exe_task.run(delay=0.001)
