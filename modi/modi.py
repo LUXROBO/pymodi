@@ -45,7 +45,7 @@ class MODI:
         self._exe_thrd = None
 
         # Init flag used to notify initialization of MODI modules
-        self._init_event = th.Event()
+        module_init_flag = th.Event()
 
         # Init number of the connected modi modules
         self._nb_modules = nb_modules
@@ -62,15 +62,15 @@ class MODI:
                 self._topology_data,
                 self._recv_q,
                 self._send_q,
-                self._init_event,
+                module_init_flag,
                 self._nb_modules
             )
             self._exe_thrd.daemon = True
             self._exe_thrd.start()
             time.sleep(1)
 
-            self._init_event.wait(timeout=10)
-            if not self._init_event.is_set():
+            module_init_flag.wait(timeout=10)
+            if not module_init_flag.is_set():
                 raise Exception("Modules are not initialized properly!")
             print("MODI modules are initialized!")
 
