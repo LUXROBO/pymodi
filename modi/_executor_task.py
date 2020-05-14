@@ -58,8 +58,12 @@ class ExecutorTask:
         time.sleep(delay)
 
         try:
-            message = json.loads(self._recv_q.get_nowait())
+            raw_message = self._recv_q.get_nowait()
+            message = json.loads(raw_message)
         except queue.Empty:
+            pass
+        except json.decoder.JSONDecodeError:
+            #print('current json message:', raw_message)
             pass
         else:
             self.__command_handler(message["c"])(message)
