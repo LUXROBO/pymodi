@@ -63,7 +63,7 @@ class ExecutorTask:
         except queue.Empty:
             pass
         except json.decoder.JSONDecodeError:
-            #print('current json message:', raw_message)
+            print('current json message:', raw_message)
             pass
         else:
             self.__command_handler(message["c"])(message)
@@ -239,7 +239,7 @@ class ExecutorTask:
                     module_pnp_state=Module.State.PNP_OFF
                 )
                 self._modules.append(module_instance)
-                print(str(type(module_instance))+" module has been connected!")
+                print(str(type(module_instance))+" has been connected!")
 
                 if self.__is_all_connected():
                     self._init_event.set()
