@@ -69,7 +69,8 @@ class MODI:
             self._exe_thrd.start()
             time.sleep(1)
 
-            module_init_flag.wait(timeout=10)
+            module_init_timeout = 10 if conn_mode.startswith("ser") else 25
+            module_init_flag.wait(timeout=module_init_timeout)
             if not module_init_flag.is_set():
                 raise Exception("Modules are not initialized properly!")
             print("MODI modules are initialized!")
