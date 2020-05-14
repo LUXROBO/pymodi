@@ -80,7 +80,6 @@ class SppTask(CommunicatorTask):
         except queue.Empty:
             pass
         else:
-            print("write msg:", message_to_write)
             self.__ser.write(message_to_write)
 
     def run_read_data(self, delay):
@@ -104,7 +103,6 @@ class SppTask(CommunicatorTask):
             # Parse json message and send it
             json_msg = self.__json_buffer[:split_index]
             self._spp_recv_q.put(json_msg)
-            print("ser recv msg", json_msg)
 
             # Update json buffer, remove the json message sent
             self.__json_buffer = self.__json_buffer[split_index:]

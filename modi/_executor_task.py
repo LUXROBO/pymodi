@@ -62,7 +62,6 @@ class ExecutorTask:
         except queue.Empty:
             pass
         else:
-            print("exe msg:", message)
             self.__command_handler(message["c"])(message)
 
     def __command_handler(self, command):
@@ -236,6 +235,7 @@ class ExecutorTask:
                     module_pnp_state=Module.State.PNP_OFF
                 )
                 self._modules.append(module_instance)
+                print(str(type(module_instance))+" module has been connected!")
 
                 if self.__is_all_connected():
                     self._init_event.set()
