@@ -11,6 +11,7 @@ from modi._communicator_task import CommunicatorTask
 class SppTask(CommunicatorTask):
 
     def __init__(self, spp_recv_q, spp_send_q, module_uuid):
+        print("Run SPP Task (establishing bluetooth connection).")
         super().__init__(spp_recv_q, spp_send_q)
         self._spp_recv_q = spp_recv_q
         self._spp_send_q = spp_send_q
@@ -27,9 +28,11 @@ class SppTask(CommunicatorTask):
                 modi_ports.append(port)
 
         if not modi_ports:
+            devices = [port.device for port in ports]
+            print("Currently connected devices are:", devices)
             raise Exception(
                 "No MODI network module is connected. "
-                "Have you connected your MODI module using bluetooth?"
+                "Have you connected your network module using bluetooth?"
             )
         return modi_ports
 
