@@ -5,8 +5,6 @@ import time
 import threading as th
 import multiprocessing as mp
 
-import threading
-
 import networkx as nx
 
 from pprint import pprint
@@ -47,7 +45,7 @@ class MODI:
         self._exe_thrd = None
 
         # Init flag used to notify initialization of MODI modules
-        self._init_event = threading.Event()
+        self._init_event = th.Event()
 
         # Init number of the connected modi modules
         self._nb_modules = nb_modules
