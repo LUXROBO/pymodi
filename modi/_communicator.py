@@ -10,21 +10,23 @@ from modi._spp_task import SppTask
 
 class Communicator(mp.Process):
 
-    def __init__(self, recv_q, send_q, conn_mode):
+    def __init__(self, recv_q, send_q, conn_mode, module_uuid):
         super().__init__()
-        self.__task = self.__init_task(conn_mode)(recv_q, send_q)
-        self.__delay = 0.05 if isinstance(self.__task, SppTask) else 0.001
+        params = [recv_q, send_q]
+        if conn_mode.startswith("b"):
+            params.append(module_uuid)
+        self.__task = self.__init_task(conn_mode)(*params)
+        self.__delay = 0.01 if isinstance(self.__task, SppTask) else 0.001
 
     def __init_task(self, conn_mode):
-        if conn_mode.startswith("bluetooth") or conn_mode.startswith("spp"):
+        if conn_mode.startswith("b"):
             return SppTask
-        if self.__is_modi_pi():
-            return CanTask
-        return SerTask
+        return SerTask if self.__is_modi_pi() else CanTask
 
     @staticmethod
     def __is_modi_pi():
-        return CommunicatorTask.is_on_pi() and not CommunicatorTask.is_network_module_connected()
+        return CommunicatorTask.is_on_pi() and \
+                not CommunicatorTask.is_network_module_connected()
 
     def run(self):
         self.__task.open_conn()

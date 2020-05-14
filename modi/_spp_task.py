@@ -10,10 +10,11 @@ from modi._communicator_task import CommunicatorTask
 
 class SppTask(CommunicatorTask):
 
-    def __init__(self, spp_recv_q, spp_send_q):
+    def __init__(self, spp_recv_q, spp_send_q, module_uuid):
         super().__init__(spp_recv_q, spp_send_q)
         self._spp_recv_q = spp_recv_q
         self._spp_send_q = spp_send_q
+        self._module_uuid = module_uuid
 
         self.__ser = None
         self.__json_buffer = ""
@@ -22,8 +23,14 @@ class SppTask(CommunicatorTask):
         modi_ports = list()
         ports = stl.comports()
         for port in ports:
-            if 'MODI' in port.device:
+            if self._module_uuid in port.device:
                 modi_ports.append(port)
+
+        if not modi_ports:
+            raise Exception(
+                "No MODI network module is connected. "
+                "Have you connected your MODI module using bluetooth?"
+            )
         return modi_ports
 
     #
@@ -34,8 +41,6 @@ class SppTask(CommunicatorTask):
         """
 
         modi_ports = self._list_modi_ports()
-        if not modi_ports:
-            raise SerialException("No MODI network module is connected.")
 
         # TODO: Refactor code to support multiple MODI network modules here
         modi_port = modi_ports.pop()
