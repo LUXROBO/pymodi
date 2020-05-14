@@ -49,7 +49,7 @@ class SppTask(CommunicatorTask):
                 "The MODI port {} is already in use".format(self.__ser.port)
             )
         self.__ser.open()
-        time.sleep(5)
+        time.sleep(1)
 
     def _close_conn(self):
         """ Close serial port
