@@ -24,7 +24,9 @@ class SppTask(CommunicatorTask):
         modi_ports = list()
         ports = stl.comports()
         for port in ports:
-            if self._module_uuid in port.device:
+            if self._module_uuid in port.device or \
+                ("Bluetooth" in port.description and
+                     port.hwid.split('&')[1][:4] == '0002'):
                 modi_ports.append(port)
 
         if not modi_ports:
@@ -34,6 +36,11 @@ class SppTask(CommunicatorTask):
                 "No MODI network module is connected. "
                 "Have you connected your network module using bluetooth?"
             )
+
+        # TODO: Support multiple network module
+        if len(modi_ports) > 1:
+            print("Current MODI ports are:", modi_ports)
+            raise Exception("More than one MODI network module exist.")
         return modi_ports
 
     #
