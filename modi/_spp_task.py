@@ -11,7 +11,7 @@ from modi._communicator_task import CommunicatorTask
 class SppTask(CommunicatorTask):
 
     def __init__(self, spp_recv_q, spp_send_q, module_uuid):
-        print("Run SPP Task (establishing bluetooth connection).")
+        print("Run Spp Task.")
         super().__init__(spp_recv_q, spp_send_q)
         self._spp_recv_q = spp_recv_q
         self._spp_send_q = spp_send_q

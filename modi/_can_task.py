@@ -11,6 +11,7 @@ from modi._communicator_task import CommunicatorTask
 class CanTask(CommunicatorTask):
 
     def __init__(self, can_recv_q, can_send_q):
+        print("Run Can Task.")
         self._can_recv_q = can_recv_q
         self._can_send_q = can_send_q
 

@@ -10,6 +10,7 @@ from modi._communicator_task import CommunicatorTask
 class SerTask(CommunicatorTask):
 
     def __init__(self, ser_recv_q, ser_send_q):
+        print("Run Ser Task.")
         super().__init__(ser_recv_q, ser_send_q)
         self._ser_recv_q = ser_recv_q
         self._ser_send_q = ser_send_q
