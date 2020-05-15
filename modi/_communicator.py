@@ -21,7 +21,7 @@ class Communicator(mp.Process):
     def __init_task(self, conn_mode):
         if conn_mode.startswith("b"):
             return SppTask
-        return SerTask if self.__is_modi_pi() else CanTask
+        return CanTask if self.__is_modi_pi() else SerTask
 
     @staticmethod
     def __is_modi_pi():
