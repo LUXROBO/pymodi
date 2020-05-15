@@ -16,7 +16,7 @@ class Communicator(mp.Process):
         if conn_mode.startswith("b"):
             params.append(module_uuid)
         self.__task = self.__init_task(conn_mode)(*params)
-        self.__delay = 0.01 if isinstance(self.__task, SppTask) else 0.001
+        self.__delay = 0.05 if isinstance(self.__task, SppTask) else 0.001
 
     def __init_task(self, conn_mode):
         if conn_mode.startswith("b"):
