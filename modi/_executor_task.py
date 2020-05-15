@@ -64,7 +64,6 @@ class ExecutorTask:
             pass
         except json.decoder.JSONDecodeError:
             print('current json message:', raw_message)
-            pass
         else:
             self.__command_handler(message["c"])(message)
 
