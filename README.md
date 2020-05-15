@@ -1,4 +1,4 @@
-pyMODI
+pymodi
 ======
 | pyversion | distribution | documentation | dependency | coverage | maintainability | license |
 |-|-|-|-|-|-|-|
@@ -35,7 +35,7 @@ Import [modi]{.title-ref} package and create [MODI]{.title-ref}
 instance:
 
     import modi
-    bundle = modi.MODI()
+    bundle = modi.MODI(nb_modules=1)
 
 List connected modules:
 
