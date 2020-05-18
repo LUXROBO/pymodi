@@ -8,8 +8,6 @@ jobs:
       python: 3.7
     - name: "Python 3.6.0 on Linux"
       python: 3.6
-    - name: "Python 3.5.0 on Linux"
-      python: 3.5
 
     - name: "Python 3.8.0 on macOS"
       os: osx
@@ -26,11 +24,6 @@ jobs:
       osx_image: xcode11.3
       language: shell
       python: 3.6
-    - name: "Python 3.5.0 on macOS"
-      os: osx
-      osx_image: xcode11.3
-      language: shell
-      python: 3.5
 
     - name: "Python 3.8.0 on Windows"
       os: windows
