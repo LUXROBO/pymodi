@@ -175,7 +175,7 @@ class Motor(OutputModule):
         if first_torque_value is not None or second_torque_value is not None:
             first_torque_value = (
                 self.set_first_torque()
-                if second_torque_value is not None
+                if first_torque_value is None
                 else first_torque_value
             )
             second_torque_value = (
