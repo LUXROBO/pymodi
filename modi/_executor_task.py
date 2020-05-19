@@ -58,9 +58,12 @@ class ExecutorTask:
         time.sleep(delay)
 
         try:
-            message = json.loads(self._recv_q.get_nowait())
+            raw_message = self._recv_q.get_nowait()
+            message = json.loads(raw_message)
         except queue.Empty:
             pass
+        except json.decoder.JSONDecodeError:
+            print('current json message:', raw_message)
         else:
             self.__command_handler(message["c"])(message)
 
@@ -235,6 +238,7 @@ class ExecutorTask:
                     module_pnp_state=Module.State.PNP_OFF
                 )
                 self._modules.append(module_instance)
+                print(str(type(module_instance))+" has been connected!")
 
                 if self.__is_all_connected():
                     self._init_event.set()

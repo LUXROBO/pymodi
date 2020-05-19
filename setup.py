@@ -4,21 +4,21 @@ from setuptools import setup, find_packages
 
 
 def get_readme():
-    here = path.abspath(path.dirname(__file__))
+    here = path.dirname(__file__)
     with open(path.join(here, 'README.md'), encoding='utf-8') as readme_file:
         readme = readme_file.read()
         return readme
 
 
 def get_history():
-    here = path.abspath(path.dirname(__file__))
+    here = path.dirname(__file__)
     with open(path.join(here, 'HISTORY.md'), encoding='utf-8') as history_file:
         history = history_file.read()
         return history
 
 
 def get_requirements():
-    here = path.abspath(path.dirname(__file__))
+    here = path.dirname(__file__)
     with open(path.join(here, 'requirements.txt'), encoding='utf-8') as \
             requirements_file:
         requirements = requirements_file.read().splitlines()
@@ -50,7 +50,6 @@ setup(
         'Intended Audience :: Information Technology',
         'Intended Audience :: Science/Research',
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",

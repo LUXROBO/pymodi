@@ -5,8 +5,6 @@ import time
 import threading as th
 import multiprocessing as mp
 
-import threading
-
 import networkx as nx
 
 from pprint import pprint
@@ -35,7 +33,7 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self, nb_modules, test=False):
+    def __init__(self, nb_modules, conn_mode="serial", module_uuid="", test=False):
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -47,34 +45,37 @@ class MODI:
         self._exe_thrd = None
 
         # Init flag used to notify initialization of MODI modules
-        self._init_event = threading.Event()
+        module_init_flag = th.Event()
 
-        # Init number of the connected modi modules
-        self._nb_modules = nb_modules
+        # If in test run, do not create process and thread
+        if test:
+            return
 
-        if not test:
-            self._com_proc = Communicator(self._recv_q, self._send_q)
-            self._com_proc.daemon = True
-            self._com_proc.start()
-            time.sleep(1)
+        self._com_proc = Communicator(
+            self._recv_q, self._send_q, conn_mode, module_uuid
+        )
+        self._com_proc.daemon = True
+        self._com_proc.start()
+        time.sleep(1)
 
-            self._exe_thrd = ExecutorThread(
-                self._modules,
-                self._module_ids,
-                self._topology_data,
-                self._recv_q,
-                self._send_q,
-                self._init_event,
-                self._nb_modules
-            )
-            self._exe_thrd.daemon = True
-            self._exe_thrd.start()
-            time.sleep(1)
+        self._exe_thrd = ExecutorThread(
+            self._modules,
+            self._module_ids,
+            self._topology_data,
+            self._recv_q,
+            self._send_q,
+            module_init_flag,
+            nb_modules,
+        )
+        self._exe_thrd.daemon = True
+        self._exe_thrd.start()
+        time.sleep(1)
 
-            self._init_event.wait(timeout=10)
-            if not self._init_event.is_set():
-                raise Exception("Modules are not initialized properly!")
-            print("MODI modules are initialized!")
+        module_init_timeout = 10 if conn_mode.startswith("ser") else 25
+        module_init_flag.wait(timeout=module_init_timeout)
+        if not module_init_flag.is_set():
+            raise Exception("Modules are not initialized properly!")
+        print("MODI modules are initialized!")
 
     def print_ids(self):
         for module in self.modules:
