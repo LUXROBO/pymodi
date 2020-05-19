@@ -5,22 +5,21 @@ from setuptools import setup, find_packages
 
 def get_readme():
     here = path.dirname(__file__)
-    with open(path.join(here, 'README.md'), encoding='utf-8') as readme_file:
+    with open(path.join(here, 'README.md')) as readme_file:
         readme = readme_file.read()
         return readme
 
 
 def get_history():
     here = path.dirname(__file__)
-    with open(path.join(here, 'HISTORY.md'), encoding='utf-8') as history_file:
+    with open(path.join(here, 'HISTORY.md')) as history_file:
         history = history_file.read()
         return history
 
 
 def get_requirements():
     here = path.dirname(__file__)
-    with open(path.join(here, 'requirements.txt'), encoding='utf-8') as \
-            requirements_file:
+    with open(path.join(here, 'requirements.txt')) as requirements_file:
         requirements = requirements_file.read().splitlines()
         return requirements
 
