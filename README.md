@@ -1,8 +1,10 @@
 pymodi
 ======
+<img src="https://www.gresswell.co.uk/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/L/3/L308260_MODI_logo_LFC.jpg" width="500" height="150">
+
 | pyversion | distribution | documentation | coverage | maintainability | license |
 |-|-|-|-|-|-|
-| [![image](https://img.shields.io/pypi/pyversions/pymodi.svg)](https://pypi.python.org/pypi/pymodi) | [![image](https://img.shields.io/pypi/v/pymodi.svg)](https://pypi.python.org/pypi/pymodi) | [![Documentation Status](https://readthedocs.org/projects/pymodi/badge/?version=latest)](https://pymodi.readthedocs.io/en/latest/?badge=latest) | [![Coverage Status](https://coveralls.io/repos/github/LUXROBO/pyMODI/badge.svg?branch=master)](https://coveralls.io/github/LUXROBO/pyMODI?branch=master) | [![Maintainability](https://api.codeclimate.com/v1/badges/3e5f0248ac50d580cb3f/maintainability)](https://codeclimate.com/github/LUXROBO/pyMODI/maintainability) | [![](https://img.shields.io/pypi/l/pymodi.svg?color=blue)](https://github.com/LUXROBO/pyMODI/blob/master/LICENSE) |
+| [![image](https://img.shields.io/pypi/pyversions/pymodi.svg)](https://pypi.python.org/pypi/pymodi) | [![image](https://img.shields.io/pypi/v/pymodi.svg)](https://pypi.python.org/pypi/pymodi) | [![Documentation Status](https://readthedocs.org/projects/pymodi/badge/?version=latest)](https://pymodi.readthedocs.io/en/latest/?badge=latest) | [![Coverage Status](https://coveralls.io/repos/github/LUXROBO/pymodi/badge.svg?branch=master)](https://coveralls.io/github/LUXROBO/pymodi?branch=master) | [![Maintainability](https://api.codeclimate.com/v1/badges/3e5f0248ac50d580cb3f/maintainability)](https://codeclimate.com/github/LUXROBO/pymodi/maintainability) | [![](https://img.shields.io/pypi/l/pymodi.svg?color=blue)](https://github.com/LUXROBO/pyMODI/blob/master/LICENSE) |
 
 Easy😆 and fast💨 MODI Python API package.
 
