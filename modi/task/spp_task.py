@@ -5,7 +5,7 @@ import serial.tools.list_ports as stl
 
 from serial import SerialException
 
-from modi.task._conn_task import ConnTask
+from modi.task.conn_task import ConnTask
 
 
 class SppTask(ConnTask):

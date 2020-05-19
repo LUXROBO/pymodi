@@ -2,10 +2,10 @@
 import threading as th
 import multiprocessing as mp
 
-from modi.task._conn_task import ConnTask
-from modi.task._ser_task import SerTask
-from modi.task._can_task import CanTask
-from modi.task._spp_task import SppTask
+from modi.task.conn_task import ConnTask
+from modi.task.ser_task import SerTask
+from modi.task.can_task import CanTask
+from modi.task.spp_task import SppTask
 
 
 class ConnProc(mp.Process):

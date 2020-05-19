@@ -1,6 +1,6 @@
 import threading as th
 
-from modi.task._exe_task import ExeTask
+from modi.task.exe_task import ExeTask
 
 
 class ExeThrd(th.Thread):

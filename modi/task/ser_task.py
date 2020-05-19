@@ -4,7 +4,7 @@ import serial
 
 from serial import SerialException
 
-from modi.task._conn_task import ConnTask
+from modi.task.conn_task import ConnTask
 
 
 class SerTask(ConnTask):

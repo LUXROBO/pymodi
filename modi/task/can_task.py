@@ -5,7 +5,7 @@ import json
 import queue
 import base64
 
-from modi.task._conn_task import ConnTask
+from modi.task.conn_task import ConnTask
 
 
 class CanTask(ConnTask):
