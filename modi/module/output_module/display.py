@@ -53,5 +53,6 @@ class Display(OutputModule):
             bytes(2),
             self.PropertyDataType.RAW
         )
+
         self._msg_send_q.put(message)
         return message
