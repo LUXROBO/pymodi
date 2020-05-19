@@ -27,7 +27,6 @@ class OutputModule(Module):
         message["c"] = 0x04
         message["s"] = property_type
         message["d"] = destination_id
-
         # Generate property according to their property type
         property_values_bytes = bytearray(8)
         if (
@@ -77,7 +76,6 @@ class OutputModule(Module):
             property_values_bytes[7] = 0x00
         else:
             raise RuntimeError("Not supported property data type.")
-
         message["b"] = base64.b64encode(
             bytes(property_values_bytes)).decode("utf-8")
         message["l"] = 8
