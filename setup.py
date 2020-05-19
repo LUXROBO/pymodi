@@ -36,7 +36,7 @@ setup(
     license="MIT",
     include_package_data=True,
     keywords=["pymodi", "modi", "luxrobo"],
-    packages=find_packages(include=['modi', 'modi.module',
+    packages=find_packages(include=['modi', 'modi.task', 'modi.module',
                                     'modi.module.setup_module',
                                     'modi.module.input_module',
                                     'modi.module.output_module']),

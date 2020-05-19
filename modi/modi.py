@@ -9,8 +9,8 @@ import networkx as nx
 
 from pprint import pprint
 
-from modi._communicator import Communicator
-from modi._executor_thread import ExecutorThread
+from modi._conn_proc import Communicator
+from modi._exe_thrd import ExecutorThread
 
 from modi.module.input_module.button import Button
 from modi.module.input_module.dial import Dial

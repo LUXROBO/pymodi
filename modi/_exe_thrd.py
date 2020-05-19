@@ -1,6 +1,6 @@
 import threading
 
-from modi._executor_task import ExecutorTask
+from modi.task._exe_task import ExecutorTask
 
 
 class ExecutorThread(threading.Thread):

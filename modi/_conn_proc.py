@@ -2,10 +2,10 @@
 import threading as th
 import multiprocessing as mp
 
-from modi._communicator_task import CommunicatorTask
-from modi._ser_task import SerTask
-from modi._can_task import CanTask
-from modi._spp_task import SppTask
+from modi.task._conn_task import CommunicatorTask
+from modi.task._ser_task import SerTask
+from modi.task._can_task import CanTask
+from modi.task._spp_task import SppTask
 
 
 class Communicator(mp.Process):
