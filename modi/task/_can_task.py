@@ -5,10 +5,10 @@ import json
 import queue
 import base64
 
-from modi.task._conn_task import CommunicatorTask
+from modi.task._conn_task import ConnTask
 
 
-class CanTask(CommunicatorTask):
+class CanTask(ConnTask):
 
     def __init__(self, can_recv_q, can_send_q):
         print("Run Can Task.")

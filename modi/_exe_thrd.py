@@ -1,9 +1,9 @@
-import threading
+import threading as th
 
-from modi.task._exe_task import ExecutorTask
+from modi.task._exe_task import ExeTask
 
 
-class ExecutorThread(threading.Thread):
+class ExeThrd(th.Thread):
     """
     :param queue serial_write_q: Inter-process queue for serial writing message
     :param queue json_recv_q: Inter-process queue for receiving json message
@@ -14,7 +14,7 @@ class ExecutorThread(threading.Thread):
     def __init__(self, modules, module_ids, topology_data,
                  recv_q, send_q, init_event, nb_modules):
         super().__init__()
-        self.__exe_task = ExecutorTask(
+        self.__exe_task = ExeTask(
             modules, module_ids, topology_data, recv_q, send_q,
             init_event, nb_modules
         )

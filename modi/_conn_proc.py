@@ -2,13 +2,13 @@
 import threading as th
 import multiprocessing as mp
 
-from modi.task._conn_task import CommunicatorTask
+from modi.task._conn_task import ConnTask
 from modi.task._ser_task import SerTask
 from modi.task._can_task import CanTask
 from modi.task._spp_task import SppTask
 
 
-class Communicator(mp.Process):
+class ConnProc(mp.Process):
 
     def __init__(self, recv_q, send_q, conn_mode, module_uuid):
         super().__init__()
@@ -25,8 +25,8 @@ class Communicator(mp.Process):
 
     @staticmethod
     def __is_modi_pi():
-        return CommunicatorTask.is_on_pi() and \
-                not CommunicatorTask.is_network_module_connected()
+        return ConnTask.is_on_pi() and \
+               not ConnTask.is_network_module_connected()
 
     def run(self):
         self.__task.open_conn()

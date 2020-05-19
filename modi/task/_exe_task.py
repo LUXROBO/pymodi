@@ -20,7 +20,7 @@ from modi.module.output_module.speaker import Speaker
 from modi.module.module import Module
 
 
-class ExecutorTask:
+class ExeTask:
     """
     :param queue serial_write_q: Inter-process queue for writing serial
     message.

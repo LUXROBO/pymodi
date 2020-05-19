@@ -7,7 +7,7 @@ from abc import ABC
 from abc import abstractmethod
 
 
-class CommunicatorTask(ABC):
+class ConnTask(ABC):
 
     def __init__(self, recv_q, send_q):
         self._recv_q = recv_q
@@ -31,7 +31,7 @@ class CommunicatorTask(ABC):
 
     @staticmethod
     def is_network_module_connected():
-        return bool(CommunicatorTask._list_modi_ports())
+        return bool(ConnTask._list_modi_ports())
 
     #
     # Abstract Methods

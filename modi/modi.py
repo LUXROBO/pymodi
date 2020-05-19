@@ -9,8 +9,8 @@ import networkx as nx
 
 from pprint import pprint
 
-from modi._conn_proc import Communicator
-from modi._exe_thrd import ExecutorThread
+from modi._conn_proc import ConnProc
+from modi._exe_thrd import ExeThrd
 
 from modi.module.input_module.button import Button
 from modi.module.input_module.dial import Dial
@@ -51,14 +51,14 @@ class MODI:
         if test:
             return
 
-        self._com_proc = Communicator(
+        self._com_proc = ConnProc(
             self._recv_q, self._send_q, conn_mode, module_uuid
         )
         self._com_proc.daemon = True
         self._com_proc.start()
         time.sleep(1)
 
-        self._exe_thrd = ExecutorThread(
+        self._exe_thrd = ExeThrd(
             self._modules,
             self._module_ids,
             self._topology_data,

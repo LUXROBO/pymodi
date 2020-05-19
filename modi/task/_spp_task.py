@@ -5,10 +5,10 @@ import serial.tools.list_ports as stl
 
 from serial import SerialException
 
-from modi.task._conn_task import CommunicatorTask
+from modi.task._conn_task import ConnTask
 
 
-class SppTask(CommunicatorTask):
+class SppTask(ConnTask):
 
     def __init__(self, spp_recv_q, spp_send_q, module_uuid):
         print("Run Spp Task.")
