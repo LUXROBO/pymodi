@@ -3,7 +3,7 @@ Credits
 
 Author
 ------
--   LUXROBO
+-   LUXROBO (tech@luxrobo.com)
 
 Maintainer
 ----------------
