@@ -15,7 +15,7 @@ class Display(OutputModule):
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
 
-    def set_text(self, text):
+    def set_text(self, text: str) -> str:
         """
         :param text: Text to display.
         """
@@ -30,7 +30,7 @@ class Display(OutputModule):
             self._msg_send_q.put(message)
         return messages
 
-    def set_variable(self, variable, position_x, position_y):
+    def set_variable(self, variable: float, position_x: int, position_y: int) -> str:
         """
         :param variable: Variable to display.
         """
@@ -44,7 +44,7 @@ class Display(OutputModule):
         self._msg_send_q.put(message)
         return message
 
-    def clear(self):
+    def clear(self) -> str:
         """Clear the screen.
         """
         message = self._set_property(

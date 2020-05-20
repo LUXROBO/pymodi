@@ -1,7 +1,7 @@
 """Speaker module."""
 
 from enum import Enum
-
+from typing import Tuple, Optional
 from modi.module.output_module.output_module import OutputModule
 
 
@@ -103,7 +103,7 @@ class Speaker(OutputModule):
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
 
-    def set_tune(self, frequency_value=None, volume_value=None):
+    def set_tune(self, frequency_value: float=None, volume_value: float=None) -> Tuple[float, float]:
         """
         * If either *frequency* or *volume* is not ``None``,
         :param float frequency_value: Frequency to set or ``None``.
@@ -130,7 +130,7 @@ class Speaker(OutputModule):
             self._msg_send_q.put(message)
         return self.set_frequency(), self.set_volume()
 
-    def set_frequency(self, frequency_value=None):
+    def set_frequency(self, frequency_value: float=None) ->  Optional[float, Tuple[float, float]]:
         """
         :param float frequency: Frequency to set or ``None``.
         If *frequency* is ``None``.
@@ -142,7 +142,7 @@ class Speaker(OutputModule):
         else:
             return self.set_tune(frequency_value=frequency_value)
 
-    def set_volume(self, volume_value=None):
+    def set_volume(self, volume_value: float=None) -> Optional[float, Tuple[float, float]]:
         """
         :param float volume: Volume to set or ``None``.
         If *volume* is ``None``.
@@ -154,7 +154,7 @@ class Speaker(OutputModule):
         else:
             return self.set_tune(volume_value=volume_value)
 
-    def set_off(self):
+    def set_off(self) -> Tuple[float, float]:
         """Turn off.
         """
         self.set_tune(0, 0)
