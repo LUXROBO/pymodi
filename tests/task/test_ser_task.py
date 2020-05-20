@@ -1,6 +1,8 @@
 import unittest
 from unittest import mock
 
+from serial.tools.list_ports_common import ListPortInfo
+
 from modi.task.ser_task import SerTask
 
 
@@ -19,7 +21,7 @@ class TestSerTask(unittest.TestCase):
 
     # def test_open_conn(self):
     #     """Test open_conn method"""
-    #     self.serTask.open_conn()
+    #     self.ser_task.open_conn()
 
 
 if __name__ == "__main__":
