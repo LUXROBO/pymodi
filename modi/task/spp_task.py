@@ -2,6 +2,8 @@ import time
 import queue
 import serial
 import serial.tools.list_ports as stl
+from serial.tools.list_ports_common import ListPortInfo
+from typing import List
 
 from serial import SerialException
 
@@ -20,7 +22,7 @@ class SppTask(ConnTask):
         self.__ser = None
         self.__json_buffer = ""
 
-    def _list_modi_ports(self):
+    def _list_modi_ports(self) -> List[ListPortInfo]:
         modi_ports = list()
         ports = stl.comports()
         for port in ports:
@@ -46,7 +48,7 @@ class SppTask(ConnTask):
     #
     # Inherited Methods
     #
-    def open_conn(self):
+    def open_conn(self) -> None:
         """ Open serial port
         """
 
@@ -66,13 +68,13 @@ class SppTask(ConnTask):
         self.__ser.open()
         time.sleep(1)
 
-    def _close_conn(self):
+    def _close_conn(self) -> None:
         """ Close serial port
         """
 
         self.__ser.close()
 
-    def _read_data(self):
+    def _read_data(self) -> None:
         """ Read serial message and put message to serial read queue
         """
 
@@ -86,7 +88,7 @@ class SppTask(ConnTask):
             # Once json buffer is obtained, we parse and send json message
             self.__parse_serial()
 
-    def _write_data(self):
+    def _write_data(self) -> None:
         """ Write serial message in serial write queue
         """
 
@@ -97,12 +99,12 @@ class SppTask(ConnTask):
         else:
             self.__ser.write(message_to_write)
 
-    def run_read_data(self, delay):
+    def run_read_data(self, delay: float) -> None:
         while True:
             self._read_data()
             time.sleep(delay)
 
-    def run_write_data(self, delay):
+    def run_write_data(self, delay: float) -> None:
         while True:
             self._write_data()
             time.sleep(delay)
@@ -110,7 +112,7 @@ class SppTask(ConnTask):
     #
     # Helper method
     #
-    def __parse_serial(self):
+    def __parse_serial(self) -> None:
         # While there is a valid json in the json buffer
         while "{" in self.__json_buffer and "}" in self.__json_buffer:
             split_index = self.__json_buffer.find("}") + 1

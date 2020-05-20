@@ -18,17 +18,17 @@ class ConnProc(mp.Process):
         self.__task = self.__init_task(conn_mode)(*params)
         self.__delay = 0.05 if isinstance(self.__task, SppTask) else 0.001
 
-    def __init_task(self, conn_mode):
+    def __init_task(self, conn_mode: str) -> ConnTask:
         if conn_mode.startswith("b"):
             return SppTask
         return CanTask if self.__is_modi_pi() else SerTask
 
     @staticmethod
-    def __is_modi_pi():
+    def __is_modi_pi() -> bool:
         return ConnTask.is_on_pi() and \
                not ConnTask.is_network_module_connected()
 
-    def run(self):
+    def run(self) -> None:
         self.__task.open_conn()
 
         read_thread = th.Thread(
