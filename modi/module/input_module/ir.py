@@ -13,7 +13,7 @@ class Ir(InputModule):
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
 
-    def get_proximity(self):
+    def get_proximity(self) -> float:
         """
         :return: Distance to object.
         :rtype: float

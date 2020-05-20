@@ -1,7 +1,7 @@
 """Motor module."""
 
 from enum import Enum
-
+from typing import Optional, Tuple
 from modi.module.output_module.output_module import OutputModule
 
 
@@ -25,7 +25,7 @@ class Motor(OutputModule):
         super().__init__(id_, uuid, msg_send_q)
 
     def set_motor_channel(self,
-                          motor_channel, control_mode, control_value=None):
+                          motor_channel: int, control_mode: int, control_value: int = None) -> Tuple[float, float]:
         """
         :param motor_channel: Select motor channel for control
         :param control_mode: Control mode of the motor to be selected
@@ -52,7 +52,7 @@ class Motor(OutputModule):
         #    self._get_property(self.PropertyType.?),
         # )
 
-    def set_first_degree(self, degree_value=None):
+    def set_first_degree(self, degree_value: int = None) -> Optional[float]:
         """
         :param int degree: Angle to set the first motor.
         If *degree* is ``None``,
@@ -74,7 +74,7 @@ class Motor(OutputModule):
         else:
             return self._get_property(self.PropertyType.FIRST_DEGREE)
 
-    def set_second_degree(self, degree_value=None):
+    def set_second_degree(self, degree_value: int = None) -> Optional[float]:
         """
         :param int degree: Angle to set the second motor.
         If *degree* is ``None``,
@@ -92,9 +92,9 @@ class Motor(OutputModule):
         else:
             return self._get_property(self.PropertyType.SECOND_DEGREE)
 
-    def set_first_speed(self, speed_value=None):
+    def set_first_speed(self, speed_value: int = None) -> Optional[float]:
         """
-        :param int degree: Angular speed to set the first motor.
+        :param int speed: Angular speed to set the first motor.
         If *speed* is ``None``,
         :return: Angular speed of the first motor.
         :rtype: float
@@ -110,9 +110,9 @@ class Motor(OutputModule):
         else:
             return self._get_property(self.PropertyType.FIRST_DEGREE)
 
-    def set_second_speed(self, speed_value=None):
+    def set_second_speed(self, speed_value: int = None) -> Optional[float]:
         """
-        :param int degree: Angular speed to set the second motor.
+        :param int speed: Angular speed to set the second motor.
         If *speed* is ``None``,
         :return: Angular speed of the second motor.
         :rtype: float
@@ -128,9 +128,9 @@ class Motor(OutputModule):
         else:
             return self._get_property(self.PropertyType.SECOND_DEGREE)
 
-    def set_first_torque(self, torque_value=None):
+    def set_first_torque(self, torque_value: int = None) -> Optional[float]:
         """
-        :param int degree: Torque to set the first motor.
+        :param int torque: Torque to set the first motor.
         If *torque* is ``None``,
         :return: Torque of the first motor.
         :rtype: float
@@ -146,9 +146,9 @@ class Motor(OutputModule):
         else:
             return self._get_property(self.PropertyType.FIRST_TORQUE)
 
-    def set_second_torque(self, torque_value=None):
+    def set_second_torque(self, torque_value: int = None) -> Optional[float]:
         """
-        :param int degree: Torque to set the second motor.
+        :param int torque: Torque to set the second motor.
         If *torque* is ``None``,
         :return: Torque of the second motor.
         :rtype: float
@@ -164,7 +164,7 @@ class Motor(OutputModule):
         else:
             return self._get_property(self.PropertyType.SECOND_TORQUE)
 
-    def set_torque(self, first_torque_value=None, second_torque_value=None):
+    def set_torque(self, first_torque_value: int = None, second_torque_value: int = None) -> Tuple[float, float]:
         """
         :param int first_torque: Torque to set the first motor.
         :param int second_torque: Torque to set the second motor.
@@ -194,7 +194,7 @@ class Motor(OutputModule):
             self._get_property(self.PropertyType.SECOND_TORQUE),
         )
 
-    def set_speed(self, first_speed_value=None, second_speed_value=None):
+    def set_speed(self, first_speed_value: int = None, second_speed_value: int = None) -> Tuple[float, float]:
         """
         :param int first_speed: Speed to set the first motor.
         :param int second_speed: Speed to set the second motor.
@@ -224,7 +224,7 @@ class Motor(OutputModule):
             self._get_property(self.PropertyType.SECOND_SPEED),
         )
 
-    def set_degree(self, first_degree_value=None, second_degree_value=None):
+    def set_degree(self, first_degree_value: int = None, second_degree_value: int =None) -> Tuple[float, float]:
         """
         :param int first_degree: Degree to set the first motor.
         :param int second_degree: Degree to set the second motor.

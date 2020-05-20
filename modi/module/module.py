@@ -41,21 +41,21 @@ class Module:
         self._is_connected = True
 
     @property
-    def id(self):
+    def id(self) -> int:
         return self._id
 
     @property
-    def uuid(self):
+    def uuid(self) -> int:
         return self._uuid
 
     @property
-    def is_connected(self):
+    def is_connected(self) -> bool:
         return self._is_connected
 
-    def set_connection_state(self, connection_state):
+    def set_connection_state(self, connection_state: bool) -> None:
         self._is_connected = connection_state
 
-    def _get_property(self, property_type):
+    def _get_property(self, property_type: Enum) -> float:
         """ Get module property value and request
         """
 
@@ -80,7 +80,7 @@ class Module:
 
         return self._properties[property_type].value
 
-    def update_property(self, property_type, property_value):
+    def update_property(self, property_type: Enum, property_value: float) -> None:
         """ Update property value and time
         """
 
@@ -88,7 +88,7 @@ class Module:
             self._properties[property_type].value = property_value
             self._properties[property_type].last_update_time = time.time()
 
-    def request_property(self, destination_id, property_type):
+    def request_property(self, destination_id: int, property_type: int) -> str:
         """ Generate message for request property
         """
 

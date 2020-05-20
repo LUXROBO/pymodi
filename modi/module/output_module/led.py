@@ -1,7 +1,7 @@
 """Led module."""
 
 from enum import Enum
-
+from typing import Tuple, Optional
 from modi.module.output_module.output_module import OutputModule
 
 
@@ -18,7 +18,7 @@ class Led(OutputModule):
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
 
-    def set_rgb(self, red=None, green=None, blue=None):
+    def set_rgb(self, red: int = None, green: int = None, blue: int = None) -> Tuple[float, float, float]:
         """
         * If either *red*, *green*, or *blue* is not ``None``,
         :param int red: Red component to set or ``None``.
@@ -42,17 +42,17 @@ class Led(OutputModule):
             self._msg_send_q.put(message)
         return self.set_red(), self.set_green(), self.set_blue()
 
-    def set_on(self):
+    def set_on(self) -> Tuple[float, float, float]:
         """Turn on led at maximum brightness.
         """
         return self.set_rgb(255, 255, 255)
 
-    def set_off(self):
+    def set_off(self) -> Tuple[float, float, float]:
         """Turn off led.
         """
         return self.set_rgb(0, 0, 0)
 
-    def set_red(self, red=None):
+    def set_red(self, red: int = None) -> float:
         """
         :param int red: Red component to set or ``None``.
         If *red* is ``None``.
@@ -63,7 +63,7 @@ class Led(OutputModule):
             self.set_rgb(red=red)
         return self._get_property(self.PropertyType.RED)
 
-    def set_green(self, green=None):
+    def set_green(self, green: int = None) -> float:
         """
         :param int green: Green component to set or ``None``.
         If *green* is ``None``.
@@ -74,7 +74,7 @@ class Led(OutputModule):
             self.set_rgb(green=green)
         return self._get_property(self.PropertyType.GREEN)
 
-    def set_blue(self, blue=None):
+    def set_blue(self, blue: int = None) -> float:
         """
         :param int blue: Blue component to set or ``None``.
         If *blue* is ``None``.
