@@ -13,7 +13,12 @@ class TestSerTask(unittest.TestCase):
         """Set up test fixtures, if any."""
         self.mock_kwargs = {"ser_recv_q": None, "ser_send_q": None}
         self.ser_task = SerTask(**self.mock_kwargs)
-        self.ser_task._list_modi_ports = mock.Mock(side_effect=lambda: [None])
+
+        def eval_list_modi_ports():
+            fake_port = ListPortInfo()
+            return [fake_port]
+        self.ser_task._close_conn()
+        self.ser_task._list_modi_ports = mock.Mock(side_effect=eval_list_modi_ports)
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -23,6 +28,8 @@ class TestSerTask(unittest.TestCase):
     #     """Test open_conn method"""
     #     self.ser_task.open_conn()
 
+    # def test_run_read_data(self):
+    #     self.ser_task._close_conn()
 
 if __name__ == "__main__":
     unittest.main()
