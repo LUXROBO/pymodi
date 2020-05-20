@@ -16,28 +16,28 @@ class Button(InputModule):
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
 
-    def get_clicked(self):
+    def get_clicked(self) -> bool:
         """
         :return: `True` if clicked or `False`.
         :rtype: bool
         """
         return self._get_property(self.PropertyType.CLICKED) == 100.0
 
-    def get_double_clicked(self):
+    def get_double_clicked(self) -> bool:
         """
         :return: `True` if double clicked or `False`.
         :rtype: bool
         """
         return self._get_property(self.PropertyType.DOUBLE_CLICKED) == 100.0
 
-    def get_pressed(self):
+    def get_pressed(self) -> bool:
         """
         :return: `True` if pressed or `False`.
         :rtype: bool
         """
         return self._get_property(self.PropertyType.PRESSED) == 100.0
 
-    def get_toggled(self):
+    def get_toggled(self) -> bool:
         """
         :return: `True` if toggled or `False`.
         :rtype: bool

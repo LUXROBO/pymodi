@@ -13,7 +13,7 @@ class Ultrasonic(InputModule):
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
 
-    def get_distance(self):
+    def get_distance(self) -> float:
         """
         :return: Distance to object.
         :rtype: float

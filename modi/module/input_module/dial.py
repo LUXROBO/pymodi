@@ -14,14 +14,14 @@ class Dial(InputModule):
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
 
-    def get_degree(self):
+    def get_degree(self) -> float:
         """
         :return: The dial's angle.
         :rtype: float
         """
         return self._get_property(self.PropertyType.DEGREE)
 
-    def get_turnspeed(self):
+    def get_turnspeed(self) -> float:
         """
         :return: The dial's turn speed.
         :rtype: float
