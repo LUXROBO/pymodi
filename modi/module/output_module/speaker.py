@@ -1,7 +1,7 @@
 """Speaker module."""
 
 from enum import Enum
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Union
 from modi.module.output_module.output_module import OutputModule
 
 
@@ -130,7 +130,7 @@ class Speaker(OutputModule):
             self._msg_send_q.put(message)
         return self.set_frequency(), self.set_volume()
 
-    def set_frequency(self, frequency_value: float=None) ->  Optional[float, Tuple[float, float]]:
+    def set_frequency(self, frequency_value: float=None) -> Union[float, Tuple[float, float]]:
         """
         :param float frequency: Frequency to set or ``None``.
         If *frequency* is ``None``.
@@ -142,7 +142,7 @@ class Speaker(OutputModule):
         else:
             return self.set_tune(frequency_value=frequency_value)
 
-    def set_volume(self, volume_value: float=None) -> Optional[float, Tuple[float, float]]:
+    def set_volume(self, volume_value: float=None) -> Union[float, Tuple[float, float]]:
         """
         :param float volume: Volume to set or ``None``.
         If *volume* is ``None``.
