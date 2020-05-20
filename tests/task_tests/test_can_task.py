@@ -10,11 +10,11 @@ class TestCanTask(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures, if any."""
         self.mock_kwargs = {"can_recv_q": None, "can_send_q": None}
-        self.canTask = CanTask(**self.mock_kwargs)
+        self.can_task = CanTask(**self.mock_kwargs)
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
-        del self.canTask
+        del self.can_task
 
     # def test_open_conn(self):
     #     """Test open_conn method"""

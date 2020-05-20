@@ -10,12 +10,12 @@ class TestSerTask(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures, if any."""
         self.mock_kwargs = {"ser_recv_q": None, "ser_send_q": None}
-        self.serTask = SerTask(**self.mock_kwargs)
-        self.serTask._list_modi_ports = mock.Mock(side_effect=lambda: [None])
+        self.ser_task = SerTask(**self.mock_kwargs)
+        self.ser_task._list_modi_ports = mock.Mock(side_effect=lambda: [None])
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
-        del self.serTask
+        del self.ser_task
 
     # def test_open_conn(self):
     #     """Test open_conn method"""
