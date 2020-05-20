@@ -3,6 +3,8 @@ import json
 import queue
 import base64
 import struct
+from enum import Enum
+from typing import Callable, Dict
 
 from modi.module.input_module.button import Button
 from modi.module.input_module.dial import Dial
@@ -51,7 +53,7 @@ class ExeTask:
         self.__init_modules()
         print('Start initializing connected MODI modules')
 
-    def run(self, delay):
+    def run(self, delay: float):
         """ Run in ExecutorThread
         """
 
@@ -67,7 +69,7 @@ class ExeTask:
         else:
             self.__command_handler(message["c"])(message)
 
-    def __command_handler(self, command):
+    def __command_handler(self, command: int) -> Callable[[Dict[str, int]], None]:
         """ Excute task based on command message
         """
 
@@ -79,7 +81,7 @@ class ExeTask:
             0x1F: self.__update_property,
         }.get(command, lambda _: None)
 
-    def __update_topology(self, message):
+    def __update_topology(self, message: Dict[str, int]) -> None:
         # print('topology_msg:', message)
 
         # Setup prerequisites
@@ -114,7 +116,7 @@ class ExeTask:
         # Save topology data for current module
         self._topology_data[src_id] = topology_by_id
 
-    def __get_uuid_by_id(self, id_):
+    def __get_uuid_by_id(self, id_: int) -> int:
 
         # find id of a module which has corresponding uuid
         for module in self._modules:
@@ -122,7 +124,7 @@ class ExeTask:
                 return module.uuid
         return None
 
-    def __update_health(self, message):
+    def __update_health(self, message: Dict[str, int]) -> None:
         """ Update information by health message
         """
 
@@ -154,7 +156,7 @@ class ExeTask:
                     if module.uuid == module_info["uuid"]:
                         module.set_connection_state(connection_state=False)
 
-    def __update_warning(self, message):
+    def __update_warning(self, message: Dict[str, int]) -> None:
         #print('Warning message:', message)
 
         sid = message["s"]
@@ -174,7 +176,7 @@ class ExeTask:
         else:
             print("Unsupported warning type:", warning_type)
 
-    def __update_modules(self, message):
+    def __update_modules(self, message: Dict[str, int]) -> None:
         """ Update module information
         """
 
@@ -243,13 +245,13 @@ class ExeTask:
                 if self.__is_all_connected():
                     self._init_event.set()
 
-    def __is_all_connected(self):
+    def __is_all_connected(self) -> bool:
         """ determine whether all modules are connected
         """
 
         return self._nb_modules == len(self._modules)
 
-    def __init_module(self, module_type):
+    def __init_module(self, module_type: str) -> Module:
         """ Find module type for module initialize
         """
 
@@ -268,7 +270,7 @@ class ExeTask:
         }.get(module_type)
         return module
 
-    def __update_property(self, message):
+    def __update_property(self, message: Dict[str, int]) -> None:
         """ Update module property
         """
 
@@ -288,7 +290,7 @@ class ExeTask:
                         message_decoded[:4]))[0], 2),
                 )
 
-    def __set_pnp(self, module_id, module_pnp_state):
+    def __set_pnp(self, module_id: int, module_pnp_state: Enum) -> None:
         """ Generate module pnp on/off command
         """
 
@@ -307,7 +309,7 @@ class ExeTask:
             )
             self._send_q.put(pnp_message)
 
-    def __fit_module_uuid(self, module_info, module_uuid):
+    def __fit_module_uuid(self, module_info: int, module_uuid: int) -> int:
         """ Generate uuid using bitwise operation
         """
 
@@ -317,7 +319,7 @@ class ExeTask:
         sizeof_module_uuid += sizeof_module_uuid % 4
         return (module_info << sizeof_module_uuid) | module_uuid
 
-    def __set_module_state(self, destination_id, module_state, pnp_state):
+    def __set_module_state(self, destination_id: int, module_state: Enum, pnp_state: Enum) -> str:
         """ Generate message for set module state and pnp state
         """
 
@@ -339,7 +341,7 @@ class ExeTask:
         else:
             raise RuntimeError("The type of state is not ModuleState")
 
-    def __init_modules(self):
+    def __init_modules(self) -> None:
         """ Initialize module on first run
         """
 
@@ -369,13 +371,13 @@ class ExeTask:
         self._send_q.put(request_topology_message)
         self.__delay()
 
-    def __delay(self):
+    def __delay(self) -> None:
         """ Wait for delay
         """
 
         time.sleep(1)
 
-    def __request_uuid(self, source_id, is_network_module=False):
+    def __request_uuid(self, source_id: int, is_network_module: bool = False) -> str:
         """ Generate broadcasting message for request uuid
         """
 
@@ -395,7 +397,7 @@ class ExeTask:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def __request_topology(self):
+    def __request_topology(self) -> str:
 
         message = dict()
         message["c"] = 0x07
@@ -408,7 +410,7 @@ class ExeTask:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def update_firmware(self):
+    def update_firmware(self) -> None:
         """ Remove firmware of MODI modules
         """
 
@@ -419,7 +421,7 @@ class ExeTask:
         self._send_q.put(firmware_update_message)
         self.__delay()
 
-    def update_firmware_ready(self, module_id):
+    def update_firmware_ready(self, module_id: int) -> None:
         """ Check if modules with no firmware are ready to update its firmware
         """
 

@@ -2,10 +2,11 @@
 import os
 
 import serial.tools.list_ports as stl
+from serial.tools.list_ports_common import ListPortInfo
 
 from abc import ABC
 from abc import abstractmethod
-
+from typing import List
 
 class ConnTask(ABC):
 
@@ -14,7 +15,7 @@ class ConnTask(ABC):
         self._send_q = send_q
 
     @staticmethod
-    def _list_modi_ports():
+    def _list_modi_ports() -> List[ListPortInfo]:
         def __is_modi_port(port):
             return (
                 port.manufacturer == "LUXROBO" or
@@ -26,11 +27,11 @@ class ConnTask(ABC):
         return [port for port in stl.comports() if __is_modi_port(port)]
 
     @staticmethod
-    def is_on_pi():
+    def is_on_pi() -> bool:
         return os.name != "nt" and os.uname()[4][:3] == "arm"
 
     @staticmethod
-    def is_network_module_connected():
+    def is_network_module_connected() -> bool:
         return bool(ConnTask._list_modi_ports())
 
     #
@@ -53,9 +54,9 @@ class ConnTask(ABC):
         pass
 
     @abstractmethod
-    def run_read_data(self, delay):
+    def run_read_data(self, delay: float):
         pass
 
     @abstractmethod
-    def run_write_data(self, delay):
+    def run_write_data(self, delay: float):
         pass
