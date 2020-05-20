@@ -1,7 +1,7 @@
 """Speaker module."""
 
 from enum import Enum
-from typing import Tuple, Optional, Union
+from typing import Tuple, Union
 from modi.module.output_module.output_module import OutputModule
 
 
