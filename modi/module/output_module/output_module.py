@@ -19,7 +19,7 @@ class OutputModule(Module):
         DISPLAY_VAR = 4
 
     def _set_property(self, destination_id: int,
-                      property_type: int, property_values: tuple, property_data_type: Enum=None) -> str:
+                      property_type: int, property_values: tuple, property_data_type: Enum = None) -> str:
         """ Generate message for setting property
         """
         message = dict()
