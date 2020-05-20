@@ -1,7 +1,7 @@
 """Motor module."""
 
 from enum import Enum
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 from modi.module.output_module.output_module import OutputModule
 
 
