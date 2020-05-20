@@ -19,7 +19,7 @@ class ExeThrd(th.Thread):
             init_event, nb_modules
         )
 
-    def run(self):
+    def run(self) -> None:
         """ Run executor task
         """
 
