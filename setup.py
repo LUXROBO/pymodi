@@ -1,5 +1,5 @@
 from os import path
-
+import modi.about as about
 from setuptools import setup, find_packages
 
 
@@ -8,6 +8,14 @@ def get_readme():
     with open(path.join(here, 'README.md')) as readme_file:
         readme = readme_file.read()
         return readme
+
+
+def get_about():
+    about = {}
+    here = path.dirname(__file__)
+    with open(path.join(here, 'modi', 'about.py')) as about_file:
+        exec(about_file.read(), about)
+    return about
 
 
 def get_history():
@@ -23,17 +31,17 @@ def get_requirements():
         requirements = requirements_file.read().splitlines()
         return requirements
 
-
+about = get_about()
 setup(
-    name="pymodi",
-    version="0.8.0",
-    author="Jinsung Ha",
-    author_email="jinsung@luxrobo.com",
-    description="Easy😆 and fast💨 MODI Python API package.",
+    name=about['__title__'],
+    version=about['__version__'],
+    author=about['__author__'],
+    author_email=about['__email__'],
+    description=about['__summary__'],
     long_description=get_readme() + '\n' + get_history(),
     long_description_content_type="text/markdown",
     install_requires=get_requirements(),
-    license="MIT",
+    license=about['__license__'],
     include_package_data=True,
     keywords=["pymodi", "modi", "luxrobo"],
     packages=find_packages(include=['modi', 'modi.task', 'modi.module',
