@@ -24,9 +24,9 @@ from modi.module.module import Module
 
 class ExeTask:
     """
-    :param queue serial_write_q: Inter-process queue for writing serial
+    :param queue send_q: Inter-process queue for writing serial
     message.
-    :param queue json_recv_q: Inter-process queue for parsing json message.
+    :param queue recv_q: Inter-process queue for parsing json message.
     :param dict() module_ids: dict() of module_id : ['timestamp', 'uuid'].
     :param list() modules: list() of module instance.
     """
@@ -55,6 +55,9 @@ class ExeTask:
 
     def run(self, delay: float):
         """ Run in ExecutorThread
+
+        :param delay: time value to wait in seconds
+        :type delay: float
         """
 
         time.sleep(delay)
@@ -70,9 +73,13 @@ class ExeTask:
             self.__command_handler(message["c"])(message)
 
     def __command_handler(self, command: int) -> Callable[[Dict[str, int]], None]:
-        """ Excute task based on command message
-        """
+        """ Execute task based on command message
 
+        :param command: command code
+        :type command: int
+        :return: a function the corresponds to the command code
+        :rtype: Callable[[Dict[str, int]], None]
+        """
         return {
             0x00: self.__update_health,
             0x0A: self.__update_warning,
@@ -82,6 +89,11 @@ class ExeTask:
         }.get(command, lambda _: None)
 
     def __update_topology(self, message: Dict[str, int]) -> None:
+        """Update the topology of the connected modules
+
+        :param message: Dictionary format message of the module
+        :return: None
+        """
         # print('topology_msg:', message)
 
         # Setup prerequisites
@@ -117,8 +129,13 @@ class ExeTask:
         self._topology_data[src_id] = topology_by_id
 
     def __get_uuid_by_id(self, id_: int) -> int:
+        """Find id of a module which has corresponding uuid
 
-        # find id of a module which has corresponding uuid
+        :param id_: ID of the module
+        :type id_: int
+        :return: UUID
+        :rtype: int
+        """
         for module in self._modules:
             if module.id == id_:
                 return module.uuid
@@ -126,8 +143,11 @@ class ExeTask:
 
     def __update_health(self, message: Dict[str, int]) -> None:
         """ Update information by health message
-        """
 
+        :param message: Dictionary format message of the module
+        :type message: Dictionary
+        :return: None
+        """
         # Record current time and uuid, timestamp, battery information
         module_id = message["s"]
         curr_time_ms = int(time.time() * 1000)
@@ -157,6 +177,11 @@ class ExeTask:
                         module.set_connection_state(connection_state=False)
 
     def __update_warning(self, message: Dict[str, int]) -> None:
+        """Update the warning message
+
+        :param message: Warning message in Dictionary format
+        :return: None
+        """
         #print('Warning message:', message)
 
         sid = message["s"]
@@ -178,6 +203,10 @@ class ExeTask:
 
     def __update_modules(self, message: Dict[str, int]) -> None:
         """ Update module information
+
+        :param message: Dictionary format module info
+        :type message: Dictionary
+        :return: None
         """
 
         # Set time variable for timestamp
@@ -246,13 +275,21 @@ class ExeTask:
                     self._init_event.set()
 
     def __is_all_connected(self) -> bool:
-        """ determine whether all modules are connected
+        """ Determine whether all modules are connected
+
+        :return: true is all modules are connected
+        :rtype: bool
         """
 
         return self._nb_modules == len(self._modules)
 
     def __init_module(self, module_type: str) -> Module:
         """ Find module type for module initialize
+
+        :param module_type: Type of the module in string
+        :type module_type: str
+        :return: Module corresponding to the type
+        :rtype: Module
         """
 
         module = {
@@ -272,8 +309,11 @@ class ExeTask:
 
     def __update_property(self, message: Dict[str, int]) -> None:
         """ Update module property
-        """
 
+        :param message: Dictionary format message
+        :type message: Dictionary
+        :return: None
+        """
         # Do not update reserved property
         property_number = message["d"]
         if property_number == 0 or property_number == 1:
@@ -292,6 +332,12 @@ class ExeTask:
 
     def __set_pnp(self, module_id: int, module_pnp_state: Enum) -> None:
         """ Generate module pnp on/off command
+
+        :param module_id: ID of the target module
+        :type module_id: int
+        :param module_pnp_state: Pnp state value
+        :type module_pnp_state: Enum
+        :return: None
         """
 
         # If no module_id is specified, it will broadcast incoming pnp state
@@ -311,6 +357,13 @@ class ExeTask:
 
     def __fit_module_uuid(self, module_info: int, module_uuid: int) -> int:
         """ Generate uuid using bitwise operation
+
+        :param module_info: Module info
+        :type module_info: int
+        :param module_uuid: Module uuid
+        :type module_uuid: int
+        :return: Fitted uuid
+        :rtype: int
         """
 
         sizeof_module_uuid = 0
@@ -321,6 +374,15 @@ class ExeTask:
 
     def __set_module_state(self, destination_id: int, module_state: Enum, pnp_state: Enum) -> str:
         """ Generate message for set module state and pnp state
+
+        :param destination_id: Id to target destination
+        :type destination_id: int
+        :param module_state: State value of the module
+        :type module_state: int
+        :param pnp_state: Pnp state value
+        :type pnp_state: Enum
+        :return: json serialized message
+        :rtype: str
         """
 
         if type(module_state) is Module.State:
@@ -343,6 +405,8 @@ class ExeTask:
 
     def __init_modules(self) -> None:
         """ Initialize module on first run
+
+        :return: None
         """
 
         BROADCAST_ID = 0xFFF
@@ -373,12 +437,21 @@ class ExeTask:
 
     def __delay(self) -> None:
         """ Wait for delay
+
+        :return: None
         """
 
         time.sleep(1)
 
     def __request_uuid(self, source_id: int, is_network_module: bool = False) -> str:
         """ Generate broadcasting message for request uuid
+
+        :param source_id: Id of the source
+        :type source_id: int
+        :param is_network_module: true if network module
+        :type is_network_module: bool
+        :return: json serialized message
+        :rtype: str
         """
 
         BROADCAST_ID = 0xFFF
@@ -398,7 +471,11 @@ class ExeTask:
         return json.dumps(message, separators=(",", ":"))
 
     def __request_topology(self) -> str:
+        """Request module topology
 
+        :return: json serialized topology request message
+        :rtype: str
+        """
         message = dict()
         message["c"] = 0x07
         message["s"] = 0
@@ -412,6 +489,8 @@ class ExeTask:
 
     def update_firmware(self) -> None:
         """ Remove firmware of MODI modules
+
+        :return: None
         """
 
         BROADCAST_ID = 0xFFF
@@ -423,6 +502,10 @@ class ExeTask:
 
     def update_firmware_ready(self, module_id: int) -> None:
         """ Check if modules with no firmware are ready to update its firmware
+
+        :param module_id: Id of the target module
+        :type module_id: int
+        :return: None
         """
 
         firmware_update_ready_message = self.__set_module_state(

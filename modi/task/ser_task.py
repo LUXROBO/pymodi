@@ -27,6 +27,8 @@ class SerTask(ConnTask):
     #
     def open_conn(self) -> None:
         """ Open serial port
+
+        :return: None
         """
 
         modi_ports = self._list_modi_ports()
@@ -48,12 +50,16 @@ class SerTask(ConnTask):
 
     def _close_conn(self) -> None:
         """ Close serial port
+
+        :return: None
         """
 
         self.__ser.close()
 
     def _read_data(self) -> None:
         """ Read serial message and put message to serial read queue
+
+        :return: None
         """
 
         serial_buffer = self.__ser.in_waiting
@@ -68,6 +74,8 @@ class SerTask(ConnTask):
 
     def _write_data(self) -> None:
         """ Write serial message in serial write queue
+
+        :return: None
         """
 
         try:
@@ -78,11 +86,23 @@ class SerTask(ConnTask):
             self.__ser.write(message_to_write)
 
     def run_read_data(self, delay: float) -> None:
+        """Read data through serial port
+
+        :param delay: time value to wait in seconds
+        :type delay: float
+        :return: None
+        """
         while True:
             self._read_data()
             time.sleep(delay)
 
     def run_write_data(self, delay: float) -> None:
+        """Write data through serial port
+
+        :param delay: time value to wait in seconds
+        :type delay: float
+        :return: None
+        """
         while True:
             self._write_data()
             time.sleep(delay)
@@ -91,6 +111,10 @@ class SerTask(ConnTask):
     # Helper method
     #
     def __parse_serial(self) -> None:
+        """Update the json buffer
+
+        :return: None
+        """
         # While there is a valid json in the json buffer
         while "{" in self.__json_buffer and "}" in self.__json_buffer:
             split_index = self.__json_buffer.find("}") + 1

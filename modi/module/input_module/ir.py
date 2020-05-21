@@ -14,7 +14,8 @@ class Ir(InputModule):
         super().__init__(id_, uuid, msg_send_q)
 
     def get_proximity(self) -> float:
-        """
+        """Returns the proximity value between 0 and 100
+
         :return: Distance to object.
         :rtype: float
         """
