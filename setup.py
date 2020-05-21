@@ -1,5 +1,5 @@
 from os import path
-import modi.about as about
+
 from setuptools import setup, find_packages
 
 
