@@ -10,6 +10,14 @@ def get_readme():
         return readme
 
 
+def get_about():
+    about = {}
+    here = path.dirname(__file__)
+    with open(path.join(here, 'about.py')) as about_file:
+        exec(about_file.read(), about)
+    return about
+
+
 def get_history():
     here = path.dirname(__file__)
     with open(path.join(here, 'HISTORY.md')) as history_file:
@@ -23,17 +31,17 @@ def get_requirements():
         requirements = requirements_file.read().splitlines()
         return requirements
 
-
+about = get_about()
 setup(
-    name="pymodi",
-    version="0.8.0",
-    author="Jinsung Ha",
-    author_email="jinsung@luxrobo.com",
-    description="Easy😆 and fast💨 MODI Python API package.",
+    name=about['__title__'],
+    version=about['__version__'],
+    author=about['__author__'],
+    author_email=about['__email__'],
+    description=about['__summary__'],
     long_description=get_readme() + '\n' + get_history(),
     long_description_content_type="text/markdown",
     install_requires=get_requirements(),
-    license="MIT",
+    license=about['__license__'],
     include_package_data=True,
     keywords=["pymodi", "modi", "luxrobo"],
     packages=find_packages(include=['modi', 'modi.task', 'modi.module',
@@ -41,7 +49,7 @@ setup(
                                     'modi.module.input_module',
                                     'modi.module.output_module']),
     test_suite="tests",
-    url="https://github.com/LUXROBO/pyMODI",
+    url=about['__url__'],
     classifiers=[
         "Natural Language :: English",
         "Intended Audience :: Developers",
