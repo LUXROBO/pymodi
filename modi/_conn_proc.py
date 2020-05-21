@@ -19,16 +19,32 @@ class ConnProc(mp.Process):
         self.__delay = 0.05 if isinstance(self.__task, SppTask) else 0.001
 
     def __init_task(self, conn_mode: str) -> ConnTask:
+        """Initialize task with given connection mode
+
+        :param conn_mode: Desired connection mode
+        :type conn_mode: str
+        :return: Corresponding connection task
+        :rtype: ConnTask
+        """
         if conn_mode.startswith("b"):
             return SppTask
         return CanTask if self.__is_modi_pi() else SerTask
 
     @staticmethod
     def __is_modi_pi() -> bool:
+        """Returns whether connection is on pi
+
+        :return: true is on pi
+        :rtype: bool
+        """
         return ConnTask.is_on_pi() and \
                not ConnTask.is_network_module_connected()
 
     def run(self) -> None:
+        """Run the connection
+
+        :return: None
+        """
         self.__task.open_conn()
 
         read_thread = th.Thread(
