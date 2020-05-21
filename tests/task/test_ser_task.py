@@ -3,6 +3,7 @@ from unittest import mock
 
 from serial.tools.list_ports_common import ListPortInfo
 from serial.serialutil import SerialException
+from serial import Serial
 from modi.task.ser_task import SerTask
 
 
@@ -30,6 +31,10 @@ class TestSerTask(unittest.TestCase):
         self.assertRaises(SerialException, self.ser_task.open_conn)
         self.assertEqual(self.ser_task.serial.port, "TestDevice")
         self.assertEqual(self.ser_task.serial.baudrate, 921600)
+
+    def test_close_conn(self):
+        """Test close_conn method"""
+        self.assertRaises(AttributeError, self.ser_task._close_conn)
 
 
 if __name__ == "__main__":
