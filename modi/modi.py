@@ -1,6 +1,7 @@
 """Main MODI module."""
 
 import time
+from typing import Tuple
 
 import threading as th
 import multiprocessing as mp
@@ -33,7 +34,7 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self, nb_modules, conn_mode="serial", module_uuid="", test=False):
+    def __init__(self, nb_modules: int, conn_mode: str = "serial", module_uuid: str = "", test: bool = False):
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -77,11 +78,19 @@ class MODI:
             raise Exception("Modules are not initialized properly!")
         print("MODI modules are initialized!")
 
-    def print_ids(self):
+    def print_ids(self) -> None:
+        """Print all module ids
+
+        :return: None
+        """
         for module in self.modules:
             pprint('module: {}, module_id: {}'.format(module, module.id))
 
-    def print_topology_map(self):
+    def print_topology_map(self) -> None:
+        """Print the topology map
+
+        :return: None
+        """
         # start_time = time.time()
         tp_data = self._topology_data
         graph = nx.Graph()
@@ -124,7 +133,14 @@ class MODI:
 
         return labeled_graph
 
-    def __get_type_from_uuid(self, uuid):
+    def __get_type_from_uuid(self, uuid: int) -> str:
+        """Returns type based on uuid
+
+        :param uuid: UUID of the required type
+        :type uuid: int
+        :return: Corresponding type
+        :rtype: str
+        """
         if uuid is None:
             return 'Network'
 
