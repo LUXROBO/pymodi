@@ -28,8 +28,8 @@ class TestSerTask(unittest.TestCase):
     def test_open_conn(self):
         """Test open_conn method"""
         self.assertRaises(SerialException, self.ser_task.open_conn)
-        self.assertEqual(self.ser_task.get_serial().port, "TestDevice")
-        self.assertEqual(self.ser_task.get_serial().baudrate, 921600)
+        self.assertEqual(self.ser_task.serial.port, "TestDevice")
+        self.assertEqual(self.ser_task.serial.baudrate, 921600)
 
 
 if __name__ == "__main__":

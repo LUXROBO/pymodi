@@ -18,7 +18,8 @@ class SerTask(ConnTask):
         self.__ser = None
         self.__json_buffer = ""
 
-    def get_serial(self):
+    @property
+    def serial(self):
         return self.__ser
 
     #
