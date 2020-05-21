@@ -2,7 +2,7 @@ import unittest
 from unittest import mock
 
 from serial.tools.list_ports_common import ListPortInfo
-
+from serial.serialutil import SerialException
 from modi.task.ser_task import SerTask
 
 
@@ -16,20 +16,21 @@ class TestSerTask(unittest.TestCase):
 
         def eval_list_modi_ports():
             fake_port = ListPortInfo()
+            fake_port.device = "TestDevice"
             return [fake_port]
-        self.ser_task._close_conn()
+
         self.ser_task._list_modi_ports = mock.Mock(side_effect=eval_list_modi_ports)
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
         del self.ser_task
 
-    # def test_open_conn(self):
-    #     """Test open_conn method"""
-    #     self.ser_task.open_conn()
+    def test_open_conn(self):
+        """Test open_conn method"""
+        self.assertRaises(SerialException, self.ser_task.open_conn)
+        self.assertEqual(self.ser_task.get_serial().port, "TestDevice")
+        self.assertEqual(self.ser_task.get_serial().baudrate, 921600)
 
-    # def test_run_read_data(self):
-    #     self.ser_task._close_conn()
 
 if __name__ == "__main__":
     unittest.main()
