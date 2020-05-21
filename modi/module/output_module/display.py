@@ -16,8 +16,13 @@ class Display(OutputModule):
         super().__init__(id_, uuid, msg_send_q)
 
     def set_text(self, text: str) -> str:
-        """
+        """Clears the display and show the input string on the display. Returns the json serialized signal sent to
+        the module to display the text
+
         :param text: Text to display.
+        :type text: string
+        :return: A json serialized signal to module
+        :rtype: string
         """
         self.clear()
         messages = self._set_property(
@@ -31,8 +36,17 @@ class Display(OutputModule):
         return messages
 
     def set_variable(self, variable: float, position_x: int, position_y: int) -> str:
-        """
-        :param variable: Variable to display.
+        """Clears the display and show the input variable on the display. Returns the json serialized signal sent to
+        the module to display the text
+
+        :param variable: variable to display.
+        :type variable: float
+        :param position_x: x coordinate of the desired position
+        :type position_x: int
+        :param position_y: y coordinate of te desired position
+        :type position_y: int
+        :return: A json serialized signal to module
+        :rtype: string
         """
         self.clear()
         message = self._set_property(
@@ -46,6 +60,9 @@ class Display(OutputModule):
 
     def clear(self) -> str:
         """Clear the screen.
+
+        :return: json serialized message to te module
+        :rtype: string
         """
         message = self._set_property(
             self._id,

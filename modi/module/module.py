@@ -9,9 +9,9 @@ from enum import Enum
 
 class Module:
     """
-    :param int id: The id of the module.
+    :param int id_: The id of the module.
     :param int uuid: The uuid of the module.
-    :param serial_write_q: multiprocessing.queue of the serial writing
+    :param msg_send_q: multiprocessing.queue of the serial writing
     """
 
     class Property:
@@ -57,6 +57,9 @@ class Module:
 
     def _get_property(self, property_type: Enum) -> float:
         """ Get module property value and request
+
+        :param property_type: Type of the requested property
+        :type property_type: Enum
         """
 
         # Register property if not exists
@@ -82,6 +85,11 @@ class Module:
 
     def update_property(self, property_type: Enum, property_value: float) -> None:
         """ Update property value and time
+
+        :param property_type: Type of the updated property
+        :type property_type: Enum
+        :param property_value: Value to update the property
+        :type property_value: float
         """
 
         if property_type in self._properties.keys():
@@ -90,8 +98,14 @@ class Module:
 
     def request_property(self, destination_id: int, property_type: int) -> str:
         """ Generate message for request property
-        """
 
+        :param destination_id: Id of the destination module
+        :type destination_id: int
+        :param property_type: Type of the requested property
+        :type property_type: int
+        :return: json serialized message for request property
+        :rtype: str
+        """
         message = dict()
 
         message["c"] = 0x03
