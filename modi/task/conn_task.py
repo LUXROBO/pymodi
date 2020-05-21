@@ -8,6 +8,7 @@ from abc import ABC
 from abc import abstractmethod
 from typing import List
 
+
 class ConnTask(ABC):
 
     def __init__(self, recv_q, send_q):
@@ -16,6 +17,10 @@ class ConnTask(ABC):
 
     @staticmethod
     def _list_modi_ports() -> List[ListPortInfo]:
+        """Returns a list of connected MODI ports
+
+        :return: List[ListPortInfo]
+        """
         def __is_modi_port(port):
             return (
                 port.manufacturer == "LUXROBO" or
@@ -28,10 +33,20 @@ class ConnTask(ABC):
 
     @staticmethod
     def is_on_pi() -> bool:
+        """Returns whether connected to pi
+
+        :return: true if connected to pi
+        :rtype: bool
+        """
         return os.name != "nt" and os.uname()[4][:3] == "arm"
 
     @staticmethod
     def is_network_module_connected() -> bool:
+        """Returns whether network module is connected
+
+        :return: true if connected
+        :rtype: bool
+        """
         return bool(ConnTask._list_modi_ports())
 
     #
