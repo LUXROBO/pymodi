@@ -18,6 +18,9 @@ class SerTask(ConnTask):
         self.__ser = None
         self.__json_buffer = ""
 
+    def get_serial(self):
+        return self.__ser
+
     #
     # Inherited Methods
     #
