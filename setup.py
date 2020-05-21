@@ -49,7 +49,7 @@ setup(
                                     'modi.module.input_module',
                                     'modi.module.output_module']),
     test_suite="tests",
-    url="https://github.com/LUXROBO/pyMODI",
+    url=about['__url__'],
     classifiers=[
         "Natural Language :: English",
         "Intended Audience :: Developers",
