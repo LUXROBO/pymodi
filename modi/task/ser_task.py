@@ -22,6 +22,9 @@ class SerTask(ConnTask):
     def serial(self):
         return self.__ser
 
+    def set_serial(self, ser):
+        self.__ser = ser
+
     #
     # Inherited Methods
     #

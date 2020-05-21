@@ -34,6 +34,7 @@ class TestSerTask(unittest.TestCase):
 
     def test_close_conn(self):
         """Test close_conn method"""
+        self.ser_task.set_serial(Serial())
         self.assertRaises(AttributeError, self.ser_task._close_conn)
 
 
