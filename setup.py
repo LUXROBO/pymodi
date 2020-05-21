@@ -13,7 +13,7 @@ def get_readme():
 def get_about():
     about = {}
     here = path.dirname(__file__)
-    with open(path.join(here, 'modi', 'about.py')) as about_file:
+    with open(path.join(here, 'about.py')) as about_file:
         exec(about_file.read(), about)
     return about
 
