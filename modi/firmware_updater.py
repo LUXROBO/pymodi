@@ -80,8 +80,7 @@ class FirmwareUpdater:
         """ Update firmware of a given module
         """
 
-        print("Start updating the binary firmware for {}: {}".format(
-            module_type, module_id))
+        print(f"Start updating the binary firmware for {module_type}: {module_id}")
 
         # Init path to binary file
         root_path = "/Users/jha/Downloads"
@@ -150,21 +149,21 @@ class FirmwareUpdater:
         end_flash_data[0] = 0xAA
         end_flash_data[6] = version & 0xFF
         end_flash_data[7] = (version >> 8) & 0xFF
-        self.send_end_flash_data(module_id, end_flash_data)
-
-        # Reboot
-        reboot_message = self.__set_module_state(
-            module_id, Module.State.REBOOT, Module.State.PNP_OFF
-        )
-        self._send_q.put(reboot_message)
+        self.send_end_flash_data(module_type, module_id, end_flash_data)
 
         # Firmware update flag down
-        print('Firmware update is done for module with id:', module_id)
+        print(f'Firmware update is done for {module_type} module with id: {module_id}')
         self.update_in_progress = False
 
         # If all modules have updated their firmware
         if all(self.progress_dict.values()):
             self.update_event.set()
+
+            # Reboot all
+            reboot_message = self.__set_module_state(
+                0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
+            )
+            self._send_q.put(reboot_message)
 
     def __set_module_state(self, destination_id, module_state, pnp_state):
         """ Generate message for set module state and pnp state
@@ -186,7 +185,7 @@ class FirmwareUpdater:
         return json.dumps(message, separators=(",", ":"))
 
     # TODO: Use retry decorator here
-    def send_end_flash_data(self, module_id, end_flash_data):
+    def send_end_flash_data(self, module_type, module_id, end_flash_data):
         # Write end-flash data until success
         end_flash_success = False
         while not end_flash_success:
@@ -211,7 +210,7 @@ class FirmwareUpdater:
                 continue
 
             end_flash_success = True
-        print("End flash is written for", module_id)
+        print(f"End flash is written for {module_type}, {module_id}")
 
     def get_firmware_command(self, module_id, rot_stype, rot_scmd,
                              crc32, page_addr):
