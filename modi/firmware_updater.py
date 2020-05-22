@@ -123,7 +123,7 @@ class FirmwareUpdater:
                 curr_data = curr_page[curr_ptr:curr_ptr+8]
                 checksum = self.send_firmware_data(module_id,
                     seq_num=curr_ptr//8, bin_data=curr_data, crc_val=checksum)
-                time.sleep(0.001)
+                time.sleep(0.0025)
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_page_success = self.send_firmware_command(
