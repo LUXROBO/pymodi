@@ -12,11 +12,11 @@ class ExecutorThread(threading.Thread):
     """
 
     def __init__(self, modules, module_ids, topology_data,
-                 recv_q, send_q, init_event, nb_modules):
+                 recv_q, send_q, init_event, nb_modules, firmware_update_flag, firmware_update_event):
         super().__init__()
         self.__exe_task = ExecutorTask(
             modules, module_ids, topology_data, recv_q, send_q,
-            init_event, nb_modules
+            init_event, nb_modules, firmware_update_flag, firmware_update_event
         )
 
     def run(self):

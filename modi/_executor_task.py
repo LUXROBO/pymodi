@@ -42,7 +42,7 @@ class ExecutorTask:
     }
 
     def __init__(self, modules, module_ids, topology_data,
-                 recv_q, send_q, init_event, nb_modules):
+                 recv_q, send_q, init_event, nb_modules, firmware_update_flag, firmware_update_event):
 
         self._modules = modules
         self._module_ids = module_ids
@@ -53,9 +53,15 @@ class ExecutorTask:
         self._nb_modules = nb_modules
 
         self.firmware_updater = None
+        self._firmware_update_flag = firmware_update_flag
+        self._firmware_update_event = firmware_update_event
 
         self.__init_modules()
         print('Start initializing connected MODI modules')
+
+        self.firmware_updater = FirmwareUpdater(
+            self._send_q, self._firmware_update_event, self._module_ids,
+        )
 
     def run(self, delay):
         """ Run in ExecutorThread
@@ -65,10 +71,20 @@ class ExecutorTask:
             message = json.loads(self._recv_q.get_nowait())
         except queue.Empty:
             pass
+        except json.decoder.JSONDecodeError:
+            pass
         else:
+            print('recv msg:', message)
             self.__command_handler(message["c"])(message)
 
         time.sleep(delay)
+
+        # If user requested, update firmware of connected modules
+        if self._firmware_update_flag[0]:
+            for module_id in self._module_ids:
+                self.firmware_updater.request_to_update_firmware(module_id)
+            self._firmware_update_flag[0] = False
+            print("Module firmware update is requested!")
 
     def __command_handler(self, command):
         """ Excute task based on command message
@@ -88,6 +104,7 @@ class ExecutorTask:
         message_decoded = bytearray(base64.b64decode(byte_data))
 
         stream_state = message_decoded[4]
+
         # TODO: Remove this if and elif branches
         if stream_state == FirmwareUpdater.FirmwareState.CRC_ERROR.value:
             self.firmware_updater.update_response(response=True, is_error_response=True)
@@ -180,7 +197,8 @@ class ExecutorTask:
         warning_type = warning_data[6]
 
         # If warning shows current module works fine, return immediately
-        if not warning_type: return
+        if not warning_type:
+            return
 
         module_uuid = warning_data[:6]
         module_uuid_res = 0
@@ -190,12 +208,12 @@ class ExecutorTask:
         module_id = message["s"]
 
         if warning_type == 1:
-            self.is_ready_to_update_firmware(module_id)
+            self.firmware_updater.is_ready_to_update_firmware(module_id)
         elif warning_type == 2:
-            if self.firmware_updater is None:
-                self.firmware_updater = FirmwareUpdater(self._send_q)
-                module_type = self.__get_type_from_uuid(module_uuid_res)
-                self.firmware_updater.update(module_id, module_type)
+            # Note that more than one warning type 2 message can be received
+            module_type = self.__get_type_from_uuid(module_uuid_res)
+            self.firmware_updater.update_module(module_id, module_type)
+            # this .update triggers the flag to be True
         else:
             # TODO: Handle warning_type of 7 and 10
             print("Unsupported warning type:", warning_type)
@@ -429,24 +447,6 @@ class ExecutorTask:
         message["l"] = 8
 
         return json.dumps(message, separators=(",", ":"))
-
-    def request_to_update_firmware(self, module_id):
-        """ Remove firmware of MODI modules (Removes EndFlash)
-        """
-
-        firmware_update_message = self.__set_module_state(
-            module_id, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
-        )
-        self._send_q.put(firmware_update_message)
-
-    def is_ready_to_update_firmware(self, module_id):
-        """ Check if modules with no firmware are ready to update its firmware
-        """
-
-        firmware_update_ready_message = self.__set_module_state(
-            module_id, Module.State.UPDATE_FIRMWARE_READY, Module.State.PNP_OFF
-        )
-        self._send_q.put(firmware_update_ready_message)
 
     #
     # Helper Methods below

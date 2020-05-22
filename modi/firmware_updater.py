@@ -3,7 +3,7 @@ import os
 import time
 import json
 import base64
-import threading
+import threading as th
 
 from enum import Enum
 
@@ -11,6 +11,7 @@ from modi.module.module import Module
 
 
 class FirmwareUpdater:
+    """Module Firmware Updater: Updates a firmware of given module"""
 
     class FirmwareState(Enum):
         NO_ERROR = 0
@@ -22,29 +23,64 @@ class FirmwareUpdater:
         ERASE_ERROR = 6
         ERASE_COMPLETE = 7
 
-    def __init__(self, send_q):
+    def __init__(self, send_q, update_event, module_ids):
         self._send_q = send_q
 
         self.response_flag = False
         self.response_error_flag = False
         self.response_error_count = 0
-    
-    def update(self, module_id, module_type):
-        updater_thread = threading.Thread(
+
+        self.update_in_progress = False
+
+        self.update_event = update_event
+        self.module_ids = module_ids
+
+        # Init a dict tracking which module started to update its firmware
+        self.progress_dict = dict(zip(module_ids, [False]*len(module_ids)))
+
+    def request_to_update_firmware(self, module_id):
+        """ Remove firmware of MODI modules (Removes EndFlash)
+        """
+
+        firmware_update_message = self.__set_module_state(
+            module_id, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
+        )
+        self._send_q.put(firmware_update_message)
+
+    def is_ready_to_update_firmware(self, module_id):
+        """ Check if modules with no firmware are ready to update its firmware
+        """
+
+        firmware_update_ready_message = self.__set_module_state(
+            module_id, Module.State.UPDATE_FIRMWARE_READY, Module.State.PNP_OFF
+        )
+        self._send_q.put(firmware_update_ready_message)
+
+    def update_module(self, module_id, module_type):
+        if module_id not in self.progress_dict:
+            self.progress_dict[module_id] = False
+
+        if self.progress_dict[module_id] or self.update_in_progress:
+            return
+
+        updater_thread = th.Thread(
             target=self.__update_firmware, args=(module_id, module_type))
         updater_thread.start()
+
+        self.progress_dict[module_id] = True
+        self.update_in_progress = True
 
     def update_response(self, response, is_error_response=False):
         if not is_error_response:
             self.response_flag = response
         else:
             self.response_error_flag = response
-    
+
     def __update_firmware(self, module_id, module_type):
         """ Update firmware of a given module
         """
 
-        print("Start updating the binary firmware for {}:{}".format(
+        print("Start updating the binary firmware for {}: {}".format(
             module_type, module_id))
 
         # Init path to binary file
@@ -52,7 +88,6 @@ class FirmwareUpdater:
         bin_path = os.path.join(root_path, "skeleton", module_type, "Base_module.bin")
 
         # Read bytes data from the given binary file of the current module
-        bin_buffer = None
         with open(bin_path, "rb") as bf:
             bin_buffer = bf.read()
 
@@ -73,7 +108,7 @@ class FirmwareUpdater:
 
             # Erase page (send erase request and receive its response)
             erase_page_success = self.send_firmware_command(
-                oper_type="erase", module_id=module_id, crc_val=0, 
+                oper_type="erase", module_id=module_id, crc_val=0,
                 dest_addr=flash_memory_addr, page_addr=page_begin)
             if not erase_page_success:
                 page_begin -= page_size
@@ -86,20 +121,18 @@ class FirmwareUpdater:
                     break
 
                 curr_data = curr_page[curr_ptr:curr_ptr+8]
-                checksum = self.send_firmware_data(module_id, 
+                checksum = self.send_firmware_data(module_id,
                     seq_num=curr_ptr//8, bin_data=curr_data, crc_val=checksum)
                 time.sleep(0.001)
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_page_success = self.send_firmware_command(
-                oper_type="crc", module_id=module_id, crc_val=checksum, 
+                oper_type="crc", module_id=module_id, crc_val=checksum,
                 dest_addr=flash_memory_addr, page_addr=page_begin)
             if not crc_page_success:
                 page_begin -= page_size
-                continue
-        
+
         # Include MODI firmware version when writing end flash
-        version_bits = None
         version_path = os.path.join(root_path, "skeleton", "version.txt")
         with open(version_path, "r") as vf:
             version_buffer = vf.read()
@@ -118,7 +151,7 @@ class FirmwareUpdater:
         end_flash_data[6] = version & 0xFF
         end_flash_data[7] = (version >> 8) & 0xFF
         self.send_end_flash_data(module_id, end_flash_data)
-        
+
         # Reboot
         reboot_message = self.__set_module_state(
             module_id, Module.State.REBOOT, Module.State.PNP_OFF
@@ -127,7 +160,12 @@ class FirmwareUpdater:
 
         # Firmware update flag down
         print('Firmware update is done for module with id:', module_id)
-    
+        self.update_in_progress = False
+
+        # If all modules have updated their firmware
+        if all(self.progress_dict.values()):
+            self.update_event.set()
+
     def __set_module_state(self, destination_id, module_state, pnp_state):
         """ Generate message for set module state and pnp state
         """
@@ -155,19 +193,19 @@ class FirmwareUpdater:
 
             # Erase page (send erase request and receive erase response)
             erase_page_success = self.send_firmware_command(
-                oper_type="erase", module_id=module_id, crc_val=0, 
+                oper_type="erase", module_id=module_id, crc_val=0,
                 dest_addr=0x0801F800)
             # TODO: Remove magic number of dest_addr above, try using flash_mem
             if not erase_page_success:
                 continue
-            
+
             # Send data
             checksum = self.send_firmware_data(
                 module_id, seq_num=0, bin_data=end_flash_data, crc_val=0)
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_page_success = self.send_firmware_command(
-                oper_type="crc", module_id=module_id, crc_val=checksum, 
+                oper_type="crc", module_id=module_id, crc_val=checksum,
                 dest_addr=0x0801F800)
             if not crc_page_success:
                 continue
@@ -227,7 +265,7 @@ class FirmwareUpdater:
         crc ^= int.from_bytes(data, byteorder='little', signed=False)
 
         for _ in range(32):
-            if ((crc & (1 << 31)) != 0):
+            if (crc & (1 << 31) != 0):
                 crc = (crc << 1) ^ 0x4C11DB7
             else:
                 crc <<= 1
@@ -253,7 +291,7 @@ class FirmwareUpdater:
 
         return self.receive_command_response()
 
-    def receive_command_response(self, response_delay=0.1, response_timeout=5, 
+    def receive_command_response(self, response_delay=0.1, response_timeout=5,
         max_response_error_count=50):
         """ Block until receiving a response of the most recent message sent
         """
