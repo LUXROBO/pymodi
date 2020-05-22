@@ -87,6 +87,50 @@ class MODI:
             pprint('module: {}, module_id: {}'.format(module, module.id))
 
     def print_topology_map(self) -> None:
+        """Print topology map
+
+        :return: None
+        """
+        class Tree:
+            def __init__(self, module_id):
+                self.connected_modules = []
+                self.id = module_id
+
+            def make_tree(self, so_far, data):
+                directions = ['t', 'b', 'l', 'r']
+                module_data = data[self.id]
+                for direction in directions:
+                    conn_id = module_data[direction]
+                    if conn_id not in so_far and conn_id is not None:
+                        so_far.append(conn_id)
+                        child = Tree(conn_id)
+                        child.make_tree(so_far, data)
+                        self.connected_modules.append(child)
+
+        def print_tree(tree, depth):
+            name = self.__get_type_from_uuid(tp_data[tree.id]['uuid'])
+            s = name
+            depth += len(name)
+            for i in range(len(tree.connected_modules)):
+                if i is not 0:
+                    s += " " * depth
+                s += " - " + print_tree(tree.connected_modules[i], depth+3)
+            if len(tree.connected_modules) is 0:
+                s += "\n"
+            return s
+
+        tp_data = self._topology_data
+        init_id = list(tp_data.keys())[0]
+        tp_tree = Tree(init_id)
+        tp_tree.make_tree([init_id], tp_data)
+        print("\n<<MODI Topology Map>>")
+        print("Ex) ModuleA -ModuleB "+'\n'+"            -ModuleC")
+        print("means that ModuleB and ModuleC are connected to ModuleA.")
+
+        print("-" * 60)
+        print(print_tree(tp_tree, 0), end='')
+
+    def print_topology_matrix(self) -> None:
         """Print the topology map
 
         :return: None
@@ -126,12 +170,28 @@ class MODI:
                 curr_edges.append(edge_to_bottom)
 
             graph.add_edges_from(curr_edges)
+
+        graph = nx.relabel_nodes(graph, labels)
+        matrix = nx.adjacency_matrix(graph).todense().tolist()
+        nodes = list(graph)
+        table_length = 13 * (len(nodes) + 1) - 2
+
+        title = "<<Topology Adjacency Matrix>>"
+        result = "\n" + " " * ((table_length - len(title)) // 2) + title + "\n"
+        result += "=" * table_length + "\n" + " " * 10 + "| "
+        for node in nodes:
+            result += "{0:<10} | ".format(node)
+        result += '\n' + '-' * table_length + '\n'
+        for i in range(len(nodes)):
+            result += "{0:<10}| ".format(nodes[i])
+            for elem in matrix[i]:
+                result += "{0:<10} | ".format(elem)
+            result += '\n'
+        print(result)
         # print('graph.edges():', graph.edges())
-
-        labeled_graph = nx.relabel_nodes(graph, labels)
+        #labeled_graph = nx.relabel_nodes(graph, labels)
         # print('total time taken:', time.time() - start_time)
-
-        return labeled_graph
+        #return labeled_graph
 
     def __get_type_from_uuid(self, uuid: int) -> str:
         """Returns type based on uuid
