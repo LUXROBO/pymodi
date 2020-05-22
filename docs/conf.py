@@ -66,7 +66,7 @@ author = "Jinsung Ha"
 from os import path
 about = {}
 here = path.dirname(__file__)
-with open(path.join(here, '..', 'about.py')) as about_file:
+with open(path.join(here, '..', 'about.py'), encoding='UTF8') as about_file:
     exec(about_file.read(), about)
 version = about['__version__']
 # The full version, including alpha/beta/rc tags.
