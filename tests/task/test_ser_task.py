@@ -35,7 +35,13 @@ class TestSerTask(unittest.TestCase):
     def test_close_conn(self):
         """Test close_conn method"""
         self.ser_task.set_serial(Serial())
-        self.assertRaises(AttributeError, self.ser_task._close_conn)
+        self.ser_task.serial.close = mock.Mock()
+        self.ser_task._close_conn()
+        self.ser_task.serial.close.assert_called_once_with()
+
+    def test_read_data(self):
+        """Test _read_data method"""
+
 
 
 if __name__ == "__main__":

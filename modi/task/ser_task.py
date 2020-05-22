@@ -19,10 +19,19 @@ class SerTask(ConnTask):
         self.__json_buffer = ""
 
     @property
-    def serial(self):
+    def serial(self) -> serial.Serial:
+        """Getter method for the serial
+
+        :return: __ser
+        """
         return self.__ser
 
-    def set_serial(self, ser):
+    def set_serial(self, ser: serial.Serial) -> None:
+        """Manually sets the __ser
+
+        :param ser: Serial to set the __ser
+        :return: None
+        """
         self.__ser = ser
 
     #
