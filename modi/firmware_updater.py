@@ -62,7 +62,10 @@ class FirmwareUpdater:
         # Check if input module already exist in the list
         for curr_module_id, curr_module_type in self.modules_to_update:
             if module_id == curr_module_id:
+                print(f"{module_type} ({module_id}) has already been added to the waiting list")
                 return
+
+        # Add the module to the waiting list
         module_elem = module_id, module_type
         self.modules_to_update.append(module_elem)
 
@@ -76,6 +79,7 @@ class FirmwareUpdater:
 
         updater_thread = th.Thread(
             target=self.__update_firmware, args=(module_id, module_type))
+        updater_thread.daemon = True
         updater_thread.start()
 
         self.progress_dict[module_id] = True
@@ -178,7 +182,8 @@ class FirmwareUpdater:
 
         if self.modules_to_update:
             next_module_id, next_module_type = self.modules_to_update.pop(0)
-            self.update_module(next_module_id, next_module_type)
+            self.response_error_count = 0
+            self.__update_firmware(next_module_id, next_module_type)
 
     def __set_module_state(self, destination_id, module_state, pnp_state):
         """ Generate message for set module state and pnp state

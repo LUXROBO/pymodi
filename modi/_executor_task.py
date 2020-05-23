@@ -213,6 +213,7 @@ class ExecutorTask:
             # Note that more than one warning type 2 message can be received
             module_type = self.__get_type_from_uuid(module_uuid_res)
             if self.firmware_updater.update_in_progress:
+                print(f"Adding {module_type} ({module_id}) to waiting list..")
                 self.firmware_updater.add_to_wait_list(module_id, module_type)
             else:
                 self.firmware_updater.update_module(module_id, module_type)
