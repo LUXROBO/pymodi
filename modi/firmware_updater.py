@@ -35,6 +35,8 @@ class FirmwareUpdater:
         self.update_event = update_event
         self.module_ids = module_ids
 
+        self.modules_to_update = []
+
         # Init a dict tracking which module started to update its firmware
         self.progress_dict = dict(zip(module_ids, [False]*len(module_ids)))
 
@@ -56,11 +58,20 @@ class FirmwareUpdater:
         )
         self._send_q.put(firmware_update_ready_message)
 
+    def add_to_wait_list(self, module_id, module_type):
+        # Check if input module already exist in the list
+        for curr_module_id, curr_module_type in self.modules_to_update:
+            if module_id == curr_module_id:
+                return
+        module_elem = module_id, module_type
+        self.modules_to_update.append(module_elem)
+
     def update_module(self, module_id, module_type):
         if module_id not in self.progress_dict:
             self.progress_dict[module_id] = False
 
         if self.progress_dict[module_id] or self.update_in_progress:
+            print(f"{module_id} with {module_type} has already been updated. This shouldn't happen?")
             return
 
         updater_thread = th.Thread(
@@ -164,6 +175,10 @@ class FirmwareUpdater:
                 0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
             )
             self._send_q.put(reboot_message)
+
+        if self.modules_to_update:
+            next_module_id, next_module_type = self.modules_to_update.pop(0)
+            self.update_module(next_module_id, next_module_type)
 
     def __set_module_state(self, destination_id, module_state, pnp_state):
         """ Generate message for set module state and pnp state

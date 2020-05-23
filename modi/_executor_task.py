@@ -212,8 +212,10 @@ class ExecutorTask:
         elif warning_type == 2:
             # Note that more than one warning type 2 message can be received
             module_type = self.__get_type_from_uuid(module_uuid_res)
-            self.firmware_updater.update_module(module_id, module_type)
-            # this .update triggers the flag to be True
+            if self.firmware_updater.update_in_progress:
+                self.firmware_updater.add_to_wait_list(module_id, module_type)
+            else:
+                self.firmware_updater.update_module(module_id, module_type)
         else:
             # TODO: Handle warning_type of 7 and 10
             print("Unsupported warning type:", warning_type)
