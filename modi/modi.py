@@ -71,6 +71,7 @@ class MODI:
         """Updates firmware of connected modules"""
         print("Request to update firmware of connected MODI modules.")
         self._firmware_update_flag[0] = True
+        self._exe_thrd.exe_task.firmware_updater.reset_state()
         self._firmware_update_event.wait()
         print("All module firmwares have been updated!")
 

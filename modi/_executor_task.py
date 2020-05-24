@@ -74,7 +74,7 @@ class ExecutorTask:
         except json.decoder.JSONDecodeError:
             pass
         else:
-            print('recv msg:', message)
+            #print('recv msg:', message)
             self.__command_handler(message["c"])(message)
 
         time.sleep(delay)

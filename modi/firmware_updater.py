@@ -40,6 +40,18 @@ class FirmwareUpdater:
         # Init a dict tracking which module started to update its firmware
         self.progress_dict = dict(zip(module_ids, [False]*len(module_ids)))
 
+    def reset_state(self):
+        """ Remove program state
+        """
+
+        print("Resetting firmware updater's state")
+        self.response_flag = False
+        self.response_error_flag = False
+        self.response_error_count = 0
+
+        for module_id, _ in self.progress_dict.items():
+            self.progress_dict[module_id] = False
+
     def request_to_update_firmware(self, module_id):
         """ Remove firmware of MODI modules (Removes EndFlash)
         """
@@ -73,8 +85,11 @@ class FirmwareUpdater:
         if module_id not in self.progress_dict:
             self.progress_dict[module_id] = False
 
-        if self.progress_dict[module_id] or self.update_in_progress:
+        if self.progress_dict[module_id]:
             print(f"{module_id} with {module_type} has already been updated. This shouldn't happen?")
+            return
+
+        if self.update_in_progress:
             return
 
         updater_thread = th.Thread(
@@ -82,7 +97,6 @@ class FirmwareUpdater:
         updater_thread.daemon = True
         updater_thread.start()
 
-        self.progress_dict[module_id] = True
         self.update_in_progress = True
 
     def update_response(self, response, is_error_response=False):
@@ -166,9 +180,13 @@ class FirmwareUpdater:
         end_flash_data[7] = (version >> 8) & 0xFF
         self.send_end_flash_data(module_type, module_id, end_flash_data)
 
-        # Firmware update flag down
+        # Firmware update flag down, resettubg used flags
         print(f'Firmware update is done for {module_type} module with id: {module_id}')
         self.update_in_progress = False
+        self.progress_dict[module_id] = True
+        self.response_flag = False
+        self.response_error_flag = False
+        self.response_error_count = 0
 
         # If all modules have updated their firmware
         if all(self.progress_dict.values()):
@@ -311,7 +329,7 @@ class FirmwareUpdater:
         return self.receive_command_response()
 
     def receive_command_response(self, response_delay=0.1, response_timeout=5,
-        max_response_error_count=50):
+        max_response_error_count=75):
         """ Block until receiving a response of the most recent message sent
         """
 
