@@ -6,8 +6,6 @@ from typing import Dict, List, Tuple
 import threading as th
 import multiprocessing as mp
 
-import networkx as nx
-
 from pprint import pprint
 
 from modi.topology_manager import TopologyManager
