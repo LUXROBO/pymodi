@@ -178,10 +178,10 @@ class TestModi(unittest.TestCase):
         self.assertIsInstance(actual_modules, tuple)
         self.assertTupleEqual(actual_modules, expected_modules)
 
-    def test_print_topology_map(self):
-        """Test print_topology_map method"""
-        bundle = MODI(7)
-        bundle.print_topology_map()
+    # def test_print_topology_map(self):
+    #     """Test print_topology_map method"""
+    #     bundle = MODI(7)
+    #     bundle.print_topology_map()
 
 if __name__ == "__main__":
     unittest.main()
