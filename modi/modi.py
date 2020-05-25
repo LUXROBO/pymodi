@@ -86,7 +86,80 @@ class MODI:
         for module in self.modules:
             pprint('module: {}, module_id: {}'.format(module, module.id))
 
-    def print_topology_map(self) -> None:
+    def print_topology_map(self):
+        tp_data = self._topology_data
+        num_modules = len(tp_data.keys())
+        map_list = []
+        for i in range(2 * num_modules):
+            row = []
+            for j in range(2 * num_modules):
+                row.append(0)
+            map_list.append(row)
+        init_id = list(tp_data.keys())[0]
+        so_far = []
+
+        def set_orietation(mod_data, prev_id, up):
+            c = 'l'
+            dirs = ['b', 'r', 't', 'l']
+            for d in dirs:
+                if mod_data[d] == prev_id:
+                    c = d
+            n = dirs.index(c)
+            for j in range(n):
+                up = (up[1], -up[0])
+            return up
+
+        def rotate(d, up):
+            n = {'t': 0, 'r': 1, 'b': 2, 'l': 3}.get(d)
+            for j in range(n):
+                up = (up[1], -up[0])
+            return up
+
+        def update_map(module_id, x, y, prev_id, up):
+            if module_id in so_far:
+                return
+            #print(module_id,x,y,prev_id,up)
+            module_data = tp_data[module_id]
+            map_list[y][x] = module_id
+            so_far.append(module_id)
+
+            up = set_orietation(module_data, prev_id, up)
+            #print("Correct upward is",up)
+            for d in ['t', 'b', 'l', 'r']:
+                if module_data[d] is not None:
+                    toward = rotate(d, up)
+                    update_map(module_data[d], x + toward[0], y + toward[1], module_id, toward)
+
+        update_map(init_id, num_modules, num_modules, -1, (1, 0))
+
+        x, y, w, h = -1, -1, 1, 1
+
+        for i in range(len(map_list)):
+            if sum(map_list[i]) > 0 and y < 0:
+                y = i
+            elif sum(map_list[i]) > 0 and y >= 0:
+                h += 1
+        for i in range(len(map_list[0])):
+            col = list(map(lambda L: L[i], map_list))
+            if sum(col) > 0 and x < 0:
+                x = i
+            elif sum(col) > 0 and x >= 0:
+                w += 1
+        title = "<<MODI Topology Map>>"
+        print(" " * ((10 * w - len(title)) // 2) + title)
+        print("=" * 10 * w)
+        for i in range(y + h - 1, y - 1, -1):
+            line = ""
+            row = map_list[i]
+            for j in range(x, x+ w + 1):
+                m = row[j]
+                if m is 0:
+                    line += " " * 10
+                else:
+                    line += "{0:^10s}".format(self.__get_type_from_uuid(tp_data[m]['uuid']))
+            print(line)
+
+    def print_topology_tree(self) -> None:
         """Print topology map
 
         :return: None
