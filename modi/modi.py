@@ -78,14 +78,6 @@ class MODI:
             raise Exception("Modules are not initialized properly!")
         print("MODI modules are initialized!")
 
-    def print_ids(self) -> None:
-        """Print all module ids
-
-        :return: None
-        """
-        for module in self.modules:
-            pprint('module: {}, module_id: {}'.format(module, module.id))
-
     def print_topology_map(self, print_id: bool = False):
         """Prints out the topology map
 
