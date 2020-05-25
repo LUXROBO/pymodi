@@ -181,7 +181,10 @@ class TestModi(unittest.TestCase):
     # def test_print_topology_map(self):
     #     """Test print_topology_map method"""
     #     bundle = MODI(7)
+    #     bundle.print_topology_map(True)
+    #     print()
     #     bundle.print_topology_map()
+
 
 if __name__ == "__main__":
     unittest.main()
