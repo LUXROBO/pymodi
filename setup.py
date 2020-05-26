@@ -1,6 +1,5 @@
 from os import path
 from setuptools import setup, find_packages
-from modi import about
 
 
 def get_readme():
@@ -8,6 +7,18 @@ def get_readme():
     with open(path.join(here, 'README.md'), encoding='UTF8') as readme_file:
         readme = readme_file.read()
         return readme
+
+
+def get_about():
+    here = path.dirname(__file__)
+    about = {}
+    with open(path.join(here, './modi/about.py'),
+              encoding='UTF8') as about_file:
+        exec(about_file.read(), about)
+        return about
+
+
+about = get_about()
 
 
 def get_history():
@@ -19,21 +30,22 @@ def get_history():
 
 def get_requirements():
     here = path.dirname(__file__)
-    with open(path.join(here, 'requirements.txt'), encoding='UTF8') as requirements_file:
+    with open(path.join(here, 'requirements.txt'),
+              encoding='UTF8') as requirements_file:
         requirements = requirements_file.read().splitlines()
         return requirements
 
 
 setup(
-    name=about.__title__,
-    version=about.__version__,
-    author=about.__author__,
-    author_email=about.__email__,
-    description=about.__summary__,
+    name=about['__title__'],
+    version=about['__version__'],
+    author=about['__author__'],
+    author_email=about['__email__'],
+    description=about['__summary__'],
     long_description=get_readme() + '\n' + get_history(),
     long_description_content_type="text/markdown",
     install_requires=get_requirements(),
-    license=about.__license__,
+    license=about['__license__'],
     include_package_data=True,
     keywords=["pymodi", "modi", "luxrobo"],
     packages=find_packages(include=['modi', 'modi.task', 'modi.module',
@@ -41,7 +53,7 @@ setup(
                                     'modi.module.input_module',
                                     'modi.module.output_module']),
     test_suite="tests",
-    url=about.__url__,
+    url=about['__url__'],
     classifiers=[
         "Natural Language :: English",
         "Intended Audience :: Developers",
