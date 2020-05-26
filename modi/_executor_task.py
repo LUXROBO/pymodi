@@ -21,7 +21,7 @@ from modi.module.output_module.speaker import Speaker
 
 from modi.module.module import Module
 
-from modi.firmware_updater import FirmwareUpdater
+from modi._firmware_updater import FirmwareUpdater
 
 
 class ExecutorTask:
