@@ -41,7 +41,7 @@ class FirmwareUpdater:
         self.progress_dict = dict(zip(module_ids, [False]*len(module_ids)))
 
     def reset_state(self):
-        """ Remove program state
+        """ Reset firmware updater's state
         """
 
         print("Resetting firmware updater's state")
@@ -49,8 +49,11 @@ class FirmwareUpdater:
         self.response_error_flag = False
         self.response_error_count = 0
 
+        self.modules_to_update = []
+
         for module_id, _ in self.progress_dict.items():
             self.progress_dict[module_id] = False
+        #self.progress_dict = dict(zip(self.module_ids, [False]*len(self.module_ids)))
 
     def request_to_update_firmware(self, module_id):
         """ Remove firmware of MODI modules (Removes EndFlash)
@@ -85,11 +88,11 @@ class FirmwareUpdater:
         if module_id not in self.progress_dict:
             self.progress_dict[module_id] = False
 
-        if self.progress_dict[module_id]:
-            print(f"{module_id} with {module_type} has already been updated. This shouldn't happen?")
+        if self.update_in_progress:
             return
 
-        if self.update_in_progress:
+        if self.progress_dict[module_id]:
+            print(f"{module_id} with {module_type} has already been updated. This shouldn't happen?")
             return
 
         updater_thread = th.Thread(
@@ -109,7 +112,7 @@ class FirmwareUpdater:
         """ Update firmware of a given module
         """
 
-        print(f"Start updating the binary firmware for {module_type}: {module_id}")
+        print(f"Start updating the binary firmware for {module_type} ({module_id})")
 
         # Init path to binary file
         root_path = "/Users/jha/Downloads"
@@ -180,8 +183,8 @@ class FirmwareUpdater:
         end_flash_data[7] = (version >> 8) & 0xFF
         self.send_end_flash_data(module_type, module_id, end_flash_data)
 
-        # Firmware update flag down, resettubg used flags
-        print(f'Firmware update is done for {module_type} module with id: {module_id}')
+        # Firmware update flag down, resetting used flags
+        print(f'Firmware update is done for {module_type} ({module_id})')
         self.update_in_progress = False
         self.progress_dict[module_id] = True
         self.response_flag = False
@@ -189,16 +192,25 @@ class FirmwareUpdater:
         self.response_error_count = 0
 
         # If all modules have updated their firmware
-        if all(self.progress_dict.values()):
-            self.update_event.set()
-
-            # Reboot all
+        false_count = 0
+        for v in self.progress_dict.values():
+            if false_count > 1:
+                break
+            if not v:
+                false_count += 1
+        else:
+            # Reboot all connected modules
             reboot_message = self.__set_module_state(
                 0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
             )
             self._send_q.put(reboot_message)
+            print("Reboot message has been sent to all connected modules")
+
+            self.update_event.set()
+            return
 
         if self.modules_to_update:
+            print("Processing the next module to update the firmware..")
             next_module_id, next_module_type = self.modules_to_update.pop(0)
             self.response_error_count = 0
             self.__update_firmware(next_module_id, next_module_type)
@@ -248,7 +260,7 @@ class FirmwareUpdater:
                 continue
 
             end_flash_success = True
-        print(f"End flash is written for {module_type}, {module_id}")
+        print(f"End flash is written for {module_type} ({module_id})")
 
     def get_firmware_command(self, module_id, rot_stype, rot_scmd,
                              crc32, page_addr):
@@ -329,7 +341,7 @@ class FirmwareUpdater:
         return self.receive_command_response()
 
     def receive_command_response(self, response_delay=0.1, response_timeout=5,
-        max_response_error_count=75):
+        max_response_error_count=50):
         """ Block until receiving a response of the most recent message sent
         """
 
