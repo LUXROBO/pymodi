@@ -36,6 +36,7 @@ class SerTask(ConnTask):
         self.__ser = serial.Serial()
         self.__ser.baudrate = 921600
         self.__ser.port = modi_port.device
+        self.__ser.timeout = 1
 
         # Check if the modi port(i.e. MODI network module) is in use
         if self.__ser.is_open:
