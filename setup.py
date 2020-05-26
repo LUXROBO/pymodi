@@ -1,6 +1,6 @@
 from os import path
-import modi
 from setuptools import setup, find_packages
+from modi import about
 
 
 def get_readme():
@@ -25,15 +25,15 @@ def get_requirements():
 
 
 setup(
-    name=modi.__title__,
-    version=modi.__version__,
-    author=modi.__author__,
-    author_email=modi.__email__,
-    description=modi.__summary__,
+    name=about.__title__,
+    version=about.__version__,
+    author=about.__author__,
+    author_email=about.__email__,
+    description=about.__summary__,
     long_description=get_readme() + '\n' + get_history(),
     long_description_content_type="text/markdown",
     install_requires=get_requirements(),
-    license=modi.__license__,
+    license=about.__license__,
     include_package_data=True,
     keywords=["pymodi", "modi", "luxrobo"],
     packages=find_packages(include=['modi', 'modi.task', 'modi.module',
@@ -41,7 +41,7 @@ setup(
                                     'modi.module.input_module',
                                     'modi.module.output_module']),
     test_suite="tests",
-    url=modi.__url__,
+    url=about.__url__,
     classifiers=[
         "Natural Language :: English",
         "Intended Audience :: Developers",
