@@ -94,9 +94,9 @@ class MODI:
             time.sleep(0.02)
 
     def print_topology_map(self, print_id: bool = False):
-        """prints out the topology map
+        """Prints out the topology map
 
-        :param print_id: if true, the result includes module id
+        :param Print_id: if true, the result includes module id
         :return: none
         """
         self._topology_manager.print_topology_map(print_id)
