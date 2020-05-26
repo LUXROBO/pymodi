@@ -3,6 +3,7 @@ import os
 import time
 import json
 import base64
+
 import threading as th
 
 from enum import Enum
@@ -23,7 +24,7 @@ class FirmwareUpdater:
         ERASE_ERROR = 6
         ERASE_COMPLETE = 7
 
-    def __init__(self, send_q, update_event, module_ids):
+    def __init__(self, send_q, module_ids):
         self._send_q = send_q
 
         self.response_flag = False
@@ -32,13 +33,51 @@ class FirmwareUpdater:
 
         self.update_in_progress = False
 
-        self.update_event = update_event
+        self.update_event = th.Event()
         self.module_ids = module_ids
 
         self.modules_to_update = []
 
+        self.nb_processed_modules = 0
+
+        # Exclude network module
+        self.network_module_id = None
+        for module_id, module_dict in module_ids.items():
+            for k, v in module_dict.items():
+                if k == 'uuid' and self.__get_module_type_from_uuid(v) == 'Network':
+                    self.network_module_id = module_id
+                    break
+        #if network_module_id is None:
+        #    raise Exception("No network module is found yet")
+        mids = list(module_ids.keys())
+        try:
+            mids.remove(self.network_module_id)
+        except ValueError:
+            pass
+
         # Init a dict tracking which module started to update its firmware
-        self.progress_dict = dict(zip(module_ids, [False]*len(module_ids)))
+        self.progress_dict = dict(zip(mids, [False]*len(mids)))
+
+    def __get_module_type_from_uuid(self, uuid):
+        hexadecimal = hex(uuid).lstrip("0x")
+        type_indicator = str(hexadecimal)[:4]
+        module_type = {
+            # Input modules
+            '2000': 'Env',
+            '2010': 'Gyro',
+            '2020': 'Mic',
+            '2030': 'Button',
+            '2040': 'Dial',
+            '2050': 'Ultrasonic',
+            '2060': 'Infrared',
+
+            # Output modules
+            '4000': 'Display',
+            '4010': 'Motor',
+            '4020': 'Led',
+            '4030': 'Speaker',
+        }.get(type_indicator)
+        return 'Network' if module_type is None else module_type
 
     def reset_state(self):
         """ Reset firmware updater's state
@@ -51,20 +90,21 @@ class FirmwareUpdater:
 
         self.modules_to_update = []
 
-        for module_id, _ in self.progress_dict.items():
-            self.progress_dict[module_id] = False
-        #self.progress_dict = dict(zip(self.module_ids, [False]*len(self.module_ids)))
+        self.nb_processed_modules = 0
+        #for module_id, _ in self.progress_dict.items():
+        #    self.progress_dict[module_id] = False
+        self.progress_dict = dict()
 
-    def request_to_update_firmware(self, module_id):
+    def request_to_update_firmware(self):
         """ Remove firmware of MODI modules (Removes EndFlash)
         """
 
         firmware_update_message = self.__set_module_state(
-            module_id, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
+            0xFFF, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
         )
         self._send_q.put(firmware_update_message)
 
-    def is_ready_to_update_firmware(self, module_id):
+    def check_to_update_firmware(self, module_id):
         """ Check if modules with no firmware are ready to update its firmware
         """
 
@@ -77,8 +117,9 @@ class FirmwareUpdater:
         # Check if input module already exist in the list
         for curr_module_id, curr_module_type in self.modules_to_update:
             if module_id == curr_module_id:
-                print(f"{module_type} ({module_id}) has already been added to the waiting list")
+                #print(f"{module_type} ({module_id}) has already been added to the waiting list")
                 return
+        print(f"Adding {module_type} ({module_id}) to waiting list..")
 
         # Add the module to the waiting list
         module_elem = module_id, module_type
@@ -92,7 +133,7 @@ class FirmwareUpdater:
             return
 
         if self.progress_dict[module_id]:
-            print(f"{module_id} with {module_type} has already been updated. This shouldn't happen?")
+            print(f"{module_type} ({module_id}) has already been updated. This shouldn't happen?")
             return
 
         updater_thread = th.Thread(
@@ -192,7 +233,14 @@ class FirmwareUpdater:
         self.response_error_count = 0
 
         # If all modules have updated their firmware
-        if all(self.progress_dict.values()):
+        print(self.progress_dict)
+        for k, v in self.progress_dict.items():
+            if k == self.network_module_id:
+                continue
+            if not v:
+                break
+        else:
+            #if all(self.progress_dict.values()):
             # Reboot all connected modules
             reboot_message = self.__set_module_state(
                 0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
@@ -206,7 +254,6 @@ class FirmwareUpdater:
         if self.modules_to_update:
             print("Processing the next module to update the firmware..")
             next_module_id, next_module_type = self.modules_to_update.pop(0)
-            self.response_error_count = 0
             self.__update_firmware(next_module_id, next_module_type)
 
     def __set_module_state(self, destination_id, module_state, pnp_state):
@@ -308,7 +355,7 @@ class FirmwareUpdater:
         crc ^= int.from_bytes(data, byteorder='little', signed=False)
 
         for _ in range(32):
-            if (crc & (1 << 31) != 0):
+            if crc & (1 << 31) != 0:
                 crc = (crc << 1) ^ 0x4C11DB7
             else:
                 crc <<= 1

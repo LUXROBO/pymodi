@@ -13,6 +13,7 @@ from pprint import pprint
 
 from modi._communicator import Communicator
 from modi._executor_thread import ExecutorThread
+from modi._firmware_updater import FirmwareUpdater
 
 
 class MODI:
@@ -27,9 +28,6 @@ class MODI:
         self._module_ids = dict()
         self._topology_data = dict()
 
-        self._firmware_update_flag = [False]
-        self._firmware_update_event = threading.Event()
-
         self._recv_q = mp.Queue()
         self._send_q = mp.Queue()
 
@@ -41,6 +39,8 @@ class MODI:
 
         # Init number of the connected modi modules
         self._nb_modules = nb_modules
+
+        self.firmware_updater = FirmwareUpdater(self._send_q, self._module_ids)
 
         if test: return
 
@@ -57,8 +57,7 @@ class MODI:
             self._send_q,
             self._init_event,
             self._nb_modules,
-            self._firmware_update_flag,
-            self._firmware_update_event,
+            self.firmware_updater,
         )
         self._exe_thrd.daemon = True
         self._exe_thrd.start()
@@ -67,13 +66,13 @@ class MODI:
         self._init_event.wait()
         print("MODI modules are initialized!")
 
-    def update_firmware(self):
+    def update_module_firmware(self):
         """Updates firmware of connected modules"""
         print("Request to update firmware of connected MODI modules.")
-        self._firmware_update_flag[0] = True
-        self._exe_thrd.exe_task.firmware_updater.reset_state()
-        self._firmware_update_event.wait()
-        print("All module firmwares have been updated!")
+        self.firmware_updater.reset_state()
+        self.firmware_updater.request_to_update_firmware()
+        #self.firmware_updater.update_event.wait()
+        print("Module firmwares have been updated!")
 
     def print_ids(self):
         for module in self.modules:

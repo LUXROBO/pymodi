@@ -42,7 +42,7 @@ class ExecutorTask:
     }
 
     def __init__(self, modules, module_ids, topology_data,
-                 recv_q, send_q, init_event, nb_modules, firmware_update_flag, firmware_update_event):
+                 recv_q, send_q, init_event, nb_modules, firmware_updater):
 
         self._modules = modules
         self._module_ids = module_ids
@@ -52,16 +52,11 @@ class ExecutorTask:
         self._init_event = init_event
         self._nb_modules = nb_modules
 
-        self.firmware_updater = None
-        self._firmware_update_flag = firmware_update_flag
-        self._firmware_update_event = firmware_update_event
+        self.firmware_updater = firmware_updater
 
         self.__init_modules()
         print('Start initializing connected MODI modules')
 
-        self.firmware_updater = FirmwareUpdater(
-            self._send_q, self._firmware_update_event, self._module_ids,
-        )
 
     def run(self, delay):
         """ Run in ExecutorThread
@@ -78,13 +73,6 @@ class ExecutorTask:
             self.__command_handler(message["c"])(message)
 
         time.sleep(delay)
-
-        # If user requested, update firmware of connected modules
-        if self._firmware_update_flag[0]:
-            for module_id in self._module_ids:
-                self.firmware_updater.request_to_update_firmware(module_id)
-            self._firmware_update_flag[0] = False
-            print("Module firmware update is requested!")
 
     def __command_handler(self, command):
         """ Excute task based on command message
@@ -212,11 +200,10 @@ class ExecutorTask:
             return
 
         if warning_type == 1:
-            self.firmware_updater.is_ready_to_update_firmware(module_id)
+            self.firmware_updater.check_to_update_firmware(module_id)
         elif warning_type == 2:
             # Note that more than one warning type 2 message can be received
             if self.firmware_updater.update_in_progress:
-                print(f"Adding {module_type} ({module_id}) to waiting list..")
                 self.firmware_updater.add_to_wait_list(module_id, module_type)
             else:
                 self.firmware_updater.update_module(module_id, module_type)
