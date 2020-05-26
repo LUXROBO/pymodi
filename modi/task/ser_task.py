@@ -2,8 +2,7 @@ import time
 import queue
 import serial
 
-from serial import SerialException
-
+from serial.serialutil import SerialException
 from modi.task.conn_task import ConnTask
 
 
@@ -74,7 +73,6 @@ class SerTask(ConnTask):
 
         :return: None
         """
-
         try:
             message_to_write = self._ser_send_q.get_nowait().encode()
         except queue.Empty:

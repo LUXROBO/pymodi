@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple
 
 import threading as th
 import multiprocessing as mp
-
+import os
 from pprint import pprint
 
 from modi.topology_manager import TopologyManager
@@ -34,7 +34,8 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self, nb_modules: int, conn_mode: str = "serial", module_uuid: str = "", test: bool = False):
+    def __init__(self, nb_modules: int, conn_mode: str = "serial",
+                 module_uuid: str = "", test: bool = False):
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -52,8 +53,10 @@ class MODI:
         if test:
             return
 
+        parent_conn, child_conn = mp.Pipe()
+
         self._com_proc = ConnProc(
-            self._recv_q, self._send_q, conn_mode, module_uuid
+            self._recv_q, self._send_q, conn_mode, module_uuid, child_conn
         )
         self._com_proc.daemon = True
         self._com_proc.start()
@@ -71,6 +74,12 @@ class MODI:
         self._exe_thrd.daemon = True
         self._exe_thrd.start()
         time.sleep(1)
+
+        child_watch = \
+            th.Thread(target=self.watch_exception, args=[parent_conn, ])
+        child_watch.daemon = True
+        child_watch.start()
+
         self._topology_manager = TopologyManager(self._topology_data)
         module_init_timeout = 10 if conn_mode.startswith("ser") else 25
         module_init_flag.wait(timeout=module_init_timeout)
@@ -78,11 +87,17 @@ class MODI:
             raise Exception("Modules are not initialized properly!")
         print("MODI modules are initialized!")
 
-    def print_topology_map(self, print_id: bool = False):
-        """Prints out the topology map
+    def watch_exception(self, parent_conn):
+        while True:
+            if not bool(parent_conn.recv()):
+                os._exit(1)
+            time.sleep(0.02)
 
-        :param print_id: If True, the result includes module id
-        :return: None
+    def print_topology_map(self, print_id: bool = False):
+        """prints out the topology map
+
+        :param print_id: if true, the result includes module id
+        :return: none
         """
         self._topology_manager.print_topology_map(print_id)
 
