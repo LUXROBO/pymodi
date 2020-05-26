@@ -1,13 +1,9 @@
 """Top-level package for pyMODI."""
 from modi.modi import MODI
-from os import path
-
+from modi.about import __version__
 
 __all__ = ["MODI"]
 
-about = {}
-here = path.dirname(__file__)
-with open(path.join(here, '..', 'about.py'), encoding='UTF8') as about_file:
-    exec(about_file.read(), about)
 
-__version__ = about['__version__']
+
+
