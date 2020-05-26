@@ -206,12 +206,15 @@ class ExecutorTask:
             module_uuid_res |= v << 8*i
 
         module_id = message["s"]
+        module_type = self.__get_type_from_uuid(module_uuid_res)
+        # No need to update Network module's STM firmware
+        if module_type == 'Network':
+            return
 
         if warning_type == 1:
             self.firmware_updater.is_ready_to_update_firmware(module_id)
         elif warning_type == 2:
             # Note that more than one warning type 2 message can be received
-            module_type = self.__get_type_from_uuid(module_uuid_res)
             if self.firmware_updater.update_in_progress:
                 print(f"Adding {module_type} ({module_id}) to waiting list..")
                 self.firmware_updater.add_to_wait_list(module_id, module_type)

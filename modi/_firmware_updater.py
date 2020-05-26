@@ -192,13 +192,7 @@ class FirmwareUpdater:
         self.response_error_count = 0
 
         # If all modules have updated their firmware
-        false_count = 0
-        for v in self.progress_dict.values():
-            if false_count > 1:
-                break
-            if not v:
-                false_count += 1
-        else:
+        if all(self.progress_dict.values()):
             # Reboot all connected modules
             reboot_message = self.__set_module_state(
                 0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
