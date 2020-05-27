@@ -40,7 +40,7 @@ class MODI:
         # Init number of the connected modi modules
         self._nb_modules = nb_modules
 
-        self.firmware_updater = FirmwareUpdater(self._send_q, self._module_ids)
+        self.firmware_updater = FirmwareUpdater(self._send_q, self._module_ids, nb_modules)
 
         if test: return
 

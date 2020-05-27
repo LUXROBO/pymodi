@@ -24,7 +24,7 @@ class FirmwareUpdater:
         ERASE_ERROR = 6
         ERASE_COMPLETE = 7
 
-    def __init__(self, send_q, module_ids):
+    def __init__(self, send_q, module_ids, nb_modules):
         self._send_q = send_q
 
         self.response_flag = False
@@ -38,6 +38,7 @@ class FirmwareUpdater:
 
         self.modules_to_update = []
 
+        self.nb_modules = nb_modules
         self.nb_processed_modules = 0
 
         # Exclude network module
@@ -47,8 +48,6 @@ class FirmwareUpdater:
                 if k == 'uuid' and self.__get_module_type_from_uuid(v) == 'Network':
                     self.network_module_id = module_id
                     break
-        #if network_module_id is None:
-        #    raise Exception("No network module is found yet")
         mids = list(module_ids.keys())
         try:
             mids.remove(self.network_module_id)
@@ -117,8 +116,8 @@ class FirmwareUpdater:
         # Check if input module already exist in the list
         for curr_module_id, curr_module_type in self.modules_to_update:
             if module_id == curr_module_id:
-                #print(f"{module_type} ({module_id}) has already been added to the waiting list")
                 return
+
         print(f"Adding {module_type} ({module_id}) to waiting list..")
 
         # Add the module to the waiting list
@@ -228,19 +227,21 @@ class FirmwareUpdater:
         print(f'Firmware update is done for {module_type} ({module_id})')
         self.update_in_progress = False
         self.progress_dict[module_id] = True
+        self.nb_processed_modules += 1
         self.response_flag = False
         self.response_error_flag = False
         self.response_error_count = 0
 
         # If all modules have updated their firmware
         print(self.progress_dict)
+        print(self.modules_to_update)
         for k, v in self.progress_dict.items():
             if k == self.network_module_id:
                 continue
             if not v:
                 break
-        else:
-            #if all(self.progress_dict.values()):
+
+        if self.nb_processed_modules == self.nb_modules:
             # Reboot all connected modules
             reboot_message = self.__set_module_state(
                 0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
@@ -301,7 +302,7 @@ class FirmwareUpdater:
                 continue
 
             end_flash_success = True
-        print(f"End flash is written for {module_type} ({module_id})")
+        #print(f"End flash is written for {module_type} ({module_id})")
 
     def get_firmware_command(self, module_id, rot_stype, rot_scmd,
                              crc32, page_addr):
@@ -382,7 +383,7 @@ class FirmwareUpdater:
         return self.receive_command_response()
 
     def receive_command_response(self, response_delay=0.1, response_timeout=5,
-        max_response_error_count=50):
+        max_response_error_count=75):
         """ Block until receiving a response of the most recent message sent
         """
 
