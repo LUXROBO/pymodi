@@ -19,9 +19,6 @@ class SerTask(ConnTask):
         self.__ser = None
         self.__json_buffer = ""
 
-    def __del__(self):
-        pass
-
     #
     # Inherited Methods
     #
