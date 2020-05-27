@@ -61,8 +61,3 @@ class ConnProc(mp.Process):
 
         read_thread.join()
         write_thread.join()
-
-
-
-
-
