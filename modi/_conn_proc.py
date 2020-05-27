@@ -6,19 +6,16 @@ from modi.task.conn_task import ConnTask
 from modi.task.ser_task import SerTask
 from modi.task.can_task import CanTask
 from modi.task.spp_task import SppTask
-import time
-from sys import exit
 
 
 class ConnProc(mp.Process):
 
-    def __init__(self, recv_q, send_q, conn_mode, module_uuid, child_conn):
+    def __init__(self, recv_q, send_q, conn_mode, module_uuid):
         super().__init__()
         params = [recv_q, send_q]
         if conn_mode.startswith("b"):
             params.append(module_uuid)
         self.__task = self.__init_task(conn_mode)(*params)
-        self.__conn = child_conn
         self.__delay = 0.05 if isinstance(self.__task, SppTask) else 0.001
 
     def __init_task(self, conn_mode: str) -> ConnTask:
@@ -62,21 +59,10 @@ class ConnProc(mp.Process):
         write_thread.daemon = True
         write_thread.start()
 
-        health_thread = th.Thread(
-            target=self.watch_thread, args=[read_thread, write_thread,])
-        health_thread.daemon = True
-        health_thread.start()
-
-        health_thread.join()
         read_thread.join()
         write_thread.join()
 
-    def watch_thread(self, r_thread, w_thread):
-        running = True
-        while running:
-            running = r_thread.isAlive() and w_thread.isAlive()
-            self.__conn.send(running)
-            time.sleep(0.02)
+
 
 
 

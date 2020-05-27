@@ -53,15 +53,18 @@ class MODI:
         if test:
             return
 
-        parent_conn, child_conn = mp.Pipe()
-
         self._com_proc = ConnProc(
-            self._recv_q, self._send_q, conn_mode, module_uuid, child_conn
+            self._recv_q, self._send_q, conn_mode, module_uuid,
         )
         self._com_proc.daemon = True
         self._com_proc.start()
-        time.sleep(1)
 
+        child_watch = \
+            th.Thread(target=self.watch_child_process)
+        child_watch.daemon = True
+        child_watch.start()
+
+        time.sleep(1)
         self._exe_thrd = ExeThrd(
             self._modules,
             self._module_ids,
@@ -75,28 +78,23 @@ class MODI:
         self._exe_thrd.start()
         time.sleep(1)
 
-        child_watch = \
-            th.Thread(target=self.watch_exception, args=[parent_conn, ])
-        child_watch.daemon = True
-        child_watch.start()
-
         self._topology_manager = TopologyManager(self._topology_data)
         module_init_timeout = 10 if conn_mode.startswith("ser") else 25
         module_init_flag.wait(timeout=module_init_timeout)
         if not module_init_flag.is_set():
             raise Exception("Modules are not initialized properly!")
+            exit(1)
         print("MODI modules are initialized!")
 
-    def watch_exception(self, parent_conn):
+    def watch_child_process(self):
         while True:
-            if not bool(parent_conn.recv()):
+            if not self._com_proc.is_alive():
                 os._exit(1)
-            time.sleep(0.02)
 
     def print_topology_map(self, print_id: bool = False):
         """Prints out the topology map
 
-        :param Print_id: if true, the result includes module id
+        :param print_id: if true, the result includes module id
         :return: none
         """
         self._topology_manager.print_topology_map(print_id)

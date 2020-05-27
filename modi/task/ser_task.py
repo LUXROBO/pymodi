@@ -1,3 +1,5 @@
+
+import os
 import time
 import queue
 import serial
@@ -17,6 +19,9 @@ class SerTask(ConnTask):
         self.__ser = None
         self.__json_buffer = ""
 
+    def __del__(self):
+        pass
+
     #
     # Inherited Methods
     #
@@ -29,6 +34,7 @@ class SerTask(ConnTask):
         modi_ports = self._list_modi_ports()
         if not modi_ports:
             raise SerialException("No MODI network module is connected.")
+            exit(1)
 
         # TODO: Refactor code to support multiple MODI network modules here
         modi_port = modi_ports.pop()
@@ -42,6 +48,7 @@ class SerTask(ConnTask):
             raise SerialException(
                 "The MODI port {} is already in use".format(self.__ser.port)
             )
+            exit(1)
         self.__ser.open()
 
     def _close_conn(self) -> None:
@@ -88,7 +95,12 @@ class SerTask(ConnTask):
         :return: None
         """
         while True:
-            self._read_data()
+            try:
+                self._read_data()
+            except SerialException as e:
+                print(e)
+                print("MODI connection is lost!!!")
+                os._exit(1)
             time.sleep(delay)
 
     def run_write_data(self, delay: float) -> None:
@@ -99,7 +111,12 @@ class SerTask(ConnTask):
         :return: None
         """
         while True:
-            self._write_data()
+            try:
+                self._write_data()
+            except SerialException as e:
+                print(e)
+                print("MODI connection is lost!!!")
+                os._exit(1)
             time.sleep(delay)
 
     #
