@@ -3,6 +3,7 @@ import os
 import time
 import queue
 import serial
+import traceback
 
 from serial.serialutil import SerialException
 from modi.task.conn_task import ConnTask
@@ -95,9 +96,9 @@ class SerTask(ConnTask):
         while True:
             try:
                 self._read_data()
-            except SerialException as e:
-                print(e)
-                print("MODI connection is lost!!!")
+            except SerialException:
+                print("\nMODI connection is lost!!!")
+                traceback.print_exc()
                 os._exit(1)
             time.sleep(delay)
 
@@ -111,9 +112,9 @@ class SerTask(ConnTask):
         while True:
             try:
                 self._write_data()
-            except SerialException as e:
-                print(e)
-                print("MODI connection is lost!!!")
+            except SerialException:
+                print("\nMODI connection is lost!!!")
+                traceback.print_exc()
                 os._exit(1)
             time.sleep(delay)
 
