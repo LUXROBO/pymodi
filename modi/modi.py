@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple
 
 import threading as th
 import multiprocessing as mp
-
+import os
 from pprint import pprint
 
 from modi.topology_manager import TopologyManager
@@ -34,7 +34,8 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self, nb_modules: int, conn_mode: str = "serial", module_uuid: str = "", test: bool = False):
+    def __init__(self, nb_modules: int, conn_mode: str = "serial",
+                 module_uuid: str = "", test: bool = False):
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -53,12 +54,17 @@ class MODI:
             return
 
         self._com_proc = ConnProc(
-            self._recv_q, self._send_q, conn_mode, module_uuid
+            self._recv_q, self._send_q, conn_mode, module_uuid,
         )
         self._com_proc.daemon = True
         self._com_proc.start()
-        time.sleep(1)
 
+        child_watch = \
+            th.Thread(target=self.watch_child_process)
+        child_watch.daemon = True
+        child_watch.start()
+
+        time.sleep(1)
         self._exe_thrd = ExeThrd(
             self._modules,
             self._module_ids,
@@ -71,17 +77,25 @@ class MODI:
         self._exe_thrd.daemon = True
         self._exe_thrd.start()
         time.sleep(1)
+
         self._topology_manager = TopologyManager(self._topology_data)
         module_init_timeout = 10 if conn_mode.startswith("ser") else 25
         module_init_flag.wait(timeout=module_init_timeout)
         if not module_init_flag.is_set():
             raise Exception("Modules are not initialized properly!")
+            exit(1)
         print("MODI modules are initialized!")
+
+    def watch_child_process(self):
+        while True:
+            if not self._com_proc.is_alive():
+                os._exit(1)
+            time.sleep(0.05)
 
     def print_topology_map(self, print_id: bool = False):
         """Prints out the topology map
 
-        :param print_id: If True, the result includes module id
+        :param print_id: if True, the result includes module id
         :return: None
         """
         self._topology_manager.print_topology_map(print_id)
