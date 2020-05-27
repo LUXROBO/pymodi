@@ -95,8 +95,8 @@ class MODI:
     def print_topology_map(self, print_id: bool = False):
         """Prints out the topology map
 
-        :param print_id: if true, the result includes module id
-        :return: none
+        :param print_id: if True, the result includes module id
+        :return: None
         """
         self._topology_manager.print_topology_map(print_id)
 
