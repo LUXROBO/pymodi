@@ -6,6 +6,7 @@ from typing import Dict, List, Tuple
 import threading as th
 import multiprocessing as mp
 import os
+import traceback
 from pprint import pprint
 
 from modi.topology_manager import TopologyManager
@@ -57,7 +58,16 @@ class MODI:
             self._recv_q, self._send_q, conn_mode, module_uuid,
         )
         self._com_proc.daemon = True
-        self._com_proc.start()
+        try:
+            self._com_proc.start()
+        except Exception:
+            if os.name == 'nt':
+                print('\nProcess initialization failed!\nMake sure you are '
+                      'using\n    if __name__ == \'__main__\' \n '
+                      'in the main module.')
+            else:
+                traceback.print_exc()
+            exit(1)
 
         child_watch = \
             th.Thread(target=self.watch_child_process)
