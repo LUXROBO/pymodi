@@ -90,6 +90,7 @@ class MODI:
         while True:
             if not self._com_proc.is_alive():
                 os._exit(1)
+            time.sleep(0.05)
 
     def print_topology_map(self, print_id: bool = False):
         """Prints out the topology map

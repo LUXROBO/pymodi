@@ -34,7 +34,6 @@ class SerTask(ConnTask):
         modi_ports = self._list_modi_ports()
         if not modi_ports:
             raise SerialException("No MODI network module is connected.")
-            exit(1)
 
         # TODO: Refactor code to support multiple MODI network modules here
         modi_port = modi_ports.pop()
@@ -48,7 +47,6 @@ class SerTask(ConnTask):
             raise SerialException(
                 "The MODI port {} is already in use".format(self.__ser.port)
             )
-            exit(1)
         self.__ser.open()
 
     def _close_conn(self) -> None:
