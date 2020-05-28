@@ -5,7 +5,6 @@ from unittest import mock
 from queue import Queue
 from serial.tools.list_ports_common import ListPortInfo
 from serial.serialutil import SerialException
-from serial import Serial
 from modi.task.ser_task import SerTask
 
 

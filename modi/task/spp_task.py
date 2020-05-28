@@ -22,6 +22,22 @@ class SppTask(ConnTask):
         self.__ser = None
         self.__json_buffer = ""
 
+    @property
+    def get_serial(self) -> serial.Serial:
+        """Getter method for the serial
+
+        :return: __ser
+        """
+        return self.__ser
+
+    def set_serial(self, ser: serial.Serial) -> None:
+        """Manually sets the __ser
+
+        :param ser: Serial to set the __ser
+        :return: None
+        """
+        self.__ser = ser
+
     def _list_modi_ports(self) -> List[ListPortInfo]:
         """Returns a list of all the connected MODI ports
 
