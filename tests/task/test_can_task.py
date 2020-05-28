@@ -18,7 +18,7 @@ class TestCanTask(unittest.TestCase):
 
     # def test_open_conn(self):
     #     """Test open_conn method"""
-    #     self.canTask.open_conn()
+    #     self.can_task.open_conn()
 
 
 if __name__ == "__main__":
