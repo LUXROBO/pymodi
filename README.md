@@ -22,6 +22,10 @@ Features
 -   Turn on or off the PnP mode of MODI modules.
 -   Get the position information of each modules.
 
+UML Diagram
+--------
+<img src="https://gituml-media.s3.amazonaws.com/production_diagram_201.svg?AWSAccessKeyId=AKIA5BNPSF2PVKDZ4QNO&Signature=5dzm1VMNGOYCgtYIIwk%2BPTQRx8A%3D&Expires=1590641498" width="800" height="500">
+
 Build Status
 --------
 
