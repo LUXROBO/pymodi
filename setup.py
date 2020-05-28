@@ -1,5 +1,4 @@
 from os import path
-
 from setuptools import setup, find_packages
 
 
@@ -11,11 +10,15 @@ def get_readme():
 
 
 def get_about():
-    about = {}
     here = path.dirname(__file__)
-    with open(path.join(here, 'about.py'), encoding='UTF8') as about_file:
+    about = {}
+    with open(path.join(here, './modi/about.py'),
+              encoding='UTF8') as about_file:
         exec(about_file.read(), about)
-    return about
+        return about
+
+
+about = get_about()
 
 
 def get_history():
@@ -27,11 +30,12 @@ def get_history():
 
 def get_requirements():
     here = path.dirname(__file__)
-    with open(path.join(here, 'requirements.txt'), encoding='UTF8') as requirements_file:
+    with open(path.join(here, 'requirements.txt'),
+              encoding='UTF8') as requirements_file:
         requirements = requirements_file.read().splitlines()
         return requirements
 
-about = get_about()
+
 setup(
     name=about['__title__'],
     version=about['__version__'],

@@ -1,9 +1,11 @@
+
+import os
 import time
 import queue
 import serial
+import traceback
 
-from serial import SerialException
-
+from serial.serialutil import SerialException
 from modi.task.conn_task import ConnTask
 
 
@@ -52,6 +54,7 @@ class SerTask(ConnTask):
         self.__ser = serial.Serial()
         self.__ser.baudrate = 921600
         self.__ser.port = modi_port.device
+        self.__ser.timeout = 1
 
         # Check if the modi port(i.e. MODI network module) is in use
         if self.__ser.is_open:
@@ -89,7 +92,6 @@ class SerTask(ConnTask):
 
         :return: None
         """
-
         try:
             message_to_write = self._ser_send_q.get_nowait().encode()
         except queue.Empty:
@@ -105,7 +107,12 @@ class SerTask(ConnTask):
         :return: None
         """
         while True:
-            self._read_data()
+            try:
+                self._read_data()
+            except SerialException:
+                print("\nMODI connection is lost!!!")
+                traceback.print_exc()
+                os._exit(1)
             time.sleep(delay)
 
     def run_write_data(self, delay: float) -> None:
@@ -116,7 +123,12 @@ class SerTask(ConnTask):
         :return: None
         """
         while True:
-            self._write_data()
+            try:
+                self._write_data()
+            except SerialException:
+                print("\nMODI connection is lost!!!")
+                traceback.print_exc()
+                os._exit(1)
             time.sleep(delay)
 
     #

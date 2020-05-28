@@ -1,14 +1,15 @@
 """Main MODI module."""
 
 import time
-from typing import Tuple
+from typing import Dict, List, Tuple
 
 import threading as th
 import multiprocessing as mp
-
-import networkx as nx
-
+import os
+import traceback
 from pprint import pprint
+
+from modi.topology_manager import TopologyManager
 
 from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
@@ -34,7 +35,8 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self, nb_modules: int, conn_mode: str = "serial", module_uuid: str = "", test: bool = False):
+    def __init__(self, nb_modules: int, conn_mode: str = "serial",
+                 module_uuid: str = "", test: bool = False):
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -53,12 +55,26 @@ class MODI:
             return
 
         self._com_proc = ConnProc(
-            self._recv_q, self._send_q, conn_mode, module_uuid
+            self._recv_q, self._send_q, conn_mode, module_uuid,
         )
         self._com_proc.daemon = True
-        self._com_proc.start()
-        time.sleep(1)
+        try:
+            self._com_proc.start()
+        except Exception:
+            if os.name == 'nt':
+                print('\nProcess initialization failed!\nMake sure you are '
+                      'using\n    if __name__ == \'__main__\' \n '
+                      'in the main module.')
+            else:
+                traceback.print_exc()
+            exit(1)
 
+        child_watch = \
+            th.Thread(target=self.watch_child_process)
+        child_watch.daemon = True
+        child_watch.start()
+
+        time.sleep(1)
         self._exe_thrd = ExeThrd(
             self._modules,
             self._module_ids,
@@ -72,97 +88,27 @@ class MODI:
         self._exe_thrd.start()
         time.sleep(1)
 
+        self._topology_manager = TopologyManager(self._topology_data)
         module_init_timeout = 10 if conn_mode.startswith("ser") else 25
         module_init_flag.wait(timeout=module_init_timeout)
         if not module_init_flag.is_set():
             raise Exception("Modules are not initialized properly!")
+            exit(1)
         print("MODI modules are initialized!")
 
-    def print_ids(self) -> None:
-        """Print all module ids
+    def watch_child_process(self):
+        while True:
+            if not self._com_proc.is_alive():
+                os._exit(1)
+            time.sleep(0.05)
 
+    def print_topology_map(self, print_id: bool = False):
+        """Prints out the topology map
+
+        :param print_id: if True, the result includes module id
         :return: None
         """
-        for module in self.modules:
-            pprint('module: {}, module_id: {}'.format(module, module.id))
-
-    def print_topology_map(self) -> None:
-        """Print the topology map
-
-        :return: None
-        """
-        # start_time = time.time()
-        tp_data = self._topology_data
-        graph = nx.Graph()
-
-        # Init graph nodes
-        labels = {}
-        for module_id in tp_data:
-            curr_module_tp_data = tp_data[module_id]
-            module_type = self.__get_type_from_uuid(
-                curr_module_tp_data['uuid']
-            )
-            labels[module_id] = module_type
-            graph.add_node(module_id)
-        # print('graph.nodes():', graph.nodes())
-
-        # Init graph edges
-        for module_id in tp_data:
-            curr_edges = []
-            curr_module_tp_data = tp_data[module_id]
-
-            # Check if module exists at R (Right) T (Top) L (Left) B (Bottom)
-            if curr_module_tp_data['r'] is not None:
-                edge_to_right = (module_id, curr_module_tp_data['r'])
-                curr_edges.append(edge_to_right)
-            if curr_module_tp_data['t'] is not None:
-                edge_to_top = (module_id, curr_module_tp_data['t'])
-                curr_edges.append(edge_to_top)
-            if curr_module_tp_data['l'] is not None:
-                edge_to_left = (module_id, curr_module_tp_data['l'])
-                curr_edges.append(edge_to_left)
-            if curr_module_tp_data['b'] is not None:
-                edge_to_bottom = (module_id, curr_module_tp_data['b'])
-                curr_edges.append(edge_to_bottom)
-
-            graph.add_edges_from(curr_edges)
-        # print('graph.edges():', graph.edges())
-
-        labeled_graph = nx.relabel_nodes(graph, labels)
-        # print('total time taken:', time.time() - start_time)
-
-        return labeled_graph
-
-    def __get_type_from_uuid(self, uuid: int) -> str:
-        """Returns type based on uuid
-
-        :param uuid: UUID of the required type
-        :type uuid: int
-        :return: Corresponding type
-        :rtype: str
-        """
-        if uuid is None:
-            return 'Network'
-
-        hexadecimal = hex(uuid).lstrip("0x")
-        type_indicator = str(hexadecimal)[:4]
-        module_type = {
-            # Input modules
-            '2000': 'Env',
-            '2010': 'Gyro',
-            '2020': 'Mic',
-            '2030': 'Button',
-            '2040': 'Dial',
-            '2050': 'Ultrasonic',
-            '2060': 'Infrared',
-
-            # Output modules
-            '4000': 'Display',
-            '4010': 'Motor',
-            '4020': 'Led',
-            '4030': 'Speaker',
-        }.get(type_indicator)
-        return module_type
+        self._topology_manager.print_topology_map(print_id)
 
     @property
     def modules(self):
