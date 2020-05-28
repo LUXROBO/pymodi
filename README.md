@@ -24,7 +24,7 @@ Features
 
 UML Diagram
 --------
-<img src="https://gituml-media.s3.amazonaws.com/production_diagram_200.svg?AWSAccessKeyId=AKIA5BNPSF2PVKDZ4QNO&Signature=oDhc9GqfZ7a64lr3RS2NgLCMmW4%3D&Expires=1590640166" width="1500" height="800">
+<img src="https://gituml-media.s3.amazonaws.com/production_diagram_201.svg?AWSAccessKeyId=AKIA5BNPSF2PVKDZ4QNO&Signature=5dzm1VMNGOYCgtYIIwk%2BPTQRx8A%3D&Expires=1590641498" width="1500" height="500">
 
 Build Status
 --------
