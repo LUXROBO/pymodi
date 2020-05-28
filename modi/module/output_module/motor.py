@@ -27,11 +27,11 @@ class Motor(OutputModule):
     def set_motor_channel(self,
                           motor_channel: int, control_mode: int, control_value: int = None) -> Tuple[float, float]:
         """Select te motor channel for control
+        Mode: 0:Torque 1:Speed 2:Angle (Torque is not implemented yet)
 
         :param motor_channel: channel number for control 0:Top 1:Bot
         :type motor_channel: int
         :param control_mode: Control mode of the motor to be selected
-        Mode: 0:Torque 1:Speed 2:Angle (Torque is not implemented yet)
         :type control_mode: int
         :param control_value: value to control
         :type control_value: int, optional
@@ -62,8 +62,7 @@ class Motor(OutputModule):
 
         :param degree_value: Angle to set the first motor.
         :type degree_value: int, optional
-        If *degree* is ``None``,
-        :return: Angle of the first motor.
+        :return: If *degree* is ``None``, Angle of the first motor.
         :rtype: float, optional
         """
         if degree_value is not None:
@@ -86,8 +85,7 @@ class Motor(OutputModule):
 
         :param degree_value: Angle to set the second motor.
         :type degree_value: int, optional
-        If *degree* is ``None``,
-        :return: Angle of the second motor.
+        :return: If *degree* is ``None``, Angle of the second motor.
         :rtype: float, optional
         """
         if degree_value is not None:
@@ -105,8 +103,7 @@ class Motor(OutputModule):
         """Set the speed of the motor at channel I
 
         :param speed_value: Angular speed to set the first motor.
-        If *speed* is ``None``,
-        :return: Angular speed of the first motor.
+        :return: If *speed* is ``None``, Angular speed of the first motor.
         :rtype: float
         """
         if speed_value is not None:
@@ -124,8 +121,7 @@ class Motor(OutputModule):
         """Set the speed of the motor at channel II
 
         :param speed_value: Angular speed to set the second motor.
-        If *speed* is ``None``,
-        :return: Angular speed of the second motor.
+        :return: If *speed* is `None`, Angular speed of the second motor.
         :rtype: float
         """
         if speed_value is not None:
@@ -144,8 +140,7 @@ class Motor(OutputModule):
 
         :param torque_value: Torque to set the first motor.
         :type torque_value: int
-        If *torque* is ``None``,
-        :return: Torque of the first motor.
+        :return: If *torque* is ``None``, Torque of the first motor.
         :rtype: float
         """
         if torque_value is not None:
@@ -164,8 +159,7 @@ class Motor(OutputModule):
 
         :param torque_value: Torque to set the second motor.
         :type torque_value: int
-        If *torque* is ``None``,
-        :return: Torque of the second motor.
+        :return: If *torque* is ``None``, Torque of the second motor.
         :rtype: float
         """
         if torque_value is not None:
@@ -186,8 +180,8 @@ class Motor(OutputModule):
         :type first_torque_value: int, optional
         :param second_torque_value: Torque to set the second motor.
         :type second_torque_value: int, optional
-        If *first_torque* is ``None`` and *second_torque* is ``None``,
-        :return: Torque of the first motor , Torque of the second motor.
+        :return: If *first_torque* is ``None`` and *second_torque* is ``None``,
+            Torque of the first motor , Torque of the second motor.
         :rtype: Tuple[float, float]
         """
         if first_torque_value is not None or second_torque_value is not None:
@@ -219,8 +213,8 @@ class Motor(OutputModule):
         :type first_speed_value: int, optional
         :param second_speed_value: Speed to set the second motor.
         :type second_speed_value: int, optional
-        If *first_speed* is ``None`` and *second_speed* is ``None``,
-        :return: Speed of the first motor , Speed of the second motor.
+        :return: If *first_speed* is ``None`` and *second_speed* is ``None``,
+            Speed of the first motor , Speed of the second motor.
         :rtype: Tuple[float, float]
         """
         if first_speed_value is not None or second_speed_value is not None:
@@ -245,15 +239,16 @@ class Motor(OutputModule):
             self._get_property(self.PropertyType.SECOND_SPEED),
         )
 
-    def set_degree(self, first_degree_value: int = None, second_degree_value: int =None) -> Tuple[float, float]:
+    def set_degree(self, first_degree_value: int = None,
+                   second_degree_value: int =None) -> Tuple[float, float]:
         """Set the angle of the motors at both channels
 
         :param first_degree_value: Angle to set the first motor.
         :type first_degree_value: int, optional
         :param second_degree_value: Angle to set the second motor.
         :type second_degree_value: int, optional
-        If *first_degree* is ``None`` and *second_degree* is ``None``,
-        :return: Angle of the first motor , Angle of the second motor.
+        :return: If *first_degree* is ``None`` and *second_degree* is ``None``,
+            Angle of the first motor , Angle of the second motor.
         :rtype: Tuple[float, float]
         """
         if first_degree_value is not None or second_degree_value is not None:

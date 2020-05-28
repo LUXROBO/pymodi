@@ -1,4 +1,4 @@
-Welcome to pyMODI's documentation!
+Welcome to pymodi's documentation!
 ==================================
 
 .. toctree::

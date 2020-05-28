@@ -21,8 +21,24 @@
 import os
 import sys
 import modi
+from m2r import parse_from_file
+
+file = open('readme.rst', 'w', encoding='utf8')
+file.write(parse_from_file('../README.md'))
+file.close()
+
+file = open('history.rst', 'w', encoding='utf8')
+file.write(parse_from_file('../HISTORY.md'))
+file.close()
 sys.path.insert(0, os.path.abspath('..'))
 
+file = open('contributing.rst', 'w', encoding='utf8')
+file.write(parse_from_file('../CONTRIBUTING.md'))
+file.close()
+
+file = open('authors.rst', 'w', encoding='utf8')
+file.write(parse_from_file('../AUTHORS.md'))
+file.close()
 
 # -- General configuration ---------------------------------------------
 
@@ -39,7 +55,6 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.graphviz',
     'sphinx.ext.inheritance_diagram',
-    #'m2r',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -49,13 +64,13 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
 
 # The master toctree document.
 master_doc = 'index'
 
 # General information about the project.
-project = 'pyMODI'
+project = 'pymodi'
 copyright = "2018, LUXROBO"
 author = "Jinsung Ha"
 

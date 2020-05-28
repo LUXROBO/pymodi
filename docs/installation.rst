@@ -8,13 +8,13 @@ Installation
 Stable release
 --------------
 
-To install pyMODI, run this command in your terminal:
+To install pymodi, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install pymodi
+    $ pip install pymodi --user
 
-This is the preferred method to install pyMODI, as it will always install the most recent stable release.
+This is the preferred method to install pymodi, as it will always install the most recent stable release.
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.
@@ -26,26 +26,20 @@ you through the process.
 From sources
 ------------
 
-The sources for pyMODI can be downloaded from the `Github repo`_.
+The sources for pymodi can be downloaded from the `Github repo`_.
 
 You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/LUXROBO/pyMODI
-
-Or download the `tarball`_:
-
-.. code-block:: console
-
-    $ curl  -OL https://github.com/LUXROBO/pyMODI/tarball/master
+    $ git clone git://github.com/LUXROBO/pymodi
 
 Once you have a copy of the source, you can install it with:
 
 .. code-block:: console
 
-    $ python setup.py install
+    $ python setup.py install --user
 
 
-.. _Github repo: https://github.com/LUXROBO/pyMODI
-.. _tarball: https://github.com/LUXROBO/pyMODI/tarball/master
+.. _Github repo: https://github.com/LUXROBO/pymodi
+
