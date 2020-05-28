@@ -24,9 +24,7 @@ Features
 
 UML Diagram
 --------
-[![button](https://www.dropbox.com/s/auynuqlfbrrxyhm/open_in_gituml_flat.png?raw=1)](https://gituml-media.s3.amazonaws.com/production_diagram_200.svg?AWSAccessKeyId=AKIA5BNPSF2PVKDZ4QNO&Signature=oDhc9GqfZ7a64lr3RS2NgLCMmW4%3D&Expires=1590640166)
-
-<img src="https://gituml-media.s3.amazonaws.com/production_diagram_200.svg?AWSAccessKeyId=AKIA5BNPSF2PVKDZ4QNO&Signature=oDhc9GqfZ7a64lr3RS2NgLCMmW4%3D&Expires=1590640166" width="1500" height="300">
+<img src="https://gituml-media.s3.amazonaws.com/production_diagram_200.svg?AWSAccessKeyId=AKIA5BNPSF2PVKDZ4QNO&Signature=oDhc9GqfZ7a64lr3RS2NgLCMmW4%3D&Expires=1590640166" width="1500" height="800">
 
 Build Status
 --------
