@@ -77,7 +77,7 @@ development.
     tox:
 
         $ flake8 modi tests
-        $ python setup.py test or py.test
+        $ python setup.py test
         $ tox
 
     To get flake8 and tox, just pip install them into your virtualenv.
