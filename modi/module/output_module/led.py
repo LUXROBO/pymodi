@@ -18,19 +18,19 @@ class Led(OutputModule):
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
 
-    def set_rgb(self, red: int = None, green: int = None, blue: int = None) -> Tuple[float, float, float]:
-        """Sets the color of the LED light with given RGB values, and returns the current RGB values.
+    def set_rgb(self, red: int = None, green: int = None,
+                blue: int = None) -> Tuple[float, float, float]:
+        """Sets the color of the LED light with given RGB values, and returns
+        the current RGB values.
 
-        * If either *red*, *green*, or *blue* is not ``None``,
         :param red: Red component to set or ``None``.
         :type red: int, optional
         :param green: Green component to set or ``None``.
         :type green: int, optional
         :param blue: Blue component to set or ``None``.
         :type blue: int, optional
-        The ``None`` component retains its previous value.
-        * If *red*, *green* and *blue* are ``None``,
-        :return: Tuple of red, green and blue.
+        :return: If *red*, *green* and *blue* are `None`, Tuple of red, green
+         and blue.
         :rtype: Tuple[float, float, float]
         """
         if not (red is None and green is None and blue is None):
@@ -67,8 +67,7 @@ class Led(OutputModule):
 
         :param red: Red component to set or ``None``.
         :type red: int, optional
-        If *red* is ``None``.
-        :return: Red component.
+        :return: If *red* is ``None``. Red component.
         :rtype: float
         """
         if red is not None:
@@ -80,8 +79,7 @@ class Led(OutputModule):
 
         :param green: Green component to set or ``None``.
         :type green: int, optional
-        If *green* is ``None``.
-        :return: Green component.
+        :return: If *green* is ``None``. Green component.
         :rtype: float
         """
         if green is not None:
@@ -93,8 +91,7 @@ class Led(OutputModule):
 
         :param blue: Blue component to set or ``None``.
         :type blue: int, optional
-        If *blue* is ``None``.
-        :return: Blue component.
+        :return: If *blue* is ``None``. Blue component.
         :rtype: float
         """
         if blue is not None:
