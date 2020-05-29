@@ -118,18 +118,9 @@ class TestMotor(unittest.TestCase):
         self.motor._set_property.assert_called_once_with(
             *expected_degree_params)
 
-        self.assertEqual(
-            mock.call(self.motor.PropertyType.FIRST_DEGREE),
-            self.motor._get_property.call_args_list[0],
-        )
-        self.assertEqual(
-            mock.call(self.motor.PropertyType.SECOND_DEGREE),
-            self.motor._get_property.call_args_list[1],
-        )
-
-    def test_set_degree_with_none(self):
-        """Test set_degree method with none input."""
-        self.motor.set_degree()
+    def test_get_degree(self):
+        """Test get_degree method with none input."""
+        self.motor.get_degree()
 
         self.assertEqual(
             mock.call(self.motor.PropertyType.FIRST_DEGREE),
