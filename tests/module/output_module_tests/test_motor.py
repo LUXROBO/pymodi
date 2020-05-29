@@ -83,18 +83,9 @@ class TestMotor(unittest.TestCase):
             *expected_speed_params
         )
 
-        self.assertEqual(
-            mock.call(self.motor.PropertyType.FIRST_SPEED),
-            self.motor._get_property.call_args_list[0],
-        )
-        self.assertEqual(
-            mock.call(self.motor.PropertyType.SECOND_SPEED),
-            self.motor._get_property.call_args_list[1],
-        )
-
-    def test_set_speed_with_none(self):
-        """Test set_speed method with none input."""
-        self.motor.set_speed()
+    def test_get_speed(self):
+        """Test get_speed method with none input."""
+        self.motor.get_speed()
 
         self.assertEqual(
             mock.call(self.motor.PropertyType.FIRST_SPEED),
