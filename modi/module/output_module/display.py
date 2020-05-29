@@ -1,13 +1,13 @@
 """Display module."""
 
-from enum import Enum
+from enum import IntEnum
 
 from modi.module.output_module.output_module import OutputModule
 
 
 class Display(OutputModule):
 
-    class PropertyType(Enum):
+    class PropertyType(IntEnum):
         TEXT = 17
         CLEAR = 21
         VARIABLE = 22
@@ -27,7 +27,7 @@ class Display(OutputModule):
         self.clear()
         messages = self._set_property(
             self._id,
-            self.PropertyType.TEXT.value,
+            self.PropertyType.TEXT,
             text,
             self.PropertyDataType.STRING
         )
@@ -51,7 +51,7 @@ class Display(OutputModule):
         self.clear()
         message = self._set_property(
             self._id,
-            self.PropertyType.VARIABLE.value,
+            self.PropertyType.VARIABLE,
             (variable, position_x, position_y),
             self.PropertyDataType.DISPLAY_VAR,
         )
@@ -66,7 +66,7 @@ class Display(OutputModule):
         """
         message = self._set_property(
             self._id,
-            self.PropertyType.CLEAR.value,
+            self.PropertyType.CLEAR,
             bytes(2),
             self.PropertyDataType.RAW
         )

@@ -1,18 +1,18 @@
 """Led module."""
 
-from enum import Enum
+from enum import IntEnum
 from typing import Tuple, Optional
 from modi.module.output_module.output_module import OutputModule
 
 
 class Led(OutputModule):
 
-    class PropertyType(Enum):
+    class PropertyType(IntEnum):
         RED = 2
         GREEN = 3
         BLUE = 4
 
-    class CommandType(Enum):
+    class CommandType(IntEnum):
         SET_RGB = 16
 
     def __init__(self, id_, uuid, msg_send_q):
@@ -35,7 +35,7 @@ class Led(OutputModule):
         if not (red is None and green is None and blue is None):
             message = self._set_property(
                 self._id,
-                self.CommandType.SET_RGB.value,
+                self.CommandType.SET_RGB,
                 (
                     red if red is not None else self.set_red(),
                     green if green is not None else self.set_green(),

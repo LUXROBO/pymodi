@@ -1,13 +1,13 @@
 """Gyro module."""
 
-from enum import Enum
+from enum import IntEnum
 
 from modi.module.input_module.input_module import InputModule
 
 
 class Gyro(InputModule):
 
-    class PropertyType(Enum):
+    class PropertyType(IntEnum):
         ROLL = 2
         PITCH = 3
         YAW = 4

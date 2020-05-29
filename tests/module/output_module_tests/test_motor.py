@@ -31,7 +31,7 @@ class TestMotor(unittest.TestCase):
 
         expected_inv_params = (
             self.mock_kwargs["id_"],
-            self.motor.ControlType.INV.value,
+            self.motor.ControlType.INV,
             (*expected_values, 0),
         )
         self.motor._set_property.assert_called_once_with(*expected_inv_params)
@@ -43,7 +43,7 @@ class TestMotor(unittest.TestCase):
 
         expected_torque_params = (
             self.mock_kwargs["id_"],
-            self.motor.ControlType.TORQUE.value,
+            self.motor.ControlType.TORQUE,
             (*expected_values, 0),
         )
         self.motor._set_property.assert_called_once_with(*expected_torque_params)
@@ -76,7 +76,7 @@ class TestMotor(unittest.TestCase):
 
         expected_speed_params = (
             self.mock_kwargs["id_"],
-            self.motor.ControlType.SPEED.value,
+            self.motor.ControlType.SPEED,
             (first_speed_value, second_speed_value, 0),
         )
         self.motor._set_property.assert_called_once_with(
@@ -112,7 +112,7 @@ class TestMotor(unittest.TestCase):
 
         expected_degree_params = (
             self.mock_kwargs["id_"],
-            self.motor.ControlType.DEGREE.value,
+            self.motor.ControlType.DEGREE,
             (first_degree_value, second_degree_value, 0),
         )
         self.motor._set_property.assert_called_once_with(

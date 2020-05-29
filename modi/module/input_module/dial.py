@@ -1,13 +1,13 @@
 """Dial module."""
 
-from enum import Enum
+from enum import IntEnum
 
 from modi.module.input_module.input_module import InputModule
 
 
 class Dial(InputModule):
 
-    class PropertyType(Enum):
+    class PropertyType(IntEnum):
         DEGREE = 2
         TURNSPEED = 3
 
