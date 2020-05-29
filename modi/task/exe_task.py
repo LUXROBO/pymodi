@@ -3,7 +3,7 @@ import json
 import queue
 import base64
 import struct
-from enum import Enum
+from enum import IntEnum
 from typing import Callable, Dict
 
 from modi.module.input_module.button import Button
@@ -330,13 +330,13 @@ class ExeTask:
                         message_decoded[:4]))[0], 2),
                 )
 
-    def __set_pnp(self, module_id: int, module_pnp_state: Enum) -> None:
+    def __set_pnp(self, module_id: int, module_pnp_state: IntEnum) -> None:
         """ Generate module pnp on/off command
 
         :param module_id: ID of the target module
         :type module_id: int
         :param module_pnp_state: Pnp state value
-        :type module_pnp_state: Enum
+        :type module_pnp_state: IntEnum
         :return: None
         """
 
@@ -372,7 +372,7 @@ class ExeTask:
         sizeof_module_uuid += sizeof_module_uuid % 4
         return (module_info << sizeof_module_uuid) | module_uuid
 
-    def __set_module_state(self, destination_id: int, module_state: Enum, pnp_state: Enum) -> str:
+    def __set_module_state(self, destination_id: int, module_state: IntEnum, pnp_state: IntEnum) -> str:
         """ Generate message for set module state and pnp state
 
         :param destination_id: Id to target destination
@@ -380,7 +380,7 @@ class ExeTask:
         :param module_state: State value of the module
         :type module_state: int
         :param pnp_state: Pnp state value
-        :type pnp_state: Enum
+        :type pnp_state: IntEnum
         :return: json serialized message
         :rtype: str
         """
@@ -393,8 +393,8 @@ class ExeTask:
             message["d"] = destination_id
 
             state_bytes = bytearray(2)
-            state_bytes[0] = module_state.value
-            state_bytes[1] = pnp_state.value
+            state_bytes[0] = module_state
+            state_bytes[1] = pnp_state
 
             message["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
             message["l"] = 2

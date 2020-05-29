@@ -2,7 +2,7 @@ import json
 import struct
 import base64
 
-from enum import Enum
+from enum import IntEnum
 
 from modi.module.module import Module
 
@@ -11,7 +11,7 @@ class OutputModule(Module):
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
 
-    class PropertyDataType(Enum):
+    class PropertyDataType(IntEnum):
         INT = 0
         FLOAT = 1
         STRING = 2
@@ -19,7 +19,8 @@ class OutputModule(Module):
         DISPLAY_VAR = 4
 
     def _set_property(self, destination_id: int,
-                      property_type: int, property_values: tuple, property_data_type: Enum = None) -> str:
+                      property_type: IntEnum, property_values: tuple,
+                      property_data_type: IntEnum = None) -> str:
         """ Generate message for setting property
         """
         message = dict()

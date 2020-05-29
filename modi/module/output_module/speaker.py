@@ -1,20 +1,20 @@
 """Speaker module."""
 
-from enum import Enum
+from enum import IntEnum
 from typing import Tuple, Union
 from modi.module.output_module.output_module import OutputModule
 
 
 class Speaker(OutputModule):
 
-    class PropertyType(Enum):
+    class PropertyType(IntEnum):
         FREQUENCY = 3
         VOLUME = 2
 
-    class CommandType(Enum):
+    class CommandType(IntEnum):
         SET_TUNE = 16
 
-    class Scale(Enum):
+    class Scale(IntEnum):
         F_DO_1 = 32
         F_RE_1 = 36
         F_MI_1 = 41
@@ -118,7 +118,7 @@ class Speaker(OutputModule):
         if not (frequency_value is None and volume_value is None):
             message = self._set_property(
                 self._id,
-                self.CommandType.SET_TUNE.value,
+                self.CommandType.SET_TUNE,
                 (
                     frequency_value
                     if frequency_value is not None
