@@ -48,18 +48,9 @@ class TestMotor(unittest.TestCase):
         )
         self.motor._set_property.assert_called_once_with(*expected_torque_params)
 
-        self.assertEqual(
-            mock.call(self.motor.PropertyType.FIRST_TORQUE),
-            self.motor._get_property.call_args_list[0],
-        )
-        self.assertEqual(
-            mock.call(self.motor.PropertyType.SECOND_TORQUE),
-            self.motor._get_property.call_args_list[1],
-        )
-
-    def test_set_torque_with_none(self):
+    def test_get_torque(self):
         """Test set_torque method with none input."""
-        self.motor.set_torque()
+        self.motor.get_torque()
         self.assertEqual(
             mock.call(self.motor.PropertyType.FIRST_TORQUE),
             self.motor._get_property.call_args_list[0],

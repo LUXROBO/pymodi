@@ -149,72 +149,81 @@ class Motor(OutputModule):
     def get_second_speed(self) -> float:
         return self._get_property(self.PropertyType.SECOND_SPEED)
 
-    def set_first_torque(self, torque_value: int = None) -> Optional[float]:
+    def set_first_torque(self, torque_value: int) -> float:
         """Set the torque of the motor at channel I
 
         :param torque_value: Torque to set the first motor.
         :type torque_value: int
-        :return: If *torque* is ``None``, Torque of the first motor.
+        :return: Torque of the first motor.
         :rtype: float
         """
-        if torque_value is not None:
-            self._msg_send_q.put(
-                self._set_property(
-                    self._id,
-                    self.ControlType.TORQUE,
-                    (torque_value, self.set_second_torque(), 0),
-                )
+        self._msg_send_q.put(
+            self._set_property(
+                self._id,
+                self.ControlType.TORQUE,
+                (torque_value, self.get_second_torque(), 0),
             )
-        else:
-            return self._get_property(self.PropertyType.FIRST_TORQUE)
+        )
+        return torque_value
 
-    def set_second_torque(self, torque_value: int = None) -> Optional[float]:
+    def get_first_torque(self) -> float:
+        return self._get_property(self.PropertyType.FIRST_TORQUE)
+
+    def set_second_torque(self, torque_value: int) -> float:
         """Set the torque of the motor at channel II
 
         :param torque_value: Torque to set the second motor.
         :type torque_value: int
-        :return: If *torque* is ``None``, Torque of the second motor.
+        :return: Torque of the second motor.
         :rtype: float
         """
-        if torque_value is not None:
-            self._msg_send_q.put(
-                self._set_property(
-                    self._id,
-                    self.ControlType.TORQUE,
-                    (self.set_first_torque(), torque_value, 0),
-                )
+        self._msg_send_q.put(
+            self._set_property(
+                self._id,
+                self.ControlType.TORQUE,
+                (self.get_first_torque(), torque_value, 0),
             )
-        else:
-            return self._get_property(self.PropertyType.SECOND_TORQUE)
+        )
+        return torque_value
 
-    def set_torque(self, first_torque_value: int = None, second_torque_value: int = None) -> Tuple[float, float]:
+    def get_second_torque(self):
+        return self._get_property(self.PropertyType.SECOND_TORQUE)
+
+    def set_torque(self, first_torque_value: int = None,
+                   second_torque_value: int = None) -> Tuple[float, float]:
         """Set the torque of the motors at both channels
 
         :param first_torque_value: Torque to set the first motor.
         :type first_torque_value: int, optional
         :param second_torque_value: Torque to set the second motor.
         :type second_torque_value: int, optional
-        :return: If *first_torque* is ``None`` and *second_torque* is ``None``,
-            Torque of the first motor , Torque of the second motor.
+        :return: Torque of the first motor , Torque of the second motor.
         :rtype: Tuple[float, float]
         """
-        if first_torque_value is not None or second_torque_value is not None:
-            first_torque_value = (
-                self.set_first_torque()
-                if first_torque_value is None
-                else first_torque_value
-            )
-            second_torque_value = (
-                self.set_second_torque()
-                if second_torque_value is None
-                else second_torque_value
-            )
-            message = self._set_property(
-                self._id,
-                self.ControlType.TORQUE,
-                (first_torque_value, second_torque_value, 0),
-            )
-            self._msg_send_q.put(message)
+        first_torque_value = (
+            self.get_first_torque()
+            if first_torque_value is None
+            else first_torque_value
+        )
+        second_torque_value = (
+            self.get_second_torque()
+            if second_torque_value is None
+            else second_torque_value
+        )
+        message = self._set_property(
+            self._id,
+            self.ControlType.TORQUE,
+            (first_torque_value, second_torque_value, 0),
+        )
+        self._msg_send_q.put(message)
+        return first_torque_value, second_torque_value
+
+    def get_torque(self) -> Tuple[float, float]:
+        """Returns torque values of two motors
+
+        :return: Torque
+        :rtype: Tuple[float, float]
+        """
         return (
             self._get_property(self.PropertyType.FIRST_TORQUE),
             self._get_property(self.PropertyType.SECOND_TORQUE),
