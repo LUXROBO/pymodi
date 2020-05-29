@@ -14,6 +14,7 @@ from modi.topology_manager import TopologyManager
 from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
 
+from modi.module.module import Module
 from modi.module.input_module.button import Button
 from modi.module.input_module.dial import Dial
 from modi.module.input_module.env import Env
@@ -60,7 +61,7 @@ class MODI:
         self._com_proc.daemon = True
         try:
             self._com_proc.start()
-        except Exception:
+        except RuntimeError:
             if os.name == 'nt':
                 print('\nProcess initialization failed!\nMake sure you are '
                       'using\n    if __name__ == \'__main__\' \n '
@@ -96,13 +97,13 @@ class MODI:
             exit(1)
         print("MODI modules are initialized!")
 
-    def watch_child_process(self):
+    def watch_child_process(self) -> None:
         while True:
             if not self._com_proc.is_alive():
                 os._exit(1)
             time.sleep(0.05)
 
-    def print_topology_map(self, print_id: bool = False):
+    def print_topology_map(self, print_id: bool = False) -> None:
         """Prints out the topology map
 
         :param print_id: if True, the result includes module id
@@ -111,17 +112,16 @@ class MODI:
         self._topology_manager.print_topology_map(print_id)
 
     @property
-    def modules(self):
+    def modules(self) -> Tuple[Module]:
         """Tuple of connected modules except network module.
         Example:
         >>> bundle = modi.MODI()
         >>> modules = bundle.modules
         """
-
         return tuple(self._modules)
 
     @property
-    def buttons(self):
+    def buttons(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.button.Button` modules.
         """
 
@@ -129,7 +129,7 @@ class MODI:
                       if isinstance(module, Button)])
 
     @property
-    def dials(self):
+    def dials(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.dial.Dial` modules.
         """
 
@@ -137,7 +137,7 @@ class MODI:
                       if isinstance(module, Dial)])
 
     @property
-    def displays(self):
+    def displays(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.display.Display` modules.
         """
 
@@ -145,7 +145,7 @@ class MODI:
                       if isinstance(module, Display)])
 
     @property
-    def envs(self):
+    def envs(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.env.Env` modules.
         """
 
@@ -153,7 +153,7 @@ class MODI:
                       if isinstance(module, Env)])
 
     @property
-    def gyros(self):
+    def gyros(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
         """
 
@@ -161,7 +161,7 @@ class MODI:
                       if isinstance(module, Gyro)])
 
     @property
-    def irs(self):
+    def irs(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.ir.Ir` modules.
         """
 
@@ -169,7 +169,7 @@ class MODI:
                       if isinstance(module, Ir)])
 
     @property
-    def leds(self):
+    def leds(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.led.Led` modules.
         """
 
@@ -177,7 +177,7 @@ class MODI:
                       if isinstance(module, Led)])
 
     @property
-    def mics(self):
+    def mics(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.mic.Mic` modules.
         """
 
@@ -185,7 +185,7 @@ class MODI:
                       if isinstance(module, Mic)])
 
     @property
-    def motors(self):
+    def motors(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.motor.Motor` modules.
         """
 
@@ -193,7 +193,7 @@ class MODI:
                       if isinstance(module, Motor)])
 
     @property
-    def speakers(self):
+    def speakers(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
         """
 
@@ -201,7 +201,7 @@ class MODI:
                       if isinstance(module, Speaker)])
 
     @property
-    def ultrasonics(self):
+    def ultrasonics(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
 

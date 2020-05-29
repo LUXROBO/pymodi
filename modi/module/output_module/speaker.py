@@ -130,7 +130,7 @@ class Speaker(OutputModule):
         self._msg_send_q.put(message)
         return frequency_value, volume_value
 
-    def get_tune(self):
+    def get_tune(self) -> Tuple[float, float]:
         return (
             self.get_frequency(),
             self.get_volume()
@@ -146,7 +146,7 @@ class Speaker(OutputModule):
         """
         return self.set_tune(frequency_value=frequency_value)[0]
 
-    def get_frequency(self):
+    def get_frequency(self) -> float:
         return self._get_property(self.PropertyType.FREQUENCY)
 
     def set_volume(self, volume_value: float) -> float:
@@ -159,7 +159,7 @@ class Speaker(OutputModule):
         """
         return self.set_tune(volume_value=volume_value)
 
-    def get_volume(self):
+    def get_volume(self) -> float:
         return self._get_property(self.PropertyType.VOLUME)
 
     def set_off(self) -> Tuple[float, float]:
