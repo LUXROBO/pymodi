@@ -32,21 +32,18 @@ class Led(OutputModule):
         :return: Tuple of red, green
         :rtype: Tuple[float, float, float]
         """
-        if not (red is None and green is None and blue is None):
-            color = (
-                    red if red is not None else self.get_red(),
-                    green if green is not None else self.get_green(),
-                    blue if blue is not None else self.get_blue(),
-                )
-            message = self._set_property(
-                self._id,
-                self.CommandType.SET_RGB,
-                color,
+        color = (
+                red if red is not None else self.get_red(),
+                green if green is not None else self.get_green(),
+                blue if blue is not None else self.get_blue(),
             )
-            self._msg_send_q.put(message)
-            return color
-        else:
-            return self.get_red(), self.get_green(), self.get_blue()
+        message = self._set_property(
+            self._id,
+            self.CommandType.SET_RGB,
+            color,
+        )
+        self._msg_send_q.put(message)
+        return color
 
     def set_on(self) -> Tuple[float, float, float]:
         """Turn on led at maximum brightness.
