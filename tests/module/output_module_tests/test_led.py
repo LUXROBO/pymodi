@@ -85,9 +85,9 @@ class TestLed(unittest.TestCase):
         self.led.set_red(red=expected_color)
         mock_set_rgb.assert_called_once_with(red=expected_color)
 
-    def test_set_red_with_none(self):
-        """Test set_red method with none input."""
-        self.led.set_red(red=None)
+    def test_get_red(self):
+        """Test get_red method with none input."""
+        self.led.get_red()
         self.led._get_property.assert_called_once_with(
             self.led.PropertyType.RED)
 
