@@ -45,17 +45,14 @@ class TestSpeaker(unittest.TestCase):
             self.speaker.CommandType.SET_TUNE
         )
 
-        mock_set_frequency.assert_called_once_with()
-        mock_set_volume.assert_called_once_with()
+    @mock.patch.object(Speaker, "get_volume")
+    @mock.patch.object(Speaker, "get_frequency")
+    def test_get_tune(self, mock_get_frequency, mock_get_volume):
+        """Test get_tune method with none input."""
+        self.speaker.get_tune()
 
-    @mock.patch.object(Speaker, "set_volume")
-    @mock.patch.object(Speaker, "set_frequency")
-    def test_set_tune_with_none(self, mock_set_frequency, mock_set_volume):
-        """Test set_tune method with none input."""
-        self.speaker.set_tune()
-
-        mock_set_frequency.assert_called_once_with()
-        mock_set_volume.assert_called_once_with()
+        mock_get_frequency.assert_called_once_with()
+        mock_get_volume.assert_called_once_with()
 
     @mock.patch.object(Speaker, "set_tune")
     def test_set_frequency(self, mock_set_tune):
@@ -65,9 +62,9 @@ class TestSpeaker(unittest.TestCase):
         mock_set_tune.assert_called_once_with(
             frequency_value=expeceted_frequency)
 
-    def test_set_frequency_with_none(self):
-        """Test set_frequency method with none input."""
-        self.speaker.set_frequency(frequency_value=None)
+    def test_get_frequency(self):
+        """Test get_frequency method with none input."""
+        self.speaker.get_frequency()
         self.speaker._get_property.assert_called_once_with(
             self.speaker.PropertyType.FREQUENCY
         )
@@ -79,9 +76,9 @@ class TestSpeaker(unittest.TestCase):
         self.speaker.set_volume(volume_value=expeceted_volume)
         mock_set_tune.assert_called_once_with(volume_value=expeceted_volume)
 
-    def test_set_volume_with_none(self):
-        """Test set_volume method with none input."""
-        self.speaker.set_volume(volume_value=None)
+    def test_get_volume(self):
+        """Test get_volume method with none input."""
+        self.speaker.get_volume()
         self.speaker._get_property.assert_called_once_with(
             self.speaker.PropertyType.VOLUME
         )
