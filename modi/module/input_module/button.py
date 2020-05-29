@@ -1,13 +1,13 @@
 """Button module."""
 
-from enum import Enum
+from enum import IntEnum
 
 from modi.module.input_module.input_module import InputModule
 
 
 class Button(InputModule):
 
-    class PropertyType(Enum):
+    class PropertyType(IntEnum):
         CLICKED = 2
         DOUBLE_CLICKED = 3
         PRESSED = 4

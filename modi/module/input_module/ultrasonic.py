@@ -1,13 +1,13 @@
 """Ultrasonic module."""
 
-from enum import Enum
+from enum import IntEnum
 
 from modi.module.input_module.input_module import InputModule
 
 
 class Ultrasonic(InputModule):
 
-    class PropertyType(Enum):
+    class PropertyType(IntEnum):
         DISTANCE = 2
 
     def __init__(self, id_, uuid, msg_send_q):

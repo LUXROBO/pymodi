@@ -34,12 +34,12 @@ class TestLed(unittest.TestCase):
 
         expected_rgb_params = (
             self.mock_kwargs["id_"],
-            self.led.CommandType.SET_RGB.value,
+            self.led.CommandType.SET_RGB,
             expected_color,
         )
         self.led._set_property.assert_called_once_with(*expected_rgb_params)
         self.led._msg_send_q.put.assert_called_once_with(
-            self.led.CommandType.SET_RGB.value
+            self.led.CommandType.SET_RGB
         )
 
         mock_set_red.assert_called_once_with()
@@ -81,7 +81,7 @@ class TestLed(unittest.TestCase):
     @mock.patch.object(Led, "set_rgb")
     def test_set_red(self, mock_set_rgb):
         """Test set_red method."""
-        expected_color = self.led.PropertyType.RED.value
+        expected_color = self.led.PropertyType.RED
         self.led.set_red(red=expected_color)
         mock_set_rgb.assert_called_once_with(red=expected_color)
 
@@ -94,7 +94,7 @@ class TestLed(unittest.TestCase):
     @mock.patch.object(Led, "set_rgb")
     def test_get_green(self, mock_set_rgb):
         """Test set_green method."""
-        expected_color = self.led.PropertyType.GREEN.value
+        expected_color = self.led.PropertyType.GREEN
         self.led.set_green(green=expected_color)
         mock_set_rgb.assert_called_once_with(green=expected_color)
 
@@ -107,7 +107,7 @@ class TestLed(unittest.TestCase):
     @mock.patch.object(Led, "set_rgb")
     def test_get_blue(self, mock_set_rgb):
         """Test blue method."""
-        expected_color = self.led.PropertyType.BLUE.value
+        expected_color = self.led.PropertyType.BLUE
         self.led.set_blue(blue=expected_color)
         mock_set_rgb.assert_called_once_with(blue=expected_color)
 

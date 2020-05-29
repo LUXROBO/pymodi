@@ -1,13 +1,13 @@
 """Motor module."""
 
-from enum import Enum
+from enum import IntEnum
 from typing import Optional, Tuple
 from modi.module.output_module.output_module import OutputModule
 
 
 class Motor(OutputModule):
 
-    class PropertyType(Enum):
+    class PropertyType(IntEnum):
         FIRST_TORQUE = 2
         SECOND_TORQUE = 10
         FIRST_SPEED = 3
@@ -15,7 +15,7 @@ class Motor(OutputModule):
         FIRST_DEGREE = 4
         SECOND_DEGREE = 12
 
-    class ControlType(Enum):
+    class ControlType(IntEnum):
         TORQUE = 16
         SPEED = 17
         DEGREE = 18
@@ -42,7 +42,7 @@ class Motor(OutputModule):
             self._msg_send_q.put(
                 self._set_property(
                     self._id,
-                    self.ControlType.INV.value,
+                    self.ControlType.INV,
                     (
                         motor_channel,
                         control_mode,
@@ -69,7 +69,7 @@ class Motor(OutputModule):
             self._msg_send_q.put(
                 self._set_property(
                     self._id,
-                    self.ControlType.DEGREE.value,
+                    self.ControlType.DEGREE,
                     (
                         degree_value,
                         self._get_property(self.PropertyType.FIRST_DEGREE),
@@ -92,7 +92,7 @@ class Motor(OutputModule):
             self._msg_send_q.put(
                 self._set_property(
                     self._id,
-                    self.ControlType.DEGREE.value,
+                    self.ControlType.DEGREE,
                     (self.set_second_degree(), degree_value, 0),
                 )
             )
@@ -110,7 +110,7 @@ class Motor(OutputModule):
             self._msg_send_q.put(
                 self._set_property(
                     self._id,
-                    self.ControlType.SPEED.value,
+                    self.ControlType.SPEED,
                     (speed_value, self.set_first_speed(), 0),
                 )
             )
@@ -128,7 +128,7 @@ class Motor(OutputModule):
             self._msg_send_q.put(
                 self._set_property(
                     self._id,
-                    self.ControlType.SPEED.value,
+                    self.ControlType.SPEED,
                     (self.set_second_speed(), speed_value, 0),
                 )
             )
@@ -147,7 +147,7 @@ class Motor(OutputModule):
             self._msg_send_q.put(
                 self._set_property(
                     self._id,
-                    self.ControlType.TORQUE.value,
+                    self.ControlType.TORQUE,
                     (torque_value, self.set_second_torque(), 0),
                 )
             )
@@ -166,7 +166,7 @@ class Motor(OutputModule):
             self._msg_send_q.put(
                 self._set_property(
                     self._id,
-                    self.ControlType.TORQUE.value,
+                    self.ControlType.TORQUE,
                     (self.set_first_torque(), torque_value, 0),
                 )
             )
@@ -197,7 +197,7 @@ class Motor(OutputModule):
             )
             message = self._set_property(
                 self._id,
-                self.ControlType.TORQUE.value,
+                self.ControlType.TORQUE,
                 (first_torque_value, second_torque_value, 0),
             )
             self._msg_send_q.put(message)
@@ -230,7 +230,7 @@ class Motor(OutputModule):
             )
             message = self._set_property(
                 self._id,
-                self.ControlType.SPEED.value,
+                self.ControlType.SPEED,
                 (first_speed_value, second_speed_value, 0),
             )
             self._msg_send_q.put(message)
@@ -264,7 +264,7 @@ class Motor(OutputModule):
             )
             message = self._set_property(
                 self._id,
-                self.ControlType.DEGREE.value,
+                self.ControlType.DEGREE,
                 (first_degree_value, second_degree_value, 0),
             )
             self._msg_send_q.put(message)

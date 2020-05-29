@@ -15,9 +15,9 @@ class TestDisplay(unittest.TestCase):
 
         def eval_set_property(id, property_type, data, property_data_type):
             eval_result = {
-                self.display.PropertyType.TEXT.value: [property_type],
-                self.display.PropertyType.VARIABLE.value: property_type,
-                self.display.PropertyType.CLEAR.value: property_type,
+                self.display.PropertyType.TEXT: [property_type],
+                self.display.PropertyType.VARIABLE: property_type,
+                self.display.PropertyType.CLEAR: property_type,
             }.get(property_type)
             return eval_result
 
@@ -35,14 +35,14 @@ class TestDisplay(unittest.TestCase):
 
         expected_clear_params = (
             self.mock_kwargs["id_"],
-            self.display.PropertyType.CLEAR.value,
+            self.display.PropertyType.CLEAR,
             bytes(2),
             self.display.PropertyDataType.RAW,
         )
 
         expected_text_params = (
            self.mock_kwargs["id_"],
-           self.display.PropertyType.TEXT.value,
+           self.display.PropertyType.TEXT,
            mock_text,
            self.display.PropertyDataType.STRING,
         )
@@ -67,14 +67,14 @@ class TestDisplay(unittest.TestCase):
 
         expected_clear_params = (
             self.mock_kwargs["id_"],
-            self.display.PropertyType.CLEAR.value,
+            self.display.PropertyType.CLEAR,
             bytes(2),
             self.display.PropertyDataType.RAW,
         )
 
         expected_variable_params = (
             self.mock_kwargs["id_"],
-            self.display.PropertyType.VARIABLE.value,
+            self.display.PropertyType.VARIABLE,
             (mock_variable, mock_position, mock_position),
             self.display.PropertyDataType.DISPLAY_VAR,
         )
@@ -98,7 +98,7 @@ class TestDisplay(unittest.TestCase):
         # Check if set_property is called once with the specified arguments
         expected_clear_params = (
             self.mock_kwargs["id_"],
-            self.display.PropertyType.CLEAR.value,
+            self.display.PropertyType.CLEAR,
             bytes(2),
             self.display.PropertyDataType.RAW,
         )
@@ -107,7 +107,7 @@ class TestDisplay(unittest.TestCase):
 
         # Check if correct message has been passed to serial_write_q
         self.display._msg_send_q.put.assert_called_once_with(
-            self.display.PropertyType.CLEAR.value
+            self.display.PropertyType.CLEAR
         )
 
 
