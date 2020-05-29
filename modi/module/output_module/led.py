@@ -33,17 +33,20 @@ class Led(OutputModule):
         :rtype: Tuple[float, float, float]
         """
         if not (red is None and green is None and blue is None):
+            color = (
+                    red if red is not None else self.get_red(),
+                    green if green is not None else self.get_green(),
+                    blue if blue is not None else self.get_blue(),
+                )
             message = self._set_property(
                 self._id,
                 self.CommandType.SET_RGB,
-                (
-                    red if red is not None else self.set_red(),
-                    green if green is not None else self.set_green(),
-                    blue if blue is not None else self.set_blue(),
-                ),
+                color,
             )
             self._msg_send_q.put(message)
-        return self.set_red(), self.set_green(), self.set_blue()
+            return color
+        else:
+            return self.get_red(), self.get_green(), self.get_blue()
 
     def set_on(self) -> Tuple[float, float, float]:
         """Turn on led at maximum brightness.
@@ -61,7 +64,7 @@ class Led(OutputModule):
         """
         return self.set_rgb(0, 0, 0)
 
-    def set_red(self, red: int = None) -> float:
+    def set_red(self, red: int = 255) -> float:
         """Sets the red component of the LED light by given value
 
         :param red: Red component to set or ``None``.
@@ -69,9 +72,8 @@ class Led(OutputModule):
         :return: If *red* is ``None``. Red component.
         :rtype: float
         """
-        if red is not None:
-            self.set_rgb(red=red)
-        return self._get_property(self.PropertyType.RED)
+        self.set_rgb(red=red)
+        return red
 
     def get_red(self) -> float:
         """Returns the current value of the red component of the LED
@@ -81,26 +83,40 @@ class Led(OutputModule):
         """
         return self._get_property(self.PropertyType.RED)
 
-    def set_green(self, green: int = None) -> float:
+    def set_green(self, green: int = 255) -> float:
         """Sets the green component of the LED light by given value
 
-        :param green: Green component to set or ``None``.
+        :param green: Green component to set
         :type green: int, optional
-        :return: If *green* is ``None``. Green component.
+        :return: Green component.
         :rtype: float
         """
-        if green is not None:
-            self.set_rgb(green=green)
+        self.set_rgb(green=green)
+        return green
+
+    def get_green(self) -> float:
+        """Returns the current value of the green component of the LED
+
+        :return: Green component
+        :rtype: float
+        """
         return self._get_property(self.PropertyType.GREEN)
 
     def set_blue(self, blue: int = None) -> float:
         """Sets the blue component of the LED light by given value
 
-        :param blue: Blue component to set or ``None``.
+        :param blue: Blue component to set
         :type blue: int, optional
-        :return: If *blue* is ``None``. Blue component.
+        :return: Blue component.
         :rtype: float
         """
-        if blue is not None:
-            self.set_rgb(blue=blue)
+        self.set_rgb(blue=blue)
+        return blue
+
+    def get_blue(self) -> float:
+        """Returns the current value of the blue component of the LED
+
+        :return: Blue component
+        :rtype: float
+        """
         return self._get_property(self.PropertyType.BLUE)
