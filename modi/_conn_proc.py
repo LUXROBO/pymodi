@@ -10,9 +10,9 @@ from modi.task.spp_task import SppTask
 
 class ConnProc(mp.Process):
 
-    def __init__(self, recv_q, send_q, conn_mode, module_uuid):
+    def __init__(self, recv_q, send_q, conn_mode, module_uuid, verbose):
         super().__init__()
-        params = [recv_q, send_q]
+        params = [recv_q, send_q, verbose]
         if conn_mode.startswith("b"):
             params.append(module_uuid)
         self.__task = self.__init_task(conn_mode)(*params)
