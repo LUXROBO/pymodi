@@ -47,10 +47,11 @@ def log(msg: str, log_type: str, human_readable: bool = False):
 
 def translate(msg):
     msg = json.loads(msg)
-    s = f"INS: {cmd_dict.get(msg['c'])}, "
-    s += f"SID: {msg.get('s')}, "
-    s += f"DID: {msg.get('d')}, "
+    s = f"INS: {cmd_dict.get(msg['c']):<20} "
+    s += f"SID: {msg.get('s'):<7} "
+    s += f"DID: {msg.get('d'):<7} "
+    s += f"LEN: {msg.get('l'):<3} "
     s += f"Data: {base64.b64decode(msg.get('b'))}, "
-    s += f"LEN: {msg.get('l')}"
+
     return s
 
