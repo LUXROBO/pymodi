@@ -48,7 +48,6 @@ class Display(OutputModule):
         :return: A json serialized signal to module
         :rtype: string
         """
-        self.clear()
         message = self._set_property(
             self._id,
             self.PropertyType.VARIABLE,

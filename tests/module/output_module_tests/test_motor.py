@@ -48,18 +48,9 @@ class TestMotor(unittest.TestCase):
         )
         self.motor._set_property.assert_called_once_with(*expected_torque_params)
 
-        self.assertEqual(
-            mock.call(self.motor.PropertyType.FIRST_TORQUE),
-            self.motor._get_property.call_args_list[0],
-        )
-        self.assertEqual(
-            mock.call(self.motor.PropertyType.SECOND_TORQUE),
-            self.motor._get_property.call_args_list[1],
-        )
-
-    def test_set_torque_with_none(self):
+    def test_get_torque(self):
         """Test set_torque method with none input."""
-        self.motor.set_torque()
+        self.motor.get_torque()
         self.assertEqual(
             mock.call(self.motor.PropertyType.FIRST_TORQUE),
             self.motor._get_property.call_args_list[0],
@@ -83,18 +74,9 @@ class TestMotor(unittest.TestCase):
             *expected_speed_params
         )
 
-        self.assertEqual(
-            mock.call(self.motor.PropertyType.FIRST_SPEED),
-            self.motor._get_property.call_args_list[0],
-        )
-        self.assertEqual(
-            mock.call(self.motor.PropertyType.SECOND_SPEED),
-            self.motor._get_property.call_args_list[1],
-        )
-
-    def test_set_speed_with_none(self):
-        """Test set_speed method with none input."""
-        self.motor.set_speed()
+    def test_get_speed(self):
+        """Test get_speed method with none input."""
+        self.motor.get_speed()
 
         self.assertEqual(
             mock.call(self.motor.PropertyType.FIRST_SPEED),
@@ -118,18 +100,9 @@ class TestMotor(unittest.TestCase):
         self.motor._set_property.assert_called_once_with(
             *expected_degree_params)
 
-        self.assertEqual(
-            mock.call(self.motor.PropertyType.FIRST_DEGREE),
-            self.motor._get_property.call_args_list[0],
-        )
-        self.assertEqual(
-            mock.call(self.motor.PropertyType.SECOND_DEGREE),
-            self.motor._get_property.call_args_list[1],
-        )
-
-    def test_set_degree_with_none(self):
-        """Test set_degree method with none input."""
-        self.motor.set_degree()
+    def test_get_degree(self):
+        """Test get_degree method with none input."""
+        self.motor.get_degree()
 
         self.assertEqual(
             mock.call(self.motor.PropertyType.FIRST_DEGREE),

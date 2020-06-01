@@ -65,13 +65,6 @@ class TestDisplay(unittest.TestCase):
         mock_position = 5
         self.display.set_variable(mock_variable, mock_position, mock_position)
 
-        expected_clear_params = (
-            self.mock_kwargs["id_"],
-            self.display.PropertyType.CLEAR,
-            bytes(2),
-            self.display.PropertyDataType.RAW,
-        )
-
         expected_variable_params = (
             self.mock_kwargs["id_"],
             self.display.PropertyType.VARIABLE,
@@ -79,16 +72,11 @@ class TestDisplay(unittest.TestCase):
             self.display.PropertyDataType.DISPLAY_VAR,
         )
 
-        self.assertEqual(self.display._set_property.call_count, 2)
+        self.assertEqual(self.display._set_property.call_count, 1)
 
-        # TODO: Refactor two functions calls below to use assert_has_calls()
-        self.assertEqual(
-            mock.call(*expected_clear_params),
-            self.display._set_property.call_args_list[0],
-        )
         self.assertEqual(
             mock.call(*expected_variable_params),
-            self.display._set_property.call_args_list[1],
+            self.display._set_property.call_args_list[0],
         )
 
     def test_clear(self):
