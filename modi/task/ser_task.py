@@ -4,6 +4,7 @@ import time
 import queue
 import serial
 import traceback
+import logging
 
 from serial.serialutil import SerialException
 from modi.task.conn_task import ConnTask
@@ -19,6 +20,14 @@ class SerTask(ConnTask):
 
         self.__ser = None
         self.__json_buffer = ""
+        self.__logger = logging.getLogger('ser_task')
+        self.__logger.setLevel(logging.DEBUG)
+
+        fh = logging.FileHandler('connection_log.txt')
+        fh.setLevel(logging.DEBUG)
+        self.__logger.addHandler(fh)
+
+        self.__logger.info("I am created")
 
     @property
     def get_serial(self) -> serial.Serial:
