@@ -20,14 +20,8 @@ class SerTask(ConnTask):
 
         self.__ser = None
         self.__json_buffer = ""
-        self.__logger = logging.getLogger('ser_task')
-        self.__logger.setLevel(logging.DEBUG)
-
-        fh = logging.FileHandler('connection_log.txt')
-        fh.setLevel(logging.DEBUG)
-        self.__logger.addHandler(fh)
-
-        self.__logger.info("I am created")
+        with open("communication_log.txt", 'w') as logfile:
+            logfile.write('pymodi Logging...\n')
 
     @property
     def get_serial(self) -> serial.Serial:
@@ -107,6 +101,8 @@ class SerTask(ConnTask):
             pass
         else:
             self.__ser.write(message_to_write)
+            with open("communication_log.txt", 'a') as logfile:
+                logfile.write(f'>>> {message_to_write}\n')
 
     def run_read_data(self, delay: float) -> None:
         """Read data through serial port
@@ -155,6 +151,7 @@ class SerTask(ConnTask):
             # Parse json message and send it
             json_msg = self.__json_buffer[:split_index]
             self._ser_recv_q.put(json_msg)
-
+            with open("communication_log.txt", 'a') as logfile:
+                logfile.write(f'<<< {json_msg}\n')
             # Update json buffer, remove the json message sent
             self.__json_buffer = self.__json_buffer[split_index:]
