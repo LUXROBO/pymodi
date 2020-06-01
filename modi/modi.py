@@ -1,19 +1,18 @@
 """Main MODI module."""
 
 import time
-from typing import Dict, List, Tuple
+from typing import Tuple
 
 import threading as th
 import multiprocessing as mp
 import os
 import traceback
-from pprint import pprint
 
-from modi.topology_manager import TopologyManager
+from modi.util.topology_manager import TopologyManager
+from modi.util.that import check_complete
 
 from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
-
 from modi.module.module import Module
 from modi.module.input_module.button import Button
 from modi.module.input_module.dial import Dial
@@ -97,6 +96,7 @@ class MODI:
             raise Exception("Modules are not initialized properly!")
             exit(1)
         print("MODI modules are initialized!")
+        check_complete(self)
 
     def watch_child_process(self) -> None:
         while True:
