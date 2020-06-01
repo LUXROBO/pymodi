@@ -9,10 +9,10 @@ import os
 import traceback
 
 from modi.util.topology_manager import TopologyManager
+from modi.util.that import check_complete
 
 from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
-from modi.util.that import check_complete
 from modi.module.module import Module
 from modi.module.input_module.button import Button
 from modi.module.input_module.dial import Dial

@@ -1,7 +1,20 @@
 import time
+from typing import Tuple
+
+from modi.module.module import Module
 
 
-def update_screen(pos, vel, bar, display):
+def update_screen(pos: Tuple[int, int],
+                  vel: Tuple[int, int], bar: int,
+                  display: Module) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+    """Update the screen of the display module after moving the ball
+
+    :param pos: Position of the ball
+    :param vel: Velocity of the ball
+    :param bar: Position of the bar
+    :param display: Reference to display module
+    :return: Tuple[Tuple[int, int], Tuple[int, int]]
+    """
     display.set_variable(0, pos[0], pos[1])
     display.set_variable(1, bar, 60)
     pos = (pos[0] + vel[0], pos[1] + vel[1])
@@ -16,7 +29,16 @@ def update_screen(pos, vel, bar, display):
     return pos, vel
 
 
-def initialize(display, led, speaker, dial):
+def initialize(display: Module, led: Module, speaker: Module,
+               dial: Module) -> int:
+    """Initialize the movment of the ball
+
+    :param display: Display module
+    :param led:  Led module
+    :param speaker: Speaker module
+    :param dial: Dial module
+    :return: Score
+    """
     ball_pos = (20, 30)
     ball_vel = (1, -1)
     led.set_rgb(0, 50, 0)
@@ -40,10 +62,14 @@ def initialize(display, led, speaker, dial):
 
 
 def check_complete(bundle):
+    """Check the connected modules and initialize
+
+    :param bundle: MODI object
+    :return: None
+    """
     module_names = [type(module).__name__ for module in bundle.modules]
     expected_names = ["Button", "Dial", "Led", "Speaker", "Display"]
-    is_equal = len(module_names) == len(expected_names)
-    if not is_equal:
+    if len(module_names) != len(expected_names):
         return
     else:
         for name in expected_names:
@@ -80,7 +106,7 @@ def check_complete(bundle):
         time.sleep(1)
         point = initialize(display, led, speaker, dial)
         time.sleep(3)
-        display.set_text("Game Over\nScore: " + str(point))
+        display.set_text("Score: {0}".format(point))
         time.sleep(2)
         display.set_text("Re: Click / No: Double Click")
 
