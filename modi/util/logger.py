@@ -34,10 +34,10 @@ def log(msg: str, log_type: str, human_readable: bool = False):
         msg = translate(msg)
     if log_type == 'r':
         with open("communication_log.txt", 'a') as logfile:
-            logfile.write(f'recv: {msg}\n')
+            logfile.write(f'recv - {msg}\n')
     elif log_type == 's':
         with open("communication_log.txt", 'a') as logfile:
-            logfile.write(f'send: {msg}\n')
+            logfile.write(f'send - {msg}\n')
     elif log_type == 'i':
         with open("communication_log.txt", 'w') as logfile:
             logfile.write('pyMODI Logging...\n')
@@ -47,10 +47,10 @@ def log(msg: str, log_type: str, human_readable: bool = False):
 
 def translate(msg):
     msg = json.loads(msg)
-    s = f"{cmd_dict.get(msg['c'])} - "
-    s += f"Source: {msg.get('s')}, "
-    s += f"Destination: {msg.get('d')}, "
+    s = f"INS: {cmd_dict.get(msg['c'])}, "
+    s += f"SID: {msg.get('s')}, "
+    s += f"DID: {msg.get('d')}, "
     s += f"Data: {base64.b64decode(msg.get('b'))}, "
-    s += f"Length: {msg.get('l')}"
+    s += f"LEN: {msg.get('l')}"
     return s
 
