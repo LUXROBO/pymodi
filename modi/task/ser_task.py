@@ -11,14 +11,16 @@ from modi.task.conn_task import ConnTask
 
 class SerTask(ConnTask):
 
-    def __init__(self, ser_recv_q, ser_send_q):
+    def __init__(self, ser_recv_q, ser_send_q, verbose):
         print("Run Ser Task.")
         super().__init__(ser_recv_q, ser_send_q)
         self._ser_recv_q = ser_recv_q
         self._ser_send_q = ser_send_q
-
+        self.__verbose = verbose
         self.__ser = None
         self.__json_buffer = ""
+        if verbose:
+            print('pyMODI log...\n==================================')
 
     @property
     def get_serial(self) -> serial.Serial:
@@ -98,6 +100,8 @@ class SerTask(ConnTask):
             pass
         else:
             self.__ser.write(message_to_write)
+            if self.__verbose:
+                print(f'send: {message_to_write.decode("utf8")}')
 
     def run_read_data(self, delay: float) -> None:
         """Read data through serial port
@@ -146,6 +150,7 @@ class SerTask(ConnTask):
             # Parse json message and send it
             json_msg = self.__json_buffer[:split_index]
             self._ser_recv_q.put(json_msg)
-
+            if self.__verbose:
+                print(f'recv: {json_msg}')
             # Update json buffer, remove the json message sent
             self.__json_buffer = self.__json_buffer[split_index:]
