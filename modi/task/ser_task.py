@@ -5,7 +5,6 @@ import queue
 import serial
 import traceback
 
-from modi.util.logger import log
 from serial.serialutil import SerialException
 from modi.task.conn_task import ConnTask
 
@@ -21,7 +20,7 @@ class SerTask(ConnTask):
         self.__ser = None
         self.__json_buffer = ""
         if verbose:
-            log("", 'i')
+            print('pyMODI log...\n==================================')
 
     @property
     def get_serial(self) -> serial.Serial:
@@ -102,7 +101,7 @@ class SerTask(ConnTask):
         else:
             self.__ser.write(message_to_write)
             if self.__verbose:
-                log(message_to_write.decode('utf8'), 's')
+                print(f'send: {message_to_write.decode("utf8")}')
 
     def run_read_data(self, delay: float) -> None:
         """Read data through serial port
@@ -152,6 +151,6 @@ class SerTask(ConnTask):
             json_msg = self.__json_buffer[:split_index]
             self._ser_recv_q.put(json_msg)
             if self.__verbose:
-                log(json_msg, 'r')
+                print(f'recv: {json_msg}')
             # Update json buffer, remove the json message sent
             self.__json_buffer = self.__json_buffer[split_index:]
