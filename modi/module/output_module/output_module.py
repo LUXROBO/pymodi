@@ -21,18 +21,13 @@ class OutputModule(Module):
 
     def _update_properties(self, property_types: Iterable,
                            values: Tuple) -> None:
-        """Update the porperties when setting the property
+        """Update the properties when setting the property
 
         :param property_types: PropertyType class of the module
         :param values: values in correct order
         :return: None
         """
-        property_value_map = list(map(lambda a, b: (a, b),
-                                      property_types, values))
-        for element in property_value_map:
-            property_type = element[0]
-            property_value = element[1]
-
+        for property_type, property_value in zip(property_types, values):
             if property_type not in self._properties.keys():
                 self._properties[property_type] = self.Property()
                 request_property_msg = self.request_property(
