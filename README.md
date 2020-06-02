@@ -1,4 +1,6 @@
-<img src="https://github.com/k2sebeom/pymodi/blob/feature/pymodi-logo/docs/_static/img/Logo.png" width="500" height="150">
+<p align="center">
+    <img src="https://github.com/k2sebeom/pymodi/blob/feature/pymodi-logo/docs/_static/img/Logo.png" width="500" height="150">
+</p>
 
 ------
 
