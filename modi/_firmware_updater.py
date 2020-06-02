@@ -1,8 +1,12 @@
 
 import os
+import io
+import sys
 import time
 import json
 import base64
+import zipfile
+import requests
 
 import threading as th
 
@@ -155,18 +159,19 @@ class FirmwareUpdater:
         print(f"Start updating the binary firmware for {module_type} ({module_id})")
 
         # Init path to binary file
-        root_path = "/Users/jha/Downloads"
-        bin_path = os.path.join(root_path, "skeleton", module_type, "Base_module.bin")
+        root_path = 'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
+        bin_path = os.path.join("skeleton", f"{module_type}.bin")
 
-        # Read bytes data from the given binary file of the current module
-        with open(bin_path, "rb") as bf:
-            bin_buffer = bf.read()
+        # Init bytes data from the given binary file of the current module
+        download_response = requests.get(root_path)
+        zip_content = zipfile.ZipFile(io.BytesIO(download_response.content), 'r')
+        bin_buffer = zip_content.read(bin_path)
 
         # Init metadata of the bytes loaded
         page_size = 0x800
         flash_memory_addr = 0x08000000
 
-        bin_size = os.stat(bin_path).st_size
+        bin_size = sys.getsizeof(bin_buffer)
         bin_begin = 0x9000
         bin_end = bin_size - ((bin_size - bin_begin) % page_size)
         for page_begin in range(bin_begin, bin_end+1, page_size):
@@ -204,11 +209,10 @@ class FirmwareUpdater:
                 page_begin -= page_size
 
         # Include MODI firmware version when writing end flash
-        version_path = os.path.join(root_path, "skeleton", "version.txt")
-        with open(version_path, "r") as vf:
-            version_buffer = vf.read()
-            version_bits_str = version_buffer.lstrip("v").rstrip().split(".")
-            version_bits = [int(bit_char) for bit_char in version_bits_str]
+        version_path = os.path.join("skeleton", "version.txt")
+        version_buffer = str(zip_content.read(version_path))[1:]
+        version_bits_str = version_buffer.lstrip("b'v").rstrip("\\n'").split(".")
+        version_bits = [int(bit_char) for bit_char in version_bits_str]
         """ Version number is formed by concatenating all three version bits
             e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
         """
@@ -233,8 +237,8 @@ class FirmwareUpdater:
         self.response_error_count = 0
 
         # If all modules have updated their firmware
-        print(self.progress_dict)
-        print(self.modules_to_update)
+        #print(self.progress_dict)
+        #print(self.modules_to_update)
         for k, v in self.progress_dict.items():
             if k == self.network_module_id:
                 continue
