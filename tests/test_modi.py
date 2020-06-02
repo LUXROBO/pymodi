@@ -20,13 +20,10 @@ from modi.module.output_module.display import Display
 from modi.module.output_module.led import Led
 from modi.module.output_module.motor import Motor
 from modi.module.output_module.speaker import Speaker
-from enum import IntEnum
 
 
 class TestModi(unittest.TestCase):
     """Tests for 'modi' class."""
-    class MockPropertyType(IntEnum):
-        MOCK_TYPE = 1
 
     def setUp(self):
         """Set up test fixtures, if any."""
