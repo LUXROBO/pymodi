@@ -28,7 +28,7 @@ class OutputModule(Module):
         :return: None
         """
         for property_type, property_value in zip(property_types, values):
-            if property_type not in self._properties.keys():
+            if property_type not in self._properties:
                 self._properties[property_type] = self.Property()
                 request_property_msg = self.request_property(
                     self._id, property_type
