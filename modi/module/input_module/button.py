@@ -14,7 +14,7 @@ class Button(InputModule):
         TOGGLED = 5
 
     def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
+        super().__init__(id_, uuid, msg_send_q, self.PropertyType)
 
     def get_clicked(self) -> bool:
         """Returns true when button is clicked

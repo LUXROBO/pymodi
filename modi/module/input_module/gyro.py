@@ -20,7 +20,7 @@ class Gyro(InputModule):
         VIBRATION = 11
 
     def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
+        super().__init__(id_, uuid, msg_send_q, self.PropertyType)
 
     def get_roll(self) -> float:
         """Returns the roll angle of the gyro

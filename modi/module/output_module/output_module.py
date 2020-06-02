@@ -8,8 +8,8 @@ from modi.module.module import Module
 
 
 class OutputModule(Module):
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
+    def __init__(self, id_, uuid, msg_send_q, property_types):
+        super().__init__(id_, uuid, msg_send_q, property_types)
 
     class PropertyDataType(IntEnum):
         INT = 0
@@ -39,7 +39,6 @@ class OutputModule(Module):
                 property_values_bytes[index * 2] = property_value & 0xFF
                 property_values_bytes[index * 2 +
                                       1] = (property_value & 0xFF00) >> 8
-
         elif property_data_type == self.PropertyDataType.FLOAT:
             for index, property_value in enumerate(property_values):
                 property_values_bytes[index * 4: index * 4 + 4] = struct.pack(
