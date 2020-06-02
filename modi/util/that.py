@@ -81,7 +81,9 @@ def check_complete(bundle):
     led = bundle.leds[0]
     dial = bundle.dials[0]
     speaker = bundle.speakers[0]
-
+    for i in range(5):
+        button.get_pressed()
+        time.sleep(0.05)
     if not button.get_pressed():
         return
     cmd = input("You have found an easter egg!\nContinue??(y/n)")
