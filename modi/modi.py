@@ -37,7 +37,7 @@ class MODI:
 
     def __init__(self, nb_modules: int, conn_mode: str = "serial",
                  module_uuid: str = "", test: bool = False,
-                 verbose: bool = False, human_readable: bool = False):
+                 verbose: bool = False):
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -56,8 +56,7 @@ class MODI:
             return
 
         self._com_proc = ConnProc(
-            self._recv_q, self._send_q, conn_mode, module_uuid, verbose,
-            human_readable
+            self._recv_q, self._send_q, conn_mode, module_uuid, verbose
         )
         self._com_proc.daemon = True
         try:

@@ -12,7 +12,7 @@ from modi.task.conn_task import ConnTask
 
 class SerTask(ConnTask):
 
-    def __init__(self, ser_recv_q, ser_send_q, verbose, human_readable):
+    def __init__(self, ser_recv_q, ser_send_q, verbose):
         print("Run Ser Task.")
         super().__init__(ser_recv_q, ser_send_q)
         self._ser_recv_q = ser_recv_q
@@ -20,7 +20,6 @@ class SerTask(ConnTask):
         self.__verbose = verbose
         self.__ser = None
         self.__json_buffer = ""
-        self.__human_readable = human_readable
         if verbose:
             log("", 'i')
 
@@ -103,7 +102,7 @@ class SerTask(ConnTask):
         else:
             self.__ser.write(message_to_write)
             if self.__verbose:
-                log(message_to_write.decode('utf8'), 's', self.__human_readable)
+                log(message_to_write.decode('utf8'), 's')
 
     def run_read_data(self, delay: float) -> None:
         """Read data through serial port
@@ -153,6 +152,6 @@ class SerTask(ConnTask):
             json_msg = self.__json_buffer[:split_index]
             self._ser_recv_q.put(json_msg)
             if self.__verbose:
-                log(json_msg, 'r', self.__human_readable)
+                log(json_msg, 'r')
             # Update json buffer, remove the json message sent
             self.__json_buffer = self.__json_buffer[split_index:]

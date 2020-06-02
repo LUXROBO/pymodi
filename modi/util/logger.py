@@ -29,9 +29,7 @@ cmd_dict = {
 }
 
 
-def log(msg: str, log_type: str, human_readable: bool = False):
-    if human_readable:
-        msg = translate(msg)
+def log(msg: str, log_type: str):
     if log_type == 'r':
         with open("communication_log.txt", 'a') as logfile:
             logfile.write(f'recv - {msg}\n')
@@ -44,14 +42,4 @@ def log(msg: str, log_type: str, human_readable: bool = False):
     else:
         raise Exception
 
-
-def translate(msg):
-    msg = json.loads(msg)
-    s = f"INS: {cmd_dict.get(msg['c']):<20} "
-    s += f"SID: {msg.get('s'):<7} "
-    s += f"DID: {msg.get('d'):<7} "
-    s += f"LEN: {msg.get('l'):<3} "
-    s += f"Data: {base64.b64decode(msg.get('b'))}, "
-
-    return s
 
