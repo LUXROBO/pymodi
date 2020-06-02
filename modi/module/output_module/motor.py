@@ -76,6 +76,8 @@ class Motor(OutputModule):
                 ),
             )
         )
+        self._update_properties([self.PropertyType.FIRST_DEGREE],
+                                [degree_value])
         return degree_value
 
     def get_first_degree(self) -> float:
@@ -101,6 +103,8 @@ class Motor(OutputModule):
                 (self.get_first_degree(), degree_value, 0),
             )
         )
+        self._update_properties([self.PropertyType.SECOND_DEGREE],
+                                [degree_value])
         return degree_value
 
     def get_second_degree(self) -> float:
@@ -125,6 +129,8 @@ class Motor(OutputModule):
                 (speed_value, self.get_second_speed(), 0),
             )
         )
+        self._update_properties([self.PropertyType.FIRST_SPEED],
+                                [speed_value])
         return speed_value
 
     def get_first_speed(self) -> float:
@@ -144,6 +150,8 @@ class Motor(OutputModule):
                 (self.get_first_speed(), speed_value, 0),
             )
         )
+        self._update_properties([self.PropertyType.SECOND_SPEED],
+                                [speed_value])
         return speed_value
 
     def get_second_speed(self) -> float:
@@ -164,6 +172,8 @@ class Motor(OutputModule):
                 (torque_value, self.get_second_torque(), 0),
             )
         )
+        self._update_properties([self.PropertyType.FIRST_TORQUE],
+                                [torque_value])
         return torque_value
 
     def get_first_torque(self) -> float:
@@ -184,6 +194,8 @@ class Motor(OutputModule):
                 (self.get_first_torque(), torque_value, 0),
             )
         )
+        self._update_properties([self.PropertyType.SECOND_TORQUE],
+                                [torque_value])
         return torque_value
 
     def get_second_torque(self):
@@ -216,6 +228,9 @@ class Motor(OutputModule):
             (first_torque_value, second_torque_value, 0),
         )
         self._msg_send_q.put(message)
+        self._update_properties(
+            [self.PropertyType.FIRST_TORQUE, self.PropertyType.SECOND_TORQUE],
+            [first_torque_value, second_torque_value])
         return first_torque_value, second_torque_value
 
     def get_torque(self) -> Tuple[float, float]:
@@ -257,6 +272,9 @@ class Motor(OutputModule):
             (first_speed_value, second_speed_value, 0),
         )
         self._msg_send_q.put(message)
+        self._update_properties(
+            [self.PropertyType.FIRST_SPEED, self.PropertyType.SECOND_SPEED],
+            [first_speed_value, second_speed_value])
         return first_speed_value, second_speed_value
 
     def get_speed(self):
@@ -292,6 +310,9 @@ class Motor(OutputModule):
             (first_degree_value, second_degree_value, 0),
         )
         self._msg_send_q.put(message)
+        self._update_properties(
+            [self.PropertyType.FIRST_DEGREE, self.PropertyType.SECOND_DEGREE],
+            [first_degree_value, second_degree_value])
         return first_degree_value, second_degree_value
 
     def get_degree(self) -> Tuple[float, float]:
