@@ -3,7 +3,7 @@ import struct
 import base64
 
 from enum import IntEnum
-
+from typing import Tuple
 from modi.module.module import Module
 
 
@@ -17,6 +17,18 @@ class OutputModule(Module):
         STRING = 2
         RAW = 3
         DISPLAY_VAR = 4
+
+    def _update_properties(self, property_types: IntEnum,
+                           values: Tuple) -> None:
+        """Update the porperties when setting the property
+
+        :param property_types: PropertyType class of the module
+        :param values: values in correct order
+        :return: None
+        """
+        property_value_map = list(map(lambda a, b: (a, b), property_types, values))
+        for element in property_value_map:
+            self.update_property(element[0], element[1])
 
     def _set_property(self, destination_id: int,
                       property_type: IntEnum, property_values: tuple,

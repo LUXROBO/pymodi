@@ -42,6 +42,7 @@ class Led(OutputModule):
             self.CommandType.SET_RGB,
             color,
         )
+        self._update_properties(self.PropertyType, color)
         self._msg_send_q.put(message)
         return color
 
