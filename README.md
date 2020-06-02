@@ -1,7 +1,7 @@
 pymodi
 ======
 
-<img src="https://www.gresswell.co.uk/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/L/3/L308260_MODI_logo_LFC.jpg" width="500" height="150">
+<img src="https://github.com/k2sebeom/pymodi/blob/feature/pymodi-logo/docs/_static/img/Logo.png" width="500" height="150">
 
 ---------
 
