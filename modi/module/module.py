@@ -31,7 +31,7 @@ class Module:
         PNP_ON = 7
         PNP_OFF = 8
 
-    def __init__(self, id_, uuid, msg_send_q, property_types):
+    def __init__(self, id_, uuid, msg_send_q):
         self._id = id_
         self._uuid = uuid
         self._msg_send_q = msg_send_q
@@ -39,23 +39,6 @@ class Module:
         self._properties = dict()
 
         self._is_connected = True
-
-        self.__initialize_property(property_types)
-
-    def __initialize_property(self, property_types: IntEnum) -> None:
-        """Register all property types and request property
-
-        :param property_types: property types of the specific module
-        :return: None
-        """
-        for p_type in property_types:
-            self._properties[p_type] = self.Property()
-            modi_serialtemp = self.request_property(
-                self._id, p_type
-            )
-            if self._msg_send_q:
-                self._msg_send_q.put(modi_serialtemp)
-            self._properties[p_type].last_request_time = time.time()
 
     @property
     def id(self) -> int:
@@ -82,10 +65,10 @@ class Module:
         # Register property if not exists
         if property_type not in self._properties.keys():
             self._properties[property_type] = self.Property()
-            modi_serialtemp = self.request_property(
+            request_property_msg = self.request_property(
                 self._id, property_type
             )
-            self._msg_send_q.put(modi_serialtemp)
+            self._msg_send_q.put(request_property_msg)
             self._properties[property_type].last_request_time = time.time()
 
         # Request property value if not updated for 0.5 sec

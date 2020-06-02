@@ -16,7 +16,7 @@ class Led(OutputModule):
         SET_RGB = 16
 
     def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q, self.PropertyType)
+        super().__init__(id_, uuid, msg_send_q)
 
     def set_rgb(self, red: int = None, green: int = None,
                 blue: int = None) -> Tuple[float, float, float]:

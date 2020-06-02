@@ -30,12 +30,11 @@ class TestModi(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        mock_setup_values = (-1, -1, None, self.MockPropertyType)
         mock_input_values = (-1, -1, None)
         mock_modules = [
-            SetupModule(*mock_setup_values),
-            InputModule(*mock_setup_values),
-            OutputModule(*mock_setup_values),
+            SetupModule(*mock_input_values),
+            InputModule(*mock_input_values),
+            OutputModule(*mock_input_values),
 
             Button(*mock_input_values),
             Dial(*mock_input_values),

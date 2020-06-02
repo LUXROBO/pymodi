@@ -1,15 +1,16 @@
 import json
 import struct
 import base64
+import time
 
 from enum import IntEnum
-from typing import Tuple
+from typing import Tuple, Iterable
 from modi.module.module import Module
 
 
 class OutputModule(Module):
-    def __init__(self, id_, uuid, msg_send_q, property_types):
-        super().__init__(id_, uuid, msg_send_q, property_types)
+    def __init__(self, id_, uuid, msg_send_q):
+        super().__init__(id_, uuid, msg_send_q)
 
     class PropertyDataType(IntEnum):
         INT = 0
@@ -18,7 +19,7 @@ class OutputModule(Module):
         RAW = 3
         DISPLAY_VAR = 4
 
-    def _update_properties(self, property_types: IntEnum,
+    def _update_properties(self, property_types: Iterable,
                            values: Tuple) -> None:
         """Update the porperties when setting the property
 
@@ -26,9 +27,21 @@ class OutputModule(Module):
         :param values: values in correct order
         :return: None
         """
-        property_value_map = list(map(lambda a, b: (a, b), property_types, values))
+        property_value_map = list(map(lambda a, b: (a, b),
+                                      property_types, values))
         for element in property_value_map:
-            self.update_property(element[0], element[1])
+            property_type = element[0]
+            property_value = element[1]
+
+            if property_type not in self._properties.keys():
+                self._properties[property_type] = self.Property()
+                request_property_msg = self.request_property(
+                    self._id, property_type
+                )
+                self._msg_send_q.put(request_property_msg)
+                self._properties[property_type].last_request_time = time.time()
+
+            self.update_property(property_type, property_value)
 
     def _set_property(self, destination_id: int,
                       property_type: IntEnum, property_values: tuple,

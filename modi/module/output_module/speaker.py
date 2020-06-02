@@ -100,7 +100,7 @@ class Speaker(OutputModule):
         F_RA_S_7 = 3729
 
     def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q, self.PropertyType)
+        super().__init__(id_, uuid, msg_send_q)
 
     def set_tune(self, frequency_value: float = None,
                  volume_value: float = None) -> Tuple[float, float]:
