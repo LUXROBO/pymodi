@@ -85,7 +85,7 @@ Please read the following to get ready for the contribution!!
 
     TL;DR: When writing a commit message, imagine your message is preceded by
 
-    "This commit will... <your-commit-mesage>"
+    "This commit will... your-commit-mesage"
 
     e.g.
 
@@ -99,13 +99,15 @@ git will automatically run the tests when you push your changes.
 
 8. Make a pull request to LUXROBO/pymodi/develop branch.
 
-    [![PR guide](https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/PR_guide.png)]
+    ![PR guide](https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/PR_guide.png)
 
    Name the pull request based on the default PR templates. Choose either of the templates based on the type of your contribution.
 
 9. It's done. You made a meaningful contribution to PyMODI.
 
-    [![Thanks](https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/modi_thanks.JPG)]
+<p align="center">
+    <img src="https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/modi_thanks.JPG" alt="thanks" width=300, height=180> 
+</p>
 
 Pull Request Guidelines
 -----------------------
