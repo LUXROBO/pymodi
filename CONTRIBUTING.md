@@ -7,14 +7,7 @@ Types of Contributions
 ----------------------
 
 ### Report Bugs
-Report bugs at <https://github.com/LUXROBO/pymodi/issues>.
-
-If you are reporting a bug, please include:
-
--   Your operating system name and version.
--   Any details about your local setup that might be helpful in
-    troubleshooting.
--   Detailed steps to reproduce the bug.
+Report bugs at <https://github.com/LUXROBO/pymodi/issues>. Fill in all the informations required at issue template.
 
 ### Fix Bugs
 Look through the GitHub issues for bugs. Anything tagged with \"bug\"
