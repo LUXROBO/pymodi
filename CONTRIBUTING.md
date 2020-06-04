@@ -33,6 +33,16 @@ If you are proposing a feature:
 -   Remember that this is a volunteer-driven project and that
     contributions are welcome :)
 
+Pre-requisites
+-------------
+You should be familiar with the following items.
+
+1. git-flow
+2. python unit-test
+3. git commit message naming convention
+4. docstring
+5. python type annotations
+
 Getting Ready for PyMODI Contribution
 --------------------------------
 Please read the following to get ready for the contribution!!
