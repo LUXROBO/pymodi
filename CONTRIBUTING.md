@@ -7,20 +7,19 @@ Types of Contributions
 ----------------------
 
 ### Report Bugs
-Report bugs at <https://github.com/LUXROBO/pymodi/issues>. Fill in all the informations required at issue template.
+Report bugs at <https://github.com/LUXROBO/pymodi/issues>. Fill in all the information required at issue template.
 
 ### Fix Bugs
-Look through the GitHub issues for bugs. Anything tagged with \"bug\"
-and \"help wanted\" is open to whoever wants to implement it.
+Look through the GitHub issues for bugs. You are welcome to implement anything tagged with \"bug\"
+and \"help wanted\".
 
 ### Implement Features
-Look through the GitHub issues for features. Anything tagged with
-\"enhancement\" and \"help wanted\" is open to whoever wants to
-implement it.
+Look through the GitHub issues for features. You are welcome to implement anything tagged with \"bug\"
+and \"help wanted\".
 
 ### Write Documentation
-pyMODI could always use more documentation, whether as part of the
-official pyMODI docs, in docstrings, or even on the web in blog posts,
+PyMODI could always use more documentation, whether it be part of the
+official PyMODI docs, docstrings, or even blog posts,
 articles, and such.
 
 ### Submit Feedback
@@ -29,9 +28,9 @@ The best way to send feedback is to file an issue at
 If you are proposing a feature:
 
 -   Explain in detail how it would work.
--   Keep the scope as narrow as possible, to make it easier to
+-   Keep the scope as narrow as possible to make it easier to
     implement.
--   Remember that this is a volunteer-driven project, and that
+-   Remember that this is a volunteer-driven project and that
     contributions are welcome :)
 
 Getting Ready for PyMODI Contribution
@@ -40,7 +39,7 @@ Please read the following to get ready for the contribution!!
 
 1. Fork the pymodi repo on GitHub
 
-    [![Fork PyMODI](https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/Fork_btn.JPG)](https://github.com/LUXROBO/pyMODI/fork)
+    [![Fork PyMODI](https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/Fork_btn.JPG)](https://github.com/LUXROBO/pymodi/fork)
 
      ^ Click this to fork the repo!!
 
@@ -96,7 +95,7 @@ git will automatically run the tests when you push your changes.
 
    Name the pull request based on the default PR templates. Choose either of the templates based on the type of your contribution.
 
-9. It's done. You made a meaningful contribution to PyMODI.
+9. Congratulations! You made a meaningful contribution to PyMODI.
 
 <p align="center">
     <img src="https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/modi_thank.JPG" alt="thanks" width=300, height=180>
