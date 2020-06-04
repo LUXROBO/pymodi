@@ -92,7 +92,6 @@ class ExeTask:
             0x1F: self.__update_property,
         }.get(command, lambda _: None)
 
-
     def __update_firmware_state(self, message):
         byte_data = message["b"]
         message_decoded = bytearray(base64.b64decode(byte_data))
@@ -219,6 +218,7 @@ class ExeTask:
 
         module_id = message["s"]
         module_type = self.__get_type_from_uuid(module_uuid_res)
+
         # No need to update Network module's STM firmware
         if module_type == 'Network':
             return
@@ -550,7 +550,7 @@ class ExeTask:
             return 'Network'
 
         hexadecimal = hex(uuid).lstrip("0x")
-        type_indicator = str(hexadecimal)
+        type_indicator = str(hexadecimal)[:4]
         module_type = {
             # Input modules
             '2000': 'env',

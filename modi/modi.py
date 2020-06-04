@@ -1,21 +1,22 @@
 """Main MODI module."""
 
+import os
 import time
-from typing import Tuple
+import traceback
 
 import threading as th
 import multiprocessing as mp
-import os
-import traceback
 
-from modi.util.topology_manager import TopologyManager
-from modi.util.that import check_complete
+from typing import Tuple
 
 from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
+
 from modi.module.module import Module
 
+from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
+from modi.util.that import check_complete
 
 
 class MODI:
@@ -28,6 +29,7 @@ class MODI:
     def __init__(self, nb_modules: int, conn_mode: str = "serial",
                  module_uuid: str = "", test: bool = False,
                  verbose: bool = False):
+
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -37,8 +39,6 @@ class MODI:
 
         self._com_proc = None
         self._exe_thrd = None
-
-        self.firmware_updater = FirmwareUpdater(self._send_q, self._module_ids, nb_modules)
 
         # Init flag used to notify initialization of MODI modules
         module_init_flag = th.Event()
@@ -62,12 +62,15 @@ class MODI:
                 traceback.print_exc()
             exit(1)
 
-        child_watch = \
-            th.Thread(target=self.watch_child_process)
+        child_watch = th.Thread(target=self.watch_child_process)
         child_watch.daemon = True
         child_watch.start()
-
         time.sleep(1)
+
+        self._firmware_updater = FirmwareUpdater(
+            self._send_q, self._module_ids, nb_modules
+        )
+
         self._exe_thrd = ExeThrd(
             self._modules,
             self._module_ids,
@@ -76,33 +79,35 @@ class MODI:
             self._send_q,
             module_init_flag,
             nb_modules,
-            self.firmware_updater,
+            self._firmware_updater,
         )
         self._exe_thrd.daemon = True
         self._exe_thrd.start()
         time.sleep(1)
 
         self._topology_manager = TopologyManager(self._topology_data)
-        module_init_timeout = 10 if conn_mode.startswith("ser") else 25
-        module_init_flag.wait(timeout=module_init_timeout)
+
+        #module_init_time = 10 if conn_mode.startswith("ser") else 25
+        #module_init_flag.wait(timeout=module_init_time)
+        module_init_flag.wait()
         if not module_init_flag.is_set():
             raise Exception("Modules are not initialized properly!")
             exit(1)
         print("MODI modules are initialized!")
         check_complete(self)
 
-    def update_module_firmware(self):
+    def update_module_firmware(self) -> None:
         """Updates firmware of connected modules"""
         print("Request to update firmware of connected MODI modules.")
-        self.firmware_updater.reset_state()
-        self.firmware_updater.request_to_update_firmware()
+        self._firmware_updater.reset_state()
+        self._firmware_updater.request_to_update_firmware()
         #self.firmware_updater.update_event.wait()
         print("Module firmwares have been updated!")
+
     def watch_child_process(self) -> None:
-        while True:
-            if not self._com_proc.is_alive():
-                os._exit(1)
-            time.sleep(0.05)
+        while self._com_proc.is_alive():
+            time.sleep(0.1)
+        os._exit(1)
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """Prints out the topology map
