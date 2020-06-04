@@ -1,7 +1,7 @@
 """Motor module."""
 
 from enum import IntEnum
-from typing import Optional, Tuple
+from typing import Tuple
 from modi.module.output_module.output_module import OutputModule
 
 
@@ -26,7 +26,8 @@ class Motor(OutputModule):
         self._type = "motor"
 
     def set_motor_channel(self,
-                          motor_channel: int, control_mode: int, control_value: int = None) -> Tuple[float, float]:
+                          motor_channel: int, control_mode: int,
+                          control_value: int = None) -> Tuple[float, float]:
         """Select te motor channel for control
         Mode: 0:Torque 1:Speed 2:Angle (Torque is not implemented yet)
 

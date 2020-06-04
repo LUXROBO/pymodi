@@ -19,8 +19,8 @@ class TestSerTask(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.mock_kwargs = {"ser_recv_q": Queue(), "ser_send_q": Queue()
-                            , "verbose": False}
+        self.mock_kwargs = {"ser_recv_q": Queue(), "ser_send_q": Queue(),
+                            "verbose": False}
         self.ser_task = SerTask(**self.mock_kwargs)
 
         def eval_list_modi_ports():

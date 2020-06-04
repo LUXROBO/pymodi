@@ -116,7 +116,7 @@ class TopologyMap:
             elif sum(self._tp_map[i]) > 0 and y >= 0:
                 h += 1
 
-        # Iterates through the columns until it finds the first non-zero column.
+        # Iterates through the columns until it finds the first non-zero column
         # Saves the index to x, and increases w until it finds next all-zero
         # column.
         for i in range(len(self._tp_map[0])):
@@ -133,7 +133,8 @@ class TopologyMap:
         The method prints out the window determined by x, y, w, h.
         """
         padding = 10
-        if print_id: padding = 17
+        if print_id:
+            padding = 17
         title = "<<MODI Topology Map>>"
         print(" " * ((padding * w - len(title)) // 2) + title)
         print("=" * padding * w)

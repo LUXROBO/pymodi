@@ -38,7 +38,7 @@ class ConnProc(mp.Process):
         :rtype: bool
         """
         return ConnTask.is_on_pi() and \
-               not ConnTask.is_network_module_connected()
+            not ConnTask.is_network_module_connected()
 
     def run(self) -> None:
         """Run the connection
