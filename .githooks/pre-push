@@ -13,9 +13,9 @@ elif [ $is_develop -gt 0 ]; then
 	read -p "You are about to push develop. Is that really what you want? [y|n] " -n 1 -r < /dev/tty
 	echo
 	if echo $REPLY | grep -E '^[Yy]$' > /dev/null; then
-		echo 'Aborting...'
 		exit 0
 	fi
+	echo 'Aborting...'
 	exit 1
 fi
 exit 0
