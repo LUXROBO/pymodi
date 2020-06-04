@@ -3,7 +3,15 @@ Contributing
 Contributions are welcome, and they are greatly appreciated! Every
 little bit helps, and credit will always be given.
 
-You can contribute in many ways:
+PyMODI Contribution Step by Step
+--------------------------------
+Please read the following to get ready for the contribution!!
+
+1. Fork the pymodi repo on GitHub
+
+[![Fork pyMODI](https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/Fork_btn.JPG)](https://github.com/LUXROBO/pyMODI/fork)
+
+2.
 
 Types of Contributions
 ----------------------
@@ -34,7 +42,6 @@ articles, and such.
 
 ### Submit Feedback
 The best way to send feedback is to file an issue at
-<https://github.com/LUXROBO/pyMODI/issues>.
 
 If you are proposing a feature:
 
