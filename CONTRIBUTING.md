@@ -9,9 +9,33 @@ Please read the following to get ready for the contribution!!
 
 1. Fork the pymodi repo on GitHub
 
-[![Fork pyMODI](https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/Fork_btn.JPG)](https://github.com/LUXROBO/pyMODI/fork)
+    [![Fork pyMODI](https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/Fork_btn.JPG)](https://github.com/LUXROBO/pyMODI/fork) <- Click this to fork the repo!!
 
-2.
+2. Clone your fork locally:
+
+        $ git clone git@github.com:your_name_here/LUXROBO/pymodi.git
+
+3. Install the version of pyMODI in your branch by:
+
+        $ python setup.py install --user
+
+4. Setup the git hooks to facilitate contribution:
+
+        $ git config core.hooksPath .githooks
+
+5. Do NOT manipulate master branch or develop branch directly. Create a new branch for local development.
+
+    PyMODI's branch naming convention follows a git-flow convention,
+
+    if you fixed a bug:
+
+        $ git checkout -b hotfix/name-of-your-bug-fix
+
+    if you implemented a new feature:
+
+        $ git checkout -b feature/name-of-your-feature
+
+
 
 Types of Contributions
 ----------------------
