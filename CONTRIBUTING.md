@@ -106,7 +106,7 @@ git will automatically run the tests when you push your changes.
 9. It's done. You made a meaningful contribution to PyMODI.
 
 <p align="center">
-    <img src="https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/modi_thanks.JPG" alt="thanks" width=300, height=180> 
+    <img src="https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/modi_thank.JPG" alt="thanks" width=300, height=180>
 </p>
 
 Pull Request Guidelines
