@@ -83,7 +83,7 @@ Please read the following to get ready for the contribution!!
     PyMODI contribution follows a git naming convention for the commit messages.
     https://chris.beams.io/posts/git-commit/
 
-    TL;DR: When writing a commit message, imaging your message is preceded by
+    TL;DR: When writing a commit message, imagine your message is preceded by
 
     "This commit will... <your-commit-mesage>"
 
