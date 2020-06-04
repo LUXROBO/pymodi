@@ -18,7 +18,7 @@ from modi.module.module import Module
 class FirmwareUpdater:
     """Module Firmware Updater: Updates a firmware of given module"""
 
-    class FirmwareState(Enum):
+    class State(Enum):
         NO_ERROR = 0
         UPDATE_READY = 1
         WRITE_FAIL = 2

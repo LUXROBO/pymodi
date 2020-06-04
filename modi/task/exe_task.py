@@ -100,13 +100,13 @@ class ExeTask:
         stream_state = message_decoded[4]
 
         # TODO: Remove this if and elif branches
-        if stream_state == self.firmware_updater.FirmwareState.CRC_ERROR.value:
+        if stream_state == self.firmware_updater.State.CRC_ERROR.value:
             self.firmware_updater.update_response(response=True, is_error_response=True)
-        elif stream_state == self.firmware_updater.FirmwareState.CRC_COMPLETE.value:
+        elif stream_state == self.firmware_updater.State.CRC_COMPLETE.value:
             self.firmware_updater.update_response(response=True)
-        elif stream_state == self.firmware_updater.FirmwareState.ERASE_ERROR.value:
+        elif stream_state == self.firmware_updater.State.ERASE_ERROR.value:
             self.firmware_updater.update_response(response=True, is_error_response=True)
-        elif stream_state == self.firmware_updater.FirmwareState.ERASE_COMPLETE.value:
+        elif stream_state == self.firmware_updater.State.ERASE_COMPLETE.value:
             self.firmware_updater.update_response(response=True)
 
     def __update_topology(self, message: Dict[str, int]) -> None:
@@ -566,4 +566,5 @@ class ExeTask:
             '4010': 'motor',
             '4020': 'led',
             '4030': 'speaker',
-        }
+        }.get(type_indicator)
+        return 'Network' if module_type is None else module_type
