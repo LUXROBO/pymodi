@@ -1,0 +1,22 @@
+#!/bin/sh; C:/Program Files/Git/bin/sh.exe
+
+current_branch=$(git symbolic-ref HEAD)
+
+is_master=$(echo $current_branch | grep master | wc -l)
+is_develop=$(echo $current_branch | grep develop | wc -l)
+
+
+if [ $is_master -gt 0 ]; then
+	echo 'You cannot to push directly to master branch'
+	exit 1
+elif [ $is_develop -gt 0 ]; then
+	read -p "You are about to push develop. Is that really what you want? [y|n] " -n 1 -r < /dev/tty
+	echo
+	if echo $REPLY | grep -E '^[Yy]$' > /dev/null; then
+		echo 'Aborting...'
+		exit 0
+	fi
+	exit 1
+fi
+exit 0
+
