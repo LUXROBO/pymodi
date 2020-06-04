@@ -83,7 +83,8 @@ class Module:
 
         return self._properties[property_type].value
 
-    def update_property(self, property_type: IntEnum, property_value: float) -> None:
+    def update_property(self, property_type: IntEnum,
+                        property_value: float) -> None:
         """ Update property value and time
 
         :param property_type: Type of the updated property

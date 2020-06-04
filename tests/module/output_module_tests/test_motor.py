@@ -46,7 +46,8 @@ class TestMotor(unittest.TestCase):
             self.motor.ControlType.TORQUE,
             (*expected_values, 0),
         )
-        self.motor._set_property.assert_called_once_with(*expected_torque_params)
+        self.motor._set_property.assert_called_once_with(
+            *expected_torque_params)
 
     def test_get_torque(self):
         """Test set_torque method with none input."""

@@ -1,7 +1,7 @@
 """Led module."""
 
 from enum import IntEnum
-from typing import Tuple, Optional
+from typing import Tuple
 from modi.module.output_module.output_module import OutputModule
 
 

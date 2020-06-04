@@ -16,8 +16,9 @@ class Display(OutputModule):
         super().__init__(id_, uuid, msg_send_q)
 
     def set_text(self, text: str) -> str:
-        """Clears the display and show the input string on the display. Returns the json serialized signal sent to
-        the module to display the text
+        """Clears the display and show the input string on the display.
+        Returns the json serialized signal sent to the module
+        to display the text
 
         :param text: Text to display.
         :type text: string
@@ -35,8 +36,10 @@ class Display(OutputModule):
             self._msg_send_q.put(message)
         return messages
 
-    def set_variable(self, variable: float, position_x: int, position_y: int) -> str:
-        """Clears the display and show the input variable on the display. Returns the json serialized signal sent to
+    def set_variable(self, variable: float, position_x: int,
+                     position_y: int) -> str:
+        """Clears the display and show the input variable on the display.
+        Returns the json serialized signal sent to
         the module to display the text
 
         :param variable: variable to display.
