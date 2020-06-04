@@ -109,18 +109,6 @@ git will automatically run the tests when you push your changes.
     <img src="https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/modi_thank.JPG" alt="thanks" width=300, height=180>
 </p>
 
-Pull Request Guidelines
------------------------
-Before you submit a pull request, check that it meets these guidelines:
-
-1.  The pull request should include tests.
-2.  If the pull request adds functionality, the docs should be updated.
-    Put your new functionality into a function with a docstring, and add
-    the feature to the list in README.md.
-3.  The pull request should work for Python 3.6, 3.7 and 3.8.
-    Check <https://travis-ci.org/LUXROBO/pymodi/pull_requests>
-    and make sure that the tests pass for all supported Python versions.
-
 Tips
 ----
 To run a subset of tests:
