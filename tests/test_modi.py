@@ -27,13 +27,8 @@ class TestModi(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.modi = MODI(test=True)
-
-        self.modi._ser_proc = mock.Mock()
-        self.modi._exe_thrd = mock.Mock()
-
         mock_input_values = (-1, -1, None)
-        self.modi._modules = [
+        mock_modules = [
             SetupModule(*mock_input_values),
             InputModule(*mock_input_values),
             OutputModule(*mock_input_values),
@@ -52,6 +47,12 @@ class TestModi(unittest.TestCase):
             Speaker(*mock_input_values),
         ]
 
+        self.modi = MODI(nb_modules=len(mock_modules), test=True)
+
+        self.modi._ser_proc = mock.Mock()
+        self.modi._exe_thrd = mock.Mock()
+        self.modi._modules = mock_modules
+
     def tearDown(self):
         """Tear down test fixtures, if any."""
         del self.modi
@@ -60,13 +61,6 @@ class TestModi(unittest.TestCase):
         """Test correct initialization of modi instance."""
         # self.assertListEqual(self.modi._modules, list())
         self.assertDictEqual(self.modi._module_ids, dict())
-
-    def test_exit(self):
-        """Test exit method."""
-        self.modi.exit()
-
-        self.modi._ser_proc.stop.assert_called_once_with()
-        self.modi._exe_thrd.stop.assert_called_once_with()
 
     def test_get_modules(self):
         """Test modules getter method."""
@@ -183,6 +177,13 @@ class TestModi(unittest.TestCase):
 
         self.assertIsInstance(actual_modules, tuple)
         self.assertTupleEqual(actual_modules, expected_modules)
+
+    # def test_print_topology_map(self):
+    #     """Test print_topology_map method"""
+    #     bundle = MODI(7)
+    #     bundle.print_topology_map(True)
+    #     print()
+    #     bundle.print_topology_map()
 
 
 if __name__ == "__main__":

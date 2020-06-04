@@ -1,7 +1,3 @@
-::: {.highlight}
-shell
-:::
-
 Contributing
 ============
 Contributions are welcome, and they are greatly appreciated! Every
@@ -13,7 +9,7 @@ Types of Contributions
 ----------------------
 
 ### Report Bugs
-Report bugs at <https://github.com/LUXROBO/pyMODI/issues>.
+Report bugs at <https://github.com/LUXROBO/pymodi/issues>.
 
 If you are reporting a bug, please include:
 
@@ -56,7 +52,7 @@ development.
 1.  Fork the [modi]{.title-ref} repo on GitHub.
 2.  Clone your fork locally:
 
-        $ git clone git@github.com:your_name_here/LUXROBO/pyMODI.git
+        $ git clone git@github.com:your_name_here/LUXROBO/pymodi.git
 
 3.  Install your local copy into a virtualenv. Assuming you have
     virtualenvwrapper installed, this is how you set up your fork for
@@ -98,8 +94,8 @@ Before you submit a pull request, check that it meets these guidelines:
 2.  If the pull request adds functionality, the docs should be updated.
     Put your new functionality into a function with a docstring, and add
     the feature to the list in README.md.
-3.  The pull request should work for Python 3.4, 3.5, 3.6 and 3.7, 3.8 and
-    for PyPy. Check <https://travis-ci.org/LUXROBO/pyMODI/pull_requests>
+3.  The pull request should work for Python 3.6 and 3.7, 3.8 and
+    for PyPy. Check <https://travis-ci.org/LUXROBO/pymodi/pull_requests>
     and make sure that the tests pass for all supported Python versions.
 
 Tips

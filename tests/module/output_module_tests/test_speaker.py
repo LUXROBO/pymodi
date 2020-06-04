@@ -10,7 +10,7 @@ class TestSpeaker(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.mock_kwargs = {"id_": -1, "uuid": -1, "can_write_q": None}
+        self.mock_kwargs = {"id_": -1, "uuid": -1, "msg_send_q": None}
         self.speaker = Speaker(**self.mock_kwargs)
 
         def eval_set_property(id, command_type, data, property_data_type):
@@ -18,7 +18,7 @@ class TestSpeaker(unittest.TestCase):
 
         self.speaker._set_property = mock.Mock(side_effect=eval_set_property)
         self.speaker._get_property = mock.Mock()
-        self.speaker._can_write_q = mock.Mock()
+        self.speaker._msg_send_q = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -35,27 +35,24 @@ class TestSpeaker(unittest.TestCase):
 
         expected_tune_params = (
             self.mock_kwargs["id_"],
-            self.speaker.CommandType.SET_TUNE.value,
+            self.speaker.CommandType.SET_TUNE,
             expected_values,
             self.speaker.PropertyDataType.FLOAT,
         )
         self.speaker._set_property.assert_called_once_with(
             *expected_tune_params)
-        self.speaker._can_write_q.put.assert_called_once_with(
-            self.speaker.CommandType.SET_TUNE.value
+        self.speaker._msg_send_q.put.assert_called_once_with(
+            self.speaker.CommandType.SET_TUNE
         )
 
-        mock_set_frequency.assert_called_once_with()
-        mock_set_volume.assert_called_once_with()
+    @mock.patch.object(Speaker, "get_volume")
+    @mock.patch.object(Speaker, "get_frequency")
+    def test_get_tune(self, mock_get_frequency, mock_get_volume):
+        """Test get_tune method with none input."""
+        self.speaker.get_tune()
 
-    @mock.patch.object(Speaker, "set_volume")
-    @mock.patch.object(Speaker, "set_frequency")
-    def test_set_tune_with_none(self, mock_set_frequency, mock_set_volume):
-        """Test set_tune method with none input."""
-        self.speaker.set_tune()
-
-        mock_set_frequency.assert_called_once_with()
-        mock_set_volume.assert_called_once_with()
+        mock_get_frequency.assert_called_once_with()
+        mock_get_volume.assert_called_once_with()
 
     @mock.patch.object(Speaker, "set_tune")
     def test_set_frequency(self, mock_set_tune):
@@ -65,9 +62,9 @@ class TestSpeaker(unittest.TestCase):
         mock_set_tune.assert_called_once_with(
             frequency_value=expeceted_frequency)
 
-    def test_set_frequency_with_none(self):
-        """Test set_frequency method with none input."""
-        self.speaker.set_frequency(frequency_value=None)
+    def test_get_frequency(self):
+        """Test get_frequency method with none input."""
+        self.speaker.get_frequency()
         self.speaker._get_property.assert_called_once_with(
             self.speaker.PropertyType.FREQUENCY
         )
@@ -79,9 +76,9 @@ class TestSpeaker(unittest.TestCase):
         self.speaker.set_volume(volume_value=expeceted_volume)
         mock_set_tune.assert_called_once_with(volume_value=expeceted_volume)
 
-    def test_set_volume_with_none(self):
-        """Test set_volume method with none input."""
-        self.speaker.set_volume(volume_value=None)
+    def test_get_volume(self):
+        """Test get_volume method with none input."""
+        self.speaker.get_volume()
         self.speaker._get_property.assert_called_once_with(
             self.speaker.PropertyType.VOLUME
         )

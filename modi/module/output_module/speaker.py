@@ -1,20 +1,19 @@
 """Speaker module."""
 
-from enum import Enum
-
+from enum import IntEnum
+from typing import Tuple, Union
 from modi.module.output_module.output_module import OutputModule
 
 
 class Speaker(OutputModule):
-
-    class PropertyType(Enum):
+    class PropertyType(IntEnum):
         FREQUENCY = 3
         VOLUME = 2
 
-    class CommandType(Enum):
+    class CommandType(IntEnum):
         SET_TUNE = 16
 
-    class Scale(Enum):
+    class Scale(IntEnum):
         F_DO_1 = 32
         F_RE_1 = 36
         F_MI_1 = 41
@@ -104,58 +103,70 @@ class Speaker(OutputModule):
         super().__init__(id_, uuid, msg_send_q)
         self._type = "speaker"
 
-    def set_tune(self, frequency_value=None, volume_value=None):
-        """
+    def set_tune(self, frequency_value: float = None,
+                 volume_value: float = None) -> Tuple[float, float]:
+        """Set tune for the speaker
+
         * If either *frequency* or *volume* is not ``None``,
-        :param float frequency_value: Frequency to set or ``None``.
-        :param float volume_value: Volume to set or ``None``.
-        The ``None`` component retains its previous value.
-        * If *frequency_value* and *volume_value* are ``None``,
-        :return: Tuple of frequency_value and volume_value.
-        :rtype: tuple
+        :param frequency_value: Frequency to set or ``None``.
+        :type frequency_value: float
+        :param volume_value: Volume to set or ``None``.
+        :type volume_value: float
+        :return: frequency_value, volume_value.
+        :rtype: Tuple[float, float]
         """
-        if not (frequency_value is None and volume_value is None):
-            message = self._set_property(
-                self._id,
-                self.CommandType.SET_TUNE.value,
-                (
-                    frequency_value
-                    if frequency_value is not None
-                    else self.set_frequency(),
-                    volume_value
-                    if volume_value is not None
-                    else self.set_volume(),
-                ),
-                self.PropertyDataType.FLOAT,
-            )
-            self._msg_send_q.put(message)
-        return self.set_frequency(), self.set_volume()
+        frequency_value = (frequency_value
+                           if frequency_value is not None
+                           else self.get_frequency())
+        volume_value = (volume_value
+                        if volume_value is not None
+                        else self.get_volume())
 
-    def set_frequency(self, frequency_value=None):
-        """
-        :param float frequency: Frequency to set or ``None``.
-        If *frequency* is ``None``.
-        :return: Frequency.
+        message = self._set_property(
+            self._id,
+            self.CommandType.SET_TUNE,
+            (frequency_value, volume_value,),
+            self.PropertyDataType.FLOAT,
+        )
+        self._msg_send_q.put(message)
+        return frequency_value, volume_value
+
+    def get_tune(self) -> Tuple[float, float]:
+        return (
+            self.get_frequency(),
+            self.get_volume()
+        )
+
+    def set_frequency(self, frequency_value: float) -> float:
+        """Set the frequency for the speaker
+
+        :param frequency_value: Frequency to set
+        :type frequency_value: float, optional
+        :return: Frequency of tune
         :rtype: float
         """
-        if frequency_value is None:
-            return self._get_property(self.PropertyType.FREQUENCY)
-        else:
-            return self.set_tune(frequency_value=frequency_value)
+        return self.set_tune(frequency_value=frequency_value)[0]
 
-    def set_volume(self, volume_value=None):
-        """
-        :param float volume: Volume to set or ``None``.
-        If *volume* is ``None``.
-        :return: Volume.
+    def get_frequency(self) -> float:
+        return self._get_property(self.PropertyType.FREQUENCY)
+
+    def set_volume(self, volume_value: float) -> float:
+        """Set the volume for the speaker
+
+        :param volume_value: Volume to set
+        :type volume_value: float
+        :return: Volume or tune
         :rtype: float
         """
-        if volume_value is None:
-            return self._get_property(self.PropertyType.VOLUME)
-        else:
-            return self.set_tune(volume_value=volume_value)
+        return self.set_tune(volume_value=volume_value)
 
-    def set_off(self):
-        """Turn off.
+    def get_volume(self) -> float:
+        return self._get_property(self.PropertyType.VOLUME)
+
+    def set_off(self) -> Tuple[float, float]:
+        """Turn off the sound
+
+        :return: Tune of the speaker turned off
+        :rtype: Tuple[float, float]
         """
         self.set_tune(0, 0)

@@ -2,7 +2,7 @@ import json
 import struct
 import base64
 
-from enum import Enum
+from enum import IntEnum
 
 from modi.module.module import Module
 
@@ -11,15 +11,16 @@ class OutputModule(Module):
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
 
-    class PropertyDataType(Enum):
+    class PropertyDataType(IntEnum):
         INT = 0
         FLOAT = 1
         STRING = 2
         RAW = 3
         DISPLAY_VAR = 4
 
-    def _set_property(self, destination_id,
-                      property_type, property_values, property_data_type=None):
+    def _set_property(self, destination_id: int,
+                      property_type: IntEnum, property_values: tuple,
+                      property_data_type: IntEnum = None) -> str:
         """ Generate message for setting property
         """
         message = dict()
@@ -27,7 +28,6 @@ class OutputModule(Module):
         message["c"] = 0x04
         message["s"] = property_type
         message["d"] = destination_id
-
         # Generate property according to their property type
         property_values_bytes = bytearray(8)
         if (
@@ -77,7 +77,6 @@ class OutputModule(Module):
             property_values_bytes[7] = 0x00
         else:
             raise RuntimeError("Not supported property data type.")
-
         message["b"] = base64.b64encode(
             bytes(property_values_bytes)).decode("utf-8")
         message["l"] = 8

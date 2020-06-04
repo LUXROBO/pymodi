@@ -1,6 +1,4 @@
-pyserial>=3.1.1
-enum34>=1.1.6
-networkx
-matplotlib
+pyserial
+enum34
 python-can
 requests

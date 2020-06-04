@@ -1,19 +1,21 @@
 """Main MODI module."""
 
 import time
+from typing import Tuple
 
 import threading as th
 import multiprocessing as mp
+import os
+import traceback
 
-import threading
+from modi.util.topology_manager import TopologyManager
+from modi.util.that import check_complete
 
-import networkx as nx
+from modi._conn_proc import ConnProc
+from modi._exe_thrd import ExeThrd
+from modi.module.module import Module
 
-from pprint import pprint
-
-from modi._communicator import Communicator
-from modi._executor_thread import ExecutorThread
-from modi._firmware_updater import FirmwareUpdater
+from modi.util._firmware_updater import FirmwareUpdater
 
 
 class MODI:
@@ -23,7 +25,9 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self, nb_modules, test=False):
+    def __init__(self, nb_modules: int, conn_mode: str = "serial",
+                 module_uuid: str = "", test: bool = False,
+                 verbose: bool = False):
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -34,37 +38,58 @@ class MODI:
         self._com_proc = None
         self._exe_thrd = None
 
-        # Init flag used to notify initialization of MODI modules
-        self._init_event = threading.Event()
-
-        # Init number of the connected modi modules
-        self._nb_modules = nb_modules
-
         self.firmware_updater = FirmwareUpdater(self._send_q, self._module_ids, nb_modules)
 
-        if test: return
+        # Init flag used to notify initialization of MODI modules
+        module_init_flag = th.Event()
 
-        self._com_proc = Communicator(self._recv_q, self._send_q)
+        # If in test run, do not create process and thread
+        if test:
+            return
+
+        self._com_proc = ConnProc(
+            self._recv_q, self._send_q, conn_mode, module_uuid, verbose
+        )
         self._com_proc.daemon = True
-        self._com_proc.start()
-        time.sleep(1)
+        try:
+            self._com_proc.start()
+        except RuntimeError:
+            if os.name == 'nt':
+                print('\nProcess initialization failed!\nMake sure you are '
+                      'using\n    if __name__ == \'__main__\' \n '
+                      'in the main module.')
+            else:
+                traceback.print_exc()
+            exit(1)
 
-        self._exe_thrd = ExecutorThread(
+        child_watch = \
+            th.Thread(target=self.watch_child_process)
+        child_watch.daemon = True
+        child_watch.start()
+
+        time.sleep(1)
+        self._exe_thrd = ExeThrd(
             self._modules,
             self._module_ids,
             self._topology_data,
             self._recv_q,
             self._send_q,
-            self._init_event,
-            self._nb_modules,
+            module_init_flag,
+            nb_modules,
             self.firmware_updater,
         )
         self._exe_thrd.daemon = True
         self._exe_thrd.start()
         time.sleep(1)
 
-        self._init_event.wait()
+        self._topology_manager = TopologyManager(self._topology_data)
+        module_init_timeout = 10 if conn_mode.startswith("ser") else 25
+        module_init_flag.wait(timeout=module_init_timeout)
+        if not module_init_flag.is_set():
+            raise Exception("Modules are not initialized properly!")
+            exit(1)
         print("MODI modules are initialized!")
+        check_complete(self)
 
     def update_module_firmware(self):
         """Updates firmware of connected modules"""
@@ -73,90 +98,31 @@ class MODI:
         self.firmware_updater.request_to_update_firmware()
         #self.firmware_updater.update_event.wait()
         print("Module firmwares have been updated!")
+    def watch_child_process(self) -> None:
+        while True:
+            if not self._com_proc.is_alive():
+                os._exit(1)
+            time.sleep(0.05)
 
-    def print_ids(self):
-        for module in self.modules:
-            pprint('module: {}, module_id: {}'.format(module, module.id))
+    def print_topology_map(self, print_id: bool = False) -> None:
+        """Prints out the topology map
 
-    def print_topology_map(self):
-        # start_time = time.time()
-        tp_data = self._topology_data
-        graph = nx.Graph()
-
-        # Init graph nodes
-        labels = {}
-        for module_id in tp_data:
-            curr_module_tp_data = tp_data[module_id]
-            module_type = self.__get_type_from_uuid(
-                curr_module_tp_data['uuid']
-            )
-            labels[module_id] = module_type
-            graph.add_node(module_id)
-        # print('graph.nodes():', graph.nodes())
-
-        # Init graph edges
-        for module_id in tp_data:
-            curr_edges = []
-            curr_module_tp_data = tp_data[module_id]
-
-            # Check if module exists at R (Right) T (Top) L (Left) B (Bottom)
-            if curr_module_tp_data['r'] is not None:
-                edge_to_right = (module_id, curr_module_tp_data['r'])
-                curr_edges.append(edge_to_right)
-            if curr_module_tp_data['t'] is not None:
-                edge_to_top = (module_id, curr_module_tp_data['t'])
-                curr_edges.append(edge_to_top)
-            if curr_module_tp_data['l'] is not None:
-                edge_to_left = (module_id, curr_module_tp_data['l'])
-                curr_edges.append(edge_to_left)
-            if curr_module_tp_data['b'] is not None:
-                edge_to_bottom = (module_id, curr_module_tp_data['b'])
-                curr_edges.append(edge_to_bottom)
-
-            graph.add_edges_from(curr_edges)
-        # print('graph.edges():', graph.edges())
-
-        labeled_graph = nx.relabel_nodes(graph, labels)
-        # print('total time taken:', time.time() - start_time)
-
-        return labeled_graph
-
-    def __get_type_from_uuid(self, uuid):
-        if uuid is None:
-            return 'Network'
-
-        hexadecimal = hex(uuid).lstrip("0x")
-        type_indicator = str(hexadecimal)[:4]
-        module_type = {
-            # Input modules
-            '2000': 'Env',
-            '2010': 'Gyro',
-            '2020': 'Mic',
-            '2030': 'Button',
-            '2040': 'Dial',
-            '2050': 'Ultrasonic',
-            '2060': 'Infrared',
-
-            # Output modules
-            '4000': 'Display',
-            '4010': 'Motor',
-            '4020': 'Led',
-            '4030': 'Speaker',
-        }.get(type_indicator)
-        return module_type
+        :param print_id: if True, the result includes module id
+        :return: None
+        """
+        self._topology_manager.print_topology_map(print_id)
 
     @property
-    def modules(self):
+    def modules(self) -> Tuple[Module]:
         """Tuple of connected modules except network module.
         Example:
         >>> bundle = modi.MODI()
         >>> modules = bundle.modules
         """
-
         return tuple(self._modules)
 
     @property
-    def buttons(self):
+    def buttons(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.button.Button` modules.
         """
 
@@ -164,7 +130,7 @@ class MODI:
                       if module.type == "button"])
 
     @property
-    def dials(self):
+    def dials(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.dial.Dial` modules.
         """
 
@@ -172,7 +138,7 @@ class MODI:
                       if module.type == "dial"])
 
     @property
-    def displays(self):
+    def displays(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.display.Display` modules.
         """
 
@@ -180,7 +146,7 @@ class MODI:
                       if module.type == "display"])
 
     @property
-    def envs(self):
+    def envs(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.env.Env` modules.
         """
 
@@ -188,7 +154,7 @@ class MODI:
                       if module.type == "env"])
 
     @property
-    def gyros(self):
+    def gyros(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
         """
 
@@ -196,7 +162,7 @@ class MODI:
                       if module.type == "gyro"])
 
     @property
-    def irs(self):
+    def irs(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.ir.Ir` modules.
         """
 
@@ -204,7 +170,7 @@ class MODI:
                       if module.type == "ir"])
 
     @property
-    def leds(self):
+    def leds(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.led.Led` modules.
         """
 
@@ -212,7 +178,7 @@ class MODI:
                       if module.type == "led"])
 
     @property
-    def mics(self):
+    def mics(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.mic.Mic` modules.
         """
 
@@ -220,7 +186,7 @@ class MODI:
                       if module.type == "mic"])
 
     @property
-    def motors(self):
+    def motors(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.motor.Motor` modules.
         """
 
@@ -228,7 +194,7 @@ class MODI:
                       if module.type == "motor"])
 
     @property
-    def speakers(self):
+    def speakers(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
         """
 
@@ -236,7 +202,7 @@ class MODI:
                       if module.type == "speaker"])
 
     @property
-    def ultrasonics(self):
+    def ultrasonics(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
 

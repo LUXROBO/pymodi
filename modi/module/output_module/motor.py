@@ -1,13 +1,13 @@
 """Motor module."""
 
-from enum import Enum
-
+from enum import IntEnum
+from typing import Optional, Tuple
 from modi.module.output_module.output_module import OutputModule
 
 
 class Motor(OutputModule):
 
-    class PropertyType(Enum):
+    class PropertyType(IntEnum):
         FIRST_TORQUE = 2
         SECOND_TORQUE = 10
         FIRST_SPEED = 3
@@ -15,7 +15,7 @@ class Motor(OutputModule):
         FIRST_DEGREE = 4
         SECOND_DEGREE = 12
 
-    class ControlType(Enum):
+    class ControlType(IntEnum):
         TORQUE = 16
         SPEED = 17
         DEGREE = 18
@@ -26,19 +26,24 @@ class Motor(OutputModule):
         self._type = "motor"
 
     def set_motor_channel(self,
-                          motor_channel, control_mode, control_value=None):
-        """
-        :param motor_channel: Select motor channel for control
-        :param control_mode: Control mode of the motor to be selected
-        :param control_value: value to control
-        Channel: 0:Top 1:Bot
+                          motor_channel: int, control_mode: int, control_value: int = None) -> Tuple[float, float]:
+        """Select te motor channel for control
         Mode: 0:Torque 1:Speed 2:Angle (Torque is not implemented yet)
+
+        :param motor_channel: channel number for control 0:Top 1:Bot
+        :type motor_channel: int
+        :param control_mode: Control mode of the motor to be selected
+        :type control_mode: int
+        :param control_value: value to control
+        :type control_value: int, optional
+        :return: current value of the motor control
+        :rtype: Tuple[float, float]
         """
         if control_value is not None:
             self._msg_send_q.put(
                 self._set_property(
                     self._id,
-                    self.ControlType.INV.value,
+                    self.ControlType.INV,
                     (
                         motor_channel,
                         control_mode,
@@ -53,203 +58,249 @@ class Motor(OutputModule):
         #    self._get_property(self.PropertyType.?),
         # )
 
-    def set_first_degree(self, degree_value=None):
+    def set_first_degree(self, degree_value: int) -> int:
+        """Sets the angle of the motor at channel I
+
+        :param degree_value: Angle to set the first motor.
+        :type degree_value: int, optional
+        :return: If *degree* is ``None``, Angle of the first motor.
+        :rtype: float, optional
         """
-        :param int degree: Angle to set the first motor.
-        If *degree* is ``None``,
-        :return: Angle of the first motor.
+        self._msg_send_q.put(
+            self._set_property(
+                self._id,
+                self.ControlType.DEGREE,
+                (
+                    degree_value,
+                    self.get_second_degree(),
+                    0,
+                ),
+            )
+        )
+        return degree_value
+
+    def get_first_degree(self) -> float:
+        """Returns first degree
+
+        :return: first degree value
         :rtype: float
         """
-        if degree_value is not None:
-            self._msg_send_q.put(
-                self._set_property(
-                    self._id,
-                    self.ControlType.DEGREE.value,
-                    (
-                        degree_value,
-                        self._get_property(self.PropertyType.FIRST_DEGREE),
-                        0,
-                    ),
-                )
-            )
-        else:
-            return self._get_property(self.PropertyType.FIRST_DEGREE)
+        return self._get_property(self.PropertyType.FIRST_DEGREE)
 
-    def set_second_degree(self, degree_value=None):
-        """
-        :param int degree: Angle to set the second motor.
-        If *degree* is ``None``,
+    def set_second_degree(self, degree_value: int) -> float:
+        """Sets the angle of the motor at channel II
+
+        :param degree_value: Angle to set the second motor.
+        :type degree_value
         :return: Angle of the second motor.
         :rtype: float
         """
-        if degree_value is not None:
-            self._msg_send_q.put(
-                self._set_property(
-                    self._id,
-                    self.ControlType.DEGREE.value,
-                    (self.set_second_degree(), degree_value, 0),
-                )
+        self._msg_send_q.put(
+            self._set_property(
+                self._id,
+                self.ControlType.DEGREE,
+                (self.get_first_degree(), degree_value, 0),
             )
-        else:
-            return self._get_property(self.PropertyType.SECOND_DEGREE)
+        )
+        return degree_value
 
-    def set_first_speed(self, speed_value=None):
+    def get_second_degree(self) -> float:
+        """Returns second degree
+
+        :return: second degree value
+        :rtype: float
         """
-        :param int degree: Angular speed to set the first motor.
-        If *speed* is ``None``,
+        return self._get_property(self.PropertyType.SECOND_DEGREE)
+
+    def set_first_speed(self, speed_value: int) -> float:
+        """Set the speed of the motor at channel I
+
+        :param speed_value: Angular speed to set the first motor.
         :return: Angular speed of the first motor.
         :rtype: float
         """
-        if speed_value is not None:
-            self._msg_send_q.put(
-                self._set_property(
-                    self._id,
-                    self.ControlType.SPEED.value,
-                    (speed_value, self.set_first_speed(), 0),
-                )
+        self._msg_send_q.put(
+            self._set_property(
+                self._id,
+                self.ControlType.SPEED,
+                (speed_value, self.get_second_speed(), 0),
             )
-        else:
-            return self._get_property(self.PropertyType.FIRST_DEGREE)
+        )
+        return speed_value
 
-    def set_second_speed(self, speed_value=None):
-        """
-        :param int degree: Angular speed to set the second motor.
-        If *speed* is ``None``,
+    def get_first_speed(self) -> float:
+        return self._get_property(self.PropertyType.FIRST_SPEED)
+
+    def set_second_speed(self, speed_value: int) -> float:
+        """Set the speed of the motor at channel II
+
+        :param speed_value: Angular speed to set the second motor.
         :return: Angular speed of the second motor.
         :rtype: float
         """
-        if speed_value is not None:
-            self._msg_send_q.put(
-                self._set_property(
-                    self._id,
-                    self.ControlType.SPEED.value,
-                    (self.set_second_speed(), speed_value, 0),
-                )
+        self._msg_send_q.put(
+            self._set_property(
+                self._id,
+                self.ControlType.SPEED,
+                (self.get_first_speed(), speed_value, 0),
             )
-        else:
-            return self._get_property(self.PropertyType.SECOND_DEGREE)
+        )
+        return speed_value
 
-    def set_first_torque(self, torque_value=None):
-        """
-        :param int degree: Torque to set the first motor.
-        If *torque* is ``None``,
+    def get_second_speed(self) -> float:
+        return self._get_property(self.PropertyType.SECOND_SPEED)
+
+    def set_first_torque(self, torque_value: int) -> float:
+        """Set the torque of the motor at channel I
+
+        :param torque_value: Torque to set the first motor.
+        :type torque_value: int
         :return: Torque of the first motor.
         :rtype: float
         """
-        if torque_value is not None:
-            self._msg_send_q.put(
-                self._set_property(
-                    self._id,
-                    self.ControlType.TORQUE.value,
-                    (torque_value, self.set_second_torque(), 0),
-                )
+        self._msg_send_q.put(
+            self._set_property(
+                self._id,
+                self.ControlType.TORQUE,
+                (torque_value, self.get_second_torque(), 0),
             )
-        else:
-            return self._get_property(self.PropertyType.FIRST_TORQUE)
+        )
+        return torque_value
 
-    def set_second_torque(self, torque_value=None):
-        """
-        :param int degree: Torque to set the second motor.
-        If *torque* is ``None``,
+    def get_first_torque(self) -> float:
+        return self._get_property(self.PropertyType.FIRST_TORQUE)
+
+    def set_second_torque(self, torque_value: int) -> float:
+        """Set the torque of the motor at channel II
+
+        :param torque_value: Torque to set the second motor.
+        :type torque_value: int
         :return: Torque of the second motor.
         :rtype: float
         """
-        if torque_value is not None:
-            self._msg_send_q.put(
-                self._set_property(
-                    self._id,
-                    self.ControlType.TORQUE.value,
-                    (self.set_first_torque(), torque_value, 0),
-                )
-            )
-        else:
-            return self._get_property(self.PropertyType.SECOND_TORQUE)
-
-    def set_torque(self, first_torque_value=None, second_torque_value=None):
-        """
-        :param int first_torque: Torque to set the first motor.
-        :param int second_torque: Torque to set the second motor.
-        If *first_torque* is ``None`` and *second_torque* is ``None``,
-        :return: Torque of the first motor , Torque of the second motor.
-        :rtype: float
-        """
-        if first_torque_value is not None or second_torque_value is not None:
-            first_torque_value = (
-                self.set_first_torque()
-                if second_torque_value is not None
-                else first_torque_value
-            )
-            second_torque_value = (
-                self.set_second_torque()
-                if second_torque_value is None
-                else second_torque_value
-            )
-            message = self._set_property(
+        self._msg_send_q.put(
+            self._set_property(
                 self._id,
-                self.ControlType.TORQUE.value,
-                (first_torque_value, second_torque_value, 0),
+                self.ControlType.TORQUE,
+                (self.get_first_torque(), torque_value, 0),
             )
-            self._msg_send_q.put(message)
+        )
+        return torque_value
+
+    def get_second_torque(self):
+        return self._get_property(self.PropertyType.SECOND_TORQUE)
+
+    def set_torque(self, first_torque_value: int = None,
+                   second_torque_value: int = None) -> Tuple[float, float]:
+        """Set the torque of the motors at both channels
+
+        :param first_torque_value: Torque to set the first motor.
+        :type first_torque_value: int, optional
+        :param second_torque_value: Torque to set the second motor.
+        :type second_torque_value: int, optional
+        :return: Torque of the first motor , Torque of the second motor.
+        :rtype: Tuple[float, float]
+        """
+        first_torque_value = (
+            self.get_first_torque()
+            if first_torque_value is None
+            else first_torque_value
+        )
+        second_torque_value = (
+            self.get_second_torque()
+            if second_torque_value is None
+            else second_torque_value
+        )
+        message = self._set_property(
+            self._id,
+            self.ControlType.TORQUE,
+            (first_torque_value, second_torque_value, 0),
+        )
+        self._msg_send_q.put(message)
+        return first_torque_value, second_torque_value
+
+    def get_torque(self) -> Tuple[float, float]:
+        """Returns torque values of two motors
+
+        :return: Torque
+        :rtype: Tuple[float, float]
+        """
         return (
             self._get_property(self.PropertyType.FIRST_TORQUE),
             self._get_property(self.PropertyType.SECOND_TORQUE),
         )
 
-    def set_speed(self, first_speed_value=None, second_speed_value=None):
+    def set_speed(self, first_speed_value: int = None,
+                  second_speed_value: int = None) -> Tuple[float, float]:
+        """Set the speed of the motors at both channels
+
+        :param first_speed_value: Speed to set the first motor.
+        :type first_speed_value: int, optional
+        :param second_speed_value: Speed to set the second motor.
+        :type second_speed_value: int, optional
+        :return: If *first_speed* is ``None`` and *second_speed* is ``None``,
+            Speed of the first motor , Speed of the second motor.
+        :rtype: Tuple[float, float]
         """
-        :param int first_speed: Speed to set the first motor.
-        :param int second_speed: Speed to set the second motor.
-        If *first_speed* is ``None`` and *second_speed* is ``None``,
-        :return: Speed of the first motor , Speed of the second motor.
-        :rtype: float
-        """
-        if first_speed_value is not None or second_speed_value is not None:
-            first_speed_value = (
-                self.set_first_speed()
-                if first_speed_value is None
-                else first_speed_value
-            )
-            second_speed_value = (
-                self.set_second_speed()
-                if second_speed_value is None
-                else second_speed_value
-            )
-            message = self._set_property(
-                self._id,
-                self.ControlType.SPEED.value,
-                (first_speed_value, second_speed_value, 0),
-            )
-            self._msg_send_q.put(message)
+        first_speed_value = (
+            self.get_first_speed()
+            if first_speed_value is None
+            else first_speed_value
+        )
+        second_speed_value = (
+            self.get_second_speed()
+            if second_speed_value is None
+            else second_speed_value
+        )
+        message = self._set_property(
+            self._id,
+            self.ControlType.SPEED,
+            (first_speed_value, second_speed_value, 0),
+        )
+        self._msg_send_q.put(message)
+        return first_speed_value, second_speed_value
+
+    def get_speed(self):
         return (
             self._get_property(self.PropertyType.FIRST_SPEED),
             self._get_property(self.PropertyType.SECOND_SPEED),
         )
 
-    def set_degree(self, first_degree_value=None, second_degree_value=None):
+    def set_degree(self, first_degree_value: int,
+                   second_degree_value: int) -> Tuple[float, float]:
+        """Set the angle of the motors at both channels
+
+        :param first_degree_value: Angle to set the first motor.
+        :type first_degree_value: int, optional
+        :param second_degree_value: Angle to set the second motor.
+        :type second_degree_value: int, optional
+        :return: Angle of the first motor , Angle of the second motor.
+        :rtype: Tuple[float, float]
         """
-        :param int first_degree: Degree to set the first motor.
-        :param int second_degree: Degree to set the second motor.
-        If *first_degree* is ``None`` and *second_degree* is ``None``,
-        :return: Degree of the first motor , Degree of the second motor.
+        first_degree_value = (
+            self.get_first_degree()
+            if first_degree_value is None
+            else first_degree_value
+        )
+        second_degree_value = (
+            self.get_second_degree()
+            if second_degree_value is None
+            else second_degree_value
+        )
+        message = self._set_property(
+            self._id,
+            self.ControlType.DEGREE,
+            (first_degree_value, second_degree_value, 0),
+        )
+        self._msg_send_q.put(message)
+        return first_degree_value, second_degree_value
+
+    def get_degree(self) -> Tuple[float, float]:
+        """Returns current angle
+
+        :return: Angle of two motors
         :rtype: float
         """
-        if first_degree_value is not None or second_degree_value is not None:
-            first_degree_value = (
-                self.set_first_degree()
-                if first_degree_value is None
-                else first_degree_value
-            )
-            second_degree_value = (
-                self.set_second_degree()
-                if second_degree_value is None
-                else second_degree_value
-            )
-            message = self._set_property(
-                self._id,
-                self.ControlType.DEGREE.value,
-                (first_degree_value, second_degree_value, 0),
-            )
-            self._msg_send_q.put(message)
         return (
             self._get_property(self.PropertyType.FIRST_DEGREE),
             self._get_property(self.PropertyType.SECOND_DEGREE),

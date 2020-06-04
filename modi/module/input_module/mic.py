@@ -1,13 +1,13 @@
 """Mic module."""
 
-from enum import Enum
+from enum import IntEnum
 
 from modi.module.input_module.input_module import InputModule
 
 
 class Mic(InputModule):
 
-    class PropertyType(Enum):
+    class PropertyType(IntEnum):
         VOLUME = 2
         FREQUENCY = 3
 
@@ -15,15 +15,17 @@ class Mic(InputModule):
         super().__init__(id_, uuid, msg_send_q)
         self._type = "mic"
 
-    def get_volume(self):
-        """
+    def get_volume(self) -> float:
+        """Returns the volume of input sound between 0 and 100
+
         :return: Volume of input sound.
         :rtype: float
         """
         return self._get_property(self.PropertyType.VOLUME)
 
-    def get_frequency(self):
-        """
+    def get_frequency(self) -> float:
+        """Returns the frequency of input sound
+
         :return: Frequency of input sound.
         :rtype: float
         """

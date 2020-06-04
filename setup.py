@@ -1,51 +1,66 @@
-#!/usr/bin/env python
-
-from setuptools import setup, find_packages
-
 from os import path
+from setuptools import setup, find_packages
 
 
 def get_readme():
-    here = path.abspath(path.dirname(__file__))
-    with open(path.join(here, 'README.md'), encoding='utf-8') as readme_file:
+    here = path.dirname(__file__)
+    with open(path.join(here, 'README.md'), encoding='UTF8') as readme_file:
         readme = readme_file.read()
-    return readme
+        return readme
+
+
+def get_about():
+    here = path.dirname(__file__)
+    about = {}
+    with open(path.join(here, './modi/about.py'),
+              encoding='UTF8') as about_file:
+        exec(about_file.read(), about)
+        return about
+
+
+about = get_about()
+
+
+def get_history():
+    here = path.dirname(__file__)
+    with open(path.join(here, 'HISTORY.md'), encoding='UTF8') as history_file:
+        history = history_file.read()
+        return history
+
+
+def get_requirements():
+    here = path.dirname(__file__)
+    with open(path.join(here, 'requirements.txt'),
+              encoding='UTF8') as requirements_file:
+        requirements = requirements_file.read().splitlines()
+        return requirements
 
 
 setup(
-    version="0.7.1",
-    author="Jinsung Ha",
-    author_email="jinsung@luxrobo.com",
-    description="Easy😆 and fast💨 MODI Python API package.",
-    long_description=get_readme(),
+    name=about['__title__'],
+    version=about['__version__'],
+    author=about['__author__'],
+    author_email=about['__email__'],
+    description=about['__summary__'],
+    long_description=get_readme() + '\n' + get_history(),
     long_description_content_type="text/markdown",
-    install_requires=[
-        "pyserial>=3.1.1",
-        "enum34>=1.1.6",
-        "networkx",
-        "matplotlib",
-        "python-can",
-    ],
-    license="MIT license",
+    install_requires=get_requirements(),
+    license=about['__license__'],
     include_package_data=True,
     keywords=["pymodi", "modi", "luxrobo"],
-    name="pymodi",
-    packages=find_packages(include=['modi', 'modi.module',
+    packages=find_packages(include=['modi', 'modi.task', 'modi.module',
                                     'modi.module.setup_module',
                                     'modi.module.input_module',
                                     'modi.module.output_module']),
     test_suite="tests",
-    url="https://github.com/LUXROBO/pyMODI",
+    url=about['__url__'],
     classifiers=[
         "Natural Language :: English",
-        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Intended Audience :: Education",
         'Intended Audience :: Information Technology',
         'Intended Audience :: Science/Research',
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",

@@ -1,10 +1,10 @@
-import os
 import time
 import json
 import queue
 import base64
 import struct
-import threading
+from enum import IntEnum
+from typing import Callable, Dict
 
 from modi.module.input_module.button import Button
 from modi.module.input_module.dial import Dial
@@ -21,14 +21,12 @@ from modi.module.output_module.speaker import Speaker
 
 from modi.module.module import Module
 
-from modi._firmware_updater import FirmwareUpdater
 
-
-class ExecutorTask:
+class ExeTask:
     """
-    :param queue serial_write_q: Inter-process queue for writing serial
+    :param queue send_q: Inter-process queue for writing serial
     message.
-    :param queue json_recv_q: Inter-process queue for parsing json message.
+    :param queue recv_q: Inter-process queue for parsing json message.
     :param dict() module_ids: dict() of module_id : ['timestamp', 'uuid'].
     :param list() modules: list() of module instance.
     """
@@ -57,25 +55,32 @@ class ExecutorTask:
         self.__init_modules()
         print('Start initializing connected MODI modules')
 
-
-    def run(self, delay):
+    def run(self, delay: float):
         """ Run in ExecutorThread
-        """
 
-        try:
-            message = json.loads(self._recv_q.get_nowait())
-        except queue.Empty:
-            pass
-        except json.decoder.JSONDecodeError:
-            pass
-        else:
-            #print('recv msg:', message)
-            self.__command_handler(message["c"])(message)
+        :param delay: time value to wait in seconds
+        :type delay: float
+        """
 
         time.sleep(delay)
 
-    def __command_handler(self, command):
-        """ Excute task based on command message
+        try:
+            raw_message = self._recv_q.get_nowait()
+            message = json.loads(raw_message)
+        except queue.Empty:
+            pass
+        except json.decoder.JSONDecodeError:
+            print('current json message:', raw_message)
+        else:
+            self.__command_handler(message["c"])(message)
+
+    def __command_handler(self, command: int) -> Callable[[Dict[str, int]], None]:
+        """ Execute task based on command message
+
+        :param command: command code
+        :type command: int
+        :return: a function the corresponds to the command code
+        :rtype: Callable[[Dict[str, int]], None]
         """
 
         return {
@@ -87,6 +92,7 @@ class ExecutorTask:
             0x1F: self.__update_property,
         }.get(command, lambda _: None)
 
+
     def __update_firmware_state(self, message):
         byte_data = message["b"]
         message_decoded = bytearray(base64.b64decode(byte_data))
@@ -94,16 +100,21 @@ class ExecutorTask:
         stream_state = message_decoded[4]
 
         # TODO: Remove this if and elif branches
-        if stream_state == FirmwareUpdater.FirmwareState.CRC_ERROR.value:
+        if stream_state == self.firmware_updater.FirmwareState.CRC_ERROR.value:
             self.firmware_updater.update_response(response=True, is_error_response=True)
-        elif stream_state == FirmwareUpdater.FirmwareState.CRC_COMPLETE.value:
+        elif stream_state == self.firmware_updater.FirmwareState.CRC_COMPLETE.value:
             self.firmware_updater.update_response(response=True)
-        elif stream_state == FirmwareUpdater.FirmwareState.ERASE_ERROR.value:
+        elif stream_state == self.firmware_updater.FirmwareState.ERASE_ERROR.value:
             self.firmware_updater.update_response(response=True, is_error_response=True)
-        elif stream_state == FirmwareUpdater.FirmwareState.ERASE_COMPLETE.value:
+        elif stream_state == self.firmware_updater.FirmwareState.ERASE_COMPLETE.value:
             self.firmware_updater.update_response(response=True)
 
-    def __update_topology(self, message):
+    def __update_topology(self, message: Dict[str, int]) -> None:
+        """Update the topology of the connected modules
+
+        :param message: Dictionary format message of the module
+        :return: None
+        """
         # print('topology_msg:', message)
 
         # Setup prerequisites
@@ -138,18 +149,26 @@ class ExecutorTask:
         # Save topology data for current module
         self._topology_data[src_id] = topology_by_id
 
-    def __get_uuid_by_id(self, id_):
+    def __get_uuid_by_id(self, id_: int) -> int:
+        """Find id of a module which has corresponding uuid
 
-        # find id of a module which has corresponding uuid
+        :param id_: ID of the module
+        :type id_: int
+        :return: UUID
+        :rtype: int
+        """
         for module in self._modules:
             if module.id == id_:
                 return module.uuid
         return None
 
-    def __update_health(self, message):
+    def __update_health(self, message: Dict[str, int]) -> None:
         """ Update information by health message
-        """
 
+        :param message: Dictionary format message of the module
+        :type message: Dictionary
+        :return: None
+        """
         # Record current time and uuid, timestamp, battery information
         module_id = message["s"]
         curr_time_ms = int(time.time() * 1000)
@@ -178,7 +197,12 @@ class ExecutorTask:
                     if module.uuid == module_info["uuid"]:
                         module.set_connection_state(connection_state=False)
 
-    def __update_warning(self, message):
+    def __update_warning(self, message: Dict[str, int]) -> None:
+        """Update the warning message
+
+        :param message: Warning message in Dictionary format
+        :return: None
+        """
         #print('Warning message:', message)
 
         warning_data = bytearray(base64.b64decode(message["b"]))
@@ -211,8 +235,12 @@ class ExecutorTask:
             # TODO: Handle warning_type of 7 and 10
             print("Unsupported warning type:", warning_type)
 
-    def __update_modules(self, message):
+    def __update_modules(self, message: Dict[str, int]) -> None:
         """ Update module information
+
+        :param message: Dictionary format module info
+        :type message: Dictionary
+        :return: None
         """
 
         # Set time variable for timestamp
@@ -275,18 +303,27 @@ class ExecutorTask:
                     module_pnp_state=Module.State.PNP_OFF
                 )
                 self._modules.append(module_instance)
+                print(str(type(module_instance))+" has been connected!")
 
                 if self.__is_all_connected():
                     self._init_event.set()
 
-    def __is_all_connected(self):
-        """ determine whether all modules are connected
+    def __is_all_connected(self) -> bool:
+        """ Determine whether all modules are connected
+
+        :return: true is all modules are connected
+        :rtype: bool
         """
 
         return self._nb_modules == len(self._modules)
 
-    def __init_module(self, module_type):
+    def __init_module(self, module_type: str) -> Module:
         """ Find module type for module initialize
+
+        :param module_type: Type of the module in string
+        :type module_type: str
+        :return: Module corresponding to the type
+        :rtype: Module
         """
 
         module = {
@@ -304,10 +341,13 @@ class ExecutorTask:
         }.get(module_type)
         return module
 
-    def __update_property(self, message):
+    def __update_property(self, message: Dict[str, int]) -> None:
         """ Update module property
-        """
 
+        :param message: Dictionary format message
+        :type message: Dictionary
+        :return: None
+        """
         # Do not update reserved property
         property_number = message["d"]
         if property_number == 0 or property_number == 1:
@@ -324,8 +364,14 @@ class ExecutorTask:
                         message_decoded[:4]))[0], 2),
                 )
 
-    def __set_pnp(self, module_id, module_pnp_state):
+    def __set_pnp(self, module_id: int, module_pnp_state: IntEnum) -> None:
         """ Generate module pnp on/off command
+
+        :param module_id: ID of the target module
+        :type module_id: int
+        :param module_pnp_state: Pnp state value
+        :type module_pnp_state: IntEnum
+        :return: None
         """
 
         # If no module_id is specified, it will broadcast incoming pnp state
@@ -343,8 +389,15 @@ class ExecutorTask:
             )
             self._send_q.put(pnp_message)
 
-    def __fit_module_uuid(self, module_info, module_uuid):
+    def __fit_module_uuid(self, module_info: int, module_uuid: int) -> int:
         """ Generate uuid using bitwise operation
+
+        :param module_info: Module info
+        :type module_info: int
+        :param module_uuid: Module uuid
+        :type module_uuid: int
+        :return: Fitted uuid
+        :rtype: int
         """
 
         sizeof_module_uuid = 0
@@ -353,8 +406,17 @@ class ExecutorTask:
         sizeof_module_uuid += sizeof_module_uuid % 4
         return (module_info << sizeof_module_uuid) | module_uuid
 
-    def __set_module_state(self, destination_id, module_state, pnp_state):
+    def __set_module_state(self, destination_id: int, module_state: IntEnum, pnp_state: IntEnum) -> str:
         """ Generate message for set module state and pnp state
+
+        :param destination_id: Id to target destination
+        :type destination_id: int
+        :param module_state: State value of the module
+        :type module_state: int
+        :param pnp_state: Pnp state value
+        :type pnp_state: IntEnum
+        :return: json serialized message
+        :rtype: str
         """
 
         message = dict()
@@ -364,16 +426,18 @@ class ExecutorTask:
         message["d"] = destination_id
 
         state_bytes = bytearray(2)
-        state_bytes[0] = module_state.value
-        state_bytes[1] = pnp_state.value
+        state_bytes[0] = module_state
+        state_bytes[1] = pnp_state
 
         message["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
         message["l"] = 2
 
         return json.dumps(message, separators=(",", ":"))
 
-    def __init_modules(self):
+    def __init_modules(self) -> None:
         """ Initialize module on first run
+
+        :return: None
         """
 
         BROADCAST_ID = 0xFFF
@@ -402,14 +466,23 @@ class ExecutorTask:
         self._send_q.put(request_topology_message)
         self.__delay()
 
-    def __delay(self):
+    def __delay(self) -> None:
         """ Wait for delay
+
+        :return: None
         """
 
         time.sleep(1)
 
-    def __request_uuid(self, source_id, is_network_module=False):
+    def __request_uuid(self, source_id: int, is_network_module: bool = False) -> str:
         """ Generate broadcasting message for request uuid
+
+        :param source_id: Id of the source
+        :type source_id: int
+        :param is_network_module: true if network module
+        :type is_network_module: bool
+        :return: json serialized message
+        :rtype: str
         """
 
         BROADCAST_ID = 0xFFF
@@ -428,8 +501,12 @@ class ExecutorTask:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def __request_topology(self):
+    def __request_topology(self) -> str:
+        """Request module topology
 
+        :return: json serialized topology request message
+        :rtype: str
+        """
         message = dict()
         message["c"] = 0x07
         message["s"] = 0
@@ -441,15 +518,39 @@ class ExecutorTask:
 
         return json.dumps(message, separators=(",", ":"))
 
-    #
-    # Helper Methods below
-    #
+    def update_firmware(self) -> None:
+        """ Remove firmware of MODI modules
+
+        :return: None
+        """
+
+        BROADCAST_ID = 0xFFF
+        firmware_update_message = self.__set_module_state(
+            BROADCAST_ID, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
+        )
+        self._send_q.put(firmware_update_message)
+        self.__delay()
+
+    def update_firmware_ready(self, module_id: int) -> None:
+        """ Check if modules with no firmware are ready to update its firmware
+
+        :param module_id: Id of the target module
+        :type module_id: int
+        :return: None
+        """
+
+        firmware_update_ready_message = self.__set_module_state(
+            module_id, Module.State.UPDATE_FIRMWARE_READY, Module.State.PNP_OFF
+        )
+        self._send_q.put(firmware_update_ready_message)
+        self.__delay()
+
     def __get_type_from_uuid(self, uuid):
         if uuid is None:
             return 'Network'
 
         hexadecimal = hex(uuid).lstrip("0x")
-        type_indicator = str(hexadecimal)[:4]
+        type_indicator = str(hexadecimal)
         module_type = {
             # Input modules
             '2000': 'env',
@@ -465,5 +566,4 @@ class ExecutorTask:
             '4010': 'motor',
             '4020': 'led',
             '4030': 'speaker',
-        }.get(type_indicator)
-        return module_type
+        }

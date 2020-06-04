@@ -1,13 +1,13 @@
 """Button module."""
 
-from enum import Enum
+from enum import IntEnum
 
 from modi.module.input_module.input_module import InputModule
 
 
 class Button(InputModule):
 
-    class PropertyType(Enum):
+    class PropertyType(IntEnum):
         CLICKED = 2
         DOUBLE_CLICKED = 3
         PRESSED = 4
@@ -17,29 +17,33 @@ class Button(InputModule):
         super().__init__(id_, uuid, msg_send_q)
         self._type = "button"
 
-    def get_clicked(self):
-        """
+    def get_clicked(self) -> bool:
+        """Returns true when button is clicked
+
         :return: `True` if clicked or `False`.
         :rtype: bool
         """
         return self._get_property(self.PropertyType.CLICKED) == 100.0
 
-    def get_double_clicked(self):
-        """
+    def get_double_clicked(self) -> bool:
+        """Returns true when button is double clicked
+
         :return: `True` if double clicked or `False`.
         :rtype: bool
         """
         return self._get_property(self.PropertyType.DOUBLE_CLICKED) == 100.0
 
-    def get_pressed(self):
-        """
+    def get_pressed(self) -> bool:
+        """Returns true while button is pressed
+
         :return: `True` if pressed or `False`.
         :rtype: bool
         """
         return self._get_property(self.PropertyType.PRESSED) == 100.0
 
-    def get_toggled(self):
-        """
+    def get_toggled(self) -> bool:
+        """Returns true when button is toggled
+
         :return: `True` if toggled or `False`.
         :rtype: bool
         """

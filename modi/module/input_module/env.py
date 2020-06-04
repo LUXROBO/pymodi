@@ -1,13 +1,13 @@
 """Env module."""
 
-from enum import Enum
+from enum import IntEnum
 
 from modi.module.input_module.input_module import InputModule
 
 
 class Env(InputModule):
 
-    class PropertyType(Enum):
+    class PropertyType(IntEnum):
         TEMPERATURE = 6
         HUMIDITY = 7
         BRIGHTNESS = 2
@@ -19,43 +19,49 @@ class Env(InputModule):
         super().__init__(id_, uuid, msg_send_q)
         self._type = "env"
 
-    def get_temperature(self):
-        """
+    def get_temperature(self) -> float:
+        """Returns the value of temperature between 0 and 100
+
         :return: Temperature.
         :rtype: float
         """
         return self._get_property(self.PropertyType.TEMPERATURE)
 
-    def get_humidity(self):
-        """
+    def get_humidity(self) -> float:
+        """Returns the value of humidity between 0 and 100
+
         :return: Humidity.
         :rtype: float
         """
         return self._get_property(self.PropertyType.HUMIDITY)
 
-    def get_brightness(self):
-        """
+    def get_brightness(self) -> float:
+        """Returns the value of brightness between 0 and 100
+
         :return: Brightness.
         :rtype: float
         """
         return self._get_property(self.PropertyType.BRIGHTNESS)
 
-    def get_red(self):
-        """
+    def get_red(self) -> float:
+        """Returns the value of red component of light
+
         :return: Red component of light.
         :rtype: float
         """
         return self._get_property(self.PropertyType.RED)
 
-    def get_green(self):
-        """
+    def get_green(self) -> float:
+        """Returns the value of green component of light
+
         :return: Green component of light.
         :rtype: float
         """
         return self._get_property(self.PropertyType.GREEN)
 
-    def get_blue(self):
-        """
+    def get_blue(self) -> float:
+        """Returns the value of blue component of light
+
         :return: Blue component of light.
         :rtype: float
         """

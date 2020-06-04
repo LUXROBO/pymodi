@@ -4,32 +4,37 @@ import time
 import json
 import queue
 import base64
+from typing import Dict, Tuple
 
-import serial.tools.list_ports as stl
-
-from modi._communicator_task import CommunicatorTask
+from modi.task.conn_task import ConnTask
 
 
-class CanTask(CommunicatorTask):
+class CanTask(ConnTask):
 
     def __init__(self, can_recv_q, can_send_q):
+        print("Run Can Task.")
         self._can_recv_q = can_recv_q
         self._can_send_q = can_send_q
 
-        self._open_conn()
-        self.__can0 = can.interface.Bus(
-            channel="can0", bustype="socketcan_ctypes"
-        )
+        self.__can0 = None
 
     def __del__(self):
         self._close_conn()
 
-    def __can_read(self):
+    def __can_read(self) -> None:
+        """Reads data through CAN and put it on recv_q
+
+        :return: None
+        """
         can_msg = self._read_data()
         json_msg = self.__parse_can_msg(can_msg)
         self._can_recv_q.put(json_msg)
 
-    def __can_write(self):
+    def __can_write(self) -> None:
+        """Write data through CAN
+
+        :return: None
+        """
         try:
             message_to_write = self._can_send_q.get_nowait().encode()
         except queue.Empty:
@@ -40,22 +45,49 @@ class CanTask(CommunicatorTask):
     #
     # Can Methods
     #
-    def _open_conn(self):
+    def open_conn(self) -> None:
+        """Open connection through CAN
+
+        :return: None
+        """
         os.system("sudo ip link set can0 type can bitrate 1000000")
         os.system("sudo ifconfig can0 up")
 
-    def _close_conn(self):
+        self.__can0 = can.interface.Bus(
+            channel="can0", bustype="socketcan_ctypes"
+        )
+
+    def _close_conn(self) -> None:
+        """Close connection through CAN
+
+        :return: None
+        """
         os.system("sudo ifconfig can0 down")
 
-    def _read_data(self, timeout=None):
+    def _read_data(self, timeout: float = None) -> can.Message:
+        """Read data from CAN and returns CAN message
+
+        :param timeout: timeout value
+        :type timeout: float, optional
+        :raises: ValueError: CAN is not initialized or message is not received
+        :return: CAN message received
+        :rtype: can.Message
+        """
+        if self.__can0 is None:
+            raise ValueError("Can is not initialized")
+
         can_msg = self.__can0.recv(timeout=timeout)
         if can_msg is None:
             raise ValueError("Can message not received!")
         return can_msg
 
-    def _write_data(self, str_msg):
-        """ Given parsed binary string message in json format, 
+    def _write_data(self, str_msg: str) -> None:
+        """ Given parsed binary string message in json format,
             convert and send the message as CAN format
+
+        :param str_msg: json serialized string message
+        :type str_msg: str
+        :return: None
         """
 
         json_msg = json.loads(str_msg)
@@ -65,13 +97,25 @@ class CanTask(CommunicatorTask):
         except can.CanError:
             raise ValueError("Can message not sent!")
 
-    def run_read_data(self, delay):
-        while 1:
+    def run_read_data(self, delay: float) -> None:
+        """Read the data and wait a given time
+
+        :param delay: time value to wait in seconds
+        :type delay: float
+        :return: None
+        """
+        while True:
             self.__can_read()
             time.sleep(delay)
 
-    def run_write_data(self, delay):
-        while 1:
+    def run_write_data(self, delay: float) -> None:
+        """Write the data and wait a given time
+
+        :param delay: time value to wait in seconds
+        :type delay: float
+        :return: None
+        """
+        while True:
             self.__can_write()
             time.sleep(delay)
 
@@ -79,8 +123,13 @@ class CanTask(CommunicatorTask):
     # Can helper methods
     #
     @staticmethod
-    def __parse_can_msg(can_msg):
-        """ Parse a can message to json format
+    def __parse_can_msg(can_msg: can.Message) -> str:
+        """Parse a can message to json format
+
+        :param can_msg: CAN message received
+        :type can_msg: can.Message
+        :return: json serialized string message
+        :rtype: str
         """
         can_id = can_msg.arbitration_id
         can_dlc = can_msg.dlc
@@ -96,8 +145,13 @@ class CanTask(CommunicatorTask):
         return json.dumps(json_msg, separators=(",", ":"))
 
     @staticmethod
-    def __parse_can_id(can_id):
+    def __parse_can_id(can_id: str) -> Tuple[int, int, int]:
         """ Parse a 29 bits length Can ID into INS, SID and DID
+
+        :param can_id: 29 bits string CAN ID
+        :type can_id: str
+        :return: INS, SID, DID
+        :rtype: Tuple[int, int, int]
         """
         BIN = 2
         SID_BEGIN_IDX = 5
@@ -109,7 +163,14 @@ class CanTask(CommunicatorTask):
         return ins, sid, did
 
     @staticmethod
-    def __compose_can_msg(json_msg):
+    def __compose_can_msg(json_msg: Dict[str, str]) -> can.Message:
+        """Returns CAN message from a dictionary format message
+
+        :param json_msg: Dictionary format json message
+        :type json_msg: Dictionary
+        :return: Composed Can message
+        :rtype: can.Message
+        """
         ins = format(json_msg["c"], '05b')
         sid = format(json_msg["s"], '012b')
         did = format(json_msg["d"], '012b')

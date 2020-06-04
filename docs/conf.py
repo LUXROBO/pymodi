@@ -18,11 +18,27 @@
 # relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
 #
-import modi
 import os
 import sys
+import modi
+from m2r import parse_from_file
+
+file = open('readme.rst', 'w', encoding='utf8')
+file.write(parse_from_file('../README.md'))
+file.close()
+
+file = open('history.rst', 'w', encoding='utf8')
+file.write(parse_from_file('../HISTORY.md'))
+file.close()
 sys.path.insert(0, os.path.abspath('..'))
 
+file = open('contributing.rst', 'w', encoding='utf8')
+file.write(parse_from_file('../CONTRIBUTING.md'))
+file.close()
+
+file = open('authors.rst', 'w', encoding='utf8')
+file.write(parse_from_file('../AUTHORS.md'))
+file.close()
 
 # -- General configuration ---------------------------------------------
 
@@ -39,7 +55,6 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.graphviz',
     'sphinx.ext.inheritance_diagram',
-    'm2r',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -49,21 +64,22 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
 
 # The master toctree document.
 master_doc = 'index'
 
 # General information about the project.
-project = u'pyMODI'
-copyright = u"2018, LUXROBO"
-author = u"Jinsung Ha"
+project = 'pymodi'
+copyright = "2018, LUXROBO"
+author = "Jinsung Ha"
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
 # the built documents.
 #
 # The short X.Y version.
+
 version = modi.__version__
 # The full version, including alpha/beta/rc tags.
 release = modi.__version__
@@ -140,8 +156,8 @@ latex_elements = {
 # [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'modi.tex',
-     u'pyMODI Documentation',
-     u'Jinsung Ha', 'manual'),
+     'pyMODI Documentation',
+     'Jinsung Ha', 'manual'),
 ]
 
 
@@ -151,7 +167,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     (master_doc, 'modi',
-     u'pyMODI Documentation',
+     'pyMODI Documentation',
      [author], 1)
 ]
 
@@ -163,7 +179,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'modi',
-     u'pyMODI Documentation',
+     'pyMODI Documentation',
      author,
      'modi',
      'One line description of project.',
