@@ -48,7 +48,7 @@ class SppTask(ConnTask):
         for port in ports:
             if self._module_uuid in port.device or \
                 ("Bluetooth" in port.description and
-                     port.hwid.split('&')[1][:4] == '0002'):
+                 port.hwid.split('&')[1][:4] == '0002'):
                 modi_ports.append(port)
 
         if not modi_ports:

@@ -74,7 +74,8 @@ class ExeTask:
         else:
             self.__command_handler(message["c"])(message)
 
-    def __command_handler(self, command: int) -> Callable[[Dict[str, int]], None]:
+    def __command_handler(self,
+                          command: int) -> Callable[[Dict[str, int]], None]:
         """ Execute task based on command message
 
         :param command: command code
@@ -202,7 +203,7 @@ class ExeTask:
         :param message: Warning message in Dictionary format
         :return: None
         """
-        #print('Warning message:', message)
+        # print('Warning message:', message)
 
         warning_data = bytearray(base64.b64decode(message["b"]))
         warning_type = warning_data[6]
@@ -406,7 +407,8 @@ class ExeTask:
         sizeof_module_uuid += sizeof_module_uuid % 4
         return (module_info << sizeof_module_uuid) | module_uuid
 
-    def __set_module_state(self, destination_id: int, module_state: IntEnum, pnp_state: IntEnum) -> str:
+    def __set_module_state(self, destination_id: int, module_state: IntEnum,
+                           pnp_state: IntEnum) -> str:
         """ Generate message for set module state and pnp state
 
         :param destination_id: Id to target destination
@@ -474,7 +476,8 @@ class ExeTask:
 
         time.sleep(1)
 
-    def __request_uuid(self, source_id: int, is_network_module: bool = False) -> str:
+    def __request_uuid(self, source_id: int,
+                       is_network_module: bool = False) -> str:
         """ Generate broadcasting message for request uuid
 
         :param source_id: Id of the source

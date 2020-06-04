@@ -45,8 +45,8 @@ def initialize(display: Module, led: Module, speaker: Module,
     score = 0
     while True:
         bar_pos = int(50 * dial.get_degree() / 100)
-        ball_pos, ball_vel = update_screen(ball_pos, ball_vel, bar_pos
-                                                , display)
+        ball_pos, ball_vel = update_screen(ball_pos, ball_vel, bar_pos,
+                                           display)
         time.sleep(0.02)
         if ball_pos[1] > 55 and (ball_pos[0] > bar_pos + 10
                                  or ball_pos[0] < bar_pos - 10):
@@ -109,10 +109,3 @@ def check_complete(bundle):
         display.set_text("Score: {0}".format(point))
         time.sleep(2)
         display.set_text("Re: Click / No: Double Click")
-
-
-
-
-
-
-
