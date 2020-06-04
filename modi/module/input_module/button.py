@@ -15,6 +15,7 @@ class Button(InputModule):
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
+        self._type = "button"
 
     def get_clicked(self) -> bool:
         """Returns true when button is clicked

@@ -40,7 +40,7 @@ class ExeTask:
     }
 
     def __init__(self, modules, module_ids, topology_data,
-                 recv_q, send_q, init_event, nb_modules):
+                 recv_q, send_q, init_event, nb_modules, firmware_updater):
 
         self._modules = modules
         self._module_ids = module_ids
@@ -49,6 +49,8 @@ class ExeTask:
         self._send_q = send_q
         self._init_event = init_event
         self._nb_modules = nb_modules
+
+        self.firmware_updater = firmware_updater
 
         self.__init_modules()
         print('Start initializing connected MODI modules')
@@ -80,13 +82,32 @@ class ExeTask:
         :return: a function the corresponds to the command code
         :rtype: Callable[[Dict[str, int]], None]
         """
+
         return {
             0x00: self.__update_health,
             0x0A: self.__update_warning,
+            0x0C: self.__update_firmware_state,
             0x05: self.__update_modules,
             0x07: self.__update_topology,
             0x1F: self.__update_property,
         }.get(command, lambda _: None)
+
+
+    def __update_firmware_state(self, message):
+        byte_data = message["b"]
+        message_decoded = bytearray(base64.b64decode(byte_data))
+
+        stream_state = message_decoded[4]
+
+        # TODO: Remove this if and elif branches
+        if stream_state == self.firmware_updater.FirmwareState.CRC_ERROR.value:
+            self.firmware_updater.update_response(response=True, is_error_response=True)
+        elif stream_state == self.firmware_updater.FirmwareState.CRC_COMPLETE.value:
+            self.firmware_updater.update_response(response=True)
+        elif stream_state == self.firmware_updater.FirmwareState.ERASE_ERROR.value:
+            self.firmware_updater.update_response(response=True, is_error_response=True)
+        elif stream_state == self.firmware_updater.FirmwareState.ERASE_COMPLETE.value:
+            self.firmware_updater.update_response(response=True)
 
     def __update_topology(self, message: Dict[str, int]) -> None:
         """Update the topology of the connected modules
@@ -184,21 +205,34 @@ class ExeTask:
         """
         #print('Warning message:', message)
 
-        sid = message["s"]
+        warning_data = bytearray(base64.b64decode(message["b"]))
+        warning_type = warning_data[6]
 
-        WARNING_TYPE_INDEX = 6
-        warning_type = bytearray(base64.b64decode(message["b"]))[
-            WARNING_TYPE_INDEX
-        ]
+        # If warning shows current module works fine, return immediately
         if not warning_type:
-            None
+            return
+
+        module_uuid = warning_data[:6]
+        module_uuid_res = 0
+        for i, v in enumerate(module_uuid):
+            module_uuid_res |= v << 8*i
+
+        module_id = message["s"]
+        module_type = self.__get_type_from_uuid(module_uuid_res)
+        # No need to update Network module's STM firmware
+        if module_type == 'Network':
+            return
 
         if warning_type == 1:
-            self.update_firmware_ready(module_id=sid)
-            print('firmware removed?')
+            self.firmware_updater.check_to_update_firmware(module_id)
         elif warning_type == 2:
-            print("sid {} is ready to update its firmware".format(sid))
+            # Note that more than one warning type 2 message can be received
+            if self.firmware_updater.update_in_progress:
+                self.firmware_updater.add_to_wait_list(module_id, module_type)
+            else:
+                self.firmware_updater.update_module(module_id, module_type)
         else:
+            # TODO: Handle warning_type of 7 and 10
             print("Unsupported warning type:", warning_type)
 
     def __update_modules(self, message: Dict[str, int]) -> None:
@@ -385,23 +419,20 @@ class ExeTask:
         :rtype: str
         """
 
-        if type(module_state) is Module.State:
-            message = dict()
+        message = dict()
 
-            message["c"] = 0x09
-            message["s"] = 0
-            message["d"] = destination_id
+        message["c"] = 0x09
+        message["s"] = 0
+        message["d"] = destination_id
 
-            state_bytes = bytearray(2)
-            state_bytes[0] = module_state
-            state_bytes[1] = pnp_state
+        state_bytes = bytearray(2)
+        state_bytes[0] = module_state
+        state_bytes[1] = pnp_state
 
-            message["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
-            message["l"] = 2
+        message["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
+        message["l"] = 2
 
-            return json.dumps(message, separators=(",", ":"))
-        else:
-            raise RuntimeError("The type of state is not ModuleState")
+        return json.dumps(message, separators=(",", ":"))
 
     def __init_modules(self) -> None:
         """ Initialize module on first run
@@ -513,3 +544,26 @@ class ExeTask:
         )
         self._send_q.put(firmware_update_ready_message)
         self.__delay()
+
+    def __get_type_from_uuid(self, uuid):
+        if uuid is None:
+            return 'Network'
+
+        hexadecimal = hex(uuid).lstrip("0x")
+        type_indicator = str(hexadecimal)
+        module_type = {
+            # Input modules
+            '2000': 'env',
+            '2010': 'gyro',
+            '2020': 'mic',
+            '2030': 'button',
+            '2040': 'dial',
+            '2050': 'ultrasonic',
+            '2060': 'ir',
+
+            # Output modules
+            '4000': 'display',
+            '4010': 'motor',
+            '4020': 'led',
+            '4030': 'speaker',
+        }

@@ -21,6 +21,7 @@ class Gyro(InputModule):
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
+        self._type = "gyro"
 
     def get_roll(self) -> float:
         """Returns the roll angle of the gyro

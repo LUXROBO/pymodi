@@ -13,6 +13,7 @@ class Mic(InputModule):
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
+        self._type = "mic"
 
     def get_volume(self) -> float:
         """Returns the volume of input sound between 0 and 100

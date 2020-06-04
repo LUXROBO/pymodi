@@ -14,18 +14,8 @@ from modi.util.that import check_complete
 from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
 from modi.module.module import Module
-from modi.module.input_module.button import Button
-from modi.module.input_module.dial import Dial
-from modi.module.input_module.env import Env
-from modi.module.input_module.gyro import Gyro
-from modi.module.input_module.ir import Ir
-from modi.module.input_module.mic import Mic
-from modi.module.input_module.ultrasonic import Ultrasonic
 
-from modi.module.output_module.display import Display
-from modi.module.output_module.led import Led
-from modi.module.output_module.motor import Motor
-from modi.module.output_module.speaker import Speaker
+from modi.util._firmware_updater import FirmwareUpdater
 
 
 class MODI:
@@ -47,6 +37,8 @@ class MODI:
 
         self._com_proc = None
         self._exe_thrd = None
+
+        self.firmware_updater = FirmwareUpdater(self._send_q, self._module_ids, nb_modules)
 
         # Init flag used to notify initialization of MODI modules
         module_init_flag = th.Event()
@@ -84,6 +76,7 @@ class MODI:
             self._send_q,
             module_init_flag,
             nb_modules,
+            self.firmware_updater,
         )
         self._exe_thrd.daemon = True
         self._exe_thrd.start()
@@ -98,6 +91,13 @@ class MODI:
         print("MODI modules are initialized!")
         check_complete(self)
 
+    def update_module_firmware(self):
+        """Updates firmware of connected modules"""
+        print("Request to update firmware of connected MODI modules.")
+        self.firmware_updater.reset_state()
+        self.firmware_updater.request_to_update_firmware()
+        #self.firmware_updater.update_event.wait()
+        print("Module firmwares have been updated!")
     def watch_child_process(self) -> None:
         while True:
             if not self._com_proc.is_alive():
@@ -127,7 +127,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Button)])
+                      if module.type == "button"])
 
     @property
     def dials(self) -> Tuple[Module]:
@@ -135,7 +135,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Dial)])
+                      if module.type == "dial"])
 
     @property
     def displays(self) -> Tuple[Module]:
@@ -143,7 +143,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Display)])
+                      if module.type == "display"])
 
     @property
     def envs(self) -> Tuple[Module]:
@@ -151,7 +151,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Env)])
+                      if module.type == "env"])
 
     @property
     def gyros(self) -> Tuple[Module]:
@@ -159,7 +159,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Gyro)])
+                      if module.type == "gyro"])
 
     @property
     def irs(self) -> Tuple[Module]:
@@ -167,7 +167,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Ir)])
+                      if module.type == "ir"])
 
     @property
     def leds(self) -> Tuple[Module]:
@@ -175,7 +175,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Led)])
+                      if module.type == "led"])
 
     @property
     def mics(self) -> Tuple[Module]:
@@ -183,7 +183,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Mic)])
+                      if module.type == "mic"])
 
     @property
     def motors(self) -> Tuple[Module]:
@@ -191,7 +191,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Motor)])
+                      if module.type == "motor"])
 
     @property
     def speakers(self) -> Tuple[Module]:
@@ -199,7 +199,7 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Speaker)])
+                      if module.type == "speaker"])
 
     @property
     def ultrasonics(self) -> Tuple[Module]:
@@ -207,4 +207,4 @@ class MODI:
         """
 
         return tuple([module for module in self.modules
-                      if isinstance(module, Ultrasonic)])
+                      if module.type == "ultrasonic"])
