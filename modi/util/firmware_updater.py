@@ -93,8 +93,6 @@ class FirmwareUpdater:
         self.modules_to_update = []
 
         self.nb_processed_modules = 0
-        # for module_id, _ in self.progress_dict.items():
-        #    self.progress_dict[module_id] = False
         self.progress_dict = dict()
 
     def request_to_update_firmware(self):
@@ -115,7 +113,7 @@ class FirmwareUpdater:
         )
         self._send_q.put(firmware_update_ready_message)
 
-    def add_to_wait_list(self, module_id, module_type):
+    def add_to_waitlist(self, module_id, module_type):
         # Check if input module already exist in the list
         for curr_module_id, curr_module_type in self.modules_to_update:
             if module_id == curr_module_id:
@@ -250,15 +248,6 @@ class FirmwareUpdater:
         self.response_error_flag = False
         self.response_error_count = 0
 
-        # If all modules have updated their firmware
-        # print(self.progress_dict)
-        # print(self.modules_to_update)
-        for k, v in self.progress_dict.items():
-            if k == self.network_module_id:
-                continue
-            if not v:
-                break
-
         if self.modules_to_update:
             print("Processing the next module to update the firmware..")
             next_module_id, next_module_type = self.modules_to_update.pop(0)
@@ -272,7 +261,6 @@ class FirmwareUpdater:
             print("Reboot message has been sent to all connected modules")
 
             self.update_event.set()
-            return
 
     def __set_module_state(self, destination_id, module_state, pnp_state):
         """ Generate message for set module state and pnp state
