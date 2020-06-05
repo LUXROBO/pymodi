@@ -180,6 +180,7 @@ class FirmwareUpdater:
         bin_begin = 0x9000
         bin_end = bin_size - ((bin_size - bin_begin) % page_size)
         for page_begin in range(bin_begin, bin_end + 1, page_size):
+            print(self.__progress_bar(page_begin, bin_end) + '\r', end='')
             page_end = page_begin + page_size
             curr_page = bin_buffer[page_begin:page_end]
 
@@ -236,7 +237,7 @@ class FirmwareUpdater:
         self.send_end_flash_data(module_type, module_id, end_flash_data)
 
         # Firmware update flag down, resetting used flags
-        print(f'Firmware update is done for {module_type} ({module_id})')
+        print(f'\nFirmware update is done for {module_type} ({module_id})')
         self.update_in_progress = False
         self.progress_dict[module_id] = True
         self.nb_processed_modules += 1
@@ -431,3 +432,8 @@ class FirmwareUpdater:
         # Calculate crc32 checksum twice
         checksum = self.calc_crc64(data=bin_data, checksum=crc_val)
         return checksum
+
+    def __progress_bar(self, current, total):
+        curr_bar = 50 * current // total
+        rest_bar = 50 - curr_bar
+        return f"Updating: [{'=' * curr_bar}>{'.' * rest_bar}]"

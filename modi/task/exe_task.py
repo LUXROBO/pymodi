@@ -236,7 +236,8 @@ class ExeTask:
                 self.firmware_updater.update_module(module_id, module_type)
         else:
             # TODO: Handle warning_type of 7 and 10
-            print("Unsupported warning type:", warning_type)
+            # print("Unsupported warning type:", warning_type)
+            pass
 
     def __update_modules(self, message: Dict[str, int]) -> None:
         """ Update module information
