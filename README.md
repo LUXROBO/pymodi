@@ -58,9 +58,13 @@ If you want to contribute to pymodi, be sure to review the contribution guidelin
 Quickstart
 --------
 
-Install the latest pyMODI if you haven\'t installed it yet:
+Install the latest PyMODI if you haven\'t installed it yet:
 
     pip install -U pymodi --user
+
+You can also install PyMODI at develop branch with:
+
+    pip install git+https://github.com/LUXROBO/pymodi.git@develop
 
 Import [modi]{.title-ref} package and create [MODI]{.title-ref}
 instance:
