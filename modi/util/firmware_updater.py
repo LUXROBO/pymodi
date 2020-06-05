@@ -1,4 +1,3 @@
-import os
 import io
 import sys
 import time
@@ -165,7 +164,7 @@ class FirmwareUpdater:
         # Init path to binary file
         root_path = \
             'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
-        bin_path = os.path.join("skeleton", f"{module_type}.bin")
+        bin_path = f"skeleton/{module_type}.bin"
 
         # Init bytes data from the given binary file of the current module
         download_response = requests.get(root_path)
@@ -217,7 +216,7 @@ class FirmwareUpdater:
                 page_begin -= page_size
 
         # Include MODI firmware version when writing end flash
-        version_path = os.path.join("skeleton", "version.txt")
+        version_path = "skeleton/version.txt"
         version_buffer = str(zip_content.read(version_path))[1:]
         version_bits_str = version_buffer.lstrip("b'v").rstrip("\\n'").split(
             ".")
