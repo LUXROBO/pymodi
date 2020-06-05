@@ -183,7 +183,8 @@ class FirmwareUpdater:
         bin_begin = 0x9000
         bin_end = bin_size - ((bin_size - bin_begin) % page_size)
         for page_begin in range(bin_begin, bin_end + 1, page_size):
-            print(self.__progress_bar(page_begin, bin_end) + '\r', end='')
+            print(f"{self.__progress_bar(page_begin, bin_end)} "
+                  f"{page_begin * 100 // bin_end}% \r", end='')
             page_end = page_begin + page_size
             curr_page = bin_buffer[page_begin:page_end]
 
