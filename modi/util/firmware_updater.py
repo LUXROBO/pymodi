@@ -39,7 +39,7 @@ class FirmwareUpdater:
         self.module_ids = module_ids
 
         self.modules_to_update = []
-
+        self.modules_updated = []
         self.nb_modules = nb_modules
         self.nb_processed_modules = 0
 
@@ -121,6 +121,10 @@ class FirmwareUpdater:
             if module_id == curr_module_id:
                 return
 
+        for curr_module_id, curr_module_type in self.modules_updated:
+            if module_id == curr_module_id:
+                return
+
         print(f"Adding {module_type} ({module_id}) to waiting list..")
 
         # Add the module to the waiting list
@@ -161,6 +165,7 @@ class FirmwareUpdater:
             f"Start updating the binary firmware "
             f"for {module_type} ({module_id})")
 
+        self.modules_updated.append((module_id, module_type))
         # Init path to binary file
         root_path = \
             'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
@@ -254,7 +259,11 @@ class FirmwareUpdater:
             if not v:
                 break
 
-        if self.nb_processed_modules == self.nb_modules:
+        if self.modules_to_update:
+            print("Processing the next module to update the firmware..")
+            next_module_id, next_module_type = self.modules_to_update.pop(0)
+            self.__update_firmware(next_module_id, next_module_type)
+        else:
             # Reboot all connected modules
             reboot_message = self.__set_module_state(
                 0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
@@ -264,11 +273,6 @@ class FirmwareUpdater:
 
             self.update_event.set()
             return
-
-        if self.modules_to_update:
-            print("Processing the next module to update the firmware..")
-            next_module_id, next_module_type = self.modules_to_update.pop(0)
-            self.__update_firmware(next_module_id, next_module_type)
 
     def __set_module_state(self, destination_id, module_state, pnp_state):
         """ Generate message for set module state and pnp state
