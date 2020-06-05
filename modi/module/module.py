@@ -48,7 +48,7 @@ class Module:
     @property
     def uuid(self) -> int:
         return self._uuid
-    
+
     @property
     def type(self):
         return self._type

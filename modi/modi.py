@@ -87,8 +87,8 @@ class MODI:
 
         self._topology_manager = TopologyManager(self._topology_data)
 
-        #module_init_time = 10 if conn_mode.startswith("ser") else 25
-        #module_init_flag.wait(timeout=module_init_time)
+        # module_init_time = 10 if conn_mode.startswith("ser") else 25
+        # module_init_flag.wait(timeout=module_init_time)
         module_init_flag.wait()
         if not module_init_flag.is_set():
             raise Exception("Modules are not initialized properly!")
@@ -101,7 +101,7 @@ class MODI:
         print("Request to update firmware of connected MODI modules.")
         self._firmware_updater.reset_state()
         self._firmware_updater.request_to_update_firmware()
-        #self.firmware_updater.update_event.wait()
+        # self.firmware_updater.update_event.wait()
         print("Module firmwares have been updated!")
 
     def watch_child_process(self) -> None:

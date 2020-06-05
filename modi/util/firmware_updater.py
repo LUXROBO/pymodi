@@ -1,4 +1,3 @@
-
 import os
 import io
 import sys
@@ -49,7 +48,8 @@ class FirmwareUpdater:
         self.network_module_id = None
         for module_id, module_dict in module_ids.items():
             for k, v in module_dict.items():
-                if k == 'uuid' and self.__get_module_type_from_uuid(v) == 'Network':
+                if k == 'uuid' and \
+                        self.__get_module_type_from_uuid(v) == 'Network':
                     self.network_module_id = module_id
                     break
         mids = list(module_ids.keys())
@@ -59,7 +59,7 @@ class FirmwareUpdater:
             pass
 
         # Init a dict tracking which module started to update its firmware
-        self.progress_dict = dict(zip(mids, [False]*len(mids)))
+        self.progress_dict = dict(zip(mids, [False] * len(mids)))
 
     def __get_module_type_from_uuid(self, uuid):
         hexadecimal = hex(uuid).lstrip("0x")
@@ -94,7 +94,7 @@ class FirmwareUpdater:
         self.modules_to_update = []
 
         self.nb_processed_modules = 0
-        #for module_id, _ in self.progress_dict.items():
+        # for module_id, _ in self.progress_dict.items():
         #    self.progress_dict[module_id] = False
         self.progress_dict = dict()
 
@@ -136,7 +136,9 @@ class FirmwareUpdater:
             return
 
         if self.progress_dict[module_id]:
-            print(f"{module_type} ({module_id}) has already been updated. This shouldn't happen?")
+            print(
+                f"{module_type} ({module_id}) "
+                f"has already been updated. This shouldn't happen?")
             return
 
         updater_thread = th.Thread(
@@ -156,15 +158,19 @@ class FirmwareUpdater:
         """ Update firmware of a given module
         """
 
-        print(f"Start updating the binary firmware for {module_type} ({module_id})")
+        print(
+            f"Start updating the binary firmware "
+            f"for {module_type} ({module_id})")
 
         # Init path to binary file
-        root_path = 'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
+        root_path = \
+            'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
         bin_path = os.path.join("skeleton", f"{module_type}.bin")
 
         # Init bytes data from the given binary file of the current module
         download_response = requests.get(root_path)
-        zip_content = zipfile.ZipFile(io.BytesIO(download_response.content), 'r')
+        zip_content = zipfile.ZipFile(io.BytesIO(download_response.content),
+                                      'r')
         bin_buffer = zip_content.read(bin_path)
 
         # Init metadata of the bytes loaded
@@ -174,7 +180,7 @@ class FirmwareUpdater:
         bin_size = sys.getsizeof(bin_buffer)
         bin_begin = 0x9000
         bin_end = bin_size - ((bin_size - bin_begin) % page_size)
-        for page_begin in range(bin_begin, bin_end+1, page_size):
+        for page_begin in range(bin_begin, bin_end + 1, page_size):
             page_end = page_begin + page_size
             curr_page = bin_buffer[page_begin:page_end]
 
@@ -196,9 +202,11 @@ class FirmwareUpdater:
                 if page_begin + curr_ptr >= bin_size:
                     break
 
-                curr_data = curr_page[curr_ptr:curr_ptr+8]
+                curr_data = curr_page[curr_ptr:curr_ptr + 8]
                 checksum = self.send_firmware_data(module_id,
-                    seq_num=curr_ptr//8, bin_data=curr_data, crc_val=checksum)
+                                                   seq_num=curr_ptr // 8,
+                                                   bin_data=curr_data,
+                                                   crc_val=checksum)
                 time.sleep(0.0025)
 
             # CRC on current page (send CRC request and receive CRC response)
@@ -211,7 +219,8 @@ class FirmwareUpdater:
         # Include MODI firmware version when writing end flash
         version_path = os.path.join("skeleton", "version.txt")
         version_buffer = str(zip_content.read(version_path))[1:]
-        version_bits_str = version_buffer.lstrip("b'v").rstrip("\\n'").split(".")
+        version_bits_str = version_buffer.lstrip("b'v").rstrip("\\n'").split(
+            ".")
         version_bits = [int(bit_char) for bit_char in version_bits_str]
         """ Version number is formed by concatenating all three version bits
             e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
@@ -237,8 +246,8 @@ class FirmwareUpdater:
         self.response_error_count = 0
 
         # If all modules have updated their firmware
-        #print(self.progress_dict)
-        #print(self.modules_to_update)
+        # print(self.progress_dict)
+        # print(self.modules_to_update)
         for k, v in self.progress_dict.items():
             if k == self.network_module_id:
                 continue
@@ -306,7 +315,7 @@ class FirmwareUpdater:
                 continue
 
             end_flash_success = True
-        #print(f"End flash is written for {module_type} ({module_id})")
+        # print(f"End flash is written for {module_type} ({module_id})")
 
     def get_firmware_command(self, module_id, rot_stype, rot_scmd,
                              crc32, page_addr):
@@ -374,20 +383,20 @@ class FirmwareUpdater:
         return checksum
 
     def send_firmware_command(self, oper_type, module_id,
-        crc_val, dest_addr, page_addr=0):
+                              crc_val, dest_addr, page_addr=0):
 
         rot_scmd = 2 if oper_type == "erase" else 1
 
         # Send firmware command request
         request_message = self.get_firmware_command(
-            module_id, 1, rot_scmd, crc_val, page_addr=dest_addr+page_addr
+            module_id, 1, rot_scmd, crc_val, page_addr=dest_addr + page_addr
         )
         self._send_q.put(request_message)
 
         return self.receive_command_response()
 
     def receive_command_response(self, response_delay=0.1, response_timeout=5,
-        max_response_error_count=75):
+                                 max_response_error_count=75):
         """ Block until receiving a response of the most recent message sent
         """
 
