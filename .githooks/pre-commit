@@ -1,15 +1,10 @@
-#!/bin/sh; C:/Program\ Files/Git/bin/sh.exe
+#!/usr/bin/env python
+import sys
 
-STAGED_FILES=$(git diff-index --cached --name-only HEAD | grep *.py)
+from flake8.main import git
 
-if [ $(echo $STAGED_FILES | wc -w) -gt 0 ]; then
-	python -m flake8 $STAGED_FILES
-	if [ $? != 0 ]; then
-		echo
-		echo "Please revise above corrections before you commit"
-		exit 1
-	else:
-		exit 0
-	fi
-fi
-exit 0
+if __name__ == '__main__':
+        result = git.hook(strict=True, lazy=False,)
+        if result != 0:
+            print("\nPlease revise above corrections before you commit")
+        sys.exit(result)
