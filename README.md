@@ -37,7 +37,7 @@ Build Status
 
 |master|develop|
 |:---:|:---:|
-|[![image](https://travis-ci.org/LUXROBO/pyMODI.svg?branch=master)](https://travis-ci.org/LUXROBO/pyMODI)|[![image](https://travis-ci.org/LUXROBO/pyMODI.svg?branch=develop)](https://travis-ci.org/LUXROBO/pyMODI)|
+|[![image](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi)|[![image](https://travis-ci.org/LUXROBO/pymodi.svg?branch=develop)](https://travis-ci.org/LUXROBO/pymodi)|
 
 System Support
 ---------
@@ -49,7 +49,7 @@ System Support
 
 Contribution Guidelines
 --------
-We appreciate all contributions. If you are planning to report bugs, please do so at <https://github.com/LUXROBO/pyMODI/issues>. Feel free to fork our repository to your local environment, and please send us feedback by filing an issue.
+We appreciate all contributions. If you are planning to report bugs, please do so at <https://github.com/LUXROBO/pymodi/issues>. Feel free to fork our repository to your local environment, and please send us feedback by filing an issue.
 
 If you want to contribute to pymodi, be sure to review the contribution guidelines. This project adheres to pymodi's code of conduct. By participating, you are expected to uphold this code.
 
