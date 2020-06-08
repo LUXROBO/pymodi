@@ -8,7 +8,7 @@ import requests
 
 import threading as th
 
-from enum import Enum
+from enum import IntEnum
 
 from modi.module.module import Module
 
@@ -16,7 +16,7 @@ from modi.module.module import Module
 class FirmwareUpdater:
     """Module Firmware Updater: Updates a firmware of given module"""
 
-    class State(Enum):
+    class State(IntEnum):
         NO_ERROR = 0
         UPDATE_READY = 1
         WRITE_FAIL = 2
@@ -66,8 +66,13 @@ class FirmwareUpdater:
         }.get(type_indicator)
         return 'Network' if module_type is None else module_type
 
-    def reset_state(self, update_in_progress=False):
+    def reset_state(self, update_in_progress: bool = False) -> None:
         """ Reset firmware updater's state
+
+        :param update_in_progress: Whether the method is called during the
+        update process or at the end of the process
+        :type update_in_progress: bool
+        :return: None
         """
 
         print("Resetting firmware updater's state")
@@ -80,7 +85,7 @@ class FirmwareUpdater:
             self.modules_to_update = []
             self.modules_updated = []
 
-    def request_to_update_firmware(self):
+    def request_to_update_firmware(self) -> None:
         """ Remove firmware of MODI modules (Removes EndFlash)
         """
 
@@ -89,8 +94,12 @@ class FirmwareUpdater:
         )
         self._send_q.put(firmware_update_message)
 
-    def check_to_update_firmware(self, module_id):
+    def check_to_update_firmware(self, module_id: int) -> None:
         """ Check if modules with no firmware are ready to update its firmware
+
+        :param module_id: Id of the module to check
+        :type module_id: int
+        :return: None
         """
 
         firmware_update_ready_message = self.__set_module_state(
@@ -98,7 +107,15 @@ class FirmwareUpdater:
         )
         self._send_q.put(firmware_update_ready_message)
 
-    def add_to_waitlist(self, module_id, module_type):
+    def add_to_waitlist(self, module_id: int, module_type: str) -> None:
+        """Add the module to the waitlist to update
+
+        :param module_id: Id of the module
+        :type module_id: int
+        :param module_type: type of the module in string
+        :type module_type: str
+        :return: None
+        """
         # Check if input module already exist in the list
         for curr_module_id, curr_module_type in self.modules_to_update:
             if module_id == curr_module_id:
@@ -114,20 +131,43 @@ class FirmwareUpdater:
         module_elem = module_id, module_type
         self.modules_to_update.append(module_elem)
 
-    def update_module(self, module_id, module_type):
+    def update_module(self, module_id: int, module_type: str) -> None:
+        """Initiate update process starting from the given module
+
+        :param module_id: Id of the module
+        :type module_id: int
+        :param module_type: Name of the module
+        :type module_type: str
+        :return: None
+        """
         updater_thread = th.Thread(
             target=self.__update_firmware, args=(module_id, module_type))
         updater_thread.daemon = True
         updater_thread.start()
 
-    def update_response(self, response, is_error_response=False):
+    def update_response(self, response: bool,
+                        is_error_response: bool = False) -> None:
+        """Update the response flag
+
+        :param response: Response flag
+        :type response: bool
+        :param is_error_response: Error response flag
+        :type is_error_response: bool
+        :return: None
+        """
         if not is_error_response:
             self.response_flag = response
         else:
             self.response_error_flag = response
 
-    def __update_firmware(self, module_id, module_type):
+    def __update_firmware(self, module_id: int, module_type: str) -> None:
         """ Update firmware of a given module
+
+        :param module_id: Id of the module
+        :type module_id: int
+        :param module_type: Name of the module
+        :type module_type: str
+        :return: None
         """
 
         print(
@@ -234,10 +274,19 @@ class FirmwareUpdater:
             self.reset_state()
             self.update_event.set()
 
-    def __set_module_state(self, destination_id, module_state, pnp_state):
+    def __set_module_state(self, destination_id: int, module_state: IntEnum,
+                           pnp_state: IntEnum) -> str:
         """ Generate message for set module state and pnp state
-        """
 
+        :param destination_id: Id of the destination module
+        :type destination_id: int
+        :param module_state: State of the module
+        :type module_state: IntEnum
+        :param pnp_state: Pnp state of the module
+        :type pnp_state: IntEnum
+        :return: Json serialized message
+        :rtype: str
+        """
         message = dict()
 
         message["c"] = 0x09
@@ -245,8 +294,8 @@ class FirmwareUpdater:
         message["d"] = destination_id
 
         state_bytes = bytearray(2)
-        state_bytes[0] = module_state.value
-        state_bytes[1] = pnp_state.value
+        state_bytes[0] = module_state
+        state_bytes[1] = pnp_state
 
         message["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
         message["l"] = 2
@@ -254,7 +303,18 @@ class FirmwareUpdater:
         return json.dumps(message, separators=(",", ":"))
 
     # TODO: Use retry decorator here
-    def send_end_flash_data(self, module_type, module_id, end_flash_data):
+    def send_end_flash_data(self, module_type: str, module_id: int,
+                            end_flash_data: bool) -> None:
+        """Send the end flash data
+
+        :param module_type: Name of the module
+        :type module_type: str
+        :param module_id: Id of the module
+        :type module_id: int
+        :param end_flash_data: Flag indicator of the end flash data
+        :type end_flash_data: bool
+        :return: None
+        """
         # Write end-flash data until success
         end_flash_success = False
         while not end_flash_success:
@@ -281,12 +341,23 @@ class FirmwareUpdater:
             end_flash_success = True
         # print(f"End flash is written for {module_type} ({module_id})")
 
-    def get_firmware_command(self, module_id, rot_stype, rot_scmd,
-                             crc32, page_addr):
-        """ Create a new firmware command in json format
-            ROT_StateType, ROT_StreamCommand
-        """
+    def get_firmware_command(self, module_id: int, rot_stype: int,
+                             rot_scmd: int, crc32: int, page_addr: int) -> str:
+        """Create a new firmware command in json format
 
+        :param module_id: Id of the module
+        :type module_id: int
+        :param rot_stype: ROT_StateType
+        :type rot_stype: int
+        :param rot_scmd: ROT_StreamCommand
+        :type rot_scmd: int
+        :param crc32: Crc checksum
+        :type crc32: int
+        :param page_addr: Page address
+        :type page_addr: int
+        :return: Json serialized message
+        :rtype: str
+        """
         message = dict()
         message["c"] = 0x0D
 
@@ -315,8 +386,18 @@ class FirmwareUpdater:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def get_firmware_data(self, module_id, seq_num, bin_data):
+    def get_firmware_data(self, module_id: int, seq_num: int,
+                          bin_data: bytes) -> str:
         """ A data to be sent when updating firmware of a module
+
+        :param module_id: Id of the module
+        :type module_id: int
+        :param seq_num: Sequence number
+        :type seq_num: int
+        :param bin_data: Data to be sent
+        :type bin_data: bytes
+        :return: Json serialized message
+        :rtype: str
         """
 
         message = dict()
@@ -329,7 +410,16 @@ class FirmwareUpdater:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def calc_crc32(self, data, crc):
+    def calc_crc32(self, data: bytes, crc: int) -> int:
+        """Checksum calculation
+
+        :param data: Data to be sent
+        :type data: bytes
+        :param crc: Checksum
+        :type crc: int
+        :return: Calculated crc
+        :rtype: int
+        """
         crc ^= int.from_bytes(data, byteorder='little', signed=False)
 
         for _ in range(32):
@@ -341,13 +431,38 @@ class FirmwareUpdater:
 
         return crc
 
-    def calc_crc64(self, data, checksum):
+    def calc_crc64(self, data: bytes, checksum: int) -> int:
+        """Calculate crc
+
+        :param data: Data to be sent
+        :type data: bytes
+        :param checksum: Checksum
+        :type checksum: int
+        :return: Checksum
+        :rtype: int
+        """
         checksum = self.calc_crc32(data[:4], checksum)
         checksum = self.calc_crc32(data[4:], checksum)
         return checksum
 
-    def send_firmware_command(self, oper_type, module_id,
-                              crc_val, dest_addr, page_addr=0):
+    def send_firmware_command(self, oper_type: str, module_id: int,
+                              crc_val: int, dest_addr: int,
+                              page_addr: int = 0) -> bool:
+        """Send the command for the firmware
+
+        :param oper_type: Type of the operation
+        :type oper_type: int
+        :param module_id: Id of the module
+        :type module_id: int
+        :param crc_val: Checksum value
+        :type crc_val: int
+        :param dest_addr: Address of the destination module
+        :type dest_addr: int
+        :param page_addr: Page address
+        :type page_addr: int
+        :return: Command response
+        :rtype: bool
+        """
 
         rot_scmd = 2 if oper_type == "erase" else 1
 
@@ -359,9 +474,19 @@ class FirmwareUpdater:
 
         return self.receive_command_response()
 
-    def receive_command_response(self, response_delay=0.1, response_timeout=5,
-                                 max_response_error_count=75):
+    def receive_command_response(self, response_delay: float = 0.1,
+                                 response_timeout: float = 5,
+                                 max_response_error_count: int = 75) -> bool:
         """ Block until receiving a response of the most recent message sent
+
+        :param response_delay: Delay time in seconds
+        :type response_delay: float
+        :param response_timeout: Timeout in seconds
+        :type response_timeout: float
+        :param max_response_error_count: Max error count
+        :type max_response_error_count: int
+        :return Boolean flag of the response
+        :rtype: bool
         """
 
         # Receive firmware command response
@@ -386,7 +511,21 @@ class FirmwareUpdater:
         self.response_flag = False
         return True
 
-    def send_firmware_data(self, module_id, seq_num, bin_data, crc_val):
+    def send_firmware_data(self, module_id: int, seq_num: int, bin_data: bytes,
+                           crc_val: int) -> int:
+        """Send firmware data
+
+        :param module_id: Id of the module
+        :type module_id: int
+        :param seq_num: Sequence number
+        :type seq_num: int
+        :param bin_data: Data to be sent
+        :type bin_data: int
+        :param crc_val: Checksum value
+        :type crc_val: int
+        :return: Calculated checksum value
+        :rtype: int
+        """
         # Send firmware data
         data_message = self.get_firmware_data(
             module_id, seq_num=seq_num, bin_data=bin_data
@@ -397,7 +536,16 @@ class FirmwareUpdater:
         checksum = self.calc_crc64(data=bin_data, checksum=crc_val)
         return checksum
 
-    def __progress_bar(self, current, total):
+    def __progress_bar(self, current: int, total: int) -> str:
+        """Returns a string format progress bar
+
+        :param current: Current progress
+        :type current: int
+        :param total: Total workload
+        :type total: int
+        :return: Progress bar string
+        :rtype: str
+        """
         curr_bar = 50 * current // total
         rest_bar = 50 - curr_bar
         return f"Updating: [{'=' * curr_bar}>{'.' * rest_bar}]"
