@@ -42,20 +42,6 @@ class FirmwareUpdater:
         self.nb_modules = nb_modules
         self.nb_processed_modules = 0
 
-        # Exclude network module
-        self.network_module_id = None
-        for module_id, module_dict in module_ids.items():
-            for k, v in module_dict.items():
-                if k == 'uuid' and \
-                        self.__get_module_type_from_uuid(v) == 'Network':
-                    self.network_module_id = module_id
-                    break
-        mids = list(module_ids.keys())
-        try:
-            mids.remove(self.network_module_id)
-        except ValueError:
-            pass
-
     def __get_module_type_from_uuid(self, uuid):
         hexadecimal = hex(uuid).lstrip("0x")
         type_indicator = str(hexadecimal)[:4]
@@ -151,14 +137,16 @@ class FirmwareUpdater:
 
         self.modules_updated.append((module_id, module_type))
         # Init path to binary file
-        root_path = \
+        root_path = (
             'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
+        )
         bin_path = f"skeleton/{module_type}.bin"
 
         # Init bytes data from the given binary file of the current module
         download_response = requests.get(root_path)
-        zip_content = zipfile.ZipFile(io.BytesIO(download_response.content),
-                                      'r')
+        zip_content = zipfile.ZipFile(
+            io.BytesIO(download_response.content), 'r'
+        )
         bin_buffer = zip_content.read(bin_path)
 
         # Init metadata of the bytes loaded
