@@ -38,8 +38,12 @@ class OutputModule(Module):
 
             self.update_property(property_type, property_value)
 
+    def __parse_data(self, property_data_type: IntEnum,
+                     property_values: Tuple):
+        pass
+
     def _set_property(self, destination_id: int,
-                      property_type: IntEnum, property_values: tuple,
+                      property_type: IntEnum, property_values: Tuple,
                       property_data_type: IntEnum = None) -> str:
         """ Generate message for setting property
         """
