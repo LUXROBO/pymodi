@@ -31,7 +31,7 @@ class TestMotor(unittest.TestCase):
 
         expected_inv_params = (
             self.mock_kwargs["id_"],
-            self.motor.ControlType.INV,
+            self.motor.ControlType.CHANNEL,
             (*expected_values, 0),
         )
         self.motor._set_property.assert_called_once_with(*expected_inv_params)
@@ -42,13 +42,13 @@ class TestMotor(unittest.TestCase):
 
         expected_top_params = (
             self.mock_kwargs["id_"],
-            self.motor.ControlType.INV,
+            self.motor.ControlType.CHANNEL,
             (0, 0, first_torque_value, 0),
         )
 
         expected_bot_params = (
             self.mock_kwargs["id_"],
-            self.motor.ControlType.INV,
+            self.motor.ControlType.CHANNEL,
             (1, 0, second_torque_value, 0),
         )
 
@@ -112,13 +112,13 @@ class TestMotor(unittest.TestCase):
 
         expected_top_params = (
             self.mock_kwargs["id_"],
-            self.motor.ControlType.INV,
+            self.motor.ControlType.CHANNEL,
             (0, 1, first_speed_value, 0),
         )
 
         expected_bot_params = (
             self.mock_kwargs["id_"],
-            self.motor.ControlType.INV,
+            self.motor.ControlType.CHANNEL,
             (1, 1, second_speed_value, 0),
         )
 
@@ -183,13 +183,13 @@ class TestMotor(unittest.TestCase):
 
         expected_top_params = (
             self.mock_kwargs["id_"],
-            self.motor.ControlType.INV,
+            self.motor.ControlType.CHANNEL,
             (0, 2, first_degree_value, 0),
         )
 
         expected_bot_params = (
             self.mock_kwargs["id_"],
-            self.motor.ControlType.INV,
+            self.motor.ControlType.CHANNEL,
             (1, 2, second_degree_value, 0),
         )
 

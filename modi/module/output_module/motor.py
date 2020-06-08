@@ -19,7 +19,7 @@ class Motor(OutputModule):
         TORQUE = 16
         SPEED = 17
         DEGREE = 18
-        INV = 19
+        CHANNEL = 19
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
@@ -43,7 +43,7 @@ class Motor(OutputModule):
         self._msg_send_q.put(
             self._set_property(
                 self._id,
-                self.ControlType.INV,
+                self.ControlType.CHANNEL,
                 (
                     motor_channel,
                     control_mode,
