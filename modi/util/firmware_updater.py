@@ -33,16 +33,19 @@ class FirmwareUpdater:
         self.response_error_flag = False
         self.response_error_count = 0
 
-        self.update_in_progress = False
-
         self.update_event = th.Event()
-
+        self.update_in_progress = False
         self.modules_to_update = []
         self.modules_updated = []
-        self.nb_modules = nb_modules
-        self.nb_processed_modules = 0
 
-    def __get_module_type_from_uuid(self, uuid):
+    def __get_module_type_from_uuid(self, uuid: int) -> str:
+        """Returns the name of the module based on uuid
+
+        :param uuid: uuid of the module
+        :type uuid: int
+        :return: Module name
+        :rtype: str
+        """
         hexadecimal = hex(uuid).lstrip("0x")
         type_indicator = str(hexadecimal)[:4]
         module_type = {
@@ -63,7 +66,7 @@ class FirmwareUpdater:
         }.get(type_indicator)
         return 'Network' if module_type is None else module_type
 
-    def reset_state(self):
+    def reset_state(self, update_in_progress=False):
         """ Reset firmware updater's state
         """
 
@@ -71,10 +74,11 @@ class FirmwareUpdater:
         self.response_flag = False
         self.response_error_flag = False
         self.response_error_count = 0
+        self.update_in_progress = False
 
-        self.modules_to_update = []
-
-        self.nb_processed_modules = 0
+        if not update_in_progress:
+            self.modules_to_update = []
+            self.modules_updated = []
 
     def request_to_update_firmware(self):
         """ Remove firmware of MODI modules (Removes EndFlash)
@@ -111,15 +115,10 @@ class FirmwareUpdater:
         self.modules_to_update.append(module_elem)
 
     def update_module(self, module_id, module_type):
-        if self.update_in_progress:
-            return
-
         updater_thread = th.Thread(
             target=self.__update_firmware, args=(module_id, module_type))
         updater_thread.daemon = True
         updater_thread.start()
-
-        self.update_in_progress = True
 
     def update_response(self, response, is_error_response=False):
         if not is_error_response:
@@ -134,13 +133,16 @@ class FirmwareUpdater:
         print(
             f"Start updating the binary firmware "
             f"for {module_type} ({module_id})")
-
+        self.update_in_progress = True
         self.modules_updated.append((module_id, module_type))
         # Init path to binary file
         root_path = (
             'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
         )
-        bin_path = f"skeleton/{module_type}.bin"
+        if module_type == 'env':
+            bin_path = "skeleton/environment.bin"
+        else:
+            bin_path = f"skeleton/{module_type}.bin"
 
         # Init bytes data from the given binary file of the current module
         download_response = requests.get(root_path)
@@ -216,11 +218,7 @@ class FirmwareUpdater:
 
         # Firmware update flag down, resetting used flags
         print(f'\nFirmware update is done for {module_type} ({module_id})')
-        self.update_in_progress = False
-        self.nb_processed_modules += 1
-        self.response_flag = False
-        self.response_error_flag = False
-        self.response_error_count = 0
+        self.reset_state(update_in_progress=True)
 
         if self.modules_to_update:
             print("Processing the next module to update the firmware..")
@@ -233,7 +231,7 @@ class FirmwareUpdater:
             )
             self._send_q.put(reboot_message)
             print("Reboot message has been sent to all connected modules")
-            self.modules_updated.clear()
+            self.reset_state()
             self.update_event.set()
 
     def __set_module_state(self, destination_id, module_state, pnp_state):
