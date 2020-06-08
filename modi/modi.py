@@ -47,8 +47,11 @@ class MODI:
         if test:
             return
 
+        init_flag = mp.Event()
+
         self._com_proc = ConnProc(
-            self._recv_q, self._send_q, conn_mode, module_uuid, verbose
+            self._recv_q, self._send_q, conn_mode, module_uuid, verbose,
+            init_flag
         )
         self._com_proc.daemon = True
         try:
@@ -65,11 +68,14 @@ class MODI:
         child_watch = th.Thread(target=self.watch_child_process)
         child_watch.daemon = True
         child_watch.start()
-        time.sleep(1)
+
+        init_flag.wait()
 
         self._firmware_updater = FirmwareUpdater(
             self._send_q, self._module_ids, nb_modules
         )
+
+        init_flag = th.Event()
 
         self._exe_thrd = ExeThrd(
             self._modules,
@@ -80,15 +86,15 @@ class MODI:
             module_init_flag,
             nb_modules,
             self._firmware_updater,
+            init_flag
         )
         self._exe_thrd.daemon = True
         self._exe_thrd.start()
-        time.sleep(1)
+
+        init_flag.wait()
 
         self._topology_manager = TopologyManager(self._topology_data)
 
-        #module_init_time = 10 if conn_mode.startswith("ser") else 25
-        #module_init_flag.wait(timeout=module_init_time)
         module_init_flag.wait()
         if not module_init_flag.is_set():
             raise Exception("Modules are not initialized properly!")
