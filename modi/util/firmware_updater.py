@@ -75,13 +75,13 @@ class FirmwareUpdater:
         :return: None
         """
 
-        print("Resetting firmware updater's state")
         self.response_flag = False
         self.response_error_flag = False
         self.response_error_count = 0
         self.update_in_progress = False
 
         if not update_in_progress:
+            print("Resetting firmware updater's state")
             self.modules_to_update = []
             self.modules_updated = []
 
