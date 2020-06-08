@@ -36,7 +36,6 @@ class FirmwareUpdater:
         self.update_in_progress = False
 
         self.update_event = th.Event()
-        self.module_ids = module_ids
 
         self.modules_to_update = []
         self.modules_updated = []
@@ -56,9 +55,6 @@ class FirmwareUpdater:
             mids.remove(self.network_module_id)
         except ValueError:
             pass
-
-        # Init a dict tracking which module started to update its firmware
-        self.progress_dict = dict(zip(mids, [False] * len(mids)))
 
     def __get_module_type_from_uuid(self, uuid):
         hexadecimal = hex(uuid).lstrip("0x")
@@ -93,7 +89,6 @@ class FirmwareUpdater:
         self.modules_to_update = []
 
         self.nb_processed_modules = 0
-        self.progress_dict = dict()
 
     def request_to_update_firmware(self):
         """ Remove firmware of MODI modules (Removes EndFlash)
@@ -130,16 +125,7 @@ class FirmwareUpdater:
         self.modules_to_update.append(module_elem)
 
     def update_module(self, module_id, module_type):
-        if module_id not in self.progress_dict:
-            self.progress_dict[module_id] = False
-
         if self.update_in_progress:
-            return
-
-        if self.progress_dict[module_id]:
-            print(
-                f"{module_type} ({module_id}) "
-                f"has already been updated. This shouldn't happen?")
             return
 
         updater_thread = th.Thread(
@@ -243,7 +229,6 @@ class FirmwareUpdater:
         # Firmware update flag down, resetting used flags
         print(f'\nFirmware update is done for {module_type} ({module_id})')
         self.update_in_progress = False
-        self.progress_dict[module_id] = True
         self.nb_processed_modules += 1
         self.response_flag = False
         self.response_error_flag = False
@@ -260,7 +245,7 @@ class FirmwareUpdater:
             )
             self._send_q.put(reboot_message)
             print("Reboot message has been sent to all connected modules")
-
+            self.modules_updated.clear()
             self.update_event.set()
 
     def __set_module_state(self, destination_id, module_state, pnp_state):

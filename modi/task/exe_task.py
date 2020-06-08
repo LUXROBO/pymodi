@@ -231,7 +231,7 @@ class ExeTask:
         elif warning_type == 2:
             # Note that more than one warning type 2 message can be received
             if self.firmware_updater.update_in_progress:
-                self.firmware_updater.add_to_wait_list(module_id, module_type)
+                self.firmware_updater.add_to_waitlist(module_id, module_type)
             else:
                 self.firmware_updater.update_module(module_id, module_type)
         else:
