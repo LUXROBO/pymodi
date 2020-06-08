@@ -4,7 +4,7 @@ import base64
 import time
 
 from enum import IntEnum
-from typing import Tuple, Iterable
+from typing import Tuple, List
 from modi.module.module import Module
 
 
@@ -19,7 +19,7 @@ class OutputModule(Module):
         RAW = 3
         DISPLAY_VAR = 4
 
-    def _update_properties(self, property_types: Iterable,
+    def _update_properties(self, property_types: List[IntEnum],
                            values: Tuple) -> None:
         """Update the properties when setting the property
 
