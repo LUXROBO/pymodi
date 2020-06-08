@@ -67,19 +67,7 @@ class Motor(OutputModule):
         :return: If *degree* is ``None``, Angle of the first motor.
         :rtype: float, optional
         """
-        self._msg_send_q.put(
-            self._set_property(
-                self._id,
-                self.ControlType.DEGREE,
-                (
-                    degree_value,
-                    self.get_second_degree(),
-                    0,
-                ),
-            )
-        )
-        self._update_properties([self.PropertyType.FIRST_DEGREE],
-                                [degree_value])
+        self.set_degree(first_degree_value=degree_value)
         return degree_value
 
     def get_first_degree(self) -> float:
@@ -98,15 +86,7 @@ class Motor(OutputModule):
         :return: Angle of the second motor.
         :rtype: float
         """
-        self._msg_send_q.put(
-            self._set_property(
-                self._id,
-                self.ControlType.DEGREE,
-                (self.get_first_degree(), degree_value, 0),
-            )
-        )
-        self._update_properties([self.PropertyType.SECOND_DEGREE],
-                                [degree_value])
+        self.set_degree(second_degree_value=degree_value)
         return degree_value
 
     def get_second_degree(self) -> float:
@@ -124,15 +104,7 @@ class Motor(OutputModule):
         :return: Angular speed of the first motor.
         :rtype: float
         """
-        self._msg_send_q.put(
-            self._set_property(
-                self._id,
-                self.ControlType.SPEED,
-                (speed_value, self.get_second_speed(), 0),
-            )
-        )
-        self._update_properties([self.PropertyType.FIRST_SPEED],
-                                [speed_value])
+        self.set_speed(first_speed_value=speed_value)
         return speed_value
 
     def get_first_speed(self) -> float:
@@ -145,15 +117,7 @@ class Motor(OutputModule):
         :return: Angular speed of the second motor.
         :rtype: float
         """
-        self._msg_send_q.put(
-            self._set_property(
-                self._id,
-                self.ControlType.SPEED,
-                (self.get_first_speed(), speed_value, 0),
-            )
-        )
-        self._update_properties([self.PropertyType.SECOND_SPEED],
-                                [speed_value])
+        self.set_speed(second_speed_value=speed_value)
         return speed_value
 
     def get_second_speed(self) -> float:
@@ -167,15 +131,7 @@ class Motor(OutputModule):
         :return: Torque of the first motor.
         :rtype: float
         """
-        self._msg_send_q.put(
-            self._set_property(
-                self._id,
-                self.ControlType.TORQUE,
-                (torque_value, self.get_second_torque(), 0),
-            )
-        )
-        self._update_properties([self.PropertyType.FIRST_TORQUE],
-                                [torque_value])
+        self.set_torque(first_torque_value=torque_value)
         return torque_value
 
     def get_first_torque(self) -> float:
@@ -189,15 +145,7 @@ class Motor(OutputModule):
         :return: Torque of the second motor.
         :rtype: float
         """
-        self._msg_send_q.put(
-            self._set_property(
-                self._id,
-                self.ControlType.TORQUE,
-                (self.get_first_torque(), torque_value, 0),
-            )
-        )
-        self._update_properties([self.PropertyType.SECOND_TORQUE],
-                                [torque_value])
+        self.set_torque(second_torque_value=torque_value)
         return torque_value
 
     def get_second_torque(self):
