@@ -26,7 +26,7 @@ class FirmwareUpdater:
         ERASE_ERROR = 6
         ERASE_COMPLETE = 7
 
-    def __init__(self, send_q, module_ids, nb_modules):
+    def __init__(self, send_q):
         self._send_q = send_q
 
         self.response_flag = False
@@ -141,7 +141,8 @@ class FirmwareUpdater:
         :return: None
         """
         updater_thread = th.Thread(
-            target=self.__update_firmware, args=(module_id, module_type))
+            target=self.__update_firmware, args=(module_id, module_type)
+        )
         updater_thread.daemon = True
         updater_thread.start()
 
@@ -211,7 +212,8 @@ class FirmwareUpdater:
             # Erase page (send erase request and receive its response)
             erase_page_success = self.send_firmware_command(
                 oper_type="erase", module_id=module_id, crc_val=0,
-                dest_addr=flash_memory_addr, page_addr=page_begin)
+                dest_addr=flash_memory_addr, page_addr=page_begin
+            )
             if not erase_page_success:
                 page_begin -= page_size
                 continue
@@ -223,16 +225,19 @@ class FirmwareUpdater:
                     break
 
                 curr_data = curr_page[curr_ptr:curr_ptr + 8]
-                checksum = self.send_firmware_data(module_id,
-                                                   seq_num=curr_ptr // 8,
-                                                   bin_data=curr_data,
-                                                   crc_val=checksum)
+                checksum = self.send_firmware_data(
+                    module_id,
+                    seq_num=curr_ptr // 8,
+                    bin_data=curr_data,
+                    crc_val=checksum
+                )
                 time.sleep(0.0025)
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_page_success = self.send_firmware_command(
                 oper_type="crc", module_id=module_id, crc_val=checksum,
-                dest_addr=flash_memory_addr, page_addr=page_begin)
+                dest_addr=flash_memory_addr, page_addr=page_begin
+            )
             if not crc_page_success:
                 page_begin -= page_size
 
@@ -322,19 +327,22 @@ class FirmwareUpdater:
             # Erase page (send erase request and receive erase response)
             erase_page_success = self.send_firmware_command(
                 oper_type="erase", module_id=module_id, crc_val=0,
-                dest_addr=0x0801F800)
+                dest_addr=0x0801F800
+            )
             # TODO: Remove magic number of dest_addr above, try using flash_mem
             if not erase_page_success:
                 continue
 
             # Send data
             checksum = self.send_firmware_data(
-                module_id, seq_num=0, bin_data=end_flash_data, crc_val=0)
+                module_id, seq_num=0, bin_data=end_flash_data, crc_val=0
+            )
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_page_success = self.send_firmware_command(
                 oper_type="crc", module_id=module_id, crc_val=checksum,
-                dest_addr=0x0801F800)
+                dest_addr=0x0801F800
+            )
             if not crc_page_success:
                 continue
 

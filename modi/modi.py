@@ -68,7 +68,7 @@ class MODI:
         time.sleep(1)
 
         self._firmware_updater = FirmwareUpdater(
-            self._send_q, self._module_ids, nb_modules
+            self._send_q,
         )
 
         self._exe_thrd = ExeThrd(
