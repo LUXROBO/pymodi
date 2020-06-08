@@ -101,11 +101,13 @@ class ExeTask:
 
         # TODO: Remove this if and elif branches
         if stream_state == self.firmware_updater.State.CRC_ERROR.value:
-            self.firmware_updater.update_response(response=True, is_error_response=True)
+            self.firmware_updater.update_response(response=True,
+                                                  is_error_response=True)
         elif stream_state == self.firmware_updater.State.CRC_COMPLETE.value:
             self.firmware_updater.update_response(response=True)
         elif stream_state == self.firmware_updater.State.ERASE_ERROR.value:
-            self.firmware_updater.update_response(response=True, is_error_response=True)
+            self.firmware_updater.update_response(response=True,
+                                                  is_error_response=True)
         elif stream_state == self.firmware_updater.State.ERASE_COMPLETE.value:
             self.firmware_updater.update_response(response=True)
 
@@ -229,12 +231,13 @@ class ExeTask:
         elif warning_type == 2:
             # Note that more than one warning type 2 message can be received
             if self.firmware_updater.update_in_progress:
-                self.firmware_updater.add_to_wait_list(module_id, module_type)
+                self.firmware_updater.add_to_waitlist(module_id, module_type)
             else:
                 self.firmware_updater.update_module(module_id, module_type)
         else:
             # TODO: Handle warning_type of 7 and 10
-            print("Unsupported warning type:", warning_type)
+            # print("Unsupported warning type:", warning_type)
+            pass
 
     def __update_modules(self, message: Dict[str, int]) -> None:
         """ Update module information
