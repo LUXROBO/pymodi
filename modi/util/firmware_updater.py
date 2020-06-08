@@ -140,6 +140,9 @@ class FirmwareUpdater:
         :type module_type: str
         :return: None
         """
+        if self.update_in_progress:
+            return
+
         updater_thread = th.Thread(
             target=self.__update_firmware, args=(module_id, module_type)
         )
