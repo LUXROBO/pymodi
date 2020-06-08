@@ -39,15 +39,30 @@ class TestMotor(unittest.TestCase):
     def test_set_torque(self):
         """Test set_torque method."""
         expected_values = first_torque_value, second_torque_value = 50, 50
+
+        expected_top_params = (
+            self.mock_kwargs["id_"],
+            self.motor.ControlType.INV,
+            (0, 0, first_torque_value, 0),
+        )
+
+        expected_bot_params = (
+            self.mock_kwargs["id_"],
+            self.motor.ControlType.INV,
+            (1, 0, second_torque_value, 0),
+        )
+
         self.motor.set_torque(*expected_values)
 
-        expected_torque_params = (
-            self.mock_kwargs["id_"],
-            self.motor.ControlType.TORQUE,
-            (*expected_values, 0),
+        self.assertEqual(
+            mock.call(*expected_top_params),
+            self.motor._set_property.call_args_list[0]
         )
-        self.motor._set_property.assert_called_once_with(
-            *expected_torque_params)
+
+        self.assertEqual(
+            mock.call(*expected_bot_params),
+            self.motor._set_property.call_args_list[1]
+        )
 
     @mock.patch.object(Motor, "set_torque")
     def test_set_first_torque(self, mock_set_torque):
@@ -94,15 +109,29 @@ class TestMotor(unittest.TestCase):
     def test_set_speed(self):
         """Test set_speed method."""
         expected_values = first_speed_value, second_speed_value = 50, 50
+
+        expected_top_params = (
+            self.mock_kwargs["id_"],
+            self.motor.ControlType.INV,
+            (0, 1, first_speed_value, 0),
+        )
+
+        expected_bot_params = (
+            self.mock_kwargs["id_"],
+            self.motor.ControlType.INV,
+            (1, 1, second_speed_value, 0),
+        )
+
         self.motor.set_speed(*expected_values)
 
-        expected_speed_params = (
-            self.mock_kwargs["id_"],
-            self.motor.ControlType.SPEED,
-            (first_speed_value, second_speed_value, 0),
+        self.assertEqual(
+            mock.call(*expected_top_params),
+            self.motor._set_property.call_args_list[0]
         )
-        self.motor._set_property.assert_called_once_with(
-            *expected_speed_params
+
+        self.assertEqual(
+            mock.call(*expected_bot_params),
+            self.motor._set_property.call_args_list[1]
         )
 
     @mock.patch.object(Motor, "set_speed")
@@ -151,15 +180,30 @@ class TestMotor(unittest.TestCase):
     def test_set_degree(self):
         """Test set_degree method."""
         expected_values = first_degree_value, second_degree_value = 50, 50
+
+        expected_top_params = (
+            self.mock_kwargs["id_"],
+            self.motor.ControlType.INV,
+            (0, 2, first_degree_value, 0),
+        )
+
+        expected_bot_params = (
+            self.mock_kwargs["id_"],
+            self.motor.ControlType.INV,
+            (1, 2, second_degree_value, 0),
+        )
+
         self.motor.set_degree(*expected_values)
 
-        expected_degree_params = (
-            self.mock_kwargs["id_"],
-            self.motor.ControlType.DEGREE,
-            (first_degree_value, second_degree_value, 0),
+        self.assertEqual(
+            mock.call(*expected_top_params),
+            self.motor._set_property.call_args_list[0]
         )
-        self.motor._set_property.assert_called_once_with(
-            *expected_degree_params)
+
+        self.assertEqual(
+            mock.call(*expected_bot_params),
+            self.motor._set_property.call_args_list[1]
+        )
 
     @mock.patch.object(Motor, "set_degree")
     def test_set_first_degree(self, mock_set_degree):
