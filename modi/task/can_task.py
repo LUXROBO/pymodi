@@ -21,26 +21,26 @@ class CanTask(ConnTask):
     def __del__(self):
         self._close_conn()
 
-    def __can_read(self) -> None:
+    def __can_recv(self) -> None:
         """Reads data through CAN and put it on recv_q
 
         :return: None
         """
-        can_msg = self._read_data()
+        can_msg = self._recv_data()
         json_msg = self.__parse_can_msg(can_msg)
         self._can_recv_q.put(json_msg)
 
-    def __can_write(self) -> None:
+    def __can_send(self) -> None:
         """Write data through CAN
 
         :return: None
         """
         try:
-            message_to_write = self._can_send_q.get_nowait().encode()
+            message_to_send = self._can_send_q.get_nowait().encode()
         except queue.Empty:
             pass
         else:
-            self._write_data(message_to_write)
+            self._write_data(message_to_send)
 
     #
     # Can Methods
@@ -64,7 +64,7 @@ class CanTask(ConnTask):
         """
         os.system("sudo ifconfig can0 down")
 
-    def _read_data(self, timeout: float = None) -> can.Message:
+    def _recv_data(self, timeout: float = None) -> can.Message:
         """Read data from CAN and returns CAN message
 
         :param timeout: timeout value
@@ -81,7 +81,7 @@ class CanTask(ConnTask):
             raise ValueError("Can message not received!")
         return can_msg
 
-    def _write_data(self, str_msg: str) -> None:
+    def _send_data(self, str_msg: str) -> None:
         """ Given parsed binary string message in json format,
             convert and send the message as CAN format
 
@@ -97,7 +97,7 @@ class CanTask(ConnTask):
         except can.CanError:
             raise ValueError("Can message not sent!")
 
-    def run_read_data(self, delay: float) -> None:
+    def run_recv_data(self, delay: float) -> None:
         """Read the data and wait a given time
 
         :param delay: time value to wait in seconds
@@ -105,10 +105,10 @@ class CanTask(ConnTask):
         :return: None
         """
         while True:
-            self.__can_read()
+            self.__can_recv()
             time.sleep(delay)
 
-    def run_write_data(self, delay: float) -> None:
+    def run_send_data(self, delay: float) -> None:
         """Write the data and wait a given time
 
         :param delay: time value to wait in seconds
@@ -116,7 +116,7 @@ class CanTask(ConnTask):
         :return: None
         """
         while True:
-            self.__can_write()
+            self.__can_send()
             time.sleep(delay)
 
     #

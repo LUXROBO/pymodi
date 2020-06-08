@@ -47,17 +47,17 @@ class TestSppTask(unittest.TestCase):
         self.spp_task._close_conn()
         self.spp_task.get_serial.close.assert_called_once_with()
 
-    def test_read_data(self):
+    def test_recv_data(self):
         """Test _read_data method"""
         self.spp_task.set_serial(self.MockSerial())
-        self.spp_task._read_data()
+        self.spp_task._recv_data()
         self.spp_task.get_serial.read.assert_called_once_with(1)
 
-    def test_write_data(self):
+    def test_send_data(self):
         """Test _write_data method"""
         self.spp_task.set_serial(self.MockSerial())
         self.spp_task._spp_send_q.put("foo")
-        self.spp_task._write_data()
+        self.spp_task._send_data()
         self.spp_task.get_serial.write.assert_called_once_with("foo".encode())
 
 

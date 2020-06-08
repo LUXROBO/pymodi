@@ -98,7 +98,7 @@ class SppTask(ConnTask):
 
         self.__ser.close()
 
-    def _read_data(self) -> None:
+    def _recv_data(self) -> None:
         """ Read serial message and put message to serial read queue
 
         :return: None
@@ -114,7 +114,7 @@ class SppTask(ConnTask):
             # Once json buffer is obtained, we parse and send json message
             self.__parse_serial()
 
-    def _write_data(self) -> None:
+    def _send_data(self) -> None:
         """ Write serial message in serial write queue
 
         :return: None
@@ -127,7 +127,7 @@ class SppTask(ConnTask):
         else:
             self.__ser.write(message_to_write)
 
-    def run_read_data(self, delay: float) -> None:
+    def run_recv_data(self, delay: float) -> None:
         """Read data through spp
 
         :param delay: time value to wait in seconds
@@ -135,10 +135,10 @@ class SppTask(ConnTask):
         :return: None
         """
         while True:
-            self._read_data()
+            self._recv_data()
             time.sleep(delay)
 
-    def run_write_data(self, delay: float) -> None:
+    def run_send_data(self, delay: float) -> None:
         """Write data through spp
 
         :param delay: time value to wait in seconds
@@ -146,7 +146,7 @@ class SppTask(ConnTask):
         :return: None
         """
         while True:
-            self._write_data()
+            self._send_data()
             time.sleep(delay)
 
     #

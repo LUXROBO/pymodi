@@ -49,20 +49,19 @@ class ConnProc(mp.Process):
         """
         self.__task.open_conn()
 
-        read_thread = th.Thread(
-            target=self.__task.run_read_data, args=(self.__delay,)
+        recv_thread = th.Thread(
+            target=self.__task.run_recv_data, args=(self.__delay,)
         )
-        read_thread.daemon = True
-        read_thread.start()
+        recv_thread.daemon = True
+        recv_thread.start()
 
-        write_thread = th.Thread(
-            target=self.__task.run_write_data, args=(self.__delay,)
+        send_thread = th.Thread(
+            target=self.__task.run_send_data, args=(self.__delay,)
         )
-        write_thread.daemon = True
-        write_thread.start()
+        send_thread.daemon = True
+        send_thread.start()
 
         self.__init_flag.set()
 
-        read_thread.join()
-        write_thread.join()
-
+        recv_thread.join()
+        send_thread.join()
