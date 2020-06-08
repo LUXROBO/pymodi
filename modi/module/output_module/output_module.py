@@ -1,9 +1,10 @@
 import json
 import struct
 import base64
+import time
 
 from enum import IntEnum
-
+from typing import Tuple, List
 from modi.module.module import Module
 
 
@@ -17,6 +18,25 @@ class OutputModule(Module):
         STRING = 2
         RAW = 3
         DISPLAY_VAR = 4
+
+    def _update_properties(self, property_types: List[IntEnum],
+                           values: Tuple) -> None:
+        """Update the properties when setting the property
+
+        :param property_types: PropertyType class of the module
+        :param values: values in correct order
+        :return: None
+        """
+        for property_type, property_value in zip(property_types, values):
+            if property_type not in self._properties:
+                self._properties[property_type] = self.Property()
+                request_property_msg = self.request_property(
+                    self._id, property_type
+                )
+                self._msg_send_q.put(request_property_msg)
+                self._properties[property_type].last_request_time = time.time()
+
+            self.update_property(property_type, property_value)
 
     def _set_property(self, destination_id: int,
                       property_type: IntEnum, property_values: tuple,
@@ -39,7 +59,6 @@ class OutputModule(Module):
                 property_values_bytes[index * 2] = property_value & 0xFF
                 property_values_bytes[index * 2 +
                                       1] = (property_value & 0xFF00) >> 8
-
         elif property_data_type == self.PropertyDataType.FLOAT:
             for index, property_value in enumerate(property_values):
                 property_values_bytes[index * 4: index * 4 + 4] = struct.pack(

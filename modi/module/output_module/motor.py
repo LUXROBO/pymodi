@@ -19,7 +19,7 @@ class Motor(OutputModule):
         TORQUE = 16
         SPEED = 17
         DEGREE = 18
-        INV = 19
+        CHANNEL = 19
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
@@ -40,24 +40,18 @@ class Motor(OutputModule):
         :return: current value of the motor control
         :rtype: Tuple[float, float]
         """
-        if control_value is not None:
-            self._msg_send_q.put(
-                self._set_property(
-                    self._id,
-                    self.ControlType.INV,
-                    (
-                        motor_channel,
-                        control_mode,
-                        control_value,
-                        0x00 if control_value >= 0 else 0xFFFF,
-                    ),
-                )
+        self._msg_send_q.put(
+            self._set_property(
+                self._id,
+                self.ControlType.CHANNEL,
+                (
+                    motor_channel,
+                    control_mode,
+                    control_value,
+                    0x00 if control_value >= 0 else 0xFFFF,
+                ),
             )
-        # TODO: implement return statement below
-        # return (
-        #    self._get_property(self.PropertyType.?),
-        #    self._get_property(self.PropertyType.?),
-        # )
+        )
 
     def set_first_degree(self, degree_value: int) -> int:
         """Sets the angle of the motor at channel I
@@ -67,17 +61,7 @@ class Motor(OutputModule):
         :return: If *degree* is ``None``, Angle of the first motor.
         :rtype: float, optional
         """
-        self._msg_send_q.put(
-            self._set_property(
-                self._id,
-                self.ControlType.DEGREE,
-                (
-                    degree_value,
-                    self.get_second_degree(),
-                    0,
-                ),
-            )
-        )
+        self.set_degree(first_degree_value=degree_value)
         return degree_value
 
     def get_first_degree(self) -> float:
@@ -96,13 +80,7 @@ class Motor(OutputModule):
         :return: Angle of the second motor.
         :rtype: float
         """
-        self._msg_send_q.put(
-            self._set_property(
-                self._id,
-                self.ControlType.DEGREE,
-                (self.get_first_degree(), degree_value, 0),
-            )
-        )
+        self.set_degree(second_degree_value=degree_value)
         return degree_value
 
     def get_second_degree(self) -> float:
@@ -120,13 +98,7 @@ class Motor(OutputModule):
         :return: Angular speed of the first motor.
         :rtype: float
         """
-        self._msg_send_q.put(
-            self._set_property(
-                self._id,
-                self.ControlType.SPEED,
-                (speed_value, self.get_second_speed(), 0),
-            )
-        )
+        self.set_speed(first_speed_value=speed_value)
         return speed_value
 
     def get_first_speed(self) -> float:
@@ -139,13 +111,7 @@ class Motor(OutputModule):
         :return: Angular speed of the second motor.
         :rtype: float
         """
-        self._msg_send_q.put(
-            self._set_property(
-                self._id,
-                self.ControlType.SPEED,
-                (self.get_first_speed(), speed_value, 0),
-            )
-        )
+        self.set_speed(second_speed_value=speed_value)
         return speed_value
 
     def get_second_speed(self) -> float:
@@ -159,13 +125,7 @@ class Motor(OutputModule):
         :return: Torque of the first motor.
         :rtype: float
         """
-        self._msg_send_q.put(
-            self._set_property(
-                self._id,
-                self.ControlType.TORQUE,
-                (torque_value, self.get_second_torque(), 0),
-            )
-        )
+        self.set_torque(first_torque_value=torque_value)
         return torque_value
 
     def get_first_torque(self) -> float:
@@ -179,13 +139,7 @@ class Motor(OutputModule):
         :return: Torque of the second motor.
         :rtype: float
         """
-        self._msg_send_q.put(
-            self._set_property(
-                self._id,
-                self.ControlType.TORQUE,
-                (self.get_first_torque(), torque_value, 0),
-            )
-        )
+        self.set_torque(second_torque_value=torque_value)
         return torque_value
 
     def get_second_torque(self):
@@ -202,22 +156,15 @@ class Motor(OutputModule):
         :return: Torque of the first motor , Torque of the second motor.
         :rtype: Tuple[float, float]
         """
-        first_torque_value = (
-            self.get_first_torque()
-            if first_torque_value is None
-            else first_torque_value
-        )
-        second_torque_value = (
-            self.get_second_torque()
-            if second_torque_value is None
-            else second_torque_value
-        )
-        message = self._set_property(
-            self._id,
-            self.ControlType.TORQUE,
-            (first_torque_value, second_torque_value, 0),
-        )
-        self._msg_send_q.put(message)
+        if first_torque_value is not None:
+            self.set_motor_channel(0, 0, first_torque_value)
+        if second_torque_value is not None:
+            self.set_motor_channel(1, 0, second_torque_value)
+
+        self._update_properties(
+            [self.PropertyType.FIRST_TORQUE, self.PropertyType.SECOND_TORQUE],
+            [first_torque_value, second_torque_value])
+
         return first_torque_value, second_torque_value
 
     def get_torque(self) -> Tuple[float, float]:
@@ -243,22 +190,15 @@ class Motor(OutputModule):
             Speed of the first motor , Speed of the second motor.
         :rtype: Tuple[float, float]
         """
-        first_speed_value = (
-            self.get_first_speed()
-            if first_speed_value is None
-            else first_speed_value
-        )
-        second_speed_value = (
-            self.get_second_speed()
-            if second_speed_value is None
-            else second_speed_value
-        )
-        message = self._set_property(
-            self._id,
-            self.ControlType.SPEED,
-            (first_speed_value, second_speed_value, 0),
-        )
-        self._msg_send_q.put(message)
+        if first_speed_value is not None:
+            self.set_motor_channel(0, 1, first_speed_value)
+        if second_speed_value is not None:
+            self.set_motor_channel(1, 1, second_speed_value)
+
+        self._update_properties(
+            [self.PropertyType.FIRST_SPEED, self.PropertyType.SECOND_SPEED],
+            [first_speed_value, second_speed_value])
+
         return first_speed_value, second_speed_value
 
     def get_speed(self):
@@ -267,8 +207,8 @@ class Motor(OutputModule):
             self._get_property(self.PropertyType.SECOND_SPEED),
         )
 
-    def set_degree(self, first_degree_value: int,
-                   second_degree_value: int) -> Tuple[float, float]:
+    def set_degree(self, first_degree_value: int = None,
+                   second_degree_value: int = None) -> Tuple[float, float]:
         """Set the angle of the motors at both channels
 
         :param first_degree_value: Angle to set the first motor.
@@ -278,22 +218,15 @@ class Motor(OutputModule):
         :return: Angle of the first motor , Angle of the second motor.
         :rtype: Tuple[float, float]
         """
-        first_degree_value = (
-            self.get_first_degree()
-            if first_degree_value is None
-            else first_degree_value
-        )
-        second_degree_value = (
-            self.get_second_degree()
-            if second_degree_value is None
-            else second_degree_value
-        )
-        message = self._set_property(
-            self._id,
-            self.ControlType.DEGREE,
-            (first_degree_value, second_degree_value, 0),
-        )
-        self._msg_send_q.put(message)
+        if first_degree_value is not None:
+            self.set_motor_channel(0, 2, first_degree_value)
+        if second_degree_value is not None:
+            self.set_motor_channel(1, 2, second_degree_value)
+
+        self._update_properties(
+            [self.PropertyType.FIRST_DEGREE, self.PropertyType.SECOND_DEGREE],
+            [first_degree_value, second_degree_value])
+
         return first_degree_value, second_degree_value
 
     def get_degree(self) -> Tuple[float, float]:
