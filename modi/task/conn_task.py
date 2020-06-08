@@ -57,11 +57,11 @@ class ConnTask(ABC):
         pass
 
     @abstractmethod
-    def _read_data(self):
+    def _recv_data(self):
         pass
 
     @abstractmethod
-    def _write_data(self):
+    def _send_data(self):
         pass
 
     @abstractmethod
@@ -69,9 +69,9 @@ class ConnTask(ABC):
         pass
 
     @abstractmethod
-    def run_read_data(self, delay: float):
+    def run_recv_data(self, delay: float):
         pass
 
     @abstractmethod
-    def run_write_data(self, delay: float):
+    def run_send_data(self, delay: float):
         pass
