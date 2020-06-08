@@ -41,9 +41,7 @@ class TestSpeaker(unittest.TestCase):
         )
         self.speaker._set_property.assert_called_once_with(
             *expected_tune_params)
-        self.speaker._msg_send_q.put.assert_called_once_with(
-            self.speaker.CommandType.SET_TUNE
-        )
+        self.assertEqual(self.speaker._msg_send_q.put.call_count, 3)
 
     @mock.patch.object(Speaker, "get_volume")
     @mock.patch.object(Speaker, "get_frequency")

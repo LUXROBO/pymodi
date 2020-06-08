@@ -128,6 +128,9 @@ class Speaker(OutputModule):
             (frequency_value, volume_value,),
             self.PropertyDataType.FLOAT,
         )
+        self._update_properties([property_type
+                                 for property_type in self.PropertyType],
+                                (frequency_value, volume_value))
         self._msg_send_q.put(message)
         return frequency_value, volume_value
 

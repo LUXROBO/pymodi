@@ -38,9 +38,7 @@ class TestLed(unittest.TestCase):
             expected_color,
         )
         self.led._set_property.assert_called_once_with(*expected_rgb_params)
-        self.led._msg_send_q.put.assert_called_once_with(
-            self.led.CommandType.SET_RGB
-        )
+        self.assertEqual(self.led._msg_send_q.put.call_count, 4)
 
     @mock.patch.object(Led, "get_blue")
     @mock.patch.object(Led, "get_green")
