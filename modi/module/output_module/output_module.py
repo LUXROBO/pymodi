@@ -40,7 +40,25 @@ class OutputModule(Module):
 
     def __parse_data(self, property_data_type: IntEnum,
                      property_values: Tuple):
-        pass
+        if property_data_type is None:
+            property_data_type = self.PropertyDataType.INT
+
+        property_values_bytes = bytearray(8)
+
+        if property_data_type == self.PropertyDataType.INT:
+            for index, property_value in enumerate(property_values):
+                property_value = int(property_value)
+                property_values_bytes[index * 2] = property_value & 0xFF
+                property_values_bytes[index * 2 + 1] = (
+                    (property_value & 0xFF00) >> 8
+                )
+        elif property_data_type == self.PropertyDataType.FLOAT:
+            for index, property_value in enumerate(property_values):
+                property_values_bytes[index * 4: index * 4 + 4] = struct.pack(
+                    "f", float(property_value)
+                )
+        elif property_data_type == self.PropertyDataType.STRING:
+            pass
 
     def _set_property(self, destination_id: int,
                       property_type: IntEnum, property_values: Tuple,
