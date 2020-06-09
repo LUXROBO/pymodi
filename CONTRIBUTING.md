@@ -117,7 +117,7 @@ To run a subset of tests:
 
     $ python -m unittest tests.test_modi
     
-To automatically intialise the MODI object in an interactive shell:
+To automatically intialize the MODI object in an interactive shell:
 
     $ python -im modi -n <nb_modules>
 
