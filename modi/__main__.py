@@ -48,8 +48,9 @@ if __name__ == "__main__":
         os._exit(0)
 
     if check_option('-t', '--tutorial'):
-        from modi.util.tutorial import tutorial
-        tutorial()
+        from modi.util.tutor import Tutor
+        modi_tutor = Tutor()
+        modi_tutor.start()
         os._exit(0)
 
     if check_option('-d', '--debug'):
