@@ -12,12 +12,16 @@ from modi.task.conn_task import ConnTask
 
 class SppTask(ConnTask):
 
-    def __init__(self, spp_recv_q, spp_send_q, module_uuid):
+    def __init__(self, spp_recv_q, spp_send_q, module_uuid, verbose):
         print("Run Spp Task.")
         super().__init__(spp_recv_q, spp_send_q)
         self._spp_recv_q = spp_recv_q
         self._spp_send_q = spp_send_q
         self._module_uuid = module_uuid
+
+        self.__verbose = verbose
+        if self.__verbose:
+            print('PyMODI log...\n==================================')
 
         self.__ser = None
         self.__json_buffer = ""
@@ -121,11 +125,13 @@ class SppTask(ConnTask):
         """
 
         try:
-            message_to_write = self._spp_send_q.get_nowait().encode()
+            message_to_send = self._spp_send_q.get_nowait().encode()
         except queue.Empty:
             pass
         else:
-            self.__ser.write(message_to_write)
+            self.__ser.write(message_to_send)
+            if self.__verbose:
+                print(f'send: {message_to_send.decode("utf8")}')
 
     def run_recv_data(self, delay: float) -> None:
         """Read data through spp
@@ -164,6 +170,8 @@ class SppTask(ConnTask):
             # Parse json message and send it
             json_msg = self.__json_buffer[:split_index]
             self._spp_recv_q.put(json_msg)
+            if self.__verbose:
+                print(f'recv: {json_msg}')
 
             # Update json buffer, remove the json message sent
             self.__json_buffer = self.__json_buffer[split_index:]

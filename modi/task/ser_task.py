@@ -19,8 +19,8 @@ class SerTask(ConnTask):
         self.__verbose = verbose
         self.__ser = None
         self.__json_buffer = ""
-        if verbose:
-            print('pyMODI log...\n==================================')
+        if self.__verbose:
+            print('PyMODI log...\n==================================')
 
     @property
     def get_serial(self) -> serial.Serial:

@@ -11,12 +11,15 @@ from modi.task.conn_task import ConnTask
 
 class CanTask(ConnTask):
 
-    def __init__(self, can_recv_q, can_send_q):
+    def __init__(self, can_recv_q, can_send_q, verbose):
         print("Run Can Task.")
         self._can_recv_q = can_recv_q
         self._can_send_q = can_send_q
 
         self.__can0 = None
+        self.__verbose = verbose
+        if self.__verbose:
+            print('PyMODI log...\n==================================')
 
     def __del__(self):
         self._close_conn()
@@ -29,6 +32,8 @@ class CanTask(ConnTask):
         can_msg = self._recv_data()
         json_msg = self.__parse_can_msg(can_msg)
         self._can_recv_q.put(json_msg)
+        if self.__verbose:
+            print(f'recv: {json_msg}')
 
     def __can_send(self) -> None:
         """Write data through CAN
@@ -40,7 +45,9 @@ class CanTask(ConnTask):
         except queue.Empty:
             pass
         else:
-            self._write_data(message_to_send)
+            self._send_data(message_to_send)
+            if self.__verbose:
+                print(f'send: {message_to_send.decode("utf8")}')
 
     #
     # Can Methods
