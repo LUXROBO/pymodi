@@ -45,7 +45,7 @@ class CanTask(ConnTask):
         except queue.Empty:
             pass
         else:
-            self._write_data(message_to_send)
+            self._send_data(message_to_send)
             if self.__verbose:
                 print(f'send: {message_to_send.decode("utf8")}')
 
