@@ -1,4 +1,3 @@
-# import modi
 import os
 from textwrap import fill
 
@@ -25,7 +24,7 @@ def check_response(answer: str):
         response = input(">>> ")
 
 
-if __name__ == "__main__":
+def tutorial():
     clear()
     print("=" * row)
     print(f"= {'Welcome to the PyMODI Tutor':^{row - 4}} =")
