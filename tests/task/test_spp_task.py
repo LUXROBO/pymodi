@@ -20,7 +20,7 @@ class TestSppTask(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures, if any."""
         self.mock_kwargs = {'spp_recv_q': Queue(), 'spp_send_q': Queue(),
-                            'module_uuid': None}
+                            'module_uuid': None, 'verbose': False}
         self.spp_task = SppTask(**self.mock_kwargs)
 
         def eval_list_modi_ports():

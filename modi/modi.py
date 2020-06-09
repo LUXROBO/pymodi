@@ -16,7 +16,7 @@ from modi.module.module import Module
 
 from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
-from modi.util.that import check_complete
+from modi.util.stranger import check_complete
 
 
 class MODI:
@@ -31,6 +31,7 @@ class MODI:
                  verbose: bool = False):
 
         self._modules = list()
+
         self._module_ids = dict()
         self._topology_data = dict()
 
@@ -65,9 +66,9 @@ class MODI:
                 traceback.print_exc()
             exit(1)
 
-        child_watch = th.Thread(target=self.watch_child_process)
-        child_watch.daemon = True
-        child_watch.start()
+        self._child_watch = th.Thread(target=self.watch_child_process)
+        self._child_watch.daemon = True
+        self._child_watch.start()
 
         init_flag.wait()
 
@@ -107,7 +108,7 @@ class MODI:
         print("Request to update firmware of connected MODI modules.")
         self._firmware_updater.reset_state()
         self._firmware_updater.request_to_update_firmware()
-        #self.firmware_updater.update_event.wait()
+        # self.firmware_updater.update_event.wait()
         print("Module firmwares have been updated!")
 
     def watch_child_process(self) -> None:
