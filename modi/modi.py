@@ -16,7 +16,7 @@ from modi.module.module import Module
 
 from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
-from modi.util.that import check_complete
+from modi.util.stranger import check_complete
 
 
 class MODI:
