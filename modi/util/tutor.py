@@ -1,7 +1,7 @@
 import os
 from textwrap import fill
 import time
-import cv2
+
 
 clear_cmd = 'clear'
 if os.name == 'nt':
@@ -33,10 +33,6 @@ def check_response(answer: str, give_answer: bool = True, guide: str = ">>> "):
         if give_answer:
             print(f"Write below code precisely.\n>>> {answer}\n")
         elif nb_wrong > 2:
-            warning = cv2.resize(cv2.imread('./soon.png'), (300, 500))
-            cv2.imshow('You still don\'t get it?', warning)
-            cv2.waitKey()
-            cv2.destroyAllWindows()
             print(f"The answer is {answer}. Type it below.")
         else:
             print("Try again!")
