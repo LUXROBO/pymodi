@@ -31,6 +31,7 @@ class MODI:
                  verbose: bool = False):
 
         self._modules = list()
+
         self._module_ids = dict()
         self._topology_data = dict()
 
@@ -107,7 +108,7 @@ class MODI:
         print("Request to update firmware of connected MODI modules.")
         self._firmware_updater.reset_state()
         self._firmware_updater.request_to_update_firmware()
-        #self.firmware_updater.update_event.wait()
+        # self.firmware_updater.update_event.wait()
         print("Module firmwares have been updated!")
 
     def watch_child_process(self) -> None:
