@@ -63,6 +63,7 @@ def tutorial():
            "the MODI object, you should specify the number of modules "
            "currently connected to the network module.\n")
     input("\nPress ENTER")
+    clear()
     printr("\nNow, prepare real MODI modules. Connect a network module "
            "to your device. Then, connect a Button module and an Led module.\n"
            "Since you have 2 module connected to the network module, make"
@@ -82,7 +83,7 @@ def tutorial():
            "figure out how we can access modules connected to it.")
     printr('"bundle.modules" is a method to get all the modules connected to '
            'the device. Type: "bundle.modules"')
-    response = check_response('bundle.modules')
+    check_response('bundle.modules')
     print(bundle.modules)
     print()
     printr("\nYou can see two modules connected to the device. You can access"
@@ -90,13 +91,13 @@ def tutorial():
     printr("\nYou can also access modules by types. "
            "Type: \"bundle.leds\"")
 
-    response = check_response('bundle.leds')
+    check_response('bundle.leds')
     print(bundle.leds)
     print()
     printr('\nThere is one led module connected. Make an led variable by'
            ' accessing the first led module. Type: "led = bundle.leds[0]"')
 
-    response = check_response('led = bundle.leds[0]')
+    check_response('led = bundle.leds[0]')
     led = bundle.leds[0]
     print()
     printr("Super! You can now do whatever you want with these modules."
@@ -112,7 +113,7 @@ def tutorial():
            "Let's make an object named \"button\" as well for your button "
            "module. You know how to do it.")
 
-    response = check_response('button = bundle.buttons[0]', False)
+    check_response('button = bundle.buttons[0]', False)
     button = bundle.buttons[0]
     print()
 
@@ -124,7 +125,7 @@ def tutorial():
            '\nCheck the state of button by typing'
            ' "button.get_pressed()"')
 
-    response = check_response('button.get_pressed()')
+    check_response('button.get_pressed()')
     print(button.get_pressed())
     print()
 
@@ -150,7 +151,7 @@ def tutorial():
     # Lesson 4 Your First project
     clear()
     print_lesson(4, "Your First PyMODI Project")
-    printr("Let's make a function that blinks led when button is pressed.\n")
+    printr("Let's make a project that blinks led when button is pressed.\n")
     printr("In an infinite loop, we want our led to light up when button is "
            "pressed, and turn off when not pressed. Complete the following "
            "code based on the description.")
@@ -184,7 +185,8 @@ def tutorial():
             led.set_off()
         time.sleep(0.02)
 
-    printr("It looks great! Now you know how to use PyMODI to control modules."
+    printr("\nIt looks great! "
+           "Now you know how to use PyMODI to control modules."
            "\nYou can look up more functions at "
            "pymodi.readthedocs.io/en/latest\n"
            )
