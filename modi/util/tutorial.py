@@ -191,5 +191,5 @@ def tutorial():
            "pymodi.readthedocs.io/en/latest\n"
            )
 
-    bundle._com_proc.terminate()
     input("\nYou have completed the tutorial.\nPress ENTER to exit")
+    bundle._com_proc.terminate()
