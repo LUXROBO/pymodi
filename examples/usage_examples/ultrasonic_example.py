@@ -1,5 +1,4 @@
 import modi
-import time
 
 """
 Example script for the usage of ultrasonic module
@@ -12,8 +11,3 @@ if __name__ == "__main__":
 
     while True:
         print("Distance: {0:<10}".format(ultrasonic.get_distance()), end='\r')
-
-
-
-
-

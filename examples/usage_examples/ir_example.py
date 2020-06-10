@@ -1,5 +1,4 @@
 import modi
-import time
 
 """
 Example script for the usage of ir module
@@ -12,8 +11,3 @@ if __name__ == "__main__":
 
     while True:
         print("{0:<10}".format(ir.get_proximity()), end='\r')
-
-
-
-
-
