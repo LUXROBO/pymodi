@@ -27,7 +27,7 @@ class Motor(OutputModule):
 
     def set_motor_channel(self,
                           motor_channel: int, control_mode: int,
-                          control_value: int = None) -> Tuple[float, float]:
+                          control_value: int = None) -> None:
         """Select te motor channel for control
         Mode: 0:Torque 1:Speed 2:Angle (Torque is not implemented yet)
 
@@ -40,17 +40,15 @@ class Motor(OutputModule):
         :return: current value of the motor control
         :rtype: Tuple[float, float]
         """
-        self._msg_send_q.put(
-            self._set_property(
-                self._id,
-                self.ControlType.CHANNEL,
-                (
-                    motor_channel,
-                    control_mode,
-                    control_value,
-                    0x00 if control_value >= 0 else 0xFFFF,
-                ),
-            )
+        self._set_property(
+            self._id,
+            self.ControlType.CHANNEL,
+            (
+                motor_channel,
+                control_mode,
+                control_value,
+                0x00 if control_value >= 0 else 0xFFFF,
+            ),
         )
 
     def set_first_degree(self, degree_value: int) -> int:
