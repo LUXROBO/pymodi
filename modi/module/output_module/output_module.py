@@ -44,11 +44,16 @@ class OutputModule(Module):
                             property_data_type: IntEnum) -> List[str]:
         """Generate set_property json serialized message
 
-        :param destination_id:
-        :param property_type:
-        :param property_values:
-        :param property_data_type:
-        :return:
+        :param destination_id: Id of the destination module
+        :type destination_id: int
+        :param property_type: Property Type
+        :type property_type: IntEnum
+        :param property_values: Property values
+        :type property_values: Tuple
+        :param property_data_type: Property Data Type
+        :type property_data_type: IntEnum
+        :return: List of json messages
+        :rtype: List[str]
         """
         message = dict()
 
@@ -110,13 +115,17 @@ class OutputModule(Module):
     def _set_property(self, destination_id: int,
                       property_type: IntEnum, property_values: Tuple,
                       property_data_type: IntEnum = None) -> None:
-        """
+        """Send the message of set_property command to the module
 
-        :param destination_id:
-        :param property_type:
-        :param property_values:
-        :param property_data_type:
-        :return:
+        :param destination_id: Id of the destination module
+        :type destination_id: int
+        :param property_type: Property Type
+        :type property_type: IntEnum
+        :param property_values: Property Values
+        :type property_values: Tuple
+        :param property_data_type: Property Data Type
+        :type property_data_type: IntEnum
+        :return: None
         """
         messages = self.__parse_set_message(
             destination_id,
