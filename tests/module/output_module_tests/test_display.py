@@ -93,11 +93,6 @@ class TestDisplay(unittest.TestCase):
         self.display._set_property.assert_called_once_with(
             *expected_clear_params)
 
-        # Check if correct message has been passed to serial_write_q
-        self.display._msg_send_q.put.assert_called_once_with(
-            self.display.PropertyType.CLEAR
-        )
-
 
 if __name__ == "__main__":
     unittest.main()
