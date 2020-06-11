@@ -14,5 +14,3 @@ if __name__ == "__main__":
     while True:
         speak.set_tune(800, dial.get_degree())
         time.sleep(0.02)
-
-
