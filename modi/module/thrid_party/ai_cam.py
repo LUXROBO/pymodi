@@ -12,9 +12,11 @@ class AIcamera():
         return self.cap.isOpened()
         
     def read(self):
-        _, self.frame = self.cap.read()
+        _, _frame = self.cap.read()
 
-        self.frame = cv2.flip(self.frame, 1)
+        _frame = cv2.flip(_frame, 1)
+
+        self.frame = cv2.cvtColor(_frame, cv2.COLOR_BGR2RGB)
 
         return self.frame
 
