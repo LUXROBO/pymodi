@@ -6,6 +6,7 @@ import serial
 import traceback
 
 from serial.serialutil import SerialException
+
 from modi.task.conn_task import ConnTask
 
 
