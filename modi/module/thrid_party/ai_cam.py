@@ -2,8 +2,7 @@
 
 import cv2
 
-
-class ai_cam():
+class AIcamera():
 
     def __init__(self):
         pass
