@@ -13,10 +13,12 @@ from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
 
 from modi.module.module import Module
+from modi.module.ai_module import AI_camera, AI_mic, AI_speaker
 
 from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
-from modi.util.stranger import check_complete
+from modi.util.that import check_complete
+
 
 
 class MODI:
@@ -27,12 +29,12 @@ class MODI:
     """
 
     def __init__(self, nb_modules: int, conn_mode: str = "serial",
-                 module_uuid: str = "", test: bool = False,
+                 module_uuid: str = "", AI_mode: bool = False, test: bool = False,
                  verbose: bool = False):
 
         self._modules = list()
-
         self._module_ids = dict()
+        self._AI_modules = list()
         self._topology_data = dict()
 
         self._recv_q = mp.Queue()
@@ -66,9 +68,9 @@ class MODI:
                 traceback.print_exc()
             exit(1)
 
-        self._child_watch = th.Thread(target=self.watch_child_process)
-        self._child_watch.daemon = True
-        self._child_watch.start()
+        child_watch = th.Thread(target=self.watch_child_process)
+        child_watch.daemon = True
+        child_watch.start()
 
         init_flag.wait()
 
@@ -103,12 +105,22 @@ class MODI:
         print("MODI modules are initialized!")
         check_complete(self)
 
+        if AI_mode:
+            self._init_AI_modules()
+
+
+
+        # if ai computing module
+            # init mic -> ai_mic = AI_MIC()
+            # init speaker
+            # init camera
+
     def update_module_firmware(self) -> None:
         """Updates firmware of connected modules"""
         print("Request to update firmware of connected MODI modules.")
         self._firmware_updater.reset_state()
         self._firmware_updater.request_to_update_firmware()
-        # self.firmware_updater.update_event.wait()
+        #self.firmware_updater.update_event.wait()
         print("Module firmwares have been updated!")
 
     def watch_child_process(self) -> None:
@@ -123,6 +135,24 @@ class MODI:
         :return: None
         """
         self._topology_manager.print_topology_map(print_id)
+
+    #TODO : complete each method
+    def _init_AI_modules(self) -> None:
+        """
+        """
+        self._init_AI_camera()
+        self._init_AI_mic()
+        self._init_AI_speaker()
+
+    def _init_AI_camera(self) -> None:
+        pass
+
+    def _init_AI_mic(self) -> None:
+        pass
+
+    def _init_AI_speaker(self) -> None:
+        pass
+
 
     @property
     def modules(self) -> Tuple[Module]:
@@ -220,3 +250,24 @@ class MODI:
 
         return tuple([module for module in self.modules
                       if module.type == "ultrasonic"])
+
+    @property
+    def ai_mics(self) -> Tuple[AI_mic]:
+        """Tuple of connected :class:'~modi.module.ai_mic.AI_mic' modules
+        """
+
+        return tuple([ai_module for ai_module in self._AI_modules
+                      if ai_module.type == "ai_mic"])
+
+    @property
+    def ai_speakers(self) -> Tuple[AI_speaker]:
+        """Tuple of connected :class:'~modi.module.ai_speaker.AI_speaker' modules
+        """
+
+        return tuple([ai_module for ai_module in self._AI_modules
+                      if ai_module.type == "ai_speaker"])
+
+    def ai_cameras(self) -> Tuple[AI_camera]:
+        """Tuple of connected :class:'~modi.module.ai_camera.AI_camera' modules
+        """
+        return tuple([ai_module for ai_module in self._AI_modules if ai_module.type == "ai_camera"])

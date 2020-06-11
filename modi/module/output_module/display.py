@@ -27,16 +27,18 @@ class Display(OutputModule):
         :rtype: string
         """
         self.clear()
-        self._set_property(
+        messages = self._set_property(
             self._id,
             self.PropertyType.TEXT,
             text,
             self.PropertyDataType.STRING
         )
-        return text
+        for message in messages:
+            self._msg_send_q.put(message)
+        return messages
 
     def set_variable(self, variable: float, position_x: int,
-                     position_y: int) -> None:
+                     position_y: int) -> str:
         """Clears the display and show the input variable on the display.
         Returns the json serialized signal sent to
         the module to display the text
@@ -50,22 +52,27 @@ class Display(OutputModule):
         :return: A json serialized signal to module
         :rtype: string
         """
-        self._set_property(
+        message = self._set_property(
             self._id,
             self.PropertyType.VARIABLE,
             (variable, position_x, position_y),
             self.PropertyDataType.DISPLAY_VAR,
         )
+        self._msg_send_q.put(message)
+        return message
 
-    def clear(self) -> None:
+    def clear(self) -> str:
         """Clear the screen.
 
         :return: json serialized message to te module
         :rtype: string
         """
-        self._set_property(
+        message = self._set_property(
             self._id,
             self.PropertyType.CLEAR,
             bytes(2),
             self.PropertyDataType.RAW
         )
+
+        self._msg_send_q.put(message)
+        return message
