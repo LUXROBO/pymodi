@@ -1,8 +1,12 @@
+import io
 import time
 import json
 import queue
 import base64
 import struct
+import zipfile
+import requests
+
 from enum import IntEnum
 from typing import Callable, Dict
 
@@ -51,6 +55,7 @@ class ExeTask:
         self._nb_modules = nb_modules
 
         self.firmware_updater = firmware_updater
+        self.firmware_state_verbose = False
 
         self.__init_modules()
         print('Start initializing connected MODI modules')
@@ -264,6 +269,33 @@ class ExeTask:
         module_info_bytes = message_decoded[-4:]
 
         module_info = (module_info_bytes[1] << 8) + module_info_bytes[0]
+        module_version_info = module_info_bytes[3] << 8 | module_info_bytes[2]
+
+        # Retrieve most recent skeleton version from the server
+        skeleton_zip_path = (
+            'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
+        )
+        download_response = requests.get(skeleton_zip_path)
+        zip_content = zipfile.ZipFile(
+            io.BytesIO(download_response.content), 'r'
+        )
+
+        version_path = "skeleton/version.txt"
+        version_buffer = str(zip_content.read(version_path))[1:]
+        version_bits_str = version_buffer.lstrip("b'v").rstrip("\\n'").split(
+            ".")
+        version_bits = [int(bit_char) for bit_char in version_bits_str]
+        """ Version number is formed by concatenating all three version bits
+            e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
+        """
+        skeleton_version = (
+            version_bits[0] << 13 | version_bits[1] << 8 | version_bits[2]
+        )
+
+        if not self.firmware_state_verbose and module_version_info < skeleton_version:
+            print("Your MODI module(s) is not up-to-date.")
+            print("You can update your MODI modules by calling 'update_module_firmware()'")
+            self.firmware_state_verbose = True
 
         module_category_idx = module_info >> 13
         module_type_idx = (module_info >> 4) & 0x1FF
