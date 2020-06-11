@@ -1,11 +1,13 @@
 """AI camera module."""
 
-import cv2
+import cv2 as cv
+from typing import Union
 
-class AIcamera():
+class AIcamera(cv2.VideoCapture):
 
-    def __init__(self):
-        pass
+    def __init__(self, source: Union[int, str]):
+        super.__init__(source)
+
     def isOpened(self):
         pass
     def read(self):
