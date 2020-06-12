@@ -122,7 +122,7 @@ class Speaker(OutputModule):
                         if volume_value is not None
                         else self.get_volume())
 
-        self._set_property(
+        message = self._set_property(
             self._id,
             self.CommandType.SET_TUNE,
             (frequency_value, volume_value,),
@@ -130,7 +130,8 @@ class Speaker(OutputModule):
         )
         self._update_properties([property_type
                                  for property_type in self.PropertyType],
-                                [frequency_value, volume_value])
+                                (frequency_value, volume_value))
+        self._msg_send_q.put(message)
         return frequency_value, volume_value
 
     def get_tune(self) -> Tuple[float, float]:
@@ -152,7 +153,7 @@ class Speaker(OutputModule):
     def get_frequency(self) -> float:
         return self._get_property(self.PropertyType.FREQUENCY)
 
-    def set_volume(self, volume_value: float) -> Tuple[float, float]:
+    def set_volume(self, volume_value: float) -> float:
         """Set the volume for the speaker
 
         :param volume_value: Volume to set
@@ -171,4 +172,4 @@ class Speaker(OutputModule):
         :return: Tune of the speaker turned off
         :rtype: Tuple[float, float]
         """
-        return self.set_tune(0, 0)
+        self.set_tune(0, 0)

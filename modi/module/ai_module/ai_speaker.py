@@ -3,14 +3,11 @@ import wave
 
 from io import BytesIO
 from modi.util.audiolib import write
-from modi.util.conn_util import is_modi_pi, MODINotOnPiException, \
-    AIModuleNotFoundException
+from modi.util.conn_util import is_modi_pi, AIModuleNotFoundException
 from typing import Union
 
-# Abort if the module is not on raspberry pi
-if not is_modi_pi():
-    raise MODINotOnPiException("MODI is not on Raspberry Pi environment")
-else:
+# Imoprt alsaaudio if the module is on raspberry pi
+if is_modi_pi():
     import alsaaudio as audio
 
 
