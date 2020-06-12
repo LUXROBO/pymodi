@@ -1,7 +1,7 @@
 import alsaaudio as audio
 import wave
 from io import BytesIO
-from scipy.io.wavfile import write
+from modi.util.audiolib import write
 import numpy as np
 
 
