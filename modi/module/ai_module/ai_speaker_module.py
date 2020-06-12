@@ -8,15 +8,16 @@ from typing import Union
 
 class AISpeaker:
     def __init__(self):
-        self.__device = audio.PCM()
+        self.__device = None
         self.__mixer = None
         cards = audio.cards()
         for idx, card in enumerate(cards):
             if 'wm8960' in card:
+                self.__device = audio.PCM(cardindex=idx)
                 self.__mixer = audio.Mixer(
                     audio.mixers(idx)[0],
                     cardindex=idx)
-        if not self.__mixer:
+        if not self.__mixer or not self.__device:
             raise Exception("Cannot find the MODI Speaker")
 
     def play(self, data: Union[str, np.ndarray], rate: int = 44100) -> None:
