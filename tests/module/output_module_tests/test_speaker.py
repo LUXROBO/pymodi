@@ -40,7 +40,7 @@ class TestSpeaker(unittest.TestCase):
             self.speaker.PropertyDataType.FLOAT,
         )
 
-        self.assertEqual(self.speaker._msg_send_q.put.call_count, 2)
+        self.assertEqual(self.speaker._msg_send_q.put.call_count, 3)
         self.speaker._set_property.assert_called_once_with(
             *expected_tune_params)
 
