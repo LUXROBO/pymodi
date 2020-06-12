@@ -17,8 +17,7 @@ from modi.module.ai_module import AI_camera, AI_mic, AI_speaker
 
 from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
-from modi.util.that import check_complete
-
+from modi.util.stranger import check_complete
 
 
 class MODI:
@@ -29,7 +28,8 @@ class MODI:
     """
 
     def __init__(self, nb_modules: int, conn_mode: str = "serial",
-                 module_uuid: str = "", AI_mode: bool = False, test: bool = False,
+                 module_uuid: str = "", AI_mode: bool = False,
+                 test: bool = False,
                  verbose: bool = False):
 
         self._modules = list()
@@ -108,19 +108,12 @@ class MODI:
         if AI_mode:
             self._init_AI_modules()
 
-
-
-        # if ai computing module
-            # init mic -> ai_mic = AI_MIC()
-            # init speaker
-            # init camera
-
     def update_module_firmware(self) -> None:
         """Updates firmware of connected modules"""
         print("Request to update firmware of connected MODI modules.")
         self._firmware_updater.reset_state()
         self._firmware_updater.request_to_update_firmware()
-        #self.firmware_updater.update_event.wait()
+        # self.firmware_updater.update_event.wait()
         print("Module firmwares have been updated!")
 
     def watch_child_process(self) -> None:
@@ -136,23 +129,22 @@ class MODI:
         """
         self._topology_manager.print_topology_map(print_id)
 
-    #TODO : complete each method
-    def _init_AI_modules(self) -> None:
+    # TODO : complete each method
+    def _init_ai_modules(self) -> None:
         """
         """
-        self._init_AI_camera()
-        self._init_AI_mic()
-        self._init_AI_speaker()
+        self._init_ai_camera()
+        self._init_ai_mic()
+        self._init_ai_speaker()
 
-    def _init_AI_camera(self) -> None:
+    def _init_ai_camera(self) -> None:
         pass
 
-    def _init_AI_mic(self) -> None:
+    def _init_ai_mic(self) -> None:
         pass
 
-    def _init_AI_speaker(self) -> None:
+    def _init_ai_speaker(self) -> None:
         pass
-
 
     @property
     def modules(self) -> Tuple[Module]:
@@ -267,7 +259,10 @@ class MODI:
         return tuple([ai_module for ai_module in self._AI_modules
                       if ai_module.type == "ai_speaker"])
 
+    @property
     def ai_cameras(self) -> Tuple[AI_camera]:
         """Tuple of connected :class:'~modi.module.ai_camera.AI_camera' modules
         """
-        return tuple([ai_module for ai_module in self._AI_modules if ai_module.type == "ai_camera"])
+        return tuple(
+            [ai_module for ai_module in self._AI_modules
+             if ai_module.type == "ai_camera"])
