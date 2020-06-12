@@ -1,4 +1,4 @@
-class AI_camera:
+class AI_speaker:
 
     def __init__(self):
         pass
