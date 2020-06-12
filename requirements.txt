@@ -2,3 +2,5 @@ pyserial
 enum34
 python-can
 requests
+pyalsaaudio
+scipy
