@@ -1,13 +1,24 @@
-import alsaaudio as audio
+import numpy as np
 import wave
+
 from io import BytesIO
 from modi.util.audiolib import write
-import numpy as np
+from modi.util.conn_util import is_modi_pi, MODINotOnPiException, \
+    AIModuleNotFoundException
 from typing import Union
+
+# Abort if the module is not on raspberry pi
+if not is_modi_pi():
+    raise MODINotOnPiException("MODI is not on Raspberry Pi environment")
+else:
+    import alsaaudio as audio
 
 
 class AISpeaker:
     def __init__(self):
+        if not self.is_ai_speaker_connected():
+            raise AIModuleNotFoundException("Cannot find the MODI Speaker")
+
         self.__device = audio.PCM()
         self.__mixer = None
         cards = audio.cards()
@@ -16,8 +27,17 @@ class AISpeaker:
                 self.__mixer = audio.Mixer(
                     audio.mixers(idx)[0],
                     cardindex=idx)
+        # If MODI sound card is not found
         if not self.__mixer:
-            raise Exception("Cannot find the MODI Speaker")
+            raise AIModuleNotFoundException("Cannot find the MODI Speaker")
+
+    @staticmethod
+    def is_ai_speaker_connected():
+        connected_devices = audio.pcms(audio.PCM_PLAYBACK)
+        for device in connected_devices:
+            if 'wm8960' in device:
+                return True
+        return False
 
     def play(self, data: Union[str, np.ndarray], rate: int = 44100) -> None:
         """ Play wave file by a given filename or numpy array
