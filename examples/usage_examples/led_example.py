@@ -28,4 +28,3 @@ if __name__ == "__main__":
     time.sleep(2)
     led.set_off()
     time.sleep(1)
-

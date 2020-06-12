@@ -1,4 +1,5 @@
 """Top-level package for pyMODI."""
+
 from modi.modi import MODI
 from modi import about
 

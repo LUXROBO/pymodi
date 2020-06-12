@@ -40,7 +40,7 @@ class MODI:
         self._recv_q = mp.Queue()
         self._send_q = mp.Queue()
 
-        self._com_proc = None
+        self._conn_proc = None
         self._exe_thrd = None
 
         # Init flag used to notify initialization of MODI modules
@@ -52,13 +52,13 @@ class MODI:
 
         init_flag = mp.Event()
 
-        self._com_proc = ConnProc(
+        self._conn_proc = ConnProc(
             self._recv_q, self._send_q, conn_mode, module_uuid, verbose,
             init_flag
         )
-        self._com_proc.daemon = True
+        self._conn_proc.daemon = True
         try:
-            self._com_proc.start()
+            self._conn_proc.start()
         except RuntimeError:
             if os.name == 'nt':
                 print('\nProcess initialization failed!\nMake sure you are '
@@ -124,7 +124,7 @@ class MODI:
         print("Module firmwares have been updated!")
 
     def watch_child_process(self) -> None:
-        while self._com_proc.is_alive():
+        while self._conn_proc.is_alive():
             time.sleep(0.1)
         os._exit(1)
 
