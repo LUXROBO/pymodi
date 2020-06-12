@@ -4,3 +4,4 @@ python-can
 requests
 pyalsaaudio
 scipy
+numpy
