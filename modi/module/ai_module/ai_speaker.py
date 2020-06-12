@@ -50,6 +50,15 @@ class AISpeaker:
         else:
             audio_file = self.__numpy_to_wave(data, rate)
 
+        _, _, _, period_size = self.__set_attribute(audio_file)
+
+        stream = audio_file.readframes(period_size)
+        while stream:
+            # Read data from stdin
+            self.__device.write(stream)
+            stream = audio_file.readframes(period_size)
+
+    def __set_attribute(self, audio_file):
         # Set attributes
         self.__device.setchannels(audio_file.getnchannels())
         self.__device.setrate(audio_file.getframerate())
@@ -68,14 +77,9 @@ class AISpeaker:
             raise ValueError('Unsupported format')
 
         period_size = audio_file.getframerate() // 8
-
         self.__device.setperiodsize(period_size)
-
-        stream = audio_file.readframes(period_size)
-        while stream:
-            # Read data from stdin
-            self.__device.write(stream)
-            stream = audio_file.readframes(period_size)
+        return (audio_file.getnchannels(), audio_file.getframerate(),
+                audio_file.getsampwidth(), period_size)
 
     def play_tune(self, frequency: float, duration: float,
                   volume: float = 1) -> None:
