@@ -69,9 +69,9 @@ class MODI:
                 traceback.print_exc()
             exit(1)
 
-        child_watch = th.Thread(target=self.watch_child_process)
-        child_watch.daemon = True
-        child_watch.start()
+        self._child_watch = th.Thread(target=self.watch_child_process)
+        self._child_watch.daemon = True
+        self._child_watch.start()
 
         init_flag.wait()
 
