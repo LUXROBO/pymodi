@@ -29,13 +29,13 @@ class MODI:
     """
 
     def __init__(self, nb_modules: int, conn_mode: str = "serial",
-                 module_uuid: str = "", AI_mode: bool = False,
+                 module_uuid: str = "", ai_mode: bool = False,
                  test: bool = False,
                  verbose: bool = False):
 
         self._modules = list()
         self._module_ids = dict()
-        self._AI_modules = list()
+        self._ai_modules = list()
         self._topology_data = dict()
 
         self._recv_q = mp.Queue()
@@ -105,11 +105,11 @@ class MODI:
         print("MODI modules are initialized!")
         check_complete(self)
 
-        if AI_mode:
+        if ai_mode:
             if not is_modi_pi():
                 raise MODINotOnPiException
             self._init_ai_modules()
-            if len(self._AI_modules) > 1:
+            if len(self._ai_modules) > 1:
                 print("AI modules are initializes")
 
     def update_module_firmware(self) -> None:
@@ -148,7 +148,7 @@ class MODI:
         pass
 
     def _init_ai_speaker(self) -> None:
-        self._AI_modules.append(AISpeaker())
+        self._ai_modules.append(AISpeaker())
 
     @property
     def modules(self) -> Tuple[Any]:
@@ -250,26 +250,26 @@ class MODI:
 
     @property
     def ai_mics(self) -> Tuple[AIMic]:
-        """Tuple of connected :class:'~modi.module.ai_mic.AI_mic' modules
+        """Tuple of connected :class:'~modi.module.ai_mic.AIMic' modules
         """
 
-        return tuple([ai_module for ai_module in self._AI_modules
+        return tuple([ai_module for ai_module in self._ai_modules
                       if isinstance(ai_module, AIMic)])
 
     @property
     def ai_speakers(self) -> Tuple[AISpeaker]:
-        """Tuple of connected :class:'~modi.module.ai_speaker.AI_speaker'
+        """Tuple of connected :class:'~modi.module.ai_speaker.AISpeaker'
         modules
         """
 
-        return tuple([ai_module for ai_module in self._AI_modules
+        return tuple([ai_module for ai_module in self._ai_modules
                       if isinstance(ai_module, AISpeaker)])
 
     @property
     def ai_cameras(self) -> Tuple[AICamera]:
-        """Tuple of connected :class:'~modi.module.ai_camera.AI_camera'
+        """Tuple of connected :class:'~modi.module.ai_camera.AICamera'
         modules
         """
         return tuple(
-            [ai_module for ai_module in self._AI_modules
+            [ai_module for ai_module in self._ai_modules
              if isinstance(ai_module, AICamera)])

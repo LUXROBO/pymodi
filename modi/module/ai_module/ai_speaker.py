@@ -6,7 +6,7 @@ from modi.util.audiolib import write
 from modi.util.conn_util import is_modi_pi, AIModuleNotFoundException
 from typing import Union
 
-# Imoprt alsaaudio if the module is on raspberry pi
+# Import alsaaudio if the module is on raspberry pi
 if is_modi_pi():
     import alsaaudio as audio
 
