@@ -24,8 +24,3 @@ if __name__ == "__main__":
     time.sleep(3)
     motor.set_speed(0, 0)
     time.sleep(1)
-
-
-
-
-

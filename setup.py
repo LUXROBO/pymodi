@@ -1,4 +1,4 @@
-from os import path
+from os import path, name
 from setuptools import setup, find_packages
 
 
@@ -18,9 +18,6 @@ def get_about():
         return about
 
 
-about = get_about()
-
-
 def get_history():
     here = path.dirname(__file__)
     with open(path.join(here, 'HISTORY.md'), encoding='UTF8') as history_file:
@@ -33,9 +30,12 @@ def get_requirements():
     with open(path.join(here, 'requirements.txt'),
               encoding='UTF8') as requirements_file:
         requirements = requirements_file.read().splitlines()
+        if name == 'nt':
+            requirements.remove('pyalsaaudio')
         return requirements
 
 
+about = get_about()
 setup(
     name=about['__title__'],
     version=about['__version__'],

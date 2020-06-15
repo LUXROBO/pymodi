@@ -6,7 +6,9 @@ import serial
 import traceback
 
 from serial.serialutil import SerialException
+
 from modi.task.conn_task import ConnTask
+from modi.util.conn_util import list_modi_ports
 
 
 class SerTask(ConnTask):
@@ -47,7 +49,7 @@ class SerTask(ConnTask):
         :return: None
         """
 
-        modi_ports = self._list_modi_ports()
+        modi_ports = list_modi_ports()
         if not modi_ports:
             raise SerialException("No MODI network module is connected.")
 

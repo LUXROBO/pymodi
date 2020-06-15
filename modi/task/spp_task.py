@@ -2,10 +2,10 @@ import time
 import queue
 import serial
 import serial.tools.list_ports as stl
-from serial.tools.list_ports_common import ListPortInfo
-from typing import List
 
+from typing import List
 from serial import SerialException
+from serial.tools.list_ports_common import ListPortInfo
 
 from modi.task.conn_task import ConnTask
 

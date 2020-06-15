@@ -6,6 +6,7 @@ from modi.task.conn_task import ConnTask
 from modi.task.ser_task import SerTask
 from modi.task.can_task import CanTask
 from modi.task.spp_task import SppTask
+from modi.util.conn_util import is_modi_pi
 
 
 class ConnProc(mp.Process):
@@ -30,17 +31,7 @@ class ConnProc(mp.Process):
         """
         if conn_mode.startswith("b"):
             return SppTask
-        return CanTask if self.__is_modi_pi() else SerTask
-
-    @staticmethod
-    def __is_modi_pi() -> bool:
-        """Returns whether connection is on pi
-
-        :return: true is on pi
-        :rtype: bool
-        """
-        return ConnTask.is_on_pi() and \
-            not ConnTask.is_network_module_connected()
+        return CanTask if is_modi_pi() else SerTask
 
     def run(self) -> None:
         """Run the connection
