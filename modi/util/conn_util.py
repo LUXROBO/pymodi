@@ -46,9 +46,9 @@ def is_modi_pi() -> bool:
     return is_on_pi() and not is_network_module_connected()
 
 
-class MODINotOnPiException(Exception):
+class AIModuleNotFoundException(Exception):
     pass
 
 
-class AIModuleNotFoundException(Exception):
+class AIModuleFaultsException(Exception):
     pass
