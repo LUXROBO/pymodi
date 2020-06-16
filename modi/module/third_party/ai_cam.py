@@ -34,8 +34,9 @@ class AIcamera:
         ai_cam_id_product = 0x62c0
 
         dev = usb.core.find(
-            id_vendor=ai_cam_id_vendor,
-            id_product=ai_cam_id_product)
+                            idVendor=ai_cam_id_vendor,
+                            idProduct=ai_cam_id_product
+                            )
 
         return dev
 
