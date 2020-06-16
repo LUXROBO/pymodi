@@ -1,23 +1,24 @@
 """AI camera module."""
 
 import cv2
-from typing import Union
-from modi.util.conn_util import is_modi_pi, AIModuleNotFoundException
 import time
 import PIL.Image
-from io import BytesIO
 import IPython.display
+
+from io import BytesIO
+
+from modi.util.conn_util import is_modi_pi, AIModuleNotFoundException
 
 if is_modi_pi():
     import usb.core
 
-class AIcamera():
+class AIcamera:
 
-    def __init__(self, source: Union[int, str]):
+    def __init__(self):
         if not self.is_ai_cam_connected():
             raise AIModuleNotFoundException("Cannot find MODI AI Camera")
 
-        self.cap = cv2.VideoCapture(source)
+        self.cap = cv2.VideoCapture(-1)
         # init video codec for raspberry pi
         self.fourcc = cv2.VideoWriter_fourcc(*"MPV4")
         # set camera resolution
