@@ -13,13 +13,12 @@ class AIMic:
         except ValueError:
             raise AIModuleFaultsException("AI Mic not found!!")
         self.RATE = 44100
-        for idx, device in sd.query_devices():
+        for idx, device in enumerate(sd.query_devices()):
             if 'wm8960' in device:
                 sd.default.device = idx
                 break
 
-    @staticmethod
-    def write_audio(file_path, data, sampling_rate):
+    def write_audio(self, file_path: str, data: ndarray, sampling_rate: int = 44100) -> None:
         sf.write(file_path, data, sampling_rate)
 
     def record(self, duration: float) -> Tuple[ndarray, float]:
