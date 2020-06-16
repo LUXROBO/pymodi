@@ -13,6 +13,10 @@ class AIMic:
         except ValueError:
             raise AIModuleFaultsException("AI Mic not found!!")
         self.RATE = 44100
+        for idx, device in sd.query_devices():
+            if 'wm8960' in device:
+                sd.default.device = idx
+                break
 
     @staticmethod
     def write_audio(file_path, data, sampling_rate):

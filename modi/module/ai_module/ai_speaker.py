@@ -13,6 +13,11 @@ class AISpeaker:
         except ValueError:
             raise AIModuleFaultsException("AI Speaker not found!!")
 
+        for idx, device in sd.query_devices():
+            if 'wm8960' in device:
+                sd.default.device = idx
+                break
+
     def play(self, data: Union[str, ndarray], rate: float = None) -> None:
         """ Play wave file by a given filename or numpy array
 
