@@ -1,4 +1,4 @@
-from os import path, name
+from os import path
 from setuptools import setup, find_packages
 
 
@@ -30,8 +30,6 @@ def get_requirements():
     with open(path.join(here, 'requirements.txt'),
               encoding='UTF8') as requirements_file:
         requirements = requirements_file.read().splitlines()
-        if name == 'nt':
-            requirements.remove('pyalsaaudio')
         return requirements
 
 
