@@ -16,7 +16,7 @@ class AIMic:
 
     def __init__(self):
         if not self.is_ai_mic_connected():
-            raise AIModuleNotFoundException("Cannot find the MODI AI Mic")
+            raise AIModuleNotFoundException("Cannot find the MODI AI Mic. Please contact our CS team")
 
         self.RATE = 16000
         self.PERIOD = self.RATE // 8
@@ -42,6 +42,7 @@ class AIMic:
     @staticmethod
     def is_ai_mic_connected():
         connected_devices = audio.pcms(audio.PCM_CAPTURE)
+        print(connected_devices)
         for device in connected_devices:
             if 'wm8960' in device:
                 return True
@@ -61,20 +62,20 @@ class AIMic:
         :return: ndarray
         """
         buffer = BytesIO()
-        audio_file = wave.open(buffer, 'wb')
-        self.__set_attribute(audio_file)
+        with wave.open(buffer, 'wb') as audio_file:
+            self.__set_attribute(audio_file)
 
-        samples_written = 0
-        while samples_written < self.RATE * duration:
-            # Read data from device
-            l, data = self.__device.read()
+            samples_written = 0
+            while samples_written < self.RATE * duration:
+                # Read data from device
+                l, data = self.__device.read()
 
-            if l:
-                samples_written += l
-                audio_file.writeframes(data)
-                time.sleep(.001)
-        audio_file.close()
+                if l:
+                    samples_written += l
+                    audio_file.writeframes(data)
+                    time.sleep(.001)
         buffer.seek(0)
+
         return read(buffer)
 
     def __set_attribute(self, audio_file):
