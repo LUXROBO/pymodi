@@ -2,13 +2,33 @@
 
 import cv2
 from typing import Union
+from modi.util.conn_util import is_modi_pi, AIModuleNotFoundException
+
+if is_modi_pi():
+    import usb.core
 
 class AIcamera():
 
     def __init__(self, source: Union[int, str]):
+        if not self.is_ai_cam_connected():
+            raise AIModuleNotFoundException("Cannot find MODI AI Camera")
+
         self.cap = cv2.VideoCapture(source)
         # init video codec for raspberry pi 
         self.fourcc = cv2.VideoWriter_fourcc(*"MPV4")
+
+    def is_ai_cam_connected():
+        ai_cam_id_vendor = 0x0c45
+        ai_cam_id_product = 0x62c0
+
+        dev = usb.core.find(
+            idVendor=ai_cam_id_vendor,
+            idProduct=ai_cam_id_product)
+
+        if dev is None:
+            return False        
+        else:
+            return True
 
     def isOpened(self):
         return self.cap.isOpened()
