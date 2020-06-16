@@ -6,6 +6,7 @@ import PIL.Image
 import IPython.display
 
 from io import BytesIO
+from typing import List
 
 from modi.util.conn_util import is_modi_pi, AIModuleNotFoundException
 
@@ -28,29 +29,26 @@ class AIcamera:
         self.t1 = time.time()
         self.t2 = time.time()
 
-    def is_ai_cam_connected():
+    def is_ai_cam_connected(self) -> List[str]:
         ai_cam_id_vendor = 0x0c45
         ai_cam_id_product = 0x62c0
 
         dev = usb.core.find(
-            idVendor=ai_cam_id_vendor,
-            idProduct=ai_cam_id_product)
+            id_vendor=ai_cam_id_vendor,
+            id_product=ai_cam_id_product)
 
-        if dev is None:
-            return False
-        else:
-            return True
+        return dev
 
-    def isOpened(self):
+    def isOpened(self) -> bool:
         return self.cap.isOpened()
 
-    def set_frame_height(self, height):
+    def set_frame_height(self, height) -> None:
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
-    def set_frame_weight(self, width):
+    def set_frame_weight(self, width) -> None:
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 
-    def read(self):
+    def read(self) -> None:
         try:
             self.t1 = time.time()
             ret, _frame = self.cap.read()
@@ -67,9 +65,9 @@ class AIcamera:
             raise Exception()
             print("Stream stopped")
 
-    def show(self, frame):
+    def show(self, frame) -> None:
         try:
-            im = self.array_to_image(frame)
+            im = self._array_to_image(frame)
             self.t2 = time.time()
             s = f"""{int(1 / (self.t2 - self.t1))} FPS"""
             self.d.update(im)
@@ -81,17 +79,17 @@ class AIcamera:
             print("Stream stopped")
             raise Exception()
 
-    def imwrite(self, path, frame):
+    def imwrite(self, path, frame) -> None:
         # save captured frame image to path
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         cv2.imwrite(path, frame)
 
-    def setWindow(self):
+    def setWindow(self) -> None:
         self.d = IPython.display.display("Window", display_id=1)
         self.d2 = IPython.display.display("Frame Rate", display_id=2)
 
     # Use 'jpeg' instead of 'png' (~5 times faster)
-    def array_to_image(self, a, fmt='jpeg'):
+    def _array_to_image(self, a, fmt='jpeg') -> None:
         try:
             # Create binary stream object
             f = BytesIO()
@@ -102,18 +100,3 @@ class AIcamera:
             return IPython.display.Image(data=f.getvalue())
         except:
             raise Exception()
-
-def main():
-    aicam = AIcamera()
-    aicam.setWindow()
-    while True:
-        try:
-            frame = aicam.read()
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # User CV2 Code
-            aicam.show(frame)
-        except:
-            break
-    aicam.imwrite('image.jpeg', frame)
-
-if __name__ == "__main__":
-    main()
