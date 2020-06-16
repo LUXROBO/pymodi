@@ -18,7 +18,7 @@ class AISpeaker:
                 sd.default.device = idx
                 break
 
-    def play(self, data: Union[str, ndarray], rate: int = 44100) -> None:
+    def play(self, target: Union[str, ndarray], rate: int = 44100) -> None:
         """ Play wave file by a given filename or numpy array
 
         :param data: File path of numpy array
@@ -27,8 +27,10 @@ class AISpeaker:
         :type rate: int
         :return: None
         """
-        if isinstance(data, str):
-            data, rate = sf.read(data)
+        if isinstance(target, str):
+            data, rate = sf.read(target)
+        else:
+            data = target
 
         if rate == 44100:
             sd.play(data)
