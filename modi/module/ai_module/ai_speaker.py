@@ -2,7 +2,7 @@ import numpy as np
 import wave
 
 from io import BytesIO
-from modi.util.audiolib import write
+from soundfile import write
 from modi.util.conn_util import is_modi_pi, AIModuleNotFoundException
 from typing import Union
 
@@ -141,21 +141,6 @@ class AISpeaker:
         :rtype: Wave_read
         """
         buffer = BytesIO()
-        write(buffer, rate, self.__float_to_pcm(data))
+        write(buffer, data, rate, format="wav")
+        buffer.seek(0)
         return wave.open(buffer, "rb")
-
-    @staticmethod
-    def __float_to_pcm(signal: np.ndarray, dtype: str = 'int16') -> np.ndarray:
-        """ Convert a given np array to a wave-convertible format
-
-        :param signal: Numpy array signal to convert
-        :type signal: np.ndarray
-        :param dtype: Datatype to change (Almost always int16)
-        :type dtype: str
-        :return: Converted signal in numpy array
-        :rtype: np.ndarray
-        """
-        i = np.iinfo(dtype)
-        abs_max = 2 ** (i.bits - 1)
-        offset = i.min + abs_max
-        return (signal * abs_max + offset).clip(i.min, i.max).astype(dtype)

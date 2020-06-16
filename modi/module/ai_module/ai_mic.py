@@ -2,7 +2,7 @@ import wave
 import numpy as np
 import time
 
-from modi.util.audiolib import read, write
+from soundfile import read, write
 from modi.util.conn_util import is_modi_pi, AIModuleNotFoundException
 from io import BytesIO
 from typing import Tuple
@@ -49,7 +49,7 @@ class AIMic:
 
     @staticmethod
     def write_audio(file_path, data, sampling_rate):
-        write(file_path, sampling_rate, data)
+        write(file_path, data, sampling_rate)
 
     def record(self, duration: float) -> Tuple[np.ndarray, float]:
         """ Record sound data catched by MODI AI shield
@@ -60,8 +60,7 @@ class AIMic:
         :type destination: str
         :return: ndarray
         """
-        bytes_wav = bytes()
-        buffer = BytesIO(bytes_wav)
+        buffer = BytesIO()
         audio_file = wave.open(buffer, 'wb')
         self.__set_attribute(audio_file)
 
@@ -76,15 +75,15 @@ class AIMic:
                 time.sleep(.001)
         audio_file.close()
         buffer.seek(0)
-        return read(buffer)[::-1]
+        return read(buffer)
 
     def __set_attribute(self, audio_file):
-        audio_file.setnchannels(2)
+        audio_file.setnchannels(1)
         audio_file.setsampwidth(2)
         audio_file.setframerate(self.RATE)
 
     def __set_device_attribute(self, device):
-        device.setchannels(2)
+        device.setchannels(1)
         device.setrate(self.RATE)
         device.setformat(audio.PCM_FORMAT_S16_LE)
         self.PERIOD = device.setperiodsize(self.PERIOD)
