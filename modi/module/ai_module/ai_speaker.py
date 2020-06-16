@@ -10,8 +10,7 @@ from typing import Union
 if is_modi_pi():
     import alsaaudio as audio
 
-
-class AISpeaker:
+class AI_Speaker:
     def __init__(self):
         if not self.is_ai_speaker_connected():
             raise AIModuleNotFoundException("Cannot find the MODI Speaker")
