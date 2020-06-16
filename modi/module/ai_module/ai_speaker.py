@@ -25,5 +25,9 @@ class AISpeaker:
         if isinstance(data, str) and not rate:
             data, rate = sf.read(data)
 
-        sd.play(data, rate)
+        if rate == 44100:
+            sd.play(data)
+        else:
+            sd.play(data, rate)
+
         sd.wait()
