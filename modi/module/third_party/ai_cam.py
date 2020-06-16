@@ -85,7 +85,7 @@ class AIcamera:
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         cv2.imwrite(path, frame)
 
-    def setWindow(self) -> None:
+    def set_window(self) -> None:
         self.d = IPython.display.display("Window", display_id=1)
         self.d2 = IPython.display.display("Frame Rate", display_id=2)
 
