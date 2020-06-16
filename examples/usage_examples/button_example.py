@@ -20,6 +20,3 @@ if __name__ == "__main__":
             print("double clicked", end='\r')
             break
         time.sleep(0.02)
-
-
-

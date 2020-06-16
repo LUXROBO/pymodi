@@ -1,5 +1,4 @@
 import modi
-import time
 
 """
 Example script for the usage of gyro module
@@ -15,8 +14,3 @@ if __name__ == "__main__":
               "Roll: {1:<10}"
               "Yaw: {2:<10}".format(gyro.get_pitch(), gyro.get_roll(),
                                     gyro.get_yaw()), end='\r')
-
-
-
-
-
