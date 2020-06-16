@@ -140,17 +140,7 @@ class MODI:
         """
         try:
             self._init_ai_camera()
-        except AIModuleFaultsException as e:
-            print(e)
-            pass
-
-        try:
             self._init_ai_mic()
-        except AIModuleFaultsException as e:
-            print(e)
-            pass
-
-        try:
             self._init_ai_speaker()
         except AIModuleFaultsException as e:
             print(e)
