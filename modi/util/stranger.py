@@ -1,4 +1,5 @@
 import time
+
 from typing import Tuple
 
 from modi.module.module import Module

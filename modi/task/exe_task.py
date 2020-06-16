@@ -3,6 +3,7 @@ import json
 import queue
 import base64
 import struct
+
 from enum import IntEnum
 from typing import Callable, Dict
 
@@ -101,11 +102,13 @@ class ExeTask:
 
         # TODO: Remove this if and elif branches
         if stream_state == self.firmware_updater.State.CRC_ERROR.value:
-            self.firmware_updater.update_response(response=True, is_error_response=True)
+            self.firmware_updater.update_response(response=True,
+                                                  is_error_response=True)
         elif stream_state == self.firmware_updater.State.CRC_COMPLETE.value:
             self.firmware_updater.update_response(response=True)
         elif stream_state == self.firmware_updater.State.ERASE_ERROR.value:
-            self.firmware_updater.update_response(response=True, is_error_response=True)
+            self.firmware_updater.update_response(response=True,
+                                                  is_error_response=True)
         elif stream_state == self.firmware_updater.State.ERASE_COMPLETE.value:
             self.firmware_updater.update_response(response=True)
 

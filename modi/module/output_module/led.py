@@ -38,14 +38,14 @@ class Led(OutputModule):
                 green if green is not None else self.get_green(),
                 blue if blue is not None else self.get_blue(),
             )
-        message = self._set_property(
+        self._set_property(
             self._id,
             self.CommandType.SET_RGB,
             color,
         )
         self._update_properties([property_type
-                                 for property_type in self.PropertyType], color)
-        self._msg_send_q.put(message)
+                                 for property_type in self.PropertyType],
+                                color)
         return color
 
     def set_on(self) -> Tuple[float, float, float]:

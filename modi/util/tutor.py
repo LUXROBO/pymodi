@@ -1,6 +1,7 @@
 import os
-from textwrap import fill
 import time
+
+from textwrap import fill
 
 
 class Tutor:

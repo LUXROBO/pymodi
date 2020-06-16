@@ -1,8 +1,9 @@
-from getopt import getopt, GetoptError
-import sys
 import os
+import sys
 import time
 import modi
+
+from getopt import getopt, GetoptError
 
 
 def check_option(*options):

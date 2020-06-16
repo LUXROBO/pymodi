@@ -7,18 +7,18 @@ import traceback
 import threading as th
 import multiprocessing as mp
 
-from typing import Tuple
+from typing import Any, Tuple
 
 from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
 
-from modi.module.module import Module
-from modi.module.ai_module import AI_camera, AI_mic, AI_speaker
-
+from modi.module.ai_module.ai_camera import AICamera
+from modi.module.ai_module.ai_speaker import AISpeaker
+from modi.module.ai_module.ai_mic import AIMic
+from modi.util.conn_util import is_modi_pi, MODINotOnPiException
 from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
-from modi.util.that import check_complete
-
+from modi.util.stranger import check_complete
 
 
 class MODI:
@@ -29,18 +29,19 @@ class MODI:
     """
 
     def __init__(self, nb_modules: int, conn_mode: str = "serial",
-                 module_uuid: str = "", AI_mode: bool = False, test: bool = False,
+                 module_uuid: str = "", ai_mode: bool = False,
+                 test: bool = False,
                  verbose: bool = False):
 
         self._modules = list()
         self._module_ids = dict()
-        self._AI_modules = list()
+        self._ai_modules = list()
         self._topology_data = dict()
 
         self._recv_q = mp.Queue()
         self._send_q = mp.Queue()
 
-        self._com_proc = None
+        self._conn_proc = None
         self._exe_thrd = None
 
         # Init flag used to notify initialization of MODI modules
@@ -52,13 +53,13 @@ class MODI:
 
         init_flag = mp.Event()
 
-        self._com_proc = ConnProc(
+        self._conn_proc = ConnProc(
             self._recv_q, self._send_q, conn_mode, module_uuid, verbose,
             init_flag
         )
-        self._com_proc.daemon = True
+        self._conn_proc.daemon = True
         try:
-            self._com_proc.start()
+            self._conn_proc.start()
         except RuntimeError:
             if os.name == 'nt':
                 print('\nProcess initialization failed!\nMake sure you are '
@@ -68,9 +69,9 @@ class MODI:
                 traceback.print_exc()
             exit(1)
 
-        child_watch = th.Thread(target=self.watch_child_process)
-        child_watch.daemon = True
-        child_watch.start()
+        self._child_watch = th.Thread(target=self.watch_child_process)
+        self._child_watch.daemon = True
+        self._child_watch.start()
 
         init_flag.wait()
 
@@ -101,30 +102,26 @@ class MODI:
         module_init_flag.wait()
         if not module_init_flag.is_set():
             raise Exception("Modules are not initialized properly!")
-            exit(1)
         print("MODI modules are initialized!")
         check_complete(self)
 
-        if AI_mode:
-            self._init_AI_modules()
-
-
-
-        # if ai computing module
-            # init mic -> ai_mic = AI_MIC()
-            # init speaker
-            # init camera
+        if ai_mode:
+            if not is_modi_pi():
+                raise MODINotOnPiException
+            self._init_ai_modules()
+            if len(self._ai_modules) > 1:
+                print("AI modules are initializes")
 
     def update_module_firmware(self) -> None:
         """Updates firmware of connected modules"""
         print("Request to update firmware of connected MODI modules.")
         self._firmware_updater.reset_state()
         self._firmware_updater.request_to_update_firmware()
-        #self.firmware_updater.update_event.wait()
+        # self.firmware_updater.update_event.wait()
         print("Module firmwares have been updated!")
 
     def watch_child_process(self) -> None:
-        while self._com_proc.is_alive():
+        while self._conn_proc.is_alive():
             time.sleep(0.1)
         os._exit(1)
 
@@ -136,26 +133,25 @@ class MODI:
         """
         self._topology_manager.print_topology_map(print_id)
 
-    #TODO : complete each method
-    def _init_AI_modules(self) -> None:
+    # TODO : complete each method
+    def _init_ai_modules(self) -> None:
         """
         """
-        self._init_AI_camera()
-        self._init_AI_mic()
-        self._init_AI_speaker()
+        self._init_ai_camera()
+        self._init_ai_mic()
+        self._init_ai_speaker()
 
-    def _init_AI_camera(self) -> None:
+    def _init_ai_camera(self) -> None:
         pass
 
-    def _init_AI_mic(self) -> None:
+    def _init_ai_mic(self) -> None:
         pass
 
-    def _init_AI_speaker(self) -> None:
-        pass
-
+    def _init_ai_speaker(self) -> None:
+        self._ai_modules.append(AISpeaker())
 
     @property
-    def modules(self) -> Tuple[Module]:
+    def modules(self) -> Tuple[Any]:
         """Tuple of connected modules except network module.
         Example:
         >>> bundle = modi.MODI()
@@ -164,7 +160,7 @@ class MODI:
         return tuple(self._modules)
 
     @property
-    def buttons(self) -> Tuple[Module]:
+    def buttons(self) -> Tuple[Any]:
         """Tuple of connected :class:`~modi.module.button.Button` modules.
         """
 
@@ -172,7 +168,7 @@ class MODI:
                       if module.type == "button"])
 
     @property
-    def dials(self) -> Tuple[Module]:
+    def dials(self) -> Tuple[Any]:
         """Tuple of connected :class:`~modi.module.dial.Dial` modules.
         """
 
@@ -180,7 +176,7 @@ class MODI:
                       if module.type == "dial"])
 
     @property
-    def displays(self) -> Tuple[Module]:
+    def displays(self) -> Tuple[Any]:
         """Tuple of connected :class:`~modi.module.display.Display` modules.
         """
 
@@ -188,7 +184,7 @@ class MODI:
                       if module.type == "display"])
 
     @property
-    def envs(self) -> Tuple[Module]:
+    def envs(self) -> Tuple[Any]:
         """Tuple of connected :class:`~modi.module.env.Env` modules.
         """
 
@@ -196,7 +192,7 @@ class MODI:
                       if module.type == "env"])
 
     @property
-    def gyros(self) -> Tuple[Module]:
+    def gyros(self) -> Tuple[Any]:
         """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
         """
 
@@ -204,7 +200,7 @@ class MODI:
                       if module.type == "gyro"])
 
     @property
-    def irs(self) -> Tuple[Module]:
+    def irs(self) -> Tuple[Any]:
         """Tuple of connected :class:`~modi.module.ir.Ir` modules.
         """
 
@@ -212,7 +208,7 @@ class MODI:
                       if module.type == "ir"])
 
     @property
-    def leds(self) -> Tuple[Module]:
+    def leds(self) -> Tuple[Any]:
         """Tuple of connected :class:`~modi.module.led.Led` modules.
         """
 
@@ -220,7 +216,7 @@ class MODI:
                       if module.type == "led"])
 
     @property
-    def mics(self) -> Tuple[Module]:
+    def mics(self) -> Tuple[Any]:
         """Tuple of connected :class:`~modi.module.mic.Mic` modules.
         """
 
@@ -228,7 +224,7 @@ class MODI:
                       if module.type == "mic"])
 
     @property
-    def motors(self) -> Tuple[Module]:
+    def motors(self) -> Tuple[Any]:
         """Tuple of connected :class:`~modi.module.motor.Motor` modules.
         """
 
@@ -236,7 +232,7 @@ class MODI:
                       if module.type == "motor"])
 
     @property
-    def speakers(self) -> Tuple[Module]:
+    def speakers(self) -> Tuple[Any]:
         """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
         """
 
@@ -244,30 +240,36 @@ class MODI:
                       if module.type == "speaker"])
 
     @property
-    def ultrasonics(self) -> Tuple[Module]:
-        """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
+    def ultrasonics(self) -> Tuple[Any]:
+        """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic`
+        modules.
         """
 
         return tuple([module for module in self.modules
                       if module.type == "ultrasonic"])
 
     @property
-    def ai_mics(self) -> Tuple[AI_mic]:
-        """Tuple of connected :class:'~modi.module.ai_mic.AI_mic' modules
+    def ai_mics(self) -> Tuple[AIMic]:
+        """Tuple of connected :class:'~modi.module.ai_mic.AIMic' modules
         """
 
-        return tuple([ai_module for ai_module in self._AI_modules
-                      if ai_module.type == "ai_mic"])
+        return tuple([ai_module for ai_module in self._ai_modules
+                      if isinstance(ai_module, AIMic)])
 
     @property
-    def ai_speakers(self) -> Tuple[AI_speaker]:
-        """Tuple of connected :class:'~modi.module.ai_speaker.AI_speaker' modules
+    def ai_speakers(self) -> Tuple[AISpeaker]:
+        """Tuple of connected :class:'~modi.module.ai_speaker.AISpeaker'
+        modules
         """
 
-        return tuple([ai_module for ai_module in self._AI_modules
-                      if ai_module.type == "ai_speaker"])
+        return tuple([ai_module for ai_module in self._ai_modules
+                      if isinstance(ai_module, AISpeaker)])
 
-    def ai_cameras(self) -> Tuple[AI_camera]:
-        """Tuple of connected :class:'~modi.module.ai_camera.AI_camera' modules
+    @property
+    def ai_cameras(self) -> Tuple[AICamera]:
+        """Tuple of connected :class:'~modi.module.ai_camera.AICamera'
+        modules
         """
-        return tuple([ai_module for ai_module in self._AI_modules if ai_module.type == "ai_camera"])
+        return tuple(
+            [ai_module for ai_module in self._ai_modules
+             if isinstance(ai_module, AICamera)])
