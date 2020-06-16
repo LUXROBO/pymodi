@@ -47,8 +47,14 @@ def is_modi_pi() -> bool:
 
 
 class AIModuleNotFoundException(Exception):
-    pass
+    """ Exception class which determine whether MODI AI module has connected
+    """
+    def __init__(self):
+        super().__init__('Please connect MODI AI module')
 
 
 class AIModuleFaultsException(Exception):
-    pass
+    """
+    """
+    def __init__(self, message):
+        super().__init__(message)

@@ -15,7 +15,8 @@ from modi._exe_thrd import ExeThrd
 from modi.module.ai_module.ai_camera import AICamera
 from modi.module.ai_module.ai_speaker import AISpeaker
 from modi.module.ai_module.ai_mic import AIMic
-from modi.util.conn_util import is_modi_pi, MODINotOnPiException
+from modi.util.conn_util import is_modi_pi, AIModuleNotFoundException, \
+    AIModuleFaultsException
 from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
 from modi.util.stranger import check_complete
@@ -107,10 +108,10 @@ class MODI:
 
         if ai_mode:
             if not is_modi_pi():
-                raise MODINotOnPiException
+                raise AIModuleNotFoundException
             self._init_ai_modules()
             if len(self._ai_modules) > 1:
-                print("AI modules are initializes")
+                print("MODI AI modules are initialized!")
 
     def update_module_firmware(self) -> None:
         """Updates firmware of connected modules"""
@@ -133,21 +134,39 @@ class MODI:
         """
         self._topology_manager.print_topology_map(print_id)
 
-    # TODO : complete each method
     def _init_ai_modules(self) -> None:
+        """Initialize AI Module features
+
+        :return: None
         """
-        """
-        self._init_ai_camera()
-        self._init_ai_mic()
-        self._init_ai_speaker()
+        try:
+            self._init_ai_camera()
+            self._init_ai_mic()
+            self._init_ai_speaker()
+        except AIModuleFaultsException as e:
+            print(e)
+            pass
 
     def _init_ai_camera(self) -> None:
+        """Initialize AI Module's camera
+
+        :return:
+        """
+        print('Camera skip')
         pass
 
     def _init_ai_mic(self) -> None:
-        pass
+        """Initialize AI Module's mic
+
+        :return:
+        """
+        self._ai_modules.append(AIMic())
 
     def _init_ai_speaker(self) -> None:
+        """Initialize AI Module's speaker
+
+        :return:
+        """
         self._ai_modules.append(AISpeaker())
 
     @property
