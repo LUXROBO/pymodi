@@ -11,7 +11,9 @@ class AISpeaker:
         try:
             sd.check_output_settings('wm8960')
         except ValueError:
-            raise AIModuleFaultsException("AI Speaker not found! Please contact our CS team.")
+            raise AIModuleFaultsException(
+                "AI Speaker not found! Please contact our CS team."
+            )
 
         for idx, device in enumerate(sd.query_devices()):
             if 'wm8960' in device:

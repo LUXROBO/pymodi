@@ -10,10 +10,13 @@ from usb import core
 
 from modi.util.conn_util import AIModuleFaultsException
 
+
 class AICamera:
     def __init__(self):
         if not self.is_ai_cam_connected():
-            raise AIModuleFaultsException("Cannot find MODI AI Camera! Please connect USB Camera")
+            raise AIModuleFaultsException(
+                "Cannot find MODI AI Camera! Please connect USB Camera"
+            )
 
         self.cap = cv2.VideoCapture(-1)
         # init video codec for raspberry pi
@@ -79,7 +82,7 @@ class AICamera:
                 return self.frame
             else:
                 pass
-        except:
+        except Exception:
             self.cap.release()
             Idisplay.clear_output()
             raise Exception('Stream stopped')
@@ -97,7 +100,7 @@ class AICamera:
             s = f"{int(1 / (self.t2 - self.t1))} FPS"
             self.d.update(im)
             self.d2.update(Idisplay.HTML(s))
-        except:
+        except Exception:
             self.cap.release()
             Idisplay.clear_output()
             print("Stream stopped")
@@ -139,5 +142,5 @@ class AICamera:
             # Convert array to binary stream object
             Image.fromarray(frame).save(f, format)
             return Idisplay.Image(data=f.getvalue())
-        except:
+        except Exception:
             raise Exception()

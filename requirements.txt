@@ -5,3 +5,6 @@ requests
 sounddevice
 soundfile
 numpy
+pyUSB
+pillow
+Image
