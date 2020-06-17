@@ -2,18 +2,18 @@ import cv2
 import time
 
 from numpy import ndarray
-from PIL import image
-from IPython import display
+from PIL import Image
+from IPython import display as Idisplay
 from io import BytesIO
 from typing import List
 from usb import core
 
 from modi.util.conn_util import AIModuleFaultsException
 
-class AIcamera:
+class AICamera:
     def __init__(self):
         if not self.is_ai_cam_connected():
-            raise AIModuleFaultsException("Cannot find MODI AI Camera! Please contact our CS team.")
+            raise AIModuleFaultsException("Cannot find MODI AI Camera! Please connect USB Camera")
 
         self.cap = cv2.VideoCapture(-1)
         # init video codec for raspberry pi
@@ -34,7 +34,7 @@ class AIcamera:
         ai_cam_id_vendor = 0x0c45
         ai_cam_id_product = 0x62c0
 
-        dev = usb.core.find(
+        dev = core.find(
             idVendor=ai_cam_id_vendor,
             idProduct=ai_cam_id_product
         )
@@ -81,7 +81,7 @@ class AIcamera:
                 pass
         except:
             self.cap.release()
-            Ipython.display.clear_output()
+            Idisplay.clear_output()
             raise Exception('Stream stopped')
 
     def show(self, frame: ndarray) -> None:
@@ -96,10 +96,10 @@ class AIcamera:
             self.t2 = time.time()
             s = f"{int(1 / (self.t2 - self.t1))} FPS"
             self.d.update(im)
-            self.d2.update(IPython.display.HTML(s))
+            self.d2.update(Idisplay.HTML(s))
         except:
             self.cap.release()
-            IPython.display.clear_output()
+            Idisplay.clear_output()
             print("Stream stopped")
             raise Exception()
 
@@ -121,8 +121,8 @@ class AIcamera:
 
         :return: None
         """
-        self.d = IPython.display.display("Window", display_id=1)
-        self.d2 = IPython.display.display("Frame Rate", display_id=2)
+        self.d = Idisplay.display("Window", display_id=1)
+        self.d2 = Idisplay.display("Frame Rate", display_id=2)
 
     # Use 'jpeg' instead of 'png' (~5 times faster)
     def _array_to_image(self, frame: ndarray, format: str = 'jpeg') -> None:
@@ -137,7 +137,7 @@ class AIcamera:
             # Create binary stream object
             f = BytesIO()
             # Convert array to binary stream object
-            PIL.Image.fromarray(frame).save(f, format)
-            return IPython.display.Image(data=f.getvalue())
+            Image.fromarray(frame).save(f, format)
+            return Idisplay.Image(data=f.getvalue())
         except:
             raise Exception()

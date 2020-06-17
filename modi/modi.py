@@ -152,7 +152,7 @@ class MODI:
 
         :return: None
         """
-        print('Camera skip')
+        self._ai_modules.append(AICamera())
         pass
 
     def _init_ai_mic(self) -> None:
