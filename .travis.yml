@@ -2,6 +2,9 @@ language: python
 
 jobs:
   include:
+    - name: "Python convention test"
+      env: TOXENV=flake8
+
     - name: "Python 3.8.0 on Linux"
       python: 3.8
       env: TOXENV=linux-py38
