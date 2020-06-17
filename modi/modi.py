@@ -17,6 +17,7 @@ from modi.module.module import Module
 from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
 from modi.util.stranger import check_complete
+from modi.util.misc import module_list
 
 
 class MODI:
@@ -26,7 +27,7 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self, nb_modules: int, conn_mode: str = "serial",
+    def __init__(self, nb_modules: int = 1, conn_mode: str = "serial",
                  module_uuid: str = "", test: bool = False,
                  verbose: bool = False):
 
@@ -96,11 +97,11 @@ class MODI:
 
         self._topology_manager = TopologyManager(self._topology_data)
 
-        module_init_flag.wait()
-        if not module_init_flag.is_set():
-            raise Exception("Modules are not initialized properly!")
-            exit(1)
-        print("MODI modules are initialized!")
+        # module_init_flag.wait()
+        # if not module_init_flag.is_set():
+        #     raise Exception("Modules are not initialized properly!")
+        #     exit(1)
+        # print("MODI modules are initialized!")
         check_complete(self)
 
     def update_module_firmware(self) -> None:
@@ -137,86 +138,74 @@ class MODI:
     def buttons(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.button.Button` modules.
         """
-
-        return tuple([module for module in self.modules
-                      if module.type == "button"])
+        return module_list(self._modules, 'button')
 
     @property
     def dials(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.dial.Dial` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "dial"])
+        return module_list(self._modules, "dial")
 
     @property
     def displays(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.display.Display` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "display"])
+        return module_list(self._modules, "display")
 
     @property
     def envs(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.env.Env` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "env"])
+        return module_list(self._modules, "env")
 
     @property
     def gyros(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "gyro"])
+        return module_list(self._modules, "gyro")
 
     @property
     def irs(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.ir.Ir` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "ir"])
+        return module_list(self._modules, "ir")
 
     @property
     def leds(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.led.Led` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "led"])
+        return module_list(self._modules, "led")
 
     @property
     def mics(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.mic.Mic` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "mic"])
+        return module_list(self._modules, "mic")
 
     @property
     def motors(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.motor.Motor` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "motor"])
+        return module_list(self._modules, "motor")
 
     @property
     def speakers(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "speaker"])
+        return module_list(self._modules, "speaker")
 
     @property
     def ultrasonics(self) -> Tuple[Module]:
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "ultrasonic"])
+        return module_list(self._modules, "ultrasonic")
