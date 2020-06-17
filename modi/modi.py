@@ -150,7 +150,7 @@ class MODI:
     def _init_ai_camera(self) -> None:
         """Initialize AI Module's camera
 
-        :return:
+        :return: None
         """
         print('Camera skip')
         pass
@@ -158,14 +158,14 @@ class MODI:
     def _init_ai_mic(self) -> None:
         """Initialize AI Module's mic
 
-        :return:
+        :return: None
         """
         self._ai_modules.append(AIMic())
 
     def _init_ai_speaker(self) -> None:
         """Initialize AI Module's speaker
 
-        :return:
+        :return: None
         """
         self._ai_modules.append(AISpeaker())
 

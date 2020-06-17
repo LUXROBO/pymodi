@@ -11,7 +11,7 @@ class AIMic:
         try:
             sd.check_input_settings('wm8960')
         except ValueError:
-            raise AIModuleFaultsException("AI Mic not found!!")
+            raise AIModuleFaultsException("AI Mic not found! Please contact our CS team.")
         self.RATE = 44100
         for idx, device in enumerate(sd.query_devices()):
             if 'wm8960' in device:
