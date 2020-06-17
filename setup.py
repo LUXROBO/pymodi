@@ -1,34 +1,33 @@
 from os import path
+
 from setuptools import setup, find_packages
-
-
-def get_readme():
-    here = path.dirname(__file__)
-    with open(path.join(here, 'README.md'), encoding='UTF8') as readme_file:
-        readme = readme_file.read()
-        return readme
 
 
 def get_about():
     here = path.dirname(__file__)
     about = {}
-    with open(path.join(here, './modi/about.py'),
-              encoding='UTF8') as about_file:
+    with open(path.join(here, './modi/about.py')) as about_file:
         exec(about_file.read(), about)
         return about
 
 
+def get_readme():
+    here = path.dirname(__file__)
+    with open(path.join(here, 'README.md')) as readme_file:
+        readme = readme_file.read()
+        return readme
+
+
 def get_history():
     here = path.dirname(__file__)
-    with open(path.join(here, 'HISTORY.md'), encoding='UTF8') as history_file:
+    with open(path.join(here, 'HISTORY.md')) as history_file:
         history = history_file.read()
         return history
 
 
 def get_requirements():
     here = path.dirname(__file__)
-    with open(path.join(here, 'requirements.txt'),
-              encoding='UTF8') as requirements_file:
+    with open(path.join(here, 'requirements.txt')) as requirements_file:
         requirements = requirements_file.read().splitlines()
         return requirements
 
