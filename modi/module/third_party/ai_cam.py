@@ -2,16 +2,14 @@
 
 import cv2
 import time
-import PIL.Image
-import IPython.display
 
+from PIL import image
+from IPython import display
 from io import BytesIO
 from typing import List
+from usb import core
 
-from modi.util.conn_util import is_modi_pi, AIModuleNotFoundException
-
-if is_modi_pi():
-    import usb.core
+from modi.util.conn_util import AIModuleNotFoundException
 
 class AIcamera:
 
@@ -34,38 +32,35 @@ class AIcamera:
         ai_cam_id_product = 0x62c0
 
         dev = usb.core.find(
-                            idVendor=ai_cam_id_vendor,
-                            idProduct=ai_cam_id_product
-                            )
-
+            idVendor=ai_cam_id_vendor,
+            idProduct=ai_cam_id_product
+        )
         return dev
 
     def isOpened(self) -> bool:
         return self.cap.isOpened()
 
-    def set_frame_height(self, height) -> None:
+    def set_frame_height(self, height: int) -> None:
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
-    def set_frame_weight(self, width) -> None:
+    def set_frame_weight(self, width: int) -> None:
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 
     def read(self) -> None:
+        self.t1 = time.time()
         try:
-            self.t1 = time.time()
             ret, _frame = self.cap.read()
             if ret:
                 _frame = cv2.flip(_frame, 1)
                 self.frame = cv2.cvtColor(_frame, cv2.COLOR_BGR2RGB)
                 return self.frame
             else:
-                exit()
-
+                pass
         except:
             self.cap.release()
-            IPython.display.clear_output()
-            raise Exception()
-            print("Stream stopped")
-
+            Ipython.display.clear_output()
+            raise Exception('Stream stopped')
+            
     def show(self, frame) -> None:
         try:
             im = self._array_to_image(frame)
@@ -73,7 +68,6 @@ class AIcamera:
             s = f"""{int(1 / (self.t2 - self.t1))} FPS"""
             self.d.update(im)
             self.d2.update(IPython.display.HTML(s))
-
         except:
             self.cap.release()
             IPython.display.clear_output()
@@ -94,7 +88,7 @@ class AIcamera:
         try:
             # Create binary stream object
             f = BytesIO()
-
+            
             # Convert array to binary stream object
             PIL.Image.fromarray(a).save(f, fmt)
 
