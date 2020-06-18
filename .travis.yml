@@ -38,7 +38,7 @@ jobs:
       osx_image: xcode11.6
       before_install:
           - pyenv install --skip-existing 3.6.0
-          - pyenv  3.6.0
+          - pyenv local 3.6.0
       language: shell
       python: 3.6
       env: TOXENV=macos-py36
