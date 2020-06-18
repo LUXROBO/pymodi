@@ -2,8 +2,8 @@ language: python
 
 jobs:
   include:
-    - name: "Python convention test"
-      env: TOXENV=flake8
+    - name: "Python convention and coverage test"
+      env: TOXENV=deployment
 
     - name: "Python 3.8 on Linux"
       python: 3.8
@@ -27,6 +27,9 @@ jobs:
     - name: "Python 3.7 on macOS"
       os: osx
       osx_image: xcode11.6
+      before_install:
+          - pyenv install --skip-existing 3.7.0
+          - pyenv local 3.7.0
       language: shell
       python: 3.7
       env: TOXENV=macos-py37
@@ -35,7 +38,7 @@ jobs:
       osx_image: xcode11.6
       before_install:
           - pyenv install --skip-existing 3.6.0
-          - pyenv local 3.6.0
+          - pyenv  3.6.0
       language: shell
       python: 3.6
       env: TOXENV=macos-py36
