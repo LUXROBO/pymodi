@@ -46,9 +46,15 @@ def is_modi_pi() -> bool:
     return is_on_pi() and not is_network_module_connected()
 
 
-class MODINotOnPiException(Exception):
-    pass
-
-
 class AIModuleNotFoundException(Exception):
-    pass
+    """Exception class which determine whether MODI AI module has connected
+    """
+    def __init__(self):
+        super().__init__('Please connect MODI AI module')
+
+
+class AIModuleFaultsException(Exception):
+    """Exception class which check if MODI AI module features are fault
+    """
+    def __init__(self, message):
+        super().__init__(message)
