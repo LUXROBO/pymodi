@@ -19,6 +19,8 @@ jobs:
       os: osx
       osx_image: xcode11.6
       language: shell
+      before_install:
+          pyenv local 3.8-dev
       python: 3.8
       env: TOXENV=macos-py38
     - name: "Python 3.7 on macOS"
@@ -64,8 +66,6 @@ jobs:
 
 install:
   - pip install tox-travis coveralls tox-pyenv
-  - pyenv install --list
-  - pyenv local 3.8-dev
 
 script:
   - tox
