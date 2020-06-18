@@ -19,8 +19,9 @@ jobs:
       os: osx
       osx_image: xcode11.6
       language: shell
-      before_install:
-          pyenv local 3.8-dev
+      addons:
+          homebrew:
+              packages: python3.8
       python: 3.8
       env: TOXENV=macos-py38
     - name: "Python 3.7 on macOS"
@@ -33,7 +34,6 @@ jobs:
       os: osx
       osx_image: xcode11.6
       before_install:
-          - pyenv update
           - pyenv install 3.6.0
       language: shell
       python: 3.6
