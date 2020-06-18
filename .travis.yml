@@ -47,6 +47,11 @@ jobs:
         - python -m pip install --upgrade pip
       env: PATH=/c/Python36:/c/Python36/Scripts:$PATH
 
+addons:
+  apt:
+    packages:
+      - libportaudio2
+
 install:
   - pip install tox-travis coveralls
 
