@@ -44,9 +44,9 @@ System Support
 ---------
 | System | 3.6 | 3.7 | 3.8 |
 | :---: | :---: | :---: | :--: |
-| Linux | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) |
-| Mac OS | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) |
-| Windows | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) |
+| Linux | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/3)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/2)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/1)](https://travis-ci.org/LUXROBO/pymodi) |
+| Mac OS | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/6)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/5)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/4)](https://travis-ci.org/LUXROBO/pymodi) |
+| Windows | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/9)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/8)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/7)](https://travis-ci.org/LUXROBO/pymodi) |
 
 Contribution Guidelines
 --------
@@ -97,3 +97,5 @@ Let\'s blink the LED\'s light 5 times:
 If you are still not sure how to use PyMODI, you can play an interactive PyMODI tutorial by running a command of
 
     $ python -m modi --tutorial
+
+
