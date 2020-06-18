@@ -40,7 +40,7 @@ jobs:
       before_install:
         - choco install python --version 3.8.0
         - python -m pip install --upgrade pip
-      env: 
+      env:
         - PATH=/c/Python38:/c/Python38/Scripts:$PATH
         - TOXENV=windows-py38
     - name: "Python 3.7 on Windows"
@@ -49,7 +49,7 @@ jobs:
       before_install:
         - choco install python --version 3.7.0
         - python -m pip install --upgrade pip
-      env: 
+      env:
         - PATH=/c/Python37:/c/Python37/Scripts:$PATH
         - TOXENV=windows-py37
     - name: "Python 3.6 on Windows"
@@ -58,12 +58,13 @@ jobs:
       before_install:
         - choco install python --version 3.6.1
         - python -m pip install --upgrade pip
-      env: 
+      env:
         - PATH=/c/Python36:/c/Python36/Scripts:$PATH
         - TOXENV=windows-py36
 
 install:
-  - pip install tox-travis coveralls
+  - pip install tox-travis coveralls tox-pyenv
+  - pyenv install 3.8.0
 
 script:
   - tox
