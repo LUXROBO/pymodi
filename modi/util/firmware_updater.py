@@ -7,6 +7,7 @@ import zipfile
 import requests
 
 import threading as th
+import urllib.request as ur
 
 from enum import IntEnum
 
@@ -175,18 +176,21 @@ class FirmwareUpdater:
         """
 
         print(
-            f"Start updating the binary firmware "
-            f"for {module_type} ({module_id})")
+            "Start updating the binary firmware "
+            f"for {module_type} ({module_id})"
+        )
         self.update_in_progress = True
         self.modules_updated.append((module_id, module_type))
+
         # Init path to binary file
         root_path = (
             'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
         )
-        if module_type == 'env':
-            bin_path = "skeleton/environment.bin"
-        else:
-            bin_path = f"skeleton/{module_type}.bin"
+        bin_path = (
+            f"skeleton/{module_type}.bin" 
+            if module_type != 'env' else 
+            "skeleton/environment.bin"
+        )
 
         # Init bytes data from the given binary file of the current module
         download_response = requests.get(root_path)
@@ -245,16 +249,18 @@ class FirmwareUpdater:
                 page_begin -= page_size
 
         # Include MODI firmware version when writing end flash
-        version_path = "skeleton/version.txt"
-        version_buffer = str(zip_content.read(version_path))[1:]
-        version_bits_str = version_buffer.lstrip("b'v").rstrip("\\n'").split(
-            ".")
-        version_bits = [int(bit_char) for bit_char in version_bits_str]
+        version_path = "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
+        version_info = None
+        for line in ur.urlopen(version_path):
+            version_info = line.decode('utf-8').lstrip('v')
+        version_digits = [int(digit) for digit in version_info.split('.')]
         """ Version number is formed by concatenating all three version bits
-            e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
+            e.g. 2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
         """
         version = (
-            version_bits[0] << 13 | version_bits[1] << 8 | version_bits[2]
+            version_digits[0] << 13 | 
+            version_digits[1] << 8 | 
+            version_digits[2]
         )
 
         # Set end-flash data to be sent at the end of the firmware update
