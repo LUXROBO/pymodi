@@ -102,11 +102,13 @@ class ExeTask:
 
         # TODO: Remove this if and elif branches
         if stream_state == self.firmware_updater.State.CRC_ERROR.value:
-            self.firmware_updater.update_response(response=True, is_error_response=True)
+            self.firmware_updater.update_response(response=True,
+                                                  is_error_response=True)
         elif stream_state == self.firmware_updater.State.CRC_COMPLETE.value:
             self.firmware_updater.update_response(response=True)
         elif stream_state == self.firmware_updater.State.ERASE_ERROR.value:
-            self.firmware_updater.update_response(response=True, is_error_response=True)
+            self.firmware_updater.update_response(response=True,
+                                                  is_error_response=True)
         elif stream_state == self.firmware_updater.State.ERASE_COMPLETE.value:
             self.firmware_updater.update_response(response=True)
 
@@ -304,8 +306,17 @@ class ExeTask:
                     module_id=module_instance.id,
                     module_pnp_state=Module.State.PNP_OFF
                 )
+
+                # Reboot module
+                reboot_message = self.__set_module_state(
+                    module_id, Module.State.REBOOT, Module.State.PNP_OFF
+                )
+                self._send_q.put(reboot_message)
+
+                self.__delay()
                 self._modules.append(module_instance)
-                print(str(type(module_instance))+" has been connected!")
+                print(f"{type(module_instance).__name__} ({module_id}) "
+                      f"has been connected!")
 
                 if self.__is_all_connected():
                     self._init_event.set()
