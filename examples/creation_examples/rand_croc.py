@@ -3,6 +3,7 @@ import time
 
 from random import randint
 
+
 """
 PyMODI implementation of random crocodile at, 
 https://www.youtube.com/
@@ -31,5 +32,5 @@ if __name__ == '__main__':
                 time.sleep(1)
 
         if button.get_double_clicked():
-            print('double clicked!')
+            print('Finishing rand_croc creation..')
             break
