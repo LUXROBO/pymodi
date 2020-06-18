@@ -32,6 +32,9 @@ jobs:
     - name: "Python 3.6 on macOS"
       os: osx
       osx_image: xcode11.6
+      before_install:
+          - pyenv update
+          - pyenv install 3.6.0
       language: shell
       python: 3.6
       env: TOXENV=macos-py36
