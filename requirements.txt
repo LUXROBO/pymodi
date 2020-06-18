@@ -9,3 +9,4 @@ pyUSB
 pillow
 Image
 opencv-python
+ipython
