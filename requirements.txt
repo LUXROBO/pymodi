@@ -8,3 +8,4 @@ numpy
 pyUSB
 pillow
 Image
+opencv-python
