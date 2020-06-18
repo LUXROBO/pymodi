@@ -2,9 +2,6 @@ language: python
 
 jobs:
   include:
-    - name: "Python convention and coverage test"
-      env: TOXENV=deployment
-
     - name: "Python 3.8 on Linux"
       python: 3.8
       env: TOXENV=linux-py38
@@ -70,6 +67,9 @@ jobs:
       env:
         - PATH=/c/Python36:/c/Python36/Scripts:$PATH
         - TOXENV=windows-py36
+
+    - name: "Python convention and coverage test"
+      env: TOXENV=deployment
 
 install:
   - pip install tox-travis coveralls tox-pyenv
