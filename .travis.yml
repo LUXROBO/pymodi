@@ -65,7 +65,7 @@ jobs:
 install:
   - pip install tox-travis coveralls tox-pyenv
   - pyenv install --list
-  - pyenv install 3.8.0
+  - pyenv local 3.8-dev
 
 script:
   - tox
