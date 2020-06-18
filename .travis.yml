@@ -22,6 +22,10 @@ jobs:
       addons:
           homebrew:
               packages: python3.8
+      before_install:
+          - pip3 install virtualenv
+          - virtualenv -p python3 ~/venv
+          - source ~/venv/bin/activate
       python: 3.8
       env: TOXENV=macos-py38
     - name: "Python 3.7 on macOS"
