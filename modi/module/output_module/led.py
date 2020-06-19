@@ -19,8 +19,8 @@ class Led(OutputModule):
         super().__init__(id_, uuid, msg_send_q)
         self._type = "led"
 
-    def set_rgb(self, red: int, green: int,
-                blue: int) -> Tuple[float, float, float]:
+    def set_rgb(self, red: int = 0, green: int = 0,
+                blue: int = 0) -> Tuple[float, float, float]:
         """Sets the color of the LED light with given RGB values, and returns
         the current RGB values.
 
