@@ -52,7 +52,6 @@ class ExeTask:
         self._nb_modules = nb_modules
 
         self.firmware_updater = firmware_updater
-
         self.__init_modules()
         print('Start initializing connected MODI modules')
 
@@ -461,19 +460,19 @@ class ExeTask:
             BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
         )
         self._send_q.put(reboot_message)
-        self.__delay()
+        # self.__delay()
 
         # Command module pnp off
         pnp_off_message = self.__set_module_state(
             BROADCAST_ID, Module.State.RUN, Module.State.PNP_OFF
         )
         self._send_q.put(pnp_off_message)
-        self.__delay()
+        # self.__delay()
 
         # Command module uuid
         request_uuid_message = self.__request_uuid(BROADCAST_ID)
         self._send_q.put(request_uuid_message)
-        self.__delay()
+        # self.__delay()
 
         # Request topology data
         request_topology_message = self.__request_topology()
@@ -486,7 +485,7 @@ class ExeTask:
         :return: None
         """
 
-        time.sleep(1)
+        time.sleep(0.5)
 
     def __request_uuid(self, source_id: int,
                        is_network_module: bool = False) -> str:
