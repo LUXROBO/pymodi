@@ -288,11 +288,6 @@ class ExeTask:
             version_digits[2]
         )
 
-        if not self.firmware_state_verbose and module_version_info < latest_version:
-            print("Your MODI module(s) is not up-to-date.")
-            print("You can update your MODI modules by calling 'update_module_firmware()'")
-            self.firmware_state_verbose = True
-
         module_category_idx = module_info >> 13
         module_type_idx = (module_info >> 4) & 0x1FF
 
@@ -307,6 +302,14 @@ class ExeTask:
                 + module_uuid_bytes[0]
             ),
         )
+
+        if module_category != 'network' and \
+                module_version_info < latest_version:
+
+            print("Your MODI module(s) is not up-to-date.")
+            print("You can update your MODI modules by calling "
+                "'update_module_firmware()'")
+            self.firmware_state_verbose = True
 
         self._module_ids[module_id]["uuid"] = module_uuid
 
