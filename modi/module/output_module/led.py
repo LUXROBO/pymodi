@@ -19,8 +19,8 @@ class Led(OutputModule):
         super().__init__(id_, uuid, msg_send_q)
         self._type = "led"
 
-    def set_rgb(self, red: int = None, green: int = None,
-                blue: int = None) -> Tuple[float, float, float]:
+    def set_rgb(self, red: int, green: int,
+                blue: int) -> Tuple[float, float, float]:
         """Sets the color of the LED light with given RGB values, and returns
         the current RGB values.
 
@@ -33,11 +33,7 @@ class Led(OutputModule):
         :return: Tuple of red, green
         :rtype: Tuple[float, float, float]
         """
-        color = (
-                red if red is not None else self.get_red(),
-                green if green is not None else self.get_green(),
-                blue if blue is not None else self.get_blue(),
-            )
+        color = (red, green, blue)
         self._set_property(
             self._id,
             self.CommandType.SET_RGB,
@@ -72,7 +68,7 @@ class Led(OutputModule):
         :return: If *red* is ``None``. Red component.
         :rtype: float
         """
-        self.set_rgb(red=red)
+        self.set_rgb(red, 0, 0)
         return red
 
     def get_red(self) -> float:
@@ -91,7 +87,7 @@ class Led(OutputModule):
         :return: Green component.
         :rtype: float
         """
-        self.set_rgb(green=green)
+        self.set_rgb(0, green, 0)
         return green
 
     def get_green(self) -> float:
@@ -102,7 +98,7 @@ class Led(OutputModule):
         """
         return self._get_property(self.PropertyType.GREEN)
 
-    def set_blue(self, blue: int = None) -> float:
+    def set_blue(self, blue: int = 255) -> float:
         """Sets the blue component of the LED light by given value
 
         :param blue: Blue component to set
@@ -110,7 +106,7 @@ class Led(OutputModule):
         :return: Blue component.
         :rtype: float
         """
-        self.set_rgb(blue=blue)
+        self.set_rgb(0, 0, blue)
         return blue
 
     def get_blue(self) -> float:

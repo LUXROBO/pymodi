@@ -40,22 +40,6 @@ class TestLed(unittest.TestCase):
         self.led._set_property.assert_called_once_with(*expected_rgb_params)
         self.assertEqual(self.led._msg_send_q.put.call_count, 3)
 
-    @mock.patch.object(Led, "get_blue")
-    @mock.patch.object(Led, "get_green")
-    @mock.patch.object(Led, "get_red")
-    def test_set_rgb_with_none(self,
-                               mock_get_red, mock_get_green, mock_get_blue):
-        """Test set_rgb method with none input"""
-        self.led.set_rgb()
-
-        # TODO: Ensure set_property and q.put have NOT been called
-        # self.led._set_property.assert_not_called_once_with()
-        # self.led._serial_write_q.put.assert_not_called_once_with()
-
-        mock_get_red.assert_called_once_with()
-        mock_get_green.assert_called_once_with()
-        mock_get_blue.assert_called_once_with()
-
     @mock.patch.object(Led, "set_rgb")
     def test_on(self, mock_set_rgb):
         """Test on method."""
@@ -76,8 +60,8 @@ class TestLed(unittest.TestCase):
     def test_set_red(self, mock_set_rgb):
         """Test set_red method."""
         expected_color = self.led.PropertyType.RED
-        self.led.set_red(red=expected_color)
-        mock_set_rgb.assert_called_once_with(red=expected_color)
+        self.led.set_red(expected_color)
+        mock_set_rgb.assert_called_once_with(expected_color, 0, 0)
 
     def test_get_red(self):
         """Test get_red method with none input."""
@@ -90,7 +74,7 @@ class TestLed(unittest.TestCase):
         """Test set_green method."""
         expected_color = self.led.PropertyType.GREEN
         self.led.set_green(green=expected_color)
-        mock_set_rgb.assert_called_once_with(green=expected_color)
+        mock_set_rgb.assert_called_once_with(0, expected_color, 0)
 
     def test_get_green(self):
         """Test set_green method with none input."""
@@ -103,7 +87,7 @@ class TestLed(unittest.TestCase):
         """Test blue method."""
         expected_color = self.led.PropertyType.BLUE
         self.led.set_blue(blue=expected_color)
-        mock_set_rgb.assert_called_once_with(blue=expected_color)
+        mock_set_rgb.assert_called_once_with(0, 0, expected_color)
 
     def test_get_blue(self):
         """Test get blue method with none input."""
