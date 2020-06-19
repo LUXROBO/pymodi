@@ -12,6 +12,8 @@ from typing import Tuple
 from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
 
+from modi.module.module import Module
+
 from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
 from modi.util.stranger import check_complete
@@ -108,7 +110,7 @@ class MODI:
         print("Request to update firmware of connected MODI modules.")
         self._firmware_updater.reset_state()
         self._firmware_updater.request_to_update_firmware()
-        # self.firmware_updater.update_event.wait()
+        self._firmware_updater.update_event.wait()
         print("Module firmwares have been updated!")
 
     def watch_child_process(self) -> None:
