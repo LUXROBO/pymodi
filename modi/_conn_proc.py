@@ -10,13 +10,15 @@ from modi.task.spp_task import SppTask
 
 class ConnProc(mp.Process):
 
-    def __init__(self, recv_q, send_q, conn_mode, module_uuid, verbose):
+    def __init__(self, recv_q, send_q, conn_mode, module_uuid, verbose,
+                 init_flag):
         super().__init__()
         params = [recv_q, send_q, verbose]
         if conn_mode.startswith("b"):
             params.append(module_uuid)
         self.__task = self.__init_task(conn_mode)(*params)
         self.__delay = 0.05 if isinstance(self.__task, SppTask) else 0.001
+        self.__init_flag = init_flag
 
     def __init_task(self, conn_mode: str) -> ConnTask:
         """Initialize task with given connection mode
@@ -47,17 +49,19 @@ class ConnProc(mp.Process):
         """
         self.__task.open_conn()
 
-        read_thread = th.Thread(
-            target=self.__task.run_read_data, args=(self.__delay,)
+        recv_thread = th.Thread(
+            target=self.__task.run_recv_data, args=(self.__delay,)
         )
-        read_thread.daemon = True
-        read_thread.start()
+        recv_thread.daemon = True
+        recv_thread.start()
 
-        write_thread = th.Thread(
-            target=self.__task.run_write_data, args=(self.__delay,)
+        send_thread = th.Thread(
+            target=self.__task.run_send_data, args=(self.__delay,)
         )
-        write_thread.daemon = True
-        write_thread.start()
+        send_thread.daemon = True
+        send_thread.start()
 
-        read_thread.join()
-        write_thread.join()
+        self.__init_flag.set()
+
+        recv_thread.join()
+        send_thread.join()

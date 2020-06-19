@@ -18,6 +18,3 @@ if __name__ == "__main__":
     time.sleep(3)
     speak.set_off()
     time.sleep(3)
-
-
-

@@ -70,10 +70,10 @@ class Module:
         # Register property if not exists
         if property_type not in self._properties.keys():
             self._properties[property_type] = self.Property()
-            modi_serialtemp = self.request_property(
+            request_property_msg = self.request_property(
                 self._id, property_type
             )
-            self._msg_send_q.put(modi_serialtemp)
+            self._msg_send_q.put(request_property_msg)
             self._properties[property_type].last_request_time = time.time()
 
         # Request property value if not updated for 0.5 sec
@@ -97,10 +97,10 @@ class Module:
         :param property_value: Value to update the property
         :type property_value: float
         """
-
         if property_type in self._properties.keys():
             self._properties[property_type].value = property_value
             self._properties[property_type].last_update_time = time.time()
+
 
     def request_property(self, destination_id: int,
                          property_type: IntEnum) -> str:

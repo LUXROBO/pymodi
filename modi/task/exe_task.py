@@ -1,4 +1,3 @@
-import io
 import time
 import json
 import queue
@@ -283,8 +282,8 @@ class ExeTask:
             e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
         """
         latest_version = (
-            version_digits[0] << 13 | 
-            version_digits[1] << 8 | 
+            version_digits[0] << 13 |
+            version_digits[1] << 8 |
             version_digits[2]
         )
 
@@ -337,8 +336,17 @@ class ExeTask:
                     module_id=module_instance.id,
                     module_pnp_state=Module.State.PNP_OFF
                 )
+
+                # Reboot module
+                reboot_message = self.__set_module_state(
+                    module_id, Module.State.REBOOT, Module.State.PNP_OFF
+                )
+                self._send_q.put(reboot_message)
+
+                self.__delay()
                 self._modules.append(module_instance)
-                print(str(type(module_instance))+" has been connected!")
+                print(f"{type(module_instance).__name__} ({module_id}) "
+                      f"has been connected!")
 
                 if self.__is_all_connected():
                     self._init_event.set()

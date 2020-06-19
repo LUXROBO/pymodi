@@ -31,8 +31,3 @@ if __name__ == "__main__":
 
     display.clear()
     time.sleep(2)
-
-
-
-
-

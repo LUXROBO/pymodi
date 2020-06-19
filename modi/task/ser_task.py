@@ -6,6 +6,7 @@ import serial
 import traceback
 
 from serial.serialutil import SerialException
+
 from modi.task.conn_task import ConnTask
 
 
@@ -19,8 +20,8 @@ class SerTask(ConnTask):
         self.__verbose = verbose
         self.__ser = None
         self.__json_buffer = ""
-        if verbose:
-            print('pyMODI log...\n==================================')
+        if self.__verbose:
+            print('PyMODI log...\n==================================')
 
     @property
     def get_serial(self) -> serial.Serial:
@@ -73,7 +74,7 @@ class SerTask(ConnTask):
 
         self.__ser.close()
 
-    def _read_data(self) -> None:
+    def _recv_data(self) -> None:
         """ Read serial message and put message to serial read queue
 
         :return: None
@@ -89,21 +90,21 @@ class SerTask(ConnTask):
             # Once json buffer is obtained, we parse and send json message
             self.__parse_serial()
 
-    def _write_data(self) -> None:
+    def _send_data(self) -> None:
         """ Write serial message in serial write queue
 
         :return: None
         """
         try:
-            message_to_write = self._ser_send_q.get_nowait().encode()
+            message_to_send = self._ser_send_q.get_nowait().encode()
         except queue.Empty:
             pass
         else:
-            self.__ser.write(message_to_write)
+            self.__ser.write(message_to_send)
             if self.__verbose:
-                print(f'send: {message_to_write.decode("utf8")}')
+                print(f'send: {message_to_send.decode("utf8")}')
 
-    def run_read_data(self, delay: float) -> None:
+    def run_recv_data(self, delay: float) -> None:
         """Read data through serial port
 
         :param delay: time value to wait in seconds
@@ -112,14 +113,14 @@ class SerTask(ConnTask):
         """
         while True:
             try:
-                self._read_data()
+                self._recv_data()
             except SerialException:
                 print("\nMODI connection is lost!!!")
                 traceback.print_exc()
                 os._exit(1)
             time.sleep(delay)
 
-    def run_write_data(self, delay: float) -> None:
+    def run_send_data(self, delay: float) -> None:
         """Write data through serial port
 
         :param delay: time value to wait in seconds
@@ -128,7 +129,7 @@ class SerTask(ConnTask):
         """
         while True:
             try:
-                self._write_data()
+                self._send_data()
             except SerialException:
                 print("\nMODI connection is lost!!!")
                 traceback.print_exc()

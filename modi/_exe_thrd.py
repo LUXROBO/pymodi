@@ -12,18 +12,20 @@ class ExeThrd(th.Thread):
     """
 
     def __init__(self, modules, module_ids, topology_data,
-                 recv_q, send_q, init_event, nb_modules, firmware_updater):
+                 recv_q, send_q, init_event, nb_modules, firmware_updater,
+                 init_flag):
         super().__init__()
         self.__exe_task = ExeTask(
             modules, module_ids, topology_data, recv_q, send_q,
             init_event, nb_modules, firmware_updater,
         )
+        self.__init_flag = init_flag
 
     def run(self) -> None:
         """ Run executor task
 
         :return: None
         """
-
+        self.__init_flag.set()
         while True:
             self.__exe_task.run(delay=0.001)

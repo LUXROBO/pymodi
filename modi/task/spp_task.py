@@ -2,22 +2,26 @@ import time
 import queue
 import serial
 import serial.tools.list_ports as stl
-from serial.tools.list_ports_common import ListPortInfo
-from typing import List
 
+from typing import List
 from serial import SerialException
+from serial.tools.list_ports_common import ListPortInfo
 
 from modi.task.conn_task import ConnTask
 
 
 class SppTask(ConnTask):
 
-    def __init__(self, spp_recv_q, spp_send_q, module_uuid):
+    def __init__(self, spp_recv_q, spp_send_q, module_uuid, verbose):
         print("Run Spp Task.")
         super().__init__(spp_recv_q, spp_send_q)
         self._spp_recv_q = spp_recv_q
         self._spp_send_q = spp_send_q
         self._module_uuid = module_uuid
+
+        self.__verbose = verbose
+        if self.__verbose:
+            print('PyMODI log...\n==================================')
 
         self.__ser = None
         self.__json_buffer = ""
@@ -98,7 +102,7 @@ class SppTask(ConnTask):
 
         self.__ser.close()
 
-    def _read_data(self) -> None:
+    def _recv_data(self) -> None:
         """ Read serial message and put message to serial read queue
 
         :return: None
@@ -114,20 +118,22 @@ class SppTask(ConnTask):
             # Once json buffer is obtained, we parse and send json message
             self.__parse_serial()
 
-    def _write_data(self) -> None:
+    def _send_data(self) -> None:
         """ Write serial message in serial write queue
 
         :return: None
         """
 
         try:
-            message_to_write = self._spp_send_q.get_nowait().encode()
+            message_to_send = self._spp_send_q.get_nowait().encode()
         except queue.Empty:
             pass
         else:
-            self.__ser.write(message_to_write)
+            self.__ser.write(message_to_send)
+            if self.__verbose:
+                print(f'send: {message_to_send.decode("utf8")}')
 
-    def run_read_data(self, delay: float) -> None:
+    def run_recv_data(self, delay: float) -> None:
         """Read data through spp
 
         :param delay: time value to wait in seconds
@@ -135,10 +141,10 @@ class SppTask(ConnTask):
         :return: None
         """
         while True:
-            self._read_data()
+            self._recv_data()
             time.sleep(delay)
 
-    def run_write_data(self, delay: float) -> None:
+    def run_send_data(self, delay: float) -> None:
         """Write data through spp
 
         :param delay: time value to wait in seconds
@@ -146,7 +152,7 @@ class SppTask(ConnTask):
         :return: None
         """
         while True:
-            self._write_data()
+            self._send_data()
             time.sleep(delay)
 
     #
@@ -164,6 +170,8 @@ class SppTask(ConnTask):
             # Parse json message and send it
             json_msg = self.__json_buffer[:split_index]
             self._spp_recv_q.put(json_msg)
+            if self.__verbose:
+                print(f'recv: {json_msg}')
 
             # Update json buffer, remove the json message sent
             self.__json_buffer = self.__json_buffer[split_index:]

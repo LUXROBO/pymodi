@@ -1,5 +1,4 @@
 import modi
-import time
 
 """
 Example script for the usage of mic module
@@ -13,8 +12,3 @@ if __name__ == "__main__":
     while True:
         print("Volume: {0:<10} freq: {1:<10}".format(mic.get_volume(),
               mic.get_frequency()), end='\r')
-
-
-
-
-

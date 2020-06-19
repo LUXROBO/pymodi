@@ -16,7 +16,8 @@ from modi.module.module import Module
 
 from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
-from modi.util.that import check_complete
+from modi.util.stranger import check_complete
+from modi.util.misc import module_list
 
 
 class MODI:
@@ -26,18 +27,19 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self, nb_modules: int, conn_mode: str = "serial",
+    def __init__(self, nb_modules: int = None, conn_mode: str = "serial",
                  module_uuid: str = "", test: bool = False,
                  verbose: bool = False):
 
         self._modules = list()
+
         self._module_ids = dict()
         self._topology_data = dict()
-
+        self.__lazy = not nb_modules
         self._recv_q = mp.Queue()
         self._send_q = mp.Queue()
 
-        self._com_proc = None
+        self._conn_proc = None
         self._exe_thrd = None
 
         # Init flag used to notify initialization of MODI modules
@@ -47,12 +49,15 @@ class MODI:
         if test:
             return
 
-        self._com_proc = ConnProc(
-            self._recv_q, self._send_q, conn_mode, module_uuid, verbose
+        init_flag = mp.Event()
+
+        self._conn_proc = ConnProc(
+            self._recv_q, self._send_q, conn_mode, module_uuid, verbose,
+            init_flag
         )
-        self._com_proc.daemon = True
+        self._conn_proc.daemon = True
         try:
-            self._com_proc.start()
+            self._conn_proc.start()
         except RuntimeError:
             if os.name == 'nt':
                 print('\nProcess initialization failed!\nMake sure you are '
@@ -62,14 +67,17 @@ class MODI:
                 traceback.print_exc()
             exit(1)
 
-        child_watch = th.Thread(target=self.watch_child_process)
-        child_watch.daemon = True
-        child_watch.start()
-        time.sleep(1)
+        self._child_watch = th.Thread(target=self.watch_child_process)
+        self._child_watch.daemon = True
+        self._child_watch.start()
+
+        init_flag.wait()
 
         self._firmware_updater = FirmwareUpdater(
-            self._send_q,
+            self._send_q, self._module_ids, nb_modules
         )
+
+        init_flag = th.Event()
 
         self._exe_thrd = ExeThrd(
             self._modules,
@@ -80,20 +88,21 @@ class MODI:
             module_init_flag,
             nb_modules,
             self._firmware_updater,
+            init_flag
         )
         self._exe_thrd.daemon = True
         self._exe_thrd.start()
-        time.sleep(1)
+
+        init_flag.wait()
 
         self._topology_manager = TopologyManager(self._topology_data)
+        if nb_modules:
+            module_init_flag.wait()
+            if not module_init_flag.is_set():
+                raise Exception("Modules are not initialized properly!")
+                exit(1)
+            print("MODI modules are initialized!")
 
-        # module_init_time = 10 if conn_mode.startswith("ser") else 25
-        # module_init_flag.wait(timeout=module_init_time)
-        module_init_flag.wait()
-        if not module_init_flag.is_set():
-            raise Exception("Modules are not initialized properly!")
-            exit(1)
-        print("MODI modules are initialized!")
         check_complete(self)
 
     def update_module_firmware(self) -> None:
@@ -105,7 +114,7 @@ class MODI:
         print("Module firmwares have been updated!")
 
     def watch_child_process(self) -> None:
-        while self._com_proc.is_alive():
+        while self._conn_proc.is_alive():
             time.sleep(0.1)
         os._exit(1)
 
@@ -118,7 +127,7 @@ class MODI:
         self._topology_manager.print_topology_map(print_id)
 
     @property
-    def modules(self) -> Tuple[Module]:
+    def modules(self) -> Tuple:
         """Tuple of connected modules except network module.
         Example:
         >>> bundle = modi.MODI()
@@ -127,89 +136,77 @@ class MODI:
         return tuple(self._modules)
 
     @property
-    def buttons(self) -> Tuple[Module]:
+    def buttons(self) -> module_list:
         """Tuple of connected :class:`~modi.module.button.Button` modules.
         """
-
-        return tuple([module for module in self.modules
-                      if module.type == "button"])
+        return module_list(self._modules, 'button', self.__lazy)
 
     @property
-    def dials(self) -> Tuple[Module]:
+    def dials(self) -> module_list:
         """Tuple of connected :class:`~modi.module.dial.Dial` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "dial"])
+        return module_list(self._modules, "dial", self.__lazy)
 
     @property
-    def displays(self) -> Tuple[Module]:
+    def displays(self) -> module_list:
         """Tuple of connected :class:`~modi.module.display.Display` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "display"])
+        return module_list(self._modules, "display", self.__lazy)
 
     @property
-    def envs(self) -> Tuple[Module]:
+    def envs(self) -> module_list:
         """Tuple of connected :class:`~modi.module.env.Env` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "env"])
+        return module_list(self._modules, "env", self.__lazy)
 
     @property
-    def gyros(self) -> Tuple[Module]:
+    def gyros(self) -> module_list:
         """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "gyro"])
+        return module_list(self._modules, "gyro", self.__lazy)
 
     @property
-    def irs(self) -> Tuple[Module]:
+    def irs(self) -> module_list:
         """Tuple of connected :class:`~modi.module.ir.Ir` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "ir"])
+        return module_list(self._modules, "ir", self.__lazy)
 
     @property
-    def leds(self) -> Tuple[Module]:
+    def leds(self) -> module_list:
         """Tuple of connected :class:`~modi.module.led.Led` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "led"])
+        return module_list(self._modules, "led", self.__lazy)
 
     @property
-    def mics(self) -> Tuple[Module]:
+    def mics(self) -> module_list:
         """Tuple of connected :class:`~modi.module.mic.Mic` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "mic"])
+        return module_list(self._modules, "mic", self.__lazy)
 
     @property
-    def motors(self) -> Tuple[Module]:
+    def motors(self) -> module_list:
         """Tuple of connected :class:`~modi.module.motor.Motor` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "motor"])
+        return module_list(self._modules, "motor", self.__lazy)
 
     @property
-    def speakers(self) -> Tuple[Module]:
+    def speakers(self) -> module_list:
         """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "speaker"])
+        return module_list(self._modules, "speaker", self.__lazy)
 
     @property
-    def ultrasonics(self) -> Tuple[Module]:
+    def ultrasonics(self) -> module_list:
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
 
-        return tuple([module for module in self.modules
-                      if module.type == "ultrasonic"])
+        return module_list(self._modules, "ultrasonic", self.__lazy)
