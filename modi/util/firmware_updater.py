@@ -187,8 +187,8 @@ class FirmwareUpdater:
             'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
         )
         bin_path = (
-            f"skeleton/{module_type}.bin" 
-            if module_type != 'env' else 
+            f"skeleton/{module_type}.bin"
+            if module_type != 'env' else
             "skeleton/environment.bin"
         )
 
@@ -249,7 +249,9 @@ class FirmwareUpdater:
                 page_begin -= page_size
 
         # Include MODI firmware version when writing end flash
-        version_path = "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
+        version_path = (
+            "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
+        )
         version_info = None
         for line in ur.urlopen(version_path):
             version_info = line.decode('utf-8').lstrip('v')
@@ -258,8 +260,8 @@ class FirmwareUpdater:
             e.g. 2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
         """
         version = (
-            version_digits[0] << 13 | 
-            version_digits[1] << 8 | 
+            version_digits[0] << 13 |
+            version_digits[1] << 8 |
             version_digits[2]
         )
 
