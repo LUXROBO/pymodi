@@ -56,7 +56,8 @@ class ExeTask:
         self._nb_modules = nb_modules
 
         self.firmware_updater = firmware_updater
-        self.firmware_state_verbose = False
+        # Check if a user has been notified when firmware is outdated
+        self.firmware_update_message_flag = False
 
         self.__init_modules()
         print('Start initializing connected MODI modules')
@@ -303,12 +304,13 @@ class ExeTask:
         )
 
         if module_category != 'network' and \
+                not self.firmware_update_message_flag and \
                 module_version_info < latest_version:
 
             print("Your MODI module(s) is not up-to-date.")
             print("You can update your MODI modules by calling "
                 "'update_module_firmware()'")
-            self.firmware_state_verbose = True
+            self.firmware_update_message_flag = True
 
         self._module_ids[module_id]["uuid"] = module_uuid
 

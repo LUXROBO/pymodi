@@ -35,7 +35,9 @@ class MODI:
 
         self._module_ids = dict()
         self._topology_data = dict()
+
         self.__lazy = not nb_modules
+
         self._recv_q = mp.Queue()
         self._send_q = mp.Queue()
 
@@ -74,9 +76,7 @@ class MODI:
         if nb_modules:
             init_flag.wait()
 
-        self._firmware_updater = FirmwareUpdater(
-            self._send_q, self._module_ids, nb_modules
-        )
+        self._firmware_updater = FirmwareUpdater(self._send_q)
 
         init_flag = th.Event()
 
