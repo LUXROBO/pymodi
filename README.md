@@ -6,10 +6,11 @@
 
 [![image](https://img.shields.io/pypi/pyversions/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
 [![image](https://img.shields.io/pypi/v/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
+[![Travis](https://img.shields.io/travis/LUXROBO/pymodi/master.svg?label=Travis%20CI)](https://travis-ci.org/LUXROBO/pymodi)
 [![Documentation Status](https://readthedocs.org/projects/pymodi/badge/?version=latest)](https://pymodi.readthedocs.io/en/latest/?badge=latest)
 [![Coverage Status](https://coveralls.io/repos/github/LUXROBO/pymodi/badge.svg)](https://coveralls.io/github/LUXROBO/pymodi)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5a62f1585d723099e337/maintainability)](https://codeclimate.com/github/LUXROBO/pymodi/maintainability)
-[![License](https://img.shields.io/pypi/l/pymodi.svg?color=blue)](https://github.com/LUXROBO/pyMODI/blob/master/LICENSE)
+[![License](https://img.shields.io/pypi/l/pymodi.svg?color=blue)](https://github.com/LUXROBO/pymodi/blob/master/LICENSE)
 
 Description
 -------
@@ -43,9 +44,9 @@ System Support
 ---------
 | System | 3.6 | 3.7 | 3.8 |
 | :---: | :---: | :---: | :--: |
-| Linux | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) |
-| Mac OS | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) |
-| Windows | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) |
+| Linux | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/3)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/2)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/1)](https://travis-ci.org/LUXROBO/pymodi) |
+| Mac OS | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/6)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/5)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/4)](https://travis-ci.org/LUXROBO/pymodi) |
+| Windows | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/9)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/8)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/LUXROBO/pymodi/branches/master/7)](https://travis-ci.org/LUXROBO/pymodi) |
 
 Contribution Guidelines
 --------
@@ -97,4 +98,3 @@ If you are still not sure how to use PyMODI, you can play an interactive PyMODI 
 
     $ python -m modi --tutorial
     
-  
