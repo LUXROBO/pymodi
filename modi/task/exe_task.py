@@ -3,8 +3,6 @@ import json
 import queue
 import base64
 import struct
-import zipfile
-import requests
 
 import urllib.request as ur
 
@@ -129,7 +127,7 @@ class ExeTask:
         # Setup prerequisites
         src_id = message["s"]
         byte_data = message["b"]
-        broadcast_id = 2**16-1
+        broadcast_id = 2 ** 16 - 1
         topology_by_id = {}
 
         message_decoded = bytearray(base64.b64decode(byte_data))
@@ -224,7 +222,7 @@ class ExeTask:
         module_uuid = warning_data[:6]
         module_uuid_res = 0
         for i, v in enumerate(module_uuid):
-            module_uuid_res |= v << 8*i
+            module_uuid_res |= v << 8 * i
 
         module_id = message["s"]
         module_type = self.__get_type_from_uuid(module_uuid_res)
@@ -274,7 +272,9 @@ class ExeTask:
         module_version_info = module_info_bytes[3] << 8 | module_info_bytes[2]
 
         # Retrieve most recent skeleton version from the server
-        version_path = "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
+        version_path = (
+            "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
+        )
         version_info = None
         for line in ur.urlopen(version_path):
             version_info = line.decode('utf-8').lstrip('v')
@@ -302,7 +302,7 @@ class ExeTask:
                 + module_uuid_bytes[0]
             ),
         )
-
+        
         if module_category != 'network' and \
                 not self.firmware_update_message_flag and \
                 module_version_info < latest_version:
