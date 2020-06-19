@@ -56,15 +56,14 @@ if __name__ == "__main__":
 
     if check_option('-d', '--debug'):
         nb_modules = check_option('-n', '--nb_modules')
-        if not nb_modules:
-            print("Please provide number of modules")
-            print(usage)
-            os._exit(2)
         is_update = check_option('-u', '--update')
         nb_modules = int(nb_modules)
         print(">>> bundle = modi.MODI(" + str(nb_modules) + ")")
         init_time = time.time()
-        bundle = modi.MODI(nb_modules)
+        if nb_modules:
+            bundle = modi.MODI(nb_modules)
+        else:
+            bundle = modi.MODI()
         fin_time = time.time()
 
         print(f'Took {fin_time - init_time:.2f} seconds to finish the job')

@@ -34,7 +34,9 @@ class MODI:
 
         self._module_ids = dict()
         self._topology_data = dict()
+
         self.__lazy = not nb_modules
+        
         self._recv_q = CommunicationQueue()
         self._send_q = CommunicationQueue()
 
@@ -70,11 +72,10 @@ class MODI:
         self._child_watch.daemon = True
         self._child_watch.start()
 
-        init_flag.wait()
+        if nb_modules:
+            init_flag.wait()
 
-        self._firmware_updater = FirmwareUpdater(
-            self._send_q, self._module_ids, nb_modules
-        )
+        self._firmware_updater = FirmwareUpdater(self._send_q)
 
         init_flag = th.Event()
 
@@ -91,8 +92,8 @@ class MODI:
         )
         self._exe_thrd.daemon = True
         self._exe_thrd.start()
-
-        init_flag.wait()
+        if nb_modules:
+            init_flag.wait()
 
         self._topology_manager = TopologyManager(self._topology_data)
         if nb_modules:
@@ -101,15 +102,14 @@ class MODI:
                 raise Exception("Modules are not initialized properly!")
                 exit(1)
             print("MODI modules are initialized!")
-
-        check_complete(self)
+            check_complete(self)
 
     def update_module_firmware(self) -> None:
         """Updates firmware of connected modules"""
         print("Request to update firmware of connected MODI modules.")
         self._firmware_updater.reset_state()
         self._firmware_updater.request_to_update_firmware()
-        # self.firmware_updater.update_event.wait()
+        self._firmware_updater.update_event.wait()
         print("Module firmwares have been updated!")
 
     def watch_child_process(self) -> None:
