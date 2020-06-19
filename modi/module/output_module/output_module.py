@@ -135,3 +135,4 @@ class OutputModule(Module):
 
         for message in messages:
             self._msg_send_q.put(message)
+        time.sleep(0.1)
