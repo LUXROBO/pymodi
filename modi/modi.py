@@ -16,6 +16,7 @@ from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
 from modi.util.stranger import check_complete
 from modi.util.misc import module_list
+from modi.util.queues import CommunicationQueue
 
 
 class MODI:
@@ -34,8 +35,8 @@ class MODI:
         self._module_ids = dict()
         self._topology_data = dict()
         self.__lazy = not nb_modules
-        self._recv_q = mp.Queue()
-        self._send_q = mp.Queue()
+        self._recv_q = CommunicationQueue()
+        self._send_q = CommunicationQueue()
 
         self._conn_proc = None
         self._exe_thrd = None

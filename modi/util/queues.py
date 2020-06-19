@@ -1,37 +1,47 @@
-from multiprocessing import queues, get_context
-from typing import Optional, TypeVar
+from multiprocessing import Queue
+import json
 
 
-class PriorityQueue(queues.Queue):
-    _T = TypeVar('_T')
-
+class CommunicationQueue:
+    """Communication queue is a priority queue styled queue.
+    When communicating with modules, there are certain messages that need
+    to be processed before others. This queue selects those messages and
+    return earlier than other messages.
+    """
     def __init__(self):
-        super().__init__(ctx=get_context())
-        self.__priority = queues.Queue(ctx=get_context())
-        self.__priority_length = 0
-        self.__length = 0
+        self.__priority = Queue()
+        self.__ordinary = Queue()
 
-    def put(self, obj: _T, block: bool = ...,
-            timeout: Optional[float] = ..., priority: bool = False) -> None:
-        if priority:
-            self.__priority.put(obj)
-            self.__priority_length += 1
+    def put(self, message: str) -> None:
+        if self.__check_priority(message):
+            self.__priority.put(message)
         else:
-            super().put(obj)
-        self.__length += 1
+            self.__ordinary.put(message)
 
-    def get(self, block: bool = ..., timeout: Optional[float] = ...) -> _T:
-        self.__length -= 1
-        if self.__priority_length > 0:
-            self.__priority_length -= 1
+    def get(self) -> str:
+        if not self.__priority.empty():
             return self.__priority.get()
         else:
-            return super().get()
+            return self.__ordinary.get()
 
-    @property
-    def priority_length(self):
-        return self.__priority_length
+    def get_nowait(self) -> str:
+        if not self.__priority.empty():
+            return self.__priority.get_nowait()
+        else:
+            return self.__ordinary.get_nowait()
 
-    @property
-    def length(self):
-        return self.__length
+    @staticmethod
+    def __check_priority(json_message: str) -> bool:
+        """Checks whether the message has priority
+
+        :param json_message: Json serialized message
+        :type json_message: str
+        :return: True is the message has priority
+        :rtype: bool
+        """
+        try:
+            message = json.loads(json_message)
+        except json.JSONDecodeError:
+            return False
+        command = message['c']
+        return command in (0x04, 0x1F, 0x05, 0x09)
