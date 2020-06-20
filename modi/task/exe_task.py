@@ -302,14 +302,14 @@ class ExeTask:
                 + module_uuid_bytes[0]
             ),
         )
-        
+
         if module_category != 'network' and \
                 not self.firmware_update_message_flag and \
                 module_version_info < latest_version:
 
             print("Your MODI module(s) is not up-to-date.")
             print("You can update your MODI modules by calling "
-                "'update_module_firmware()'")
+                  "'update_module_firmware()'")
             self.firmware_update_message_flag = True
 
         self._module_ids[module_id]["uuid"] = module_uuid

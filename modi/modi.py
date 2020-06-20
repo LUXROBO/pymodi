@@ -31,12 +31,11 @@ class MODI:
                  verbose: bool = False):
 
         self._modules = list()
-
         self._module_ids = dict()
         self._topology_data = dict()
 
         self.__lazy = not nb_modules
-        
+
         self._recv_q = CommunicationQueue()
         self._send_q = CommunicationQueue()
 
