@@ -49,7 +49,7 @@ Please read the following to get ready for the contribution!!
 
 1. Fork the pymodi repo on GitHub
 
-    [![Fork PyMODI](https://github.com/LUXROBO/pymodi/blob/develop/docs/_static/img/fork_button.jpg)](https://github.com/LUXROBO/pymodi/fork)
+    [![Fork PyMODI](docs/_static/img/fork_button.jpg)](https://github.com/LUXROBO/pymodi/fork)
 
      ^ Click this to fork the repo!!
 
@@ -101,14 +101,14 @@ git will automatically run the tests when you push your changes.
 
 8. Make a pull request to LUXROBO/pymodi/develop branch.
 
-    ![PR guide](https://github.com/LUXROBO/pymodi/blob/develop/docs/_static/img/pr_guide.png)
+    ![PR guide](docs/_static/img/pr_guide.png)
 
    Name the pull request based on the default PR templates. Choose either of the templates based on the type of your contribution.
 
 9. Congratulations! You made a meaningful contribution to PyMODI.
 
 <p align="center">
-    <img src="https://github.com/LUXROBO/pymodi/blob/develop/docs/_static/img/modi_thankyou.jpg" alt="thanks" width=300, height=180>
+    <img src="docs/_static/img/modi_thankyou.jpg" alt="thanks" width=300, height=180>
 </p>
 
 Tips
