@@ -98,4 +98,4 @@ If you are still not sure how to use PyMODI, you can play an interactive PyMODI 
 
     $ python -m modi --tutorial
 
-
+Moreover, we provide some usage and creation examples [here](examples)
