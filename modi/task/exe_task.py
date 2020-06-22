@@ -306,13 +306,6 @@ class ExeTask:
                     module_pnp_state=Module.State.PNP_OFF
                 )
 
-                # Reboot module
-                reboot_message = self.__set_module_state(
-                    module_id, Module.State.REBOOT, Module.State.PNP_OFF
-                )
-                self._send_q.put(reboot_message)
-
-                self.__delay()
                 self._modules.append(module_instance)
                 print(f"{type(module_instance).__name__} ({module_id}) "
                       f"has been connected!")
@@ -477,7 +470,7 @@ class ExeTask:
         # Request topology data
         request_topology_message = self.__request_topology()
         self._send_q.put(request_topology_message)
-        self.__delay()
+        # self.__delay()
 
     def __delay(self) -> None:
         """ Wait for delay
