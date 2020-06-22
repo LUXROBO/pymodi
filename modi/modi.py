@@ -28,7 +28,7 @@ class MODI:
 
     def __init__(self, nb_modules: int, conn_mode: str = "serial",
                  module_uuid: str = "", test: bool = False,
-                 verbose: bool = False):
+                 verbose: bool = False, port: str = None):
 
         self._modules = list()
 
@@ -52,7 +52,7 @@ class MODI:
 
         self._conn_proc = ConnProc(
             self._recv_q, self._send_q, conn_mode, module_uuid, verbose,
-            init_flag
+            init_flag, port
         )
         self._conn_proc.daemon = True
         try:
