@@ -64,7 +64,6 @@ class SerTask(ConnTask):
                 except SerialException:
                     raise SerialException(f"{self.__port} is not available.")
 
-        # TODO: Refactor code to support multiple MODI network modules here
         for modi_port in modi_ports:
             self.__init_serial(modi_port.device)
             try:
