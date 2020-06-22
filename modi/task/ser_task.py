@@ -61,6 +61,7 @@ class SerTask(ConnTask):
                 try:
                     self.__init_serial(self.__port)
                     self.__ser.open()
+                    return
                 except SerialException:
                     raise SerialException(f"{self.__port} is not available.")
 
@@ -74,7 +75,7 @@ class SerTask(ConnTask):
         raise SerialException("No MODI port is available now")
 
     def __init_serial(self, port):
-        self.__ser = serial.Serial()
+        self.__ser = serial.Serial(exclusive=True)
         self.__ser.baudrate = 921600
         self.__ser.port = port
         self.__ser.timeout = 1
