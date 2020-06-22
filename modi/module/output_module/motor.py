@@ -154,16 +154,18 @@ class Motor(OutputModule):
         :return: Torque of the first motor , Torque of the second motor.
         :rtype: Tuple[float, float]
         """
-        if first_torque_value is not None:
-            self.set_motor_channel(0, 0, first_torque_value)
-        if second_torque_value is not None:
-            self.set_motor_channel(1, 0, second_torque_value)
+        raise NotImplementedError
 
-        self._update_properties(
-            [self.PropertyType.FIRST_TORQUE, self.PropertyType.SECOND_TORQUE],
-            [first_torque_value, second_torque_value])
+        #if first_torque_value is not None:
+        #    self.set_motor_channel(0, 0, first_torque_value)
+        #if second_torque_value is not None:
+        #    self.set_motor_channel(1, 0, second_torque_value)
 
-        return first_torque_value, second_torque_value
+        #self._update_properties(
+        #    [self.PropertyType.FIRST_TORQUE, self.PropertyType.SECOND_TORQUE],
+        #    [first_torque_value, second_torque_value])
+
+        #return first_torque_value, second_torque_value
 
     def get_torque(self) -> Tuple[float, float]:
         """Returns torque values of two motors
