@@ -170,6 +170,7 @@ class TopologyManager:
         :param print_id: If True, the result includes module ids
         :return: None
         """
+        self._nb_modules = len(self._tp_data.keys())
         tp_map = TopologyMap(self._tp_data, self._nb_modules)
         tp_map.construct_map()
         tp_map.print_map(print_id)

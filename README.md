@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="docs/_static/img/Logo3.JPG" width="500" height="150">
+	<img src="docs/_static/img/logo.png" width="500" height="150">
 </p>
 
 ---------
@@ -30,7 +30,7 @@ Features
 UML Diagram
 --------
 <p align="center">
-<img src="https://gituml-media.s3.amazonaws.com/production_diagram_201.svg?AWSAccessKeyId=AKIA5BNPSF2PVKDZ4QNO&Signature=Zi1eXS7Zjs%2BECnYl%2BCeIO2tc0aQ%3D&Expires=1592475580" width="800" height="500">
+    <img src="https://gituml-media.s3.amazonaws.com/production_diagram_201.svg?AWSAccessKeyId=AKIA5BNPSF2PVKDZ4QNO&Signature=Zi1eXS7Zjs%2BECnYl%2BCeIO2tc0aQ%3D&Expires=1592475580">
 </p>
 
 Build Status
@@ -98,4 +98,4 @@ If you are still not sure how to use PyMODI, you can play an interactive PyMODI 
 
     $ python -m modi --tutorial
 
-
+Moreover, we provide some [usage and creation examples.](examples)

@@ -48,7 +48,7 @@ class Module:
     @property
     def uuid(self) -> int:
         return self._uuid
-    
+
     @property
     def type(self):
         return self._type
@@ -100,7 +100,6 @@ class Module:
         if property_type in self._properties.keys():
             self._properties[property_type].value = property_value
             self._properties[property_type].last_update_time = time.time()
-
 
     def request_property(self, destination_id: int,
                          property_type: IntEnum) -> str:

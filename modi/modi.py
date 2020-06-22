@@ -16,6 +16,7 @@ from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
 from modi.util.stranger import check_complete
 from modi.util.misc import module_list
+from modi.util.queues import CommunicationQueue
 
 
 class MODI:
@@ -27,15 +28,16 @@ class MODI:
 
     def __init__(self, nb_modules: int = None, conn_mode: str = "serial",
                  module_uuid: str = "", test: bool = False,
-                 verbose: bool = False):
+                 verbose: bool = False, port: str = None):
 
         self._modules = list()
-
         self._module_ids = dict()
         self._topology_data = dict()
+
         self.__lazy = not nb_modules
-        self._recv_q = mp.Queue()
-        self._send_q = mp.Queue()
+
+        self._recv_q = CommunicationQueue()
+        self._send_q = CommunicationQueue()
 
         self._conn_proc = None
         self._exe_thrd = None
@@ -51,7 +53,7 @@ class MODI:
 
         self._conn_proc = ConnProc(
             self._recv_q, self._send_q, conn_mode, module_uuid, verbose,
-            init_flag
+            init_flag, port
         )
         self._conn_proc.daemon = True
         try:
@@ -72,9 +74,7 @@ class MODI:
         if nb_modules:
             init_flag.wait()
 
-        self._firmware_updater = FirmwareUpdater(
-            self._send_q, self._module_ids, nb_modules
-        )
+        self._firmware_updater = FirmwareUpdater(self._send_q)
 
         init_flag = th.Event()
 
@@ -108,7 +108,7 @@ class MODI:
         print("Request to update firmware of connected MODI modules.")
         self._firmware_updater.reset_state()
         self._firmware_updater.request_to_update_firmware()
-        # self.firmware_updater.update_event.wait()
+        self._firmware_updater.update_event.wait()
         print("Module firmwares have been updated!")
 
     def watch_child_process(self) -> None:

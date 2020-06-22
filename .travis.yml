@@ -16,7 +16,7 @@ jobs:
       os: osx
       osx_image: xcode11.6
       language: shell
-      before_install:
+      before_script:
           - pyenv install --skip-existing 3.8.0
           - pyenv local 3.8.0
       python: 3.8
@@ -24,7 +24,7 @@ jobs:
     - name: "Python 3.7 on macOS"
       os: osx
       osx_image: xcode11.6
-      before_install:
+      before_script:
           - pyenv install --skip-existing 3.7.0
           - pyenv local 3.7.0
       language: shell
@@ -33,7 +33,7 @@ jobs:
     - name: "Python 3.6 on macOS"
       os: osx
       osx_image: xcode11.6
-      before_install:
+      before_script:
           - pyenv install --skip-existing 3.6.0
           - pyenv local 3.6.0
       language: shell
