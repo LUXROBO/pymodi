@@ -12,7 +12,7 @@ from modi.task.conn_task import ConnTask
 
 class SerTask(ConnTask):
 
-    def __init__(self, ser_recv_q, ser_send_q, verbose, port):
+    def __init__(self, ser_recv_q, ser_send_q, verbose, port=None):
         print("Run Ser Task.")
         super().__init__(ser_recv_q, ser_send_q)
         self._ser_recv_q = ser_recv_q
