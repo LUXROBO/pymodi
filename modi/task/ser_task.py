@@ -12,7 +12,7 @@ from modi.task.conn_task import ConnTask
 
 class SerTask(ConnTask):
 
-    def __init__(self, ser_recv_q, ser_send_q, verbose):
+    def __init__(self, ser_recv_q, ser_send_q, verbose, port=None):
         print("Run Ser Task.")
         super().__init__(ser_recv_q, ser_send_q)
         self._ser_recv_q = ser_recv_q
@@ -20,6 +20,7 @@ class SerTask(ConnTask):
         self.__verbose = verbose
         self.__ser = None
         self.__json_buffer = ""
+        self.__port = port
         if self.__verbose:
             print('PyMODI log...\n==================================')
 
@@ -52,19 +53,31 @@ class SerTask(ConnTask):
         if not modi_ports:
             raise SerialException("No MODI network module is connected.")
 
-        # TODO: Refactor code to support multiple MODI network modules here
-        modi_port = modi_ports.pop()
+        if self.__port:
+            if self.__port not in map(lambda info: info.device, modi_ports):
+                raise SerialException(f"{self.__port} is not connected "
+                                      f"to a MODI network module.")
+            else:
+                try:
+                    self.__init_serial(self.__port)
+                    self.__ser.open()
+                except SerialException:
+                    raise SerialException(f"{self.__port} is not available.")
+
+        for modi_port in modi_ports:
+            self.__init_serial(modi_port.device)
+            try:
+                self.__ser.open()
+                return
+            except SerialException:
+                continue
+        raise SerialException("No MODI port is available now")
+
+    def __init_serial(self, port):
         self.__ser = serial.Serial()
         self.__ser.baudrate = 921600
-        self.__ser.port = modi_port.device
+        self.__ser.port = port
         self.__ser.timeout = 1
-
-        # Check if the modi port(i.e. MODI network module) is in use
-        if self.__ser.is_open:
-            raise SerialException(
-                "The MODI port {} is already in use".format(self.__ser.port)
-            )
-        self.__ser.open()
 
     def _close_conn(self) -> None:
         """ Close serial port
