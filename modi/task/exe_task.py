@@ -54,6 +54,7 @@ class ExeTask:
         self._nb_modules = nb_modules
 
         self.firmware_updater = firmware_updater
+
         # Check if a user has been notified when firmware is outdated
         self.firmware_update_message_flag = False
 
@@ -339,13 +340,6 @@ class ExeTask:
                     module_pnp_state=Module.State.PNP_OFF
                 )
 
-                # Reboot module
-                reboot_message = self.__set_module_state(
-                    module_id, Module.State.REBOOT, Module.State.PNP_OFF
-                )
-                self._send_q.put(reboot_message)
-
-                self.__delay()
                 self._modules.append(module_instance)
                 print(f"{type(module_instance).__name__} ({module_id}) "
                       f"has been connected!")
@@ -493,24 +487,24 @@ class ExeTask:
             BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
         )
         self._send_q.put(reboot_message)
-        self.__delay()
+        # self.__delay()
 
         # Command module pnp off
         pnp_off_message = self.__set_module_state(
             BROADCAST_ID, Module.State.RUN, Module.State.PNP_OFF
         )
         self._send_q.put(pnp_off_message)
-        self.__delay()
+        # self.__delay()
 
         # Command module uuid
         request_uuid_message = self.__request_uuid(BROADCAST_ID)
         self._send_q.put(request_uuid_message)
-        self.__delay()
+        # self.__delay()
 
         # Request topology data
         request_topology_message = self.__request_topology()
         self._send_q.put(request_topology_message)
-        self.__delay()
+        # self.__delay()
 
     def __delay(self) -> None:
         """ Wait for delay
@@ -518,7 +512,7 @@ class ExeTask:
         :return: None
         """
 
-        time.sleep(1)
+        time.sleep(0.5)
 
     def __request_uuid(self, source_id: int,
                        is_network_module: bool = False) -> str:
