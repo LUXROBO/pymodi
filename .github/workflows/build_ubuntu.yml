@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    name: Ubuntu Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
