@@ -3,6 +3,7 @@
 import os
 import time
 import traceback
+import signal
 
 import threading as th
 import multiprocessing as mp
@@ -26,10 +27,12 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
+    # Keeps track of all the connection processes spawned
+    __conn_procs = []
+
     def __init__(self, nb_modules: int = None, conn_mode: str = "serial",
                  module_uuid: str = "", test: bool = False,
                  verbose: bool = False, port: str = None):
-
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -66,6 +69,8 @@ class MODI:
             else:
                 traceback.print_exc()
             exit(1)
+
+        MODI.__conn_procs.append(self._conn_proc.pid)
 
         self._child_watch = th.Thread(target=self.watch_child_process)
         self._child_watch.daemon = True
@@ -114,7 +119,12 @@ class MODI:
     def watch_child_process(self) -> None:
         while self._conn_proc.is_alive():
             time.sleep(0.1)
-        os._exit(1)
+        for pid in MODI.__conn_procs:
+            try:
+                os.kill(pid, signal.SIGTERM)
+            except PermissionError:
+                continue
+        os.kill(os.getpid(), signal.SIGTERM)
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """Prints out the topology map
