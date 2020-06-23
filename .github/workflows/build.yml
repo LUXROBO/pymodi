@@ -31,4 +31,5 @@ jobs:
         flake8 modi tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Unittest
       run: |
+        python --version
         python -m unittest
