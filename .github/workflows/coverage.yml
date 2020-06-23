@@ -25,6 +25,6 @@ jobs:
         pip install coveralls
         pip install -r requirements.txt
     - name: Run coverage
-      run: |
-        coverage run --source=modi setup.py test
-        coveralls
+      uses: coverallsapp/github-action@v1.1.1
+      with:
+        github-token: ${{ secrets.github_token }}
