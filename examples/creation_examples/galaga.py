@@ -1,15 +1,7 @@
 import modi
-from playscii.games.galaga import GalagaManager
 import time
 
-if __name__ == "__main__":
-    bundle = modi.MODI()
-    button = bundle.buttons[0]
-    led = bundle.leds[0]
-    gyro = bundle.gyros[0]
-    game_manager = GalagaManager(gyro, button, led)
-    game_manager.start()
-    time.sleep(3)
+from playscii.games.galaga import GalagaManager
 
 """
 HOW TO PLAY
@@ -21,3 +13,11 @@ HOW TO PLAY
    Use the gyro to control the jet!
    Press the button to shoot down enemies!
 """
+if __name__ == "__main__":
+    bundle = modi.MODI()
+    button = bundle.buttons[0]
+    led = bundle.leds[0]
+    gyro = bundle.gyros[0]
+    game_manager = GalagaManager(gyro, button, led)
+    game_manager.start()
+    time.sleep(3)
