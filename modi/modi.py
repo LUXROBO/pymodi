@@ -124,6 +124,8 @@ class MODI:
                 os.kill(pid, signal.SIGTERM)
             except PermissionError:
                 continue
+            except ProcessLookupError:
+                continue
         os.kill(os.getpid(), signal.SIGTERM)
 
     def print_topology_map(self, print_id: bool = False) -> None:
