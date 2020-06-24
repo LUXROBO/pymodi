@@ -30,7 +30,7 @@ Features
 UML Diagram
 --------
 <p align="center">
-    <img src="https://gituml-media.s3.amazonaws.com/production_diagram_201.svg?AWSAccessKeyId=AKIA5BNPSF2PVKDZ4QNO&Signature=Zi1eXS7Zjs%2BECnYl%2BCeIO2tc0aQ%3D&Expires=1592475580">
+    <img src="/docs/_static/img/umldiagram.svg">
 </p>
 
 Build Status
