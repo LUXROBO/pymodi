@@ -24,11 +24,10 @@ class ConnTask(ABC):
         """
         def __is_modi_port(port):
             return (
-                port.manufacturer == "LUXROBO" or
-                port.product == "MODI Network Module" or
-                port.description == "MODI Network Module" or
-                (port.vid == 12254 and port.pid == 2)
-            )
+                port.manufacturer == "LUXROBO"
+                or port.product == "MODI Network Module"
+                or port.description == "MODI Network Module"
+                or (port.vid == 12254 and port.pid == 2))
 
         return [port for port in stl.comports() if __is_modi_port(port)]
 

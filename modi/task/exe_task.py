@@ -284,9 +284,9 @@ class ExeTask:
             e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
         """
         latest_version = (
-            version_digits[0] << 13 |
-            version_digits[1] << 8 |
-            version_digits[2]
+            version_digits[0] << 13
+            | version_digits[1] << 8
+            | version_digits[2]
         )
 
         module_category_idx = module_info >> 13
