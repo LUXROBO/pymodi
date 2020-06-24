@@ -34,4 +34,4 @@ jobs:
     - name: Flake8 type annotation check
       run: flake8 modi tests --select=A --count --statistics --exit-zero
     - name: Flake8 docstring check
-      run: flake8 modi tests --select=D102,D103,D105,R --count --statisticss --exit-zero
+      run: flake8 modi tests --select=D102,D103,D105,R --count --statistics --exit-zero
