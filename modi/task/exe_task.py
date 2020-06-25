@@ -501,6 +501,10 @@ class ExeTask:
         self._send_q.put(request_uuid_message)
         # self.__delay()
 
+        # Request topology data
+        self.request_topology()
+        # self.__delay()
+
     def __delay(self) -> None:
         """ Wait for delay
 

@@ -17,6 +17,12 @@ class module_list(list):
         else:
             return super().__getitem__(item)
 
+    def get(self, module_id):
+        for module in self.sublist():
+            if module.id == module_id:
+                return module
+        raise Exception("Module with given id does not exits!!")
+
     def sublist(self):
         return [module for module in self.__src
                 if module.type == self.__module_type]
