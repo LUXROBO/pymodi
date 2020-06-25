@@ -30,4 +30,15 @@ jobs:
       run: |
         coverage run --source=modi setup.py test
         coveralls
+    - name: Send email
+      uses: dawidd6/action-send-mail@v2.2.0
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{secrets.MAIL_USERNAME}}
+        subject: A new version of PyMODI is successfully released!
+        # Literal body:
+        body: file://HISTORY.md
+        to: slee5@oberlin.edu
+        from: PyMODI Manager
 
