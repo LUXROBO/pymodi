@@ -134,6 +134,12 @@ class MODI:
         :param print_id: if True, the result includes module id
         :return: None
         """
+        self._topology_data.clear()
+        self._exe_thrd.request_topology()
+        while (len(self._topology_data) - 1 != len(self._modules)) \
+                or len(self._topology_data) == 0:
+            time.sleep(0.1)
+        time.sleep(1)
         self._topology_manager.print_topology_map(print_id)
 
     @property
