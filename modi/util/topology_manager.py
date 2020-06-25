@@ -176,15 +176,25 @@ class TopologyMap:
 
 class TopologyManager:
 
-    def __init__(self, topology_data):
+    def __init__(self, topology_data, modules):
         self._tp_data = topology_data
         self._nb_modules = len(self._tp_data)
+        self._modules = modules
 
-    def update_module_data(self, modules):
+    def __update_module_position(self):
         self._nb_modules = len(self._tp_data)
         tp_map = TopologyMap(self._tp_data, self._nb_modules)
         tp_map.construct_map()
-        tp_map.update_module_data(modules)
+        tp_map.update_module_data(self._modules)
+
+    def is_topology_complete(self):
+        if len(self._tp_data) < 2:
+            return False
+        try:
+            self.__update_module_position()
+        except KeyError:
+            return False
+        return len(self._modules) >= len(self._tp_data) - 1
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """ Print the topology map
