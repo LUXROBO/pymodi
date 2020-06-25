@@ -149,8 +149,8 @@ class TopologyMap:
                     if print_id:
                         line += "{0:^17s}".format(
                             TopologyManager.get_type_from_uuid(
-                                self._tp_data[curr_elem]['uuid']) + ":" +
-                            str(curr_elem))
+                                self._tp_data[curr_elem]['uuid']) + ":"
+                            + str(curr_elem))
                     else:
                         line += "{0:^10s}".format(
                             TopologyManager.get_type_from_uuid(

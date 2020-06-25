@@ -34,10 +34,9 @@ class Led(OutputModule):
         :rtype: Tuple[float, float, float]
         """
         color = (
-                red if red is not None else self.get_red(),
-                green if green is not None else self.get_green(),
-                blue if blue is not None else self.get_blue(),
-            )
+            red if red is not None else self.get_red(),
+            green if green is not None else self.get_green(),
+            blue if blue is not None else self.get_blue())
         self._set_property(
             self._id,
             self.CommandType.SET_RGB,

@@ -41,22 +41,21 @@ class TestDisplay(unittest.TestCase):
         )
 
         expected_text_params = (
-           self.mock_kwargs["id_"],
-           self.display.PropertyType.TEXT,
-           mock_text,
-           self.display.PropertyDataType.STRING,
+            self.mock_kwargs["id_"],
+            self.display.PropertyType.TEXT,
+            mock_text,
+            self.display.PropertyDataType.STRING
         )
-
         self.assertEqual(self.display._set_property.call_count, 2)
 
         # TODO: Refactor two functions calls below to use assert_has_calls()
         self.assertEqual(
-           mock.call(*expected_clear_params),
-           self.display._set_property.call_args_list[0],
+            mock.call(*expected_clear_params),
+            self.display._set_property.call_args_list[0],
         )
         self.assertEqual(
-           mock.call(*expected_text_params),
-           self.display._set_property.call_args_list[1],
+            mock.call(*expected_text_params),
+            self.display._set_property.call_args_list[1],
         )
 
     def test_set_variable(self):
