@@ -20,7 +20,7 @@ class Speaker(OutputModule):
         F_PA_1 = 43
         F_SOL_1 = 48
         F_RA_1 = 55
-        F_SO_1 = 61
+        F_SI_1 = 61
         F_DO_S_1 = 34
         F_RE_S_1 = 39
         F_PA_S_1 = 46
@@ -32,7 +32,7 @@ class Speaker(OutputModule):
         F_PA_2 = 87
         F_SOL_2 = 97
         F_RA_2 = 110
-        F_SO_2 = 123
+        F_SI_2 = 123
         F_DO_S_2 = 69
         F_RE_S_2 = 77
         F_PA_S_2 = 92
@@ -44,7 +44,7 @@ class Speaker(OutputModule):
         F_PA_3 = 174
         F_SOL_3 = 196
         F_RA_3 = 220
-        F_SO_3 = 247
+        F_SI_3 = 247
         F_DO_S_3 = 138
         F_RE_S_3 = 155
         F_PA_S_3 = 185
@@ -56,7 +56,7 @@ class Speaker(OutputModule):
         F_PA_4 = 349
         F_SOL_4 = 392
         F_RA_4 = 440
-        F_SO_4 = 493
+        F_SI_4 = 493
         F_DO_S_4 = 277
         F_RE_S_4 = 311
         F_PA_S_4 = 369
@@ -68,7 +68,7 @@ class Speaker(OutputModule):
         F_PA_5 = 698
         F_SOL_5 = 783
         F_RA_5 = 880
-        F_SO_5 = 988
+        F_SI_5 = 988
         F_DO_S_5 = 554
         F_RE_S_5 = 622
         F_PA_S_5 = 739
@@ -80,7 +80,7 @@ class Speaker(OutputModule):
         F_PA_6 = 1397
         F_SOL_6 = 1567
         F_RA_6 = 1760
-        F_SO_6 = 1975
+        F_SI_6 = 1975
         F_DO_S_6 = 1108
         F_RE_S_6 = 1244
         F_PA_S_6 = 1479
@@ -92,7 +92,7 @@ class Speaker(OutputModule):
         F_PA_7 = 2793
         F_SOL_7 = 3135
         F_RA_7 = 3520
-        F_SO_7 = 3951
+        F_SI_7 = 3951
         F_DO_S_7 = 2217
         F_RE_S_7 = 2489
         F_PA_S_7 = 2959
