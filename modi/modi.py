@@ -133,7 +133,6 @@ class MODI:
         while (len(self._topology_data) - 1 != len(self._modules)) \
                 or len(self._topology_data) == 0:
             time.sleep(0.1)
-        time.sleep(1)
         self._topology_manager.update_module_data(self._modules)
 
     def print_topology_map(self, print_id: bool = False) -> None:

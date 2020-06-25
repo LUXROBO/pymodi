@@ -43,6 +43,15 @@ class Module:
 
         self.position = (0, 0)
 
+    def __gt__(self, other):
+        if self.distance == other.distance:
+            if self.position[0] == other.position[0]:
+                return self.position[1] < other.position[1]
+            else:
+                return self.position[0] > other.position[0]
+        else:
+            return self.distance > other.distance
+
     @property
     def distance(self):
         return self.position[0] ** 2 + self.position[1] ** 2
