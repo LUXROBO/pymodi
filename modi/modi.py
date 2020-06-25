@@ -108,6 +108,7 @@ class MODI:
                 exit(1)
             print("MODI modules are initialized!")
             check_complete(self)
+
         timeout = 0
         while not self._topology_manager.is_topology_complete():
             time.sleep(0.1)
