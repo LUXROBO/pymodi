@@ -99,7 +99,8 @@ class MODI:
         if nb_modules:
             init_flag.wait()
 
-        self._topology_manager = TopologyManager(self._topology_data)
+        self._topology_manager = TopologyManager(self._topology_data,
+                                                 self._modules)
         if nb_modules:
             module_init_flag.wait()
             if not module_init_flag.is_set():
@@ -107,6 +108,14 @@ class MODI:
                 exit(1)
             print("MODI modules are initialized!")
             check_complete(self)
+
+        timeout = 0
+        while not self._topology_manager.is_topology_complete():
+            time.sleep(0.1)
+            timeout += 0.1
+            if timeout > 5:
+                self._exe_thrd.request_topology()
+                timeout = 0
 
     def update_module_firmware(self) -> None:
         """Updates firmware of connected modules"""
@@ -155,68 +164,58 @@ class MODI:
     def dials(self) -> module_list:
         """Tuple of connected :class:`~modi.module.dial.Dial` modules.
         """
-
         return module_list(self._modules, "dial", self.__lazy)
 
     @property
     def displays(self) -> module_list:
         """Tuple of connected :class:`~modi.module.display.Display` modules.
         """
-
         return module_list(self._modules, "display", self.__lazy)
 
     @property
     def envs(self) -> module_list:
         """Tuple of connected :class:`~modi.module.env.Env` modules.
         """
-
         return module_list(self._modules, "env", self.__lazy)
 
     @property
     def gyros(self) -> module_list:
         """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
         """
-
         return module_list(self._modules, "gyro", self.__lazy)
 
     @property
     def irs(self) -> module_list:
         """Tuple of connected :class:`~modi.module.ir.Ir` modules.
         """
-
         return module_list(self._modules, "ir", self.__lazy)
 
     @property
     def leds(self) -> module_list:
         """Tuple of connected :class:`~modi.module.led.Led` modules.
         """
-
         return module_list(self._modules, "led", self.__lazy)
 
     @property
     def mics(self) -> module_list:
         """Tuple of connected :class:`~modi.module.mic.Mic` modules.
         """
-
         return module_list(self._modules, "mic", self.__lazy)
 
     @property
     def motors(self) -> module_list:
         """Tuple of connected :class:`~modi.module.motor.Motor` modules.
         """
-
         return module_list(self._modules, "motor", self.__lazy)
 
     @property
     def speakers(self) -> module_list:
         """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
         """
-
         return module_list(self._modules, "speaker", self.__lazy)
 
     @property
     def ultrasonics(self) -> module_list:
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
-
         return module_list(self._modules, "ultrasonic", self.__lazy)

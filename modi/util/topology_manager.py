@@ -1,4 +1,3 @@
-
 from typing import Dict, List, Tuple
 
 
@@ -11,6 +10,7 @@ class TopologyMap:
         # It stores the module id
         self._tp_map = [[0 for _ in range(2 * self._nb_modules)]
                         for _ in range(2 * self._nb_modules)]
+        self.__module_position = dict()
 
     @staticmethod
     def __get_module_orientation(mod_data: Dict[str, int], prev_id: int,
@@ -71,6 +71,7 @@ class TopologyMap:
             return
         module_data = self._tp_data[module_id]
         self._tp_map[y][x] = module_id
+        self.__module_position[module_id] = (x, y)
         visited.append(module_id)
         up_vector = self.__get_module_orientation(module_data, prev_id, toward)
         for d in ['t', 'b', 'l', 'r']:
@@ -152,17 +153,48 @@ class TopologyMap:
                                 self._tp_data[curr_elem]['uuid']) + ":"
                             + str(curr_elem))
                     else:
-                        line += "{0:^10s}".format(
-                            TopologyManager.get_type_from_uuid(
-                                self._tp_data[curr_elem]['uuid']))
+                        name = TopologyManager.get_type_from_uuid(
+                            self._tp_data[curr_elem]['uuid'])
+                        line += f"{name:^10}"
             print(line)
+
+    @property
+    def network_id(self):
+        for mid in self._tp_data:
+            if TopologyManager.get_type_from_uuid(self._tp_data[mid]['uuid']) \
+                    == 'Network':
+                return mid
+
+    def update_module_data(self, modules):
+        network_position = self.__module_position[self.network_id]
+        for module in modules:
+            module_position = self.__module_position[module.id]
+
+            module.position = (module_position[0] - network_position[0],
+                               module_position[1] - network_position[1])
 
 
 class TopologyManager:
 
-    def __init__(self, topology_data):
+    def __init__(self, topology_data, modules):
         self._tp_data = topology_data
-        self._nb_modules = len(self._tp_data.keys())
+        self._nb_modules = len(self._tp_data)
+        self._modules = modules
+
+    def __update_module_position(self):
+        self._nb_modules = len(self._tp_data)
+        tp_map = TopologyMap(self._tp_data, self._nb_modules)
+        tp_map.construct_map()
+        tp_map.update_module_data(self._modules)
+
+    def is_topology_complete(self):
+        if len(self._tp_data) < 2:
+            return False
+        try:
+            self.__update_module_position()
+        except KeyError:
+            return False
+        return len(self._modules) >= len(self._tp_data) - 1
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """ Print the topology map
@@ -170,7 +202,7 @@ class TopologyManager:
         :param print_id: If True, the result includes module ids
         :return: None
         """
-        self._nb_modules = len(self._tp_data.keys())
+        self._nb_modules = len(self._tp_data)
         tp_map = TopologyMap(self._tp_data, self._nb_modules)
         tp_map.construct_map()
         tp_map.print_map(print_id)

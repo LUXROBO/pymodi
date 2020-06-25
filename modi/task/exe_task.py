@@ -502,8 +502,7 @@ class ExeTask:
         # self.__delay()
 
         # Request topology data
-        request_topology_message = self.__request_topology()
-        self._send_q.put(request_topology_message)
+        self.request_topology()
         # self.__delay()
 
     def __delay(self) -> None:
@@ -542,7 +541,7 @@ class ExeTask:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def __request_topology(self) -> str:
+    def request_topology(self) -> str:
         """Request module topology
 
         :return: json serialized topology request message
@@ -557,7 +556,7 @@ class ExeTask:
         message["b"] = base64.b64encode(bytes(direction_data)).decode("utf-8")
         message["l"] = 8
 
-        return json.dumps(message, separators=(",", ":"))
+        self._send_q.put(json.dumps(message, separators=(",", ":")))
 
     def update_firmware(self) -> None:
         """ Remove firmware of MODI modules

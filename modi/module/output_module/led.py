@@ -101,7 +101,7 @@ class Led(OutputModule):
         """
         return self._get_property(self.PropertyType.GREEN)
 
-    def set_blue(self, blue: int = None) -> float:
+    def set_blue(self, blue: int = 255) -> float:
         """Sets the blue component of the LED light by given value
 
         :param blue: Blue component to set
