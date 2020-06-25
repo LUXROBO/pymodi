@@ -41,6 +41,12 @@ class Module:
 
         self._is_connected = True
 
+        self.position = (0, 0)
+
+    @property
+    def distance(self):
+        return self.position[0] ** 2 + self.position[1] ** 2
+
     @property
     def id(self) -> int:
         return self._id

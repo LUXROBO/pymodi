@@ -165,11 +165,13 @@ class TopologyMap:
                     == 'Network':
                 return mid
 
-    def get_distance(self, module_id):
-        module_position = self.__module_position[module_id]
+    def update_module_data(self, modules):
         network_position = self.__module_position[self.network_id]
-        return (module_position[0] - network_position[0])**2 \
-            + (module_position[1] - network_position[1])**2
+        for module in modules:
+            module_position = self.__module_position[module.id]
+
+            module.position = (module_position[0] - network_position[0],
+                               module_position[1] - network_position[1])
 
 
 class TopologyManager:
@@ -177,6 +179,12 @@ class TopologyManager:
     def __init__(self, topology_data):
         self._tp_data = topology_data
         self._nb_modules = len(self._tp_data)
+
+    def update_module_data(self, modules):
+        self._nb_modules = len(self._tp_data)
+        tp_map = TopologyMap(self._tp_data, self._nb_modules)
+        tp_map.construct_map()
+        tp_map.update_module_data(modules)
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """ Print the topology map
