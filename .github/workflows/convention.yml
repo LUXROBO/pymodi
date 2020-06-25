@@ -28,15 +28,3 @@ jobs:
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 modi tests --count --select=E9,F63,F7,F82 --show-source --statistics
-    - name: Send email
-      uses: dawidd6/action-send-mail@v2.2.0
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{secrets.MAIL_USERNAME}}
-        password: ${{secrets.MAIL_PASSWORD}}
-        subject: A new version of PyMODI is successfully released!
-        # Literal body:
-        body: file://HISTORY.md
-        to: tech@luxrobo.com
-        from: PyMODI Manager
