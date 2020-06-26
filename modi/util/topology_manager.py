@@ -164,6 +164,7 @@ class TopologyMap:
             if TopologyManager.get_type_from_uuid(self._tp_data[mid]['uuid']) \
                     == 'Network':
                 return mid
+        return list(self._tp_data.keys())[0]
 
     def update_module_data(self, modules):
         network_position = self.__module_position[self.network_id]
