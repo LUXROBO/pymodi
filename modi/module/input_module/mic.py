@@ -15,7 +15,8 @@ class Mic(InputModule):
         super().__init__(id_, uuid, msg_send_q)
         self._type = "mic"
 
-    def get_volume(self) -> float:
+    @property
+    def volume(self) -> float:
         """Returns the volume of input sound between 0 and 100
 
         :return: Volume of input sound.
@@ -23,7 +24,8 @@ class Mic(InputModule):
         """
         return self._get_property(self.PropertyType.VOLUME)
 
-    def get_frequency(self) -> float:
+    @property
+    def frequency(self) -> float:
         """Returns the frequency of input sound
 
         :return: Frequency of input sound.
