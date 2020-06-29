@@ -189,7 +189,7 @@ class TopologyManager:
         tp_map.update_module_data(self._modules)
 
     def is_topology_complete(self):
-        if len(self._tp_data) < 2:
+        if len(self._tp_data) < 1:
             return False
         try:
             self.__update_module_position()
