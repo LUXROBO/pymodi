@@ -111,6 +111,7 @@ class Speaker(OutputModule):
         )
 
     @tune.setter
+    @OutputModule._validate_property(nb_values=2)
     def tune(self, tune_value: Tuple[int, int]) -> None:
         """Set tune for the speaker
 
@@ -118,22 +119,10 @@ class Speaker(OutputModule):
         :type tune_value: Tuple[int, int]
         :return: None
         """
-        if isinstance(tune_value, int):
-            raise ValueError("Requires two values for frequency and volume")
-
-        frequency_value = (tune_value[0]
-                           if tune_value[0] is not None
-                           else self.frequency)
-        volume_value = (tune_value[1]
-                        if tune_value[1] is not None
-                        else self.volume)
-
-        tune_value = (frequency_value, volume_value)
-
         self._set_property(
             self._id,
             self.CommandType.SET_TUNE,
-            (frequency_value, volume_value,),
+            tune_value,
             self.PropertyDataType.FLOAT,
         )
         self._update_properties([property_type
@@ -145,6 +134,7 @@ class Speaker(OutputModule):
         return self._get_property(self.PropertyType.FREQUENCY)
 
     @frequency.setter
+    @OutputModule._validate_property(nb_values=1)
     def frequency(self, frequency_value: float) -> None:
         """Set the frequency for the speaker
 
@@ -152,13 +142,19 @@ class Speaker(OutputModule):
         :type frequency_value: float, optional
         :return: None
         """
-        self.tune = frequency_value, None
+        self.tune = frequency_value, self.volume
 
     @property
     def volume(self) -> float:
+        """Returns current volume
+
+        :return: Volume value
+        :rtype: float
+        """
         return self._get_property(self.PropertyType.VOLUME)
 
     @volume.setter
+    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
     def volume(self, volume_value: float) -> None:
         """Set the volume for the speaker
 
@@ -166,7 +162,7 @@ class Speaker(OutputModule):
         :type volume_value: float
         :return: None
         """
-        self.tune = None, volume_value
+        self.tune = self.frequency, volume_value
 
     def turn_off(self) -> None:
         """Turn off the sound

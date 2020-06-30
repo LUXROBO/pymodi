@@ -61,6 +61,7 @@ class Motor(OutputModule):
         return self._get_property(self.PropertyType.FIRST_DEGREE)
 
     @first_degree.setter
+    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
     def first_degree(self, degree_value: int) -> None:
         """Sets the angle of the motor at channel I
 
@@ -68,7 +69,7 @@ class Motor(OutputModule):
         :type degree_value: int
         :return: None
         """
-        self.degree = degree_value, None
+        self.degree = degree_value, self.second_degree
 
     @property
     def second_degree(self) -> float:
@@ -80,6 +81,7 @@ class Motor(OutputModule):
         return self._get_property(self.PropertyType.SECOND_DEGREE)
 
     @second_degree.setter
+    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
     def second_degree(self, degree_value: int) -> None:
         """Sets the angle of the motor at channel II
 
@@ -87,9 +89,7 @@ class Motor(OutputModule):
         :type degree_value
         :return: None
         """
-        if degree_value < 0 or degree_value > 100:
-            raise ValueError("Degree value should be in range of 0~100")
-        self.degree = None, degree_value
+        self.degree = self.first_degree, degree_value
 
     @property
     def first_speed(self) -> float:
@@ -101,13 +101,14 @@ class Motor(OutputModule):
         return self._get_property(self.PropertyType.FIRST_SPEED)
 
     @first_speed.setter
+    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
     def first_speed(self, speed_value: int) -> None:
         """Set the speed of the motor at channel I
 
         :param speed_value: Angular speed to set the first motor.
         :return: None
         """
-        self.speed = speed_value, None
+        self.speed = speed_value, self.second_speed
 
     @property
     def second_speed(self) -> float:
@@ -119,14 +120,14 @@ class Motor(OutputModule):
         return self._get_property(self.PropertyType.SECOND_SPEED)
 
     @second_speed.setter
+    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
     def second_speed(self, speed_value: int) -> None:
         """Set the speed of the motor at channel II
 
         :param speed_value: Angular speed to set the second motor.
-        :return: Angular speed of the second motor.
-        :rtype: float
+        :return: None
         """
-        self.speed = None, speed_value
+        self.speed = self.first_speed, speed_value
 
     @property
     def first_torque(self) -> float:
@@ -138,15 +139,15 @@ class Motor(OutputModule):
         return self._get_property(self.PropertyType.FIRST_TORQUE)
 
     @first_torque.setter
+    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
     def first_torque(self, torque_value: int) -> None:
         """Set the torque of the motor at channel I
 
         :param torque_value: Torque to set the first motor.
         :type torque_value: int
-        :return: Torque of the first motor.
-        :rtype: float
+        :return: None
         """
-        self.torque = torque_value, None
+        self.torque = torque_value, self.second_torque
 
     @property
     def second_torque(self) -> float:
@@ -158,6 +159,7 @@ class Motor(OutputModule):
         return self._get_property(self.PropertyType.SECOND_TORQUE)
 
     @second_torque.setter
+    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
     def second_torque(self, torque_value: int) -> None:
         """Set the torque of the motor at channel II
 
@@ -165,7 +167,7 @@ class Motor(OutputModule):
         :type torque_value: int
         :return: None
         """
-        self.torque = None, torque_value
+        self.torque = self.first_torque, torque_value
 
     @property
     def torque(self) -> Tuple[float, float]:
@@ -180,6 +182,7 @@ class Motor(OutputModule):
         )
 
     @torque.setter
+    @OutputModule._validate_property(nb_values=2, value_range=(0, 100))
     def torque(self, torque_value: Tuple[int, int]) -> None:
         """Set the torque of the motors at both channels
 
@@ -187,17 +190,8 @@ class Motor(OutputModule):
         :type torque_value: Tuple[int, int]
         :return: None
         """
-        if isinstance(torque_value, int):
-            raise ValueError("Requires two values for each channel")
-        if torque_value[0] is not None:
-            if torque_value[0] < 0 or torque_value[0] > 100:
-                raise ValueError("Torque value should be in range 0~100")
-            self.set_motor_channel(0, 0, torque_value[0])
-        if torque_value[1] is not None:
-            if torque_value[1] < 0 or torque_value[1] > 100:
-                raise ValueError("Torque value should be in range 0~100")
-            self.set_motor_channel(1, 0, torque_value[1])
-
+        self.set_motor_channel(0, 0, torque_value[0])
+        self.set_motor_channel(1, 0, torque_value[1])
         self._update_properties(
             [self.PropertyType.FIRST_TORQUE, self.PropertyType.SECOND_TORQUE],
             torque_value)
@@ -214,6 +208,7 @@ class Motor(OutputModule):
         )
 
     @speed.setter
+    @OutputModule._validate_property(2, (0, 100))
     def speed(self, speed_value: Tuple[int, int]) -> None:
         """Set the speed of the motors at both channels
 
@@ -221,17 +216,8 @@ class Motor(OutputModule):
         :type speed_value: Tuple[int, int]
         :return: None
         """
-        if isinstance(speed_value, int):
-            raise ValueError("Requires two values for each channel")
-        if speed_value[0] is not None:
-            if speed_value[0] < 0 or speed_value[0] > 100:
-                raise ValueError("Speed value should be in range 0~100")
-            self.set_motor_channel(0, 1, speed_value[0])
-        if speed_value[1] is not None:
-            if speed_value[1] < 0 or speed_value[1] > 100:
-                raise ValueError("Speed value should be in range 0~100")
-            self.set_motor_channel(1, 1, speed_value[1])
-
+        self.set_motor_channel(0, 1, speed_value[0])
+        self.set_motor_channel(1, 1, speed_value[1])
         self._update_properties(
             [self.PropertyType.FIRST_SPEED, self.PropertyType.SECOND_SPEED],
             speed_value)
@@ -249,25 +235,16 @@ class Motor(OutputModule):
         )
 
     @degree.setter
+    @OutputModule._validate_property(nb_values=2, value_range=(0, 100))
     def degree(self, degree_value: Tuple[int, int]) -> None:
         """Set the angle of the motors at both channels
 
         :param degree_value: Degree to set
         :type degree_value: Tuple[int, int]
-        :return: Angle of the first motor , Angle of the second motor.
-        :rtype: Tuple[float, float]
+        :return: None
         """
-        if isinstance(degree_value, int):
-            raise ValueError("Requires two values for each channel")
-        if degree_value[0] is not None:
-            if degree_value[0] < 0 or degree_value[0] > 100:
-                raise ValueError("Degree value should be in range 0~100")
-            self.set_motor_channel(0, 2, degree_value[0])
-        if degree_value[1] is not None:
-            if degree_value[1] < 0 or degree_value[1] > 100:
-                raise ValueError("Degree value should be in range 0~100")
-            self.set_motor_channel(1, 2, degree_value[1])
-
+        self.set_motor_channel(0, 2, degree_value[0])
+        self.set_motor_channel(1, 2, degree_value[1])
         self._update_properties(
             [self.PropertyType.FIRST_DEGREE, self.PropertyType.SECOND_DEGREE],
             degree_value)

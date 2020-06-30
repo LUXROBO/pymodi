@@ -16,7 +16,7 @@ class TestMotor(unittest.TestCase):
             return command_type
 
         self.motor._set_property = mock.Mock(side_effect=eval_set_property)
-        self.motor._get_property = mock.Mock()
+        self.motor._get_property = mock.Mock(return_value=0)
         self.motor._msg_send_q = mock.Mock()
 
     def tearDown(self):
@@ -71,7 +71,7 @@ class TestMotor(unittest.TestCase):
         with mock.patch.object(Motor, 'torque', mock_property):
             self.motor.first_torque = expected_torque
             setter_mock.assert_called_once_with(
-                self.motor, (expected_torque, None))
+                self.motor, (expected_torque, 0))
 
     def test_set_second_torque(self):
         """Test set_second_torque method."""
@@ -81,7 +81,7 @@ class TestMotor(unittest.TestCase):
         with mock.patch.object(Motor, 'torque', mock_property):
             self.motor.second_torque = expected_torque
             setter_mock.assert_called_once_with(
-                self.motor, (None, expected_torque))
+                self.motor, (0, expected_torque))
 
     def test_get_torque(self):
         """Test set_torque method with none input."""
@@ -145,7 +145,7 @@ class TestMotor(unittest.TestCase):
         with mock.patch.object(Motor, 'speed', mock_property):
             self.motor.first_speed = expected_speed
             setter_mock.assert_called_once_with(
-                self.motor, (expected_speed, None))
+                self.motor, (expected_speed, 0))
 
     def test_set_second_speed(self):
         """Test set_second_speed method."""
@@ -155,7 +155,7 @@ class TestMotor(unittest.TestCase):
         with mock.patch.object(Motor, 'speed', mock_property):
             self.motor.second_speed = expected_speed
             setter_mock.assert_called_once_with(
-                self.motor, (None, expected_speed))
+                self.motor, (0, expected_speed))
 
     def test_get_speed(self):
         """Test get_speed method with none input."""
@@ -220,7 +220,7 @@ class TestMotor(unittest.TestCase):
         with mock.patch.object(Motor, 'degree', mock_property):
             self.motor.first_degree = expected_degree
             setter_mock.assert_called_once_with(
-                self.motor, (expected_degree, None))
+                self.motor, (expected_degree, 0))
 
     def test_set_second_degree(self):
         """Test set_second_degree method."""
@@ -230,7 +230,7 @@ class TestMotor(unittest.TestCase):
         with mock.patch.object(Motor, 'degree', mock_property):
             self.motor.second_degree = expected_degree
             setter_mock.assert_called_once_with(
-                self.motor, (None, expected_degree))
+                self.motor, (0, expected_degree))
 
     def test_get_degree(self):
         """Test get_degree method with none input."""

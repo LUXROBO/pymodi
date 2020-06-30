@@ -115,7 +115,7 @@ class MODI:
             timeout += 0.1
             if timeout > 5:
                 self._exe_thrd.request_topology()
-                timeout = 0
+                break
 
     def update_module_firmware(self) -> None:
         """Updates firmware of connected modules"""
