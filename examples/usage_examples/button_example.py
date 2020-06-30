@@ -8,15 +8,15 @@ network module
 """
 
 if __name__ == "__main__":
-    bundle = modi.MODI(1)
+    bundle = modi.MODI()
     button = bundle.buttons[0]
 
     while True:
-        if button.get_pressed():
+        if button.pressed:
             print("pressed       ", end='\r')
         else:
             print("not pressed   ", end='\r')
-        if button.get_double_clicked():
+        if button.double_clicked:
             print("double clicked", end='\r')
             break
         time.sleep(0.02)

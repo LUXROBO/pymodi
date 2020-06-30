@@ -6,9 +6,9 @@ Make sure you connect 1 mic module to your network module
 """
 
 if __name__ == "__main__":
-    bundle = modi.MODI(1)
+    bundle = modi.MODI()
     mic = bundle.mics[0]
 
     while True:
-        print("Volume: {0:<10} freq: {1:<10}".format(mic.get_volume(),
-              mic.get_frequency()), end='\r')
+        print("Volume: {0:<10} freq: {1:<10}".format(mic.volume,
+              mic.frequency), end='\r')

@@ -7,14 +7,14 @@ Make sure you connect 1 speaker module to your network module
 """
 
 if __name__ == "__main__":
-    bundle = modi.MODI(1)
+    bundle = modi.MODI()
     speak = bundle.speakers[0]
 
-    speak.set_tune(800, 70)
+    speak.tune = 800, 70
     time.sleep(3)
-    speak.set_frequency(700)
+    speak.frequency = 700
     time.sleep(3)
-    speak.set_volume(100)
+    speak.volume = 100
     time.sleep(3)
-    speak.set_off()
+    speak.turn_off()
     time.sleep(3)
