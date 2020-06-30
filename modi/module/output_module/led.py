@@ -24,34 +24,15 @@ class Led(OutputModule):
         return self.red, self.green, self.blue
 
     @rgb.setter
-    def rgb(self, color: Tuple[int, int, int]) -> Tuple[float, float, float]:
+    @OutputModule._validate_property(nb_values=3, value_range=(0, 255))
+    def rgb(self, color: Tuple[int, int, int]) -> None:
         """Sets the color of the LED light with given RGB values, and returns
         the current RGB values.
 
-        :param red: Red component to set or ``None``.
-        :type red: int, optional
-        :param green: Green component to set or ``None``.
-        :type green: int, optional
-        :param blue: Blue component to set or ``None``.
-        :type blue: int, optional
-        :return: Tuple of red, green
-        :rtype: Tuple[float, float, float]
+        :param color: RGB value to set
+        :type color: Tuple[int, int, int]
+        :return: None
         """
-        if isinstance(color, int):
-            raise ValueError("Requires three values for red, green, and blue")
-
-        red, green, blue = color
-        color = (
-            red if red is not None else self.red,
-            green if green is not None else self.green,
-            blue if blue is not None else self.blue)
-
-        red, green, blue = color
-
-        if red > 255 or blue > 255 or green > 255 or red < 0 or blue < 0\
-                or green < 0:
-            raise ValueError("Color should be in range of 0 ~ 255")
-
         self._set_property(
             self._id,
             self.CommandType.SET_RGB,
@@ -60,25 +41,21 @@ class Led(OutputModule):
         self._update_properties([property_type
                                  for property_type in self.PropertyType],
                                 color)
-        return color
 
-    def turn_on(self) -> Tuple[float, float, float]:
+    def turn_on(self) -> None:
         """Turn on led at maximum brightness.
 
         :return: RGB value of the LED set to maximum brightness
-        :rtype: Tuple[float, float, float]
+        :rtype: None
         """
         self.rgb = 255, 255, 255
-        return 255, 255, 255
 
-    def turn_off(self) -> Tuple[float, float, float]:
+    def turn_off(self) -> None:
         """Turn off led.
 
-        :return: RGB value of the LED turned off
-        :rtype: Tuple[float, float, float]
+        :return: None
         """
         self.rgb = 0, 0, 0
-        return 0, 0, 0
 
     @property
     def red(self) -> float:
@@ -90,14 +67,15 @@ class Led(OutputModule):
         return self._get_property(self.PropertyType.RED)
 
     @red.setter
-    def red(self, red: int = 255) -> None:
+    @OutputModule._validate_property(nb_values=1, value_range=(0, 255))
+    def red(self, red: int) -> None:
         """Sets the red component of the LED light by given value
 
-        :param red: Red component to set or ``None``.
-        :type red: int, optional
+        :param red: Red component to set
+        :type red: int
         :return: None
         """
-        self.rgb = red, None, None
+        self.rgb = red, self.green, self.blue
 
     @property
     def green(self) -> float:
@@ -109,14 +87,15 @@ class Led(OutputModule):
         return self._get_property(self.PropertyType.GREEN)
 
     @green.setter
-    def green(self, green: int = 255) -> None:
+    @OutputModule._validate_property(nb_values=1, value_range=(0, 255))
+    def green(self, green: int) -> None:
         """Sets the green component of the LED light by given value
 
         :param green: Green component to set
-        :type green: int, optional
+        :type green: int
         :return: None
         """
-        self.rgb = None, green, None
+        self.rgb = self.red, green, self.blue
 
     @property
     def blue(self) -> float:
@@ -128,11 +107,12 @@ class Led(OutputModule):
         return self._get_property(self.PropertyType.BLUE)
 
     @blue.setter
-    def blue(self, blue: int = 255) -> None:
+    @OutputModule._validate_property(nb_values=1, value_range=(0, 255))
+    def blue(self, blue: int) -> None:
         """Sets the blue component of the LED light by given value
 
         :param blue: Blue component to set
-        :type blue: int, optional
+        :type blue: int
         :return: None
         """
-        self.rgb = None, None, blue
+        self.rgb = self.red, self.green, blue

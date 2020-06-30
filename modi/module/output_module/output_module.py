@@ -135,3 +135,25 @@ class OutputModule(Module):
 
         for message in messages:
             self._msg_send_q.put(message)
+
+    @staticmethod
+    def _validate_property(nb_values: int, value_range: Tuple = None):
+        def check_value(setter):
+            def set_property(self, value):
+                if nb_values > 1 and isinstance(value, int):
+                    raise ValueError(f"{setter.__name__} needs {nb_values} "
+                                     f"values")
+                elif nb_values == 1 and not (
+                        value_range[1] >= value >= value_range[0]):
+                    raise ValueError(f"{setter.__name__} should be in range "
+                                     f"{value_range[0]}~{value_range[1]}")
+                elif nb_values > 1:
+                    for val in value:
+                        if not (value_range[1] >= val >= value_range[0]):
+                            raise ValueError(f"{setter.__name__} "
+                                             f"should be in range"
+                                             f" {value_range[0]}~"
+                                             f"{value_range[1]}")
+                setter(self, value)
+            return set_property
+        return check_value
