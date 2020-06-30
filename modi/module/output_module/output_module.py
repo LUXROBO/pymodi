@@ -20,7 +20,7 @@ class OutputModule(Module):
         DISPLAY_VAR = 4
 
     def _update_properties(self, property_types: List[IntEnum],
-                           values: List) -> None:
+                           values: Tuple) -> None:
         """Update the properties when setting the property
 
         :param property_types: PropertyType class of the module

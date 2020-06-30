@@ -20,8 +20,12 @@ class TestUltrasonic(unittest.TestCase):
 
     def test_get_distance(self):
         """Test get_distance method."""
-        self.ultrasonic.get_distance()
+        _ = self.ultrasonic.distance
 
         self.ultrasonic._get_property.assert_called_once_with(
             self.ultrasonic.PropertyType.DISTANCE
         )
+
+
+if __name__ == '__main__':
+    unittest.main()

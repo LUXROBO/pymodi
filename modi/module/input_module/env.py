@@ -19,7 +19,8 @@ class Env(InputModule):
         super().__init__(id_, uuid, msg_send_q)
         self._type = "env"
 
-    def get_temperature(self) -> float:
+    @property
+    def temperature(self) -> float:
         """Returns the value of temperature between 0 and 100
 
         :return: Temperature.
@@ -27,7 +28,8 @@ class Env(InputModule):
         """
         return self._get_property(self.PropertyType.TEMPERATURE)
 
-    def get_humidity(self) -> float:
+    @property
+    def humidity(self) -> float:
         """Returns the value of humidity between 0 and 100
 
         :return: Humidity.
@@ -35,7 +37,8 @@ class Env(InputModule):
         """
         return self._get_property(self.PropertyType.HUMIDITY)
 
-    def get_brightness(self) -> float:
+    @property
+    def brightness(self) -> float:
         """Returns the value of brightness between 0 and 100
 
         :return: Brightness.
@@ -43,7 +46,8 @@ class Env(InputModule):
         """
         return self._get_property(self.PropertyType.BRIGHTNESS)
 
-    def get_red(self) -> float:
+    @property
+    def red(self) -> float:
         """Returns the value of red component of light
 
         :return: Red component of light.
@@ -51,7 +55,8 @@ class Env(InputModule):
         """
         return self._get_property(self.PropertyType.RED)
 
-    def get_green(self) -> float:
+    @property
+    def green(self) -> float:
         """Returns the value of green component of light
 
         :return: Green component of light.
@@ -59,7 +64,8 @@ class Env(InputModule):
         """
         return self._get_property(self.PropertyType.GREEN)
 
-    def get_blue(self) -> float:
+    @property
+    def blue(self) -> float:
         """Returns the value of blue component of light
 
         :return: Blue component of light.

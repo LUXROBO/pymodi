@@ -20,38 +20,38 @@ class TestEnv(unittest.TestCase):
 
     def test_get_temperature(self):
         """Test get_temperature method."""
-        self.env.get_temperature()
+        _ = self.env.temperature
         self.env._get_property.assert_called_once_with(
             self.env.PropertyType.TEMPERATURE
         )
 
     def test_get_humidity(self):
         """Test get_humidity method."""
-        self.env.get_humidity()
+        _ = self.env.humidity
         self.env._get_property.assert_called_once_with(
             self.env.PropertyType.HUMIDITY)
 
     def test_get_brightness(self):
         """Test get_brightness method."""
-        self.env.get_brightness()
+        _ = self.env.brightness
         self.env._get_property.assert_called_once_with(
             self.env.PropertyType.BRIGHTNESS)
 
     def test_get_red(self):
         """Test get_red method."""
-        self.env.get_red()
+        _ = self.env.red
         self.env._get_property.assert_called_once_with(
             self.env.PropertyType.RED)
 
     def test_get_green(self):
         """Test get_green method."""
-        self.env.get_green()
+        _ = self.env.green
         self.env._get_property.assert_called_once_with(
             self.env.PropertyType.GREEN)
 
     def test_get_blue(self):
         """Test get_blue method."""
-        self.env.get_blue()
+        _ = self.env.blue
         self.env._get_property.assert_called_once_with(
             self.env.PropertyType.BLUE)
 
