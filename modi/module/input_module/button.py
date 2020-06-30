@@ -18,7 +18,7 @@ class Button(InputModule):
         self._type = "button"
 
     @property
-    def click(self) -> bool:
+    def clicked(self) -> bool:
         """Returns true when button is clicked
 
         :return: `True` if clicked or `False`.
@@ -27,7 +27,7 @@ class Button(InputModule):
         return self._get_property(self.PropertyType.CLICKED) == 100.0
 
     @property
-    def double_click(self) -> bool:
+    def double_clicked(self) -> bool:
         """Returns true when button is double clicked
 
         :return: `True` if double clicked or `False`.
@@ -36,7 +36,7 @@ class Button(InputModule):
         return self._get_property(self.PropertyType.DOUBLE_CLICKED) == 100.0
 
     @property
-    def press_status(self) -> bool:
+    def pressed(self) -> bool:
         """Returns true while button is pressed
 
         :return: `True` if pressed or `False`.
@@ -45,7 +45,7 @@ class Button(InputModule):
         return self._get_property(self.PropertyType.PRESSED) == 100.0
 
     @property
-    def istoggled(self) -> bool:
+    def toggled(self) -> bool:
         """Returns true when button is toggled
 
         :return: `True` if toggled or `False`.
