@@ -70,7 +70,7 @@ You can also install PyMODI at develop branch with:
 Import **modi** package and create **MODI** instance:
 
     import modi
-    bundle = modi.MODI(nb_modules=1)
+    bundle = modi.MODI()
 
 List connected modules:
 
@@ -88,9 +88,9 @@ Let\'s blink the LED\'s light 5 times:
     led = bundle.leds[0]
 
     for _ in range(5):
-        led.set_on()
+        led.turn_on()
         time.sleep(1)
-        led.set_off()
+        led.turn_off()
         time.sleep(1)
 
 If you are still not sure how to use PyMODI, you can play an interactive PyMODI tutorial by running a command of
