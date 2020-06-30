@@ -21,7 +21,7 @@ class TestMic(unittest.TestCase):
 
     def test_get_volume(self):
         """Test get_volume method."""
-        self.mic.get_volume()
+        _ = self.mic.volume
 
         self.mic._get_property.assert_called_once_with(
             self.mic.PropertyType.VOLUME
@@ -29,8 +29,12 @@ class TestMic(unittest.TestCase):
 
     def test_get_frequency(self):
         """Test get_frequency method."""
-        self.mic.get_frequency()
+        _ = self.mic.frequency
 
         self.mic._get_property.assert_called_once_with(
             self.mic.PropertyType.FREQUENCY
         )
+
+
+if __name__ == '__main__':
+    unittest.main()

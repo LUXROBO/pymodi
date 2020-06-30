@@ -152,7 +152,7 @@ class Speaker(OutputModule):
         :type frequency_value: float, optional
         :return: None
         """
-        self.tune = frequency_value, 0
+        self.tune = frequency_value, None
 
     @property
     def volume(self) -> float:

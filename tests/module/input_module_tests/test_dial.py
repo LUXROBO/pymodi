@@ -20,13 +20,13 @@ class TestDial(unittest.TestCase):
 
     def test_get_degree(self):
         """Test get_degree method."""
-        self.dial.get_degree()
+        _ = self.dial.degree
         self.dial._get_property.assert_called_once_with(
             self.dial.PropertyType.DEGREE)
 
     def test_get_turnspeed(self):
         """Test get_turnspeed method."""
-        self.dial.get_turnspeed()
+        _ = self.dial.turnspeed
         self.dial._get_property.assert_called_once_with(
             self.dial.PropertyType.TURNSPEED
         )

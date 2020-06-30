@@ -20,7 +20,7 @@ class TestIr(unittest.TestCase):
 
     def test_get_proximity(self):
         """Test get_proximity method."""
-        self.ir.get_proximity()
+        _ = self.ir.proximity
         self.ir._get_property.assert_called_once_with(
             self.ir.PropertyType.PROXIMITY)
 

@@ -20,28 +20,28 @@ class TestButton(unittest.TestCase):
 
     def test_get_clicked(self):
         """Test get_clicked method."""
-        self.button.get_clicked()
+        _ = self.button.clicked
         self.button._get_property.assert_called_once_with(
             self.button.PropertyType.CLICKED
         )
 
     def test_get_double_clicked(self):
         """Test get_double_clicked method."""
-        self.button.get_double_clicked()
+        _ = self.button.double_clicked
         self.button._get_property.assert_called_once_with(
             self.button.PropertyType.DOUBLE_CLICKED
         )
 
     def test_get_pressed(self):
         """Test get_pressed method."""
-        self.button.get_pressed()
+        _ = self.button.pressed
         self.button._get_property.assert_called_once_with(
             self.button.PropertyType.PRESSED
         )
 
     def test_get_toggled(self):
         """Test get_toggled method."""
-        self.button.get_toggled()
+        _ = self.button.toggled
         self.button._get_property.assert_called_once_with(
             self.button.PropertyType.TOGGLED
         )

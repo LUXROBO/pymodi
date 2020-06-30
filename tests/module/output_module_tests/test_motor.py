@@ -1,5 +1,4 @@
 import unittest
-
 from unittest import mock
 
 from modi.module.output_module.motor import Motor
@@ -52,7 +51,7 @@ class TestMotor(unittest.TestCase):
             (1, 0, second_torque_value, 0),
         )
 
-        self.motor.set_torque(*expected_values)
+        self.motor.torque = expected_values
 
         self.assertEqual(
             mock.call(*expected_top_params),
@@ -64,25 +63,29 @@ class TestMotor(unittest.TestCase):
             self.motor._set_property.call_args_list[1]
         )
 
-    @mock.patch.object(Motor, "set_torque")
-    def test_set_first_torque(self, mock_set_torque):
+    def test_set_first_torque(self):
         """Test set_first_torque method."""
         expected_torque = 10
-        self.motor.set_first_torque(expected_torque)
-        mock_set_torque.assert_called_once_with(
-            first_torque_value=expected_torque)
+        setter_mock = mock.Mock(wraps=Motor.torque.fset)
+        mock_property = Motor.torque.setter(setter_mock)
+        with mock.patch.object(Motor, 'torque', mock_property):
+            self.motor.first_torque = expected_torque
+            setter_mock.assert_called_once_with(
+                self.motor, (expected_torque, None))
 
-    @mock.patch.object(Motor, "set_torque")
-    def test_set_second_torque(self, mock_set_torque):
+    def test_set_second_torque(self):
         """Test set_second_torque method."""
         expected_torque = 10
-        self.motor.set_second_torque(expected_torque)
-        mock_set_torque.assert_called_once_with(
-            second_torque_value=expected_torque)
+        setter_mock = mock.Mock(wraps=Motor.torque.fset)
+        mock_property = Motor.torque.setter(setter_mock)
+        with mock.patch.object(Motor, 'torque', mock_property):
+            self.motor.second_torque = expected_torque
+            setter_mock.assert_called_once_with(
+                self.motor, (None, expected_torque))
 
     def test_get_torque(self):
         """Test set_torque method with none input."""
-        self.motor.get_torque()
+        _ = self.motor.torque
         self.assertEqual(
             mock.call(self.motor.PropertyType.FIRST_TORQUE),
             self.motor._get_property.call_args_list[0],
@@ -94,14 +97,14 @@ class TestMotor(unittest.TestCase):
 
     def test_get_first_torque(self):
         """Test get_first_torque method"""
-        self.motor.get_first_torque()
+        _ = self.motor.first_torque
         self.motor._get_property.assert_called_once_with(
             self.motor.PropertyType.FIRST_TORQUE
         )
 
     def test_get_second_torque(self):
         """Test get_second_torque method"""
-        self.motor.get_second_torque()
+        _ = self.motor.second_torque
         self.motor._get_property.assert_called_once_with(
             self.motor.PropertyType.SECOND_TORQUE
         )
@@ -122,7 +125,7 @@ class TestMotor(unittest.TestCase):
             (1, 1, second_speed_value, 0),
         )
 
-        self.motor.set_speed(*expected_values)
+        self.motor.speed = expected_values
 
         self.assertEqual(
             mock.call(*expected_top_params),
@@ -134,25 +137,29 @@ class TestMotor(unittest.TestCase):
             self.motor._set_property.call_args_list[1]
         )
 
-    @mock.patch.object(Motor, "set_speed")
-    def test_set_first_speed(self, mock_set_speed):
+    def test_set_first_speed(self):
         """Test set_first_speed method."""
         expected_speed = 10
-        self.motor.set_first_speed(expected_speed)
-        mock_set_speed.assert_called_once_with(
-            first_speed_value=expected_speed)
+        setter_mock = mock.Mock(wraps=Motor.speed.fset)
+        mock_property = Motor.speed.setter(setter_mock)
+        with mock.patch.object(Motor, 'speed', mock_property):
+            self.motor.first_speed = expected_speed
+            setter_mock.assert_called_once_with(
+                self.motor, (expected_speed, None))
 
-    @mock.patch.object(Motor, "set_speed")
-    def test_set_second_speed(self, mock_set_speed):
+    def test_set_second_speed(self):
         """Test set_second_speed method."""
         expected_speed = 10
-        self.motor.set_second_speed(expected_speed)
-        mock_set_speed.assert_called_once_with(
-            second_speed_value=expected_speed)
+        setter_mock = mock.Mock(wraps=Motor.speed.fset)
+        mock_property = Motor.speed.setter(setter_mock)
+        with mock.patch.object(Motor, 'speed', mock_property):
+            self.motor.second_speed = expected_speed
+            setter_mock.assert_called_once_with(
+                self.motor, (None, expected_speed))
 
     def test_get_speed(self):
         """Test get_speed method with none input."""
-        self.motor.get_speed()
+        _ = self.motor.speed
 
         self.assertEqual(
             mock.call(self.motor.PropertyType.FIRST_SPEED),
@@ -165,14 +172,14 @@ class TestMotor(unittest.TestCase):
 
     def test_get_first_speed(self):
         """Test get_first_speed method"""
-        self.motor.get_first_speed()
+        _ = self.motor.first_speed
         self.motor._get_property.assert_called_once_with(
             self.motor.PropertyType.FIRST_SPEED
         )
 
     def test_get_second_speed(self):
         """Test get_second_speed method"""
-        self.motor.get_second_speed()
+        _ = self.motor.second_speed
         self.motor._get_property.assert_called_once_with(
             self.motor.PropertyType.SECOND_SPEED
         )
@@ -193,7 +200,7 @@ class TestMotor(unittest.TestCase):
             (1, 2, second_degree_value, 0),
         )
 
-        self.motor.set_degree(*expected_values)
+        self.motor.degree = expected_values
 
         self.assertEqual(
             mock.call(*expected_top_params),
@@ -205,25 +212,29 @@ class TestMotor(unittest.TestCase):
             self.motor._set_property.call_args_list[1]
         )
 
-    @mock.patch.object(Motor, "set_degree")
-    def test_set_first_degree(self, mock_set_degree):
+    def test_set_first_degree(self):
         """Test set_first_degree method."""
         expected_degree = 10
-        self.motor.set_first_degree(expected_degree)
-        mock_set_degree.assert_called_once_with(
-            first_degree_value=expected_degree)
+        setter_mock = mock.Mock(wraps=Motor.degree.fset)
+        mock_property = Motor.degree.setter(setter_mock)
+        with mock.patch.object(Motor, 'degree', mock_property):
+            self.motor.first_degree = expected_degree
+            setter_mock.assert_called_once_with(
+                self.motor, (expected_degree, None))
 
-    @mock.patch.object(Motor, "set_degree")
-    def test_set_second_degree(self, mock_set_degree):
+    def test_set_second_degree(self):
         """Test set_second_degree method."""
         expected_degree = 10
-        self.motor.set_second_degree(expected_degree)
-        mock_set_degree.assert_called_once_with(
-            second_degree_value=expected_degree)
+        setter_mock = mock.Mock(wraps=Motor.degree.fset)
+        mock_property = Motor.degree.setter(setter_mock)
+        with mock.patch.object(Motor, 'degree', mock_property):
+            self.motor.second_degree = expected_degree
+            setter_mock.assert_called_once_with(
+                self.motor, (None, expected_degree))
 
     def test_get_degree(self):
         """Test get_degree method with none input."""
-        self.motor.get_degree()
+        _ = self.motor.degree
 
         self.assertEqual(
             mock.call(self.motor.PropertyType.FIRST_DEGREE),
@@ -236,14 +247,14 @@ class TestMotor(unittest.TestCase):
 
     def test_get_first_degree(self):
         """Test get_first_degree method"""
-        self.motor.get_first_degree()
+        _ = self.motor.first_degree
         self.motor._get_property.assert_called_once_with(
             self.motor.PropertyType.FIRST_DEGREE
         )
 
     def test_get_second_degree(self):
         """Test get_second_degree method"""
-        self.motor.get_second_degree()
+        _ = self.motor.second_degree
         self.motor._get_property.assert_called_once_with(
             self.motor.PropertyType.SECOND_DEGREE
         )

@@ -31,7 +31,7 @@ class TestDisplay(unittest.TestCase):
     def test_set_text(self):
         """Test set_text method."""
         mock_text = "abcd"
-        self.display.set_text(text=mock_text)
+        self.display.text = mock_text
 
         expected_clear_params = (
             self.mock_kwargs["id_"],
@@ -62,7 +62,7 @@ class TestDisplay(unittest.TestCase):
         """Test set_variable method."""
         mock_variable = "12345"
         mock_position = 5
-        self.display.set_variable(mock_variable, mock_position, mock_position)
+        self.display.show_variable(mock_variable, mock_position, mock_position)
 
         expected_variable_params = (
             self.mock_kwargs["id_"],

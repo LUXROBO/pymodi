@@ -17,20 +17,17 @@ class TestLed(unittest.TestCase):
             return command_type
 
         self.led._set_property = mock.Mock(side_effect=eval_set_property)
-        self.led._get_property = mock.Mock()
+        self.led._get_property = mock.Mock(return_value=0)
         self.led._msg_send_q = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
         del self.led
 
-    @mock.patch.object(Led, "set_blue")
-    @mock.patch.object(Led, "set_green")
-    @mock.patch.object(Led, "set_red")
-    def test_set_rgb(self, mock_set_red, mock_set_green, mock_set_blue):
+    def test_set_rgb(self):
         """Test set_rgb method with user-defined inputs."""
         expected_color = (10, 100, 200)
-        self.led.set_rgb(*expected_color)
+        self.led.rgb = expected_color
 
         expected_rgb_params = (
             self.mock_kwargs["id_"],
@@ -40,74 +37,69 @@ class TestLed(unittest.TestCase):
         self.led._set_property.assert_called_once_with(*expected_rgb_params)
         self.assertEqual(self.led._msg_send_q.put.call_count, 3)
 
-    @mock.patch.object(Led, "get_blue")
-    @mock.patch.object(Led, "get_green")
-    @mock.patch.object(Led, "get_red")
-    def test_set_rgb_with_none(self,
-                               mock_get_red, mock_get_green, mock_get_blue):
-        """Test set_rgb method with none input"""
-        self.led.set_rgb()
-
-        # TODO: Ensure set_property and q.put have NOT been called
-        # self.led._set_property.assert_not_called_once_with()
-        # self.led._serial_write_q.put.assert_not_called_once_with()
-
-        mock_get_red.assert_called_once_with()
-        mock_get_green.assert_called_once_with()
-        mock_get_blue.assert_called_once_with()
-
-    @mock.patch.object(Led, "set_rgb")
-    def test_on(self, mock_set_rgb):
+    def test_on(self):
         """Test on method."""
-        self.led.set_on()
-
         expected_color = (255, 255, 255)
-        mock_set_rgb.assert_called_once_with(*expected_color)
+        setter_mock = mock.Mock(wraps=Led.rgb.fset)
+        mock_property = Led.rgb.setter(setter_mock)
+        with mock.patch.object(Led, 'rgb', mock_property):
+            self.led.turn_on()
+            setter_mock.assert_called_once_with(self.led, expected_color)
 
-    @mock.patch.object(Led, "set_rgb")
-    def test_off(self, mock_set_rgb):
+    def test_off(self):
         """Test off method."""
-        self.led.set_off()
-
         expected_color = (0, 0, 0)
-        mock_set_rgb.assert_called_once_with(*expected_color)
+        setter_mock = mock.Mock(wraps=Led.rgb.fset)
+        mock_property = Led.rgb.setter(setter_mock)
+        with mock.patch.object(Led, 'rgb', mock_property):
+            self.led.turn_off()
+            setter_mock.assert_called_once_with(self.led, expected_color)
 
-    @mock.patch.object(Led, "set_rgb")
-    def test_set_red(self, mock_set_rgb):
+    def test_set_red(self):
         """Test set_red method."""
-        expected_color = self.led.PropertyType.RED
-        self.led.set_red(red=expected_color)
-        mock_set_rgb.assert_called_once_with(red=expected_color)
+        expected_color = 20
+        setter_mock = mock.Mock(wraps=Led.rgb.fset)
+        mock_property = Led.rgb.setter(setter_mock)
+        with mock.patch.object(Led, 'rgb', mock_property):
+            self.led.red = expected_color
+            setter_mock.assert_called_once_with(self.led,
+                                                (expected_color, None, None))
 
     def test_get_red(self):
         """Test get_red method with none input."""
-        self.led.get_red()
+        _ = self.led.red
         self.led._get_property.assert_called_once_with(
             self.led.PropertyType.RED)
 
-    @mock.patch.object(Led, "set_rgb")
-    def test_set_green(self, mock_set_rgb):
+    def test_set_green(self):
         """Test set_green method."""
-        expected_color = self.led.PropertyType.GREEN
-        self.led.set_green(green=expected_color)
-        mock_set_rgb.assert_called_once_with(green=expected_color)
+        expected_color = 20
+        setter_mock = mock.Mock(wraps=Led.rgb.fset)
+        mock_property = Led.rgb.setter(setter_mock)
+        with mock.patch.object(Led, 'rgb', mock_property):
+            self.led.green = expected_color
+            setter_mock.assert_called_once_with(self.led,
+                                                (None, expected_color, None))
 
     def test_get_green(self):
         """Test set_green method with none input."""
-        self.led.get_green()
+        _ = self.led.green
         self.led._get_property.assert_called_once_with(
             self.led.PropertyType.GREEN)
 
-    @mock.patch.object(Led, "set_rgb")
-    def test_set_blue(self, mock_set_rgb):
+    def test_set_blue(self):
         """Test blue method."""
-        expected_color = self.led.PropertyType.BLUE
-        self.led.set_blue(blue=expected_color)
-        mock_set_rgb.assert_called_once_with(blue=expected_color)
+        expected_color = 20
+        setter_mock = mock.Mock(wraps=Led.rgb.fset)
+        mock_property = Led.rgb.setter(setter_mock)
+        with mock.patch.object(Led, 'rgb', mock_property):
+            self.led.blue = expected_color
+            setter_mock.assert_called_once_with(self.led,
+                                                (None, None, expected_color))
 
     def test_get_blue(self):
         """Test get blue method with none input."""
-        self.led.get_blue()
+        _ = self.led.blue
         self.led._get_property.assert_called_once_with(
             self.led.PropertyType.BLUE)
 
