@@ -63,7 +63,7 @@ class TestLed(unittest.TestCase):
         with mock.patch.object(Led, 'rgb', mock_property):
             self.led.red = expected_color
             setter_mock.assert_called_once_with(self.led,
-                                                (expected_color, None, None))
+                                                (expected_color, 0, 0))
 
     def test_get_red(self):
         """Test get_red method with none input."""
@@ -79,7 +79,7 @@ class TestLed(unittest.TestCase):
         with mock.patch.object(Led, 'rgb', mock_property):
             self.led.green = expected_color
             setter_mock.assert_called_once_with(self.led,
-                                                (None, expected_color, None))
+                                                (0, expected_color, 0))
 
     def test_get_green(self):
         """Test set_green method with none input."""
@@ -95,7 +95,7 @@ class TestLed(unittest.TestCase):
         with mock.patch.object(Led, 'rgb', mock_property):
             self.led.blue = expected_color
             setter_mock.assert_called_once_with(self.led,
-                                                (None, None, expected_color))
+                                                (0, 0, expected_color))
 
     def test_get_blue(self):
         """Test get blue method with none input."""

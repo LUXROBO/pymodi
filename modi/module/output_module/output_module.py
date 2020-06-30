@@ -143,11 +143,11 @@ class OutputModule(Module):
                 if nb_values > 1 and isinstance(value, int):
                     raise ValueError(f"{setter.__name__} needs {nb_values} "
                                      f"values")
-                elif nb_values == 1 and not (
+                elif value_range and nb_values == 1 and not (
                         value_range[1] >= value >= value_range[0]):
                     raise ValueError(f"{setter.__name__} should be in range "
                                      f"{value_range[0]}~{value_range[1]}")
-                elif nb_values > 1:
+                elif value_range and nb_values > 1:
                     for val in value:
                         if not (value_range[1] >= val >= value_range[0]):
                             raise ValueError(f"{setter.__name__} "

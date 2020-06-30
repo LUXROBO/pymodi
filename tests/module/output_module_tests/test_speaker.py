@@ -55,7 +55,7 @@ class TestSpeaker(unittest.TestCase):
         with mock.patch.object(Speaker, 'tune', mock_property):
             self.speaker.frequency = expeceted_frequency
             setter_mock.assert_called_once_with(self.speaker,
-                                                (expeceted_frequency, None))
+                                                (expeceted_frequency, 0))
 
     def test_get_frequency(self):
         """Test get_frequency method with none input."""
@@ -72,7 +72,7 @@ class TestSpeaker(unittest.TestCase):
         with mock.patch.object(Speaker, 'tune', mock_property):
             self.speaker.volume = expeceted_volume
             setter_mock.assert_called_once_with(self.speaker,
-                                                (None, expeceted_volume))
+                                                (0, expeceted_volume))
 
     def test_get_volume(self):
         """Test get_volume method with none input."""
