@@ -85,7 +85,7 @@ class TopologyMap:
 
         :return: None
         """
-        first_id = list(self._tp_data.keys())[0]
+        first_id = self.network_id
         visited = []
         self.__update_map(first_id, self._nb_modules, self._nb_modules,
                           prev_id=-1, toward=(1, 0), visited=visited)

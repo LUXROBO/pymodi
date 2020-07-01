@@ -21,8 +21,8 @@ class ExeThrd(th.Thread):
         )
         self.__init_flag = init_flag
 
-    def request_topology(self):
-        self.__exe_task.request_topology()
+    def request_topology(self, module_id):
+        self.__exe_task.request_topology(module_id)
 
     def reboot(self):
         self.__exe_task.reboot()

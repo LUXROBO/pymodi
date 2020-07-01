@@ -347,6 +347,12 @@ class ExeTask:
                 if self.__is_all_connected():
                     self._init_event.set()
 
+    def reboot(self):
+        reboot_message = self.__set_module_state(
+            0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
+        )
+        self._send_q.put(reboot_message)
+
     def __is_all_connected(self) -> bool:
         """ Determine whether all modules are connected
 
@@ -505,12 +511,6 @@ class ExeTask:
         self.request_topology()
         # self.__delay()
 
-    def reboot(self):
-        reboot_message = self.__set_module_state(
-            0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
-        )
-        self._send_q.put(reboot_message)
-
     def __delay(self) -> None:
         """ Wait for delay
 
@@ -547,7 +547,7 @@ class ExeTask:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def request_topology(self) -> str:
+    def request_topology(self, module_id: int = 0xFFF) -> None:
         """Request module topology
 
         :return: json serialized topology request message
@@ -556,7 +556,7 @@ class ExeTask:
         message = dict()
         message["c"] = 0x07
         message["s"] = 0
-        message["d"] = 0xFFF
+        message["d"] = module_id
 
         direction_data = bytearray(8)
         message["b"] = base64.b64encode(bytes(direction_data)).decode("utf-8")
