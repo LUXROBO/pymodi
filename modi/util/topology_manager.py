@@ -195,7 +195,7 @@ class TopologyManager:
             self.__update_module_position()
         except KeyError:
             return False
-        return len(self._modules) >= len(self._tp_data) - 1
+        return len(self._modules) == len(self._tp_data) - 1
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """ Print the topology map

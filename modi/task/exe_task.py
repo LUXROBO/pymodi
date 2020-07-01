@@ -505,6 +505,12 @@ class ExeTask:
         self.request_topology()
         # self.__delay()
 
+    def reboot(self):
+        reboot_message = self.__set_module_state(
+            0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
+        )
+        self._send_q.put(reboot_message)
+
     def __delay(self) -> None:
         """ Wait for delay
 

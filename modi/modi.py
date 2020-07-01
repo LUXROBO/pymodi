@@ -114,7 +114,7 @@ class MODI:
             time.sleep(0.1)
             timeout += 0.1
             if timeout > 5:
-                self._exe_thrd.request_topology()
+                self._exe_thrd.reboot()
                 break
 
     def update_module_firmware(self) -> None:
