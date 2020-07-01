@@ -142,7 +142,7 @@ class TopologyMap:
         for i in range(y + h - 1, y - 1, -1):
             line = ""
             row = self._tp_map[i]
-            for j in range(x, x + w + 1):
+            for j in range(x, x + w):
                 curr_elem = row[j]
                 if not curr_elem:
                     line += " " * padding
