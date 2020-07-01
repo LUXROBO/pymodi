@@ -155,7 +155,13 @@ class ExeTask:
         topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
 
         # Save topology data for current module
-        self._topology_data[src_id] = topology_by_id
+        if not self._topology_data.get(src_id):
+            self._topology_data[src_id] = topology_by_id
+        else:
+            # If the topology data already exists, update it
+            for key in self._topology_data[src_id]:
+                if not self._topology_data[src_id][key]:
+                    self._topology_data[src_id][key] = topology_by_id[key]
 
     def __get_uuid_by_id(self, id_: int) -> int:
         """Find id of a module which has corresponding uuid
@@ -347,11 +353,15 @@ class ExeTask:
                 if self.__is_all_connected():
                     self._init_event.set()
 
-    def reboot(self):
+    def reset(self):
         reboot_message = self.__set_module_state(
             0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
         )
         self._send_q.put(reboot_message)
+        pnp_off_message = self.__set_module_state(
+            0xFFF, Module.State.RUN, Module.State.PNP_OFF
+        )
+        self._send_q.put(pnp_off_message)
 
     def __is_all_connected(self) -> bool:
         """ Determine whether all modules are connected

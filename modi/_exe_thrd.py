@@ -24,8 +24,8 @@ class ExeThrd(th.Thread):
     def request_topology(self, module_id):
         self.__exe_task.request_topology(module_id)
 
-    def reboot(self):
-        self.__exe_task.reboot()
+    def reset(self):
+        self.__exe_task.reset()
 
     def run(self) -> None:
         """ Run executor task

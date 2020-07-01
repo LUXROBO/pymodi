@@ -188,6 +188,16 @@ class TopologyManager:
         tp_map.construct_map()
         tp_map.update_module_data(self._modules)
 
+    def is_uuid_initialized(self):
+        count = 0
+        for module in self._tp_data:
+            if not self._tp_data[module]['uuid']:
+                count += 1
+        if count > 1:
+            return False
+        else:
+            return True
+
     def is_topology_complete(self):
         if len(self._tp_data) < 1:
             return False
@@ -195,7 +205,8 @@ class TopologyManager:
             self.__update_module_position()
         except KeyError:
             return False
-        return len(self._modules) == len(self._tp_data) - 1
+        return len(self._modules) == len(self._tp_data) - 1 \
+            and self.is_uuid_initialized()
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """ Print the topology map
