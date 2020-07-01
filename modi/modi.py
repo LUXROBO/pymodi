@@ -115,7 +115,6 @@ class MODI:
             timeout += 0.1
             if timeout > 5:
                 self._exe_thrd.reset()
-                print("Rebooting...")
                 timeout = 0
 
     def update_module_firmware(self) -> None:
