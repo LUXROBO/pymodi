@@ -38,10 +38,10 @@ class OutputModule(Module):
 
             self.update_property(property_type, property_value)
 
-    def parse_set_message(self, destination_id: int,
-                          property_type: IntEnum,
-                          property_values: Tuple,
-                          property_data_type: IntEnum) -> List[str]:
+    def __parse_set_message(self, destination_id: int,
+                            property_type: IntEnum,
+                            property_values: Tuple,
+                            property_data_type: IntEnum) -> List[str]:
         """Generate set_property json serialized message
 
         :param destination_id: Id of the destination module
