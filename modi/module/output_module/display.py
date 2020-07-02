@@ -10,7 +10,6 @@ class Display(OutputModule):
         TEXT = 17
         CLEAR = 21
         VARIABLE = 22
-        POSITION = 16
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
