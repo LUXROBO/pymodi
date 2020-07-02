@@ -116,7 +116,8 @@ class Module:
             self._properties[property_type].value = property_value
             self._properties[property_type].last_update_time = time.time()
 
-    def request_property(self, destination_id: int,
+    @staticmethod
+    def request_property(destination_id: int,
                          property_type: IntEnum) -> str:
         """ Generate message for request property
 
