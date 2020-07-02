@@ -198,12 +198,17 @@ class TopologyManager:
         else:
             return True
 
-    def is_topology_complete(self):
+    def is_topology_complete(self, exe_thrd):
         if len(self._tp_data) < 1:
             return False
         try:
             self.__update_module_position()
-        except KeyError:
+        except KeyError as e:
+            print(f"Waiting for {e}")
+            exe_thrd.request_topology(module_id=int(str(e)))
+            if int(str(e)) not in [module.id for module in self._modules]:
+                print("Requesting network topology...")
+                exe_thrd.request_topology(0x2A, int(str(e)))
             return False
         return len(self._modules) == len(self._tp_data) - 1 \
             and self.is_uuid_initialized()

@@ -153,7 +153,7 @@ class ExeTask:
         # BOTTOM ID
         bottom_id = message_decoded[7] << 8 | message_decoded[6]
         topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
-
+        print(topology_by_id)
         # Save topology data for current module
         if not self._topology_data.get(src_id):
             self._topology_data[src_id] = topology_by_id
@@ -353,16 +353,6 @@ class ExeTask:
                 if self.__is_all_connected():
                     self._init_event.set()
 
-    def reset(self):
-        reboot_message = self.__set_module_state(
-            0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
-        )
-        self._send_q.put(reboot_message)
-        pnp_off_message = self.__set_module_state(
-            0xFFF, Module.State.RUN, Module.State.PNP_OFF
-        )
-        self._send_q.put(pnp_off_message)
-
     def __is_all_connected(self) -> bool:
         """ Determine whether all modules are connected
 
@@ -557,14 +547,15 @@ class ExeTask:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def request_topology(self, module_id: int = 0xFFF) -> None:
+    def request_topology(self, cmd: int = 0x07,
+                         module_id: int = 0xFFF) -> None:
         """Request module topology
 
         :return: json serialized topology request message
         :rtype: str
         """
         message = dict()
-        message["c"] = 0x07
+        message["c"] = cmd
         message["s"] = 0
         message["d"] = module_id
 
