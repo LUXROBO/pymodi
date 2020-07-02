@@ -5,6 +5,7 @@ import base64
 import struct
 
 import urllib.request as ur
+from urllib.error import URLError
 
 from enum import IntEnum
 from typing import Callable, Dict
@@ -153,7 +154,7 @@ class ExeTask:
         # BOTTOM ID
         bottom_id = message_decoded[7] << 8 | message_decoded[6]
         topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
-        print(topology_by_id)
+
         # Save topology data for current module
         if not self._topology_data.get(src_id):
             self._topology_data[src_id] = topology_by_id
@@ -283,17 +284,20 @@ class ExeTask:
             "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
         )
         version_info = None
-        for line in ur.urlopen(version_path):
-            version_info = line.decode('utf-8').lstrip('v')
-        version_digits = [int(digit) for digit in version_info.split('.')]
-        """ Version number is formed by concatenating all three version bits
-            e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
-        """
-        latest_version = (
-            version_digits[0] << 13
-            | version_digits[1] << 8
-            | version_digits[2]
-        )
+        try:
+            for line in ur.urlopen(version_path, timeout=1):
+                version_info = line.decode('utf-8').lstrip('v')
+            version_digits = [int(digit) for digit in version_info.split('.')]
+            """ Version number is formed by concatenating all three version bits
+                e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
+            """
+            latest_version = (
+                version_digits[0] << 13
+                | version_digits[1] << 8
+                | version_digits[2]
+            )
+        except URLError:
+            latest_version = module_version_info
 
         module_category_idx = module_info >> 13
         module_type_idx = (module_info >> 4) & 0x1FF

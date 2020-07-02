@@ -204,10 +204,8 @@ class TopologyManager:
         try:
             self.__update_module_position()
         except KeyError as e:
-            print(f"Waiting for {e}")
             exe_thrd.request_topology(module_id=int(str(e)))
             if int(str(e)) not in [module.id for module in self._modules]:
-                print("Requesting network topology...")
                 exe_thrd.request_topology(0x2A, int(str(e)))
             return False
         return len(self._modules) == len(self._tp_data) - 1 \
