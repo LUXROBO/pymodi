@@ -2,6 +2,7 @@ import unittest
 
 from queue import Queue
 from modi.task.exe_task import ExeTask
+from modi.util.msgutil import parse_message
 
 
 class TestExeTask(unittest.TestCase):
@@ -27,11 +28,16 @@ class TestExeTask(unittest.TestCase):
         del self.exe_task
 
     def test_request_topology(self):
-        topology_message = '{"c":7,"s":-1,"d":0,"b":"AAAAAAAAAAA=","l":8}'
+        topology_message = parse_message(0x07, -1, 0,
+                                         (0xff, 0xff,
+                                          0xff, 0xff,
+                                          0xff, 0xff,
+                                          3712, None))
         self.recv_q.put(topology_message)
         self.exe_task.run(0.1)
         self.assertEqual(len(self.topology_data), 1)
         self.assertTrue(-1 in self.topology_data)
+        self.assertTrue(self.topology_data[-1]['b'] == 3712)
 
 
 if __name__ == "__main__":
