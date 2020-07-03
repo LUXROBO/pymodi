@@ -34,7 +34,11 @@ def __encode_bytes(byte_data: Tuple):
 
 
 def decode_message(message: str):
-    message = json.loads(message)
+    try:
+        message = json.loads(message)
+    except json.JSONDecodeError as e:
+        print(e)
+        return None, None, None, None, None
     command = message['c']
     source = message['s']
     destination = message['d']

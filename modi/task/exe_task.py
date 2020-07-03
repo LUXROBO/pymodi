@@ -68,7 +68,6 @@ class ExeTask:
         :param delay: time value to wait in seconds
         :type delay: float
         """
-
         time.sleep(delay)
 
         try:
