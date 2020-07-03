@@ -32,9 +32,9 @@ if __name__ == "__main__":
                 " use: python -im modi -n <nb_modules> -<options>"
 
     try:
-        opts, args = getopt(sys.argv[1:], 'tdn:uh',
+        opts, args = getopt(sys.argv[1:], 'tdn:uhv',
                             ["tutorial", "debug", "nb_modules=", "update",
-                             "help"])
+                             "help", "verbose"])
     except GetoptError as err:
         print(str(err))
         print(usage)
@@ -61,9 +61,10 @@ if __name__ == "__main__":
         print(">>> bundle = modi.MODI(" + str(nb_modules) + ")")
         init_time = time.time()
         if nb_modules:
-            bundle = modi.MODI(nb_modules)
+            bundle = modi.MODI(nb_modules, verbose=check_option('-v',
+                                                                '--verbose'))
         else:
-            bundle = modi.MODI()
+            bundle = modi.MODI(verbose=check_option('-v', '--verbose'))
         fin_time = time.time()
 
         print(f'Took {fin_time - init_time:.2f} seconds to finish the job')
