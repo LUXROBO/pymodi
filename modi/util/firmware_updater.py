@@ -9,6 +9,7 @@ import requests
 import threading as th
 import urllib.request as ur
 
+from urllib.error import URLError
 from enum import IntEnum
 
 from modi.module.module import Module
@@ -192,8 +193,11 @@ class FirmwareUpdater:
             "skeleton/environment.bin"
         )
 
-        # Init bytes data from the given binary file of the current module
-        download_response = requests.get(root_path)
+        try:
+            # Init bytes data from the given binary file of the current module
+            download_response = requests.get(root_path)
+        except URLError:
+            raise URLError("Failed to download firmware. Check your internet")
         zip_content = zipfile.ZipFile(
             io.BytesIO(download_response.content), 'r'
         )

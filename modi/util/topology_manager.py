@@ -85,7 +85,7 @@ class TopologyMap:
 
         :return: None
         """
-        first_id = list(self._tp_data.keys())[0]
+        first_id = self.network_id
         visited = []
         self.__update_map(first_id, self._nb_modules, self._nb_modules,
                           prev_id=-1, toward=(1, 0), visited=visited)
@@ -142,7 +142,7 @@ class TopologyMap:
         for i in range(y + h - 1, y - 1, -1):
             line = ""
             row = self._tp_map[i]
-            for j in range(x, x + w + 1):
+            for j in range(x, x + w):
                 curr_elem = row[j]
                 if not curr_elem:
                     line += " " * padding
@@ -188,14 +188,25 @@ class TopologyManager:
         tp_map.construct_map()
         tp_map.update_module_data(self._modules)
 
-    def is_topology_complete(self):
+    def is_uuid_initialized(self):
+        count = 0
+        for module in self._tp_data:
+            if not self._tp_data[module]['uuid']:
+                count += 1
+        return count <= 1
+
+    def is_topology_complete(self, exe_thrd):
         if len(self._tp_data) < 1:
             return False
         try:
             self.__update_module_position()
-        except KeyError:
+        except KeyError as e:
+            exe_thrd.request_topology(module_id=int(str(e)))
+            if int(str(e)) not in [module.id for module in self._modules]:
+                exe_thrd.request_topology(0x2A, int(str(e)))
             return False
-        return len(self._modules) >= len(self._tp_data) - 1
+        return len(self._modules) == len(self._tp_data) - 1 \
+            and self.is_uuid_initialized()
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """ Print the topology map

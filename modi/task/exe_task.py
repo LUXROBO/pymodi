@@ -5,6 +5,7 @@ import base64
 import struct
 
 import urllib.request as ur
+from urllib.error import URLError
 
 from enum import IntEnum
 from typing import Callable, Dict
@@ -155,7 +156,13 @@ class ExeTask:
         topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
 
         # Save topology data for current module
-        self._topology_data[src_id] = topology_by_id
+        if not self._topology_data.get(src_id):
+            self._topology_data[src_id] = topology_by_id
+        else:
+            # If the topology data already exists, update it
+            for key in self._topology_data[src_id]:
+                if not self._topology_data[src_id][key]:
+                    self._topology_data[src_id][key] = topology_by_id[key]
 
     def __get_uuid_by_id(self, id_: int) -> int:
         """Find id of a module which has corresponding uuid
@@ -277,17 +284,20 @@ class ExeTask:
             "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
         )
         version_info = None
-        for line in ur.urlopen(version_path):
-            version_info = line.decode('utf-8').lstrip('v')
-        version_digits = [int(digit) for digit in version_info.split('.')]
-        """ Version number is formed by concatenating all three version bits
-            e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
-        """
-        latest_version = (
-            version_digits[0] << 13
-            | version_digits[1] << 8
-            | version_digits[2]
-        )
+        try:
+            for line in ur.urlopen(version_path, timeout=1):
+                version_info = line.decode('utf-8').lstrip('v')
+            version_digits = [int(digit) for digit in version_info.split('.')]
+            """ Version number is formed by concatenating all three version bits
+                e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
+            """
+            latest_version = (
+                version_digits[0] << 13
+                | version_digits[1] << 8
+                | version_digits[2]
+            )
+        except URLError:
+            latest_version = module_version_info
 
         module_category_idx = module_info >> 13
         module_type_idx = (module_info >> 4) & 0x1FF
@@ -541,16 +551,17 @@ class ExeTask:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def request_topology(self) -> str:
+    def request_topology(self, cmd: int = 0x07,
+                         module_id: int = 0xFFF) -> None:
         """Request module topology
 
         :return: json serialized topology request message
         :rtype: str
         """
         message = dict()
-        message["c"] = 0x07
+        message["c"] = cmd
         message["s"] = 0
-        message["d"] = 0xFFF
+        message["d"] = module_id
 
         direction_data = bytearray(8)
         message["b"] = base64.b64encode(bytes(direction_data)).decode("utf-8")

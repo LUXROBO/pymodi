@@ -109,13 +109,8 @@ class MODI:
             print("MODI modules are initialized!")
             check_complete(self)
 
-        timeout = 0
-        while not self._topology_manager.is_topology_complete():
+        while not self._topology_manager.is_topology_complete(self._exe_thrd):
             time.sleep(0.1)
-            timeout += 0.1
-            if timeout > 5:
-                self._exe_thrd.request_topology()
-                break
 
     def update_module_firmware(self) -> None:
         """Updates firmware of connected modules"""
