@@ -1,4 +1,6 @@
 import json
+import struct
+
 from base64 import b64encode, b64decode
 from typing import Tuple
 
@@ -22,11 +24,11 @@ def __encode_bytes(byte_data: Tuple):
         if not byte_data[idx]:
             idx += 1
         elif byte_data[idx] > 256:
-            data[idx] = byte_data[idx] % 256
-            data[idx + 1] = byte_data[idx] >> 8
+            data[idx] = int(byte_data[idx] % 256)
+            data[idx + 1] = int(byte_data[idx] >> 8)
             idx += 2
         elif byte_data[idx] < 256:
-            data[idx] = byte_data[idx]
+            data[idx] = int(byte_data[idx])
             idx += 1
     return b64encode(bytes(data)).decode('utf8')
 
@@ -50,3 +52,22 @@ def unpack_data(data: str, structure: Tuple = (1, 1, 1, 1, 1, 1, 1, 1)):
                                      byteorder='little'))
         idx += size
     return result
+
+
+def parse_data(values, data_type: str) -> Tuple:
+    data = []
+    if data_type == 'int':
+        for value in values:
+            data.append(value)
+            data.append(None)
+    elif data_type == 'float':
+        for value in values:
+            data += struct.pack("f", float(value))
+    elif data_type == 'string':
+        data = map(ord, str(values))
+    elif data_type == 'raw':
+        data = values
+    elif data_type == 'display_var':
+        data = struct.pack("f", float(values[0])) + bytearray(
+            [values[1], 0x00, values[2], 0x00])
+    return tuple(data)

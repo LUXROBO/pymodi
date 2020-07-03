@@ -1,11 +1,9 @@
-import json
-import struct
-import base64
 import time
 
 from enum import IntEnum
 from typing import Tuple, List
 from modi.module.module import Module
+from modi.util.msgutil import parse_message, parse_data
 
 
 class OutputModule(Module):
@@ -55,66 +53,33 @@ class OutputModule(Module):
         :return: List of json messages
         :rtype: List[str]
         """
-        message = dict()
-
-        message['c'] = 0x04
-        message['s'] = property_type
-        message['d'] = destination_id
-
-        if property_data_type is None:
-            property_data_type = self.PropertyDataType.INT
-
-        property_values_bytes = bytearray(8)
-
+        data_list = []
         if property_data_type == self.PropertyDataType.INT:
-            for index, property_value in enumerate(property_values):
-                property_value = int(property_value)
-                property_values_bytes[index * 2] = property_value & 0xFF
-                property_values_bytes[index * 2 + 1] = (
-                    (property_value & 0xFF00) >> 8
-                )
+            data_list.append(parse_data(property_values, 'int'))
         elif property_data_type == self.PropertyDataType.FLOAT:
-            for index, property_value in enumerate(property_values):
-                property_values_bytes[index * 4: index * 4 + 4] = struct.pack(
-                    "f", float(property_value)
-                )
+            data_list.append(parse_data(property_values, 'float'))
         elif property_data_type == self.PropertyDataType.STRING:
-            messages = list()
-            property_value = str(property_values)[:27]
-            number_of_chunks = int(len(property_value) / 8) + 1
-
-            for index in range(number_of_chunks):
-                property_values_bytes[:] = [
-                    ord(character)
-                    for character in property_value[index * 8: index * 8 + 8]
-                ]
-                message["b"] = base64.b64encode(
-                    bytes(property_values_bytes)
-                ).decode("utf-8")
-                message["l"] = len(property_values_bytes)
-                messages.append(json.dumps(message, separators=(",", ":")))
-            return messages
+            for i in range(0, len(property_values), 8):
+                chunk = str(property_values)[i:i+8]
+                data_list.append(parse_data(chunk, 'string'))
         elif property_data_type == self.PropertyDataType.RAW:
-            property_values_bytes = bytearray(property_values)
+            data_list.append(parse_data(property_values, 'raw'))
         elif property_data_type == self.PropertyDataType.DISPLAY_VAR:
-            property_values_bytes[:4] = struct.pack(
-                "f", float(property_values[0]))
-            property_values_bytes[4] = property_values[1]
-            property_values_bytes[5] = 0x00
-            property_values_bytes[6] = property_values[2]
-            property_values_bytes[7] = 0x00
+            data_list.append(parse_data(property_values, 'display_var'))
         else:
             raise RuntimeError("Not supported property data type.")
 
-        message['b'] = base64.b64encode(
-            bytes(property_values_bytes)).decode('utf-8')
-        message['l'] = len(property_values_bytes)
-
-        return [json.dumps(message, separators=(",", ":"))]
+        messages = []
+        for data in data_list:
+            messages.append(
+                parse_message(0x04, property_type, destination_id, data)
+            )
+        return messages
 
     def _set_property(self, destination_id: int,
                       property_type: IntEnum, property_values: Tuple,
-                      property_data_type: IntEnum = None) -> None:
+                      property_data_type: IntEnum
+                      = PropertyDataType.INT) -> None:
         """Send the message of set_property command to the module
 
         :param destination_id: Id of the destination module
