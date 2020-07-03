@@ -137,6 +137,14 @@ class MODI:
                 continue
         os.kill(os.getpid(), signal.SIGTERM)
 
+    def send(self, message):
+        self._send_q.put(message)
+
+    def recv(self):
+        if self._recv_q.empty():
+            return None
+        self._recv_q.get()
+
     def print_topology_map(self, print_id: bool = False) -> None:
         """Prints out the topology map
 
