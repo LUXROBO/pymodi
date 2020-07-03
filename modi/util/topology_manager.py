@@ -193,10 +193,7 @@ class TopologyManager:
         for module in self._tp_data:
             if not self._tp_data[module]['uuid']:
                 count += 1
-        if count > 1:
-            return False
-        else:
-            return True
+        return count <= 1
 
     def is_topology_complete(self, exe_thrd):
         if len(self._tp_data) < 1:
