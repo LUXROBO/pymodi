@@ -65,7 +65,7 @@ Install the latest PyMODI if you haven\'t installed it yet:
 
 You can also install PyMODI at develop branch with:
 
-    pip install git+https://github.com/LUXROBO/pymodi.git@develop --user
+    pip install git+https://github.com/LUXROBO/pymodi.git@develop --user --upgrade
 
 Import **modi** package and create **MODI** instance:
 
