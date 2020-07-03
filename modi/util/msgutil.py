@@ -71,3 +71,7 @@ def parse_data(values, data_type: str) -> Tuple:
         data = struct.pack("f", float(values[0])) + bytearray(
             [values[1], 0x00, values[2], 0x00])
     return tuple(data)
+
+
+def decode_data(data: str) -> float:
+    return round(struct.unpack("f", bytes(unpack_data(data)[:4]))[0], 2)
