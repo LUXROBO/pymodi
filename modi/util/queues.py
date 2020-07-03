@@ -30,6 +30,9 @@ class CommunicationQueue:
         else:
             return self.__ordinary.get_nowait()
 
+    def empty(self):
+        return self.__ordinary.empty() and self.__priority.empty()
+
     @staticmethod
     def __check_priority(json_message: str) -> bool:
         """Checks whether the message has priority

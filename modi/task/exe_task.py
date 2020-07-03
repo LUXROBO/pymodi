@@ -24,6 +24,7 @@ from modi.module.output_module.motor import Motor
 from modi.module.output_module.speaker import Speaker
 
 from modi.module.module import Module
+from modi.util.msgutil import unpack_data as up
 
 
 class ExeTask:
@@ -68,7 +69,6 @@ class ExeTask:
         :param delay: time value to wait in seconds
         :type delay: float
         """
-
         time.sleep(delay)
 
         try:
@@ -252,7 +252,7 @@ class ExeTask:
             # print("Unsupported warning type:", warning_type)
             pass
 
-    def __update_modules(self, message: Dict[str, int]) -> None:
+    def __update_modules(self, message: Dict[str, str]) -> None:
         """ Update module information
 
         :param message: Dictionary format module info
@@ -313,6 +313,8 @@ class ExeTask:
                 + module_uuid_bytes[0]
             ),
         )
+
+        module_uuid = up(message['b'], (6, 2))[0]
 
         if module_category != 'network' and \
                 not self.firmware_update_message_flag and \
