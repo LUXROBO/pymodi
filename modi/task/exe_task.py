@@ -5,6 +5,7 @@ import base64
 import struct
 
 import urllib.request as ur
+
 from urllib.error import URLError
 
 from enum import IntEnum
