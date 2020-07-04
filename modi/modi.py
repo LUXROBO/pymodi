@@ -39,9 +39,13 @@ class MODI:
                  module_uuid: str = "", test: bool = False,
                  verbose: bool = False, port: str = None):
         print(f'Running PyMODI (v{version})')
-        latest_pymodi_version = self.get_latest_pymodi_version()
-        if version != latest_pymodi_version:
-            print(f"Newer PyMODI (v{latest_pymodi_version}) is available!")
+        try:
+            latest_pymodi_version = self.get_latest_pymodi_version()
+            if version != latest_pymodi_version:
+                print(f"Newer PyMODI (v{latest_pymodi_version}) is available!")
+        except URLError:
+            print("Cannot check the latest version of PyMODI, "
+                  "please check your internet connection")
 
         self._modules = list()
         self._module_ids = dict()
@@ -124,11 +128,7 @@ class MODI:
 
     def get_latest_pymodi_version(self):
         url = "https://pypi.org/pypi/pymodi/json"
-        try:
-            pypi_pymodi_data = json.load(ur.urlopen(url))
-        except URLError:
-            print("Cannot check the latest version of PyMODI, "
-                  "check your internet connection!")
+        pypi_pymodi_data = json.load(ur.urlopen(url))
         return list(pypi_pymodi_data["releases"].keys())[-1]
 
     def update_module_firmware(self) -> None:
