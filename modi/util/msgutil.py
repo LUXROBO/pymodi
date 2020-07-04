@@ -52,7 +52,7 @@ def unpack_data(data: str, structure: Tuple = (1, 1, 1, 1, 1, 1, 1, 1)):
     idx = 0
     result = []
     for size in structure:
-        result.append(int.from_bytes(data[idx:idx+size],
+        result.append(int.from_bytes(data[idx:idx + size],
                                      byteorder='little'))
         idx += size
     return result

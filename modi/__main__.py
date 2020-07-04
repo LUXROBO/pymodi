@@ -56,7 +56,7 @@ if __name__ == "__main__":
         os._exit(0)
 
     if check_option('-p', '--performance'):
-        print("[PyMODI Performance Test]" + "\n" + "="*25)
+        print("[PyMODI Performance Test]" + "\n" + "=" * 25)
         init_time = time.time()
         bundle = modi.MODI()
         fin_time = time.time()

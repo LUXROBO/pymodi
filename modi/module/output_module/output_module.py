@@ -60,7 +60,7 @@ class OutputModule(Module):
             data_list.append(parse_data(property_values, 'float'))
         elif property_data_type == self.PropertyDataType.STRING:
             for i in range(0, len(property_values), 8):
-                chunk = str(property_values)[i:i+8]
+                chunk = str(property_values)[i:i + 8]
                 data_list.append(parse_data(chunk, 'string'))
         elif property_data_type == self.PropertyDataType.RAW:
             data_list.append(parse_data(property_values, 'raw'))
