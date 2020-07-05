@@ -3,11 +3,10 @@
 import os
 import time
 import json
-import traceback
 import signal
+import traceback
 
 import threading as th
-import urllib.request as ur
 import multiprocessing as mp
 
 from typing import Tuple
@@ -20,9 +19,6 @@ from modi.util.firmware_updater import FirmwareUpdater
 from modi.util.stranger import check_complete
 from modi.util.misc import module_list
 from modi.util.queues import CommunicationQueue
-
-from modi.about import __version__ as version
-from urllib.error import URLError
 
 
 class MODI:
@@ -38,15 +34,6 @@ class MODI:
     def __init__(self, nb_modules: int = None, conn_mode: str = "serial",
                  module_uuid: str = "", test: bool = False,
                  verbose: bool = False, port: str = None):
-        print(f'Running PyMODI (v{version})')
-        try:
-            latest_pymodi_version = self.get_latest_pymodi_version()
-            if version != latest_pymodi_version:
-                print(f"Newer PyMODI (v{latest_pymodi_version}) is available!")
-        except URLError:
-            print("Cannot check the latest version of PyMODI, "
-                  "please check your internet connection")
-
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
@@ -125,11 +112,6 @@ class MODI:
 
         while not self._topology_manager.is_topology_complete(self._exe_thrd):
             time.sleep(0.1)
-
-    def get_latest_pymodi_version(self):
-        url = "https://pypi.org/pypi/pymodi/json"
-        pypi_pymodi_data = json.load(ur.urlopen(url))
-        return list(pypi_pymodi_data["releases"].keys())[-1]
 
     def update_module_firmware(self) -> None:
         """Updates firmware of connected modules"""
