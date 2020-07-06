@@ -119,15 +119,13 @@ class Speaker(OutputModule):
         :type tune_value: Tuple[int, int]
         :return: None
         """
+        _, _ = self.tune
         self._set_property(
             self._id,
             self.CommandType.SET_TUNE,
             tune_value,
             self.PropertyDataType.FLOAT,
         )
-        self._update_properties([property_type
-                                 for property_type in self.PropertyType],
-                                tune_value)
 
     @property
     def frequency(self) -> float:
