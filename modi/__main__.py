@@ -3,6 +3,7 @@ import sys
 import time
 import modi
 
+from modi.util.msgutil import parse_message, decode_message
 from getopt import getopt, GetoptError
 
 
@@ -32,9 +33,9 @@ if __name__ == "__main__":
                 " use: python -im modi -n <nb_modules> -<options>"
 
     try:
-        opts, args = getopt(sys.argv[1:], 'tdn:uh',
+        opts, args = getopt(sys.argv[1:], 'tdn:uhvp',
                             ["tutorial", "debug", "nb_modules=", "update",
-                             "help"])
+                             "help", "verbose", "performance"])
     except GetoptError as err:
         print(str(err))
         print(usage)
@@ -54,6 +55,29 @@ if __name__ == "__main__":
         modi_tutor.start()
         os._exit(0)
 
+    if check_option('-p', '--performance'):
+        print("[PyMODI Performance Test]" + "\n" + "=" * 25)
+        init_time = time.time()
+        bundle = modi.MODI()
+        fin_time = time.time()
+        took = (fin_time - init_time) * 100 // 1 / 100
+        bundle.print_topology_map(True)
+        print(f"Took {took} seconds to initialize")
+        time.sleep(1)
+        msg = parse_message(0x03, 0, bundle.modules[0].id, (1, None, 96, None))
+        print(f"sending request message... {msg}")
+        init_time = time.time()
+        bundle.send(msg)
+        while True:
+            msg = bundle.recv()
+            if msg and decode_message(msg)[0] == 0x1F:
+                break
+        fin_time = time.time()
+        took = round((fin_time - init_time) / 2, 2)
+        print(f"received message... {msg}")
+        print(f"Took {took} seconds for message transfer")
+        exit(0)
+
     if check_option('-d', '--debug'):
         nb_modules = check_option('-n', '--nb_modules')
         is_update = check_option('-u', '--update')
@@ -61,9 +85,10 @@ if __name__ == "__main__":
         print(">>> bundle = modi.MODI(" + str(nb_modules) + ")")
         init_time = time.time()
         if nb_modules:
-            bundle = modi.MODI(nb_modules)
+            bundle = modi.MODI(nb_modules, verbose=check_option('-v',
+                                                                '--verbose'))
         else:
-            bundle = modi.MODI()
+            bundle = modi.MODI(verbose=check_option('-v', '--verbose'))
         fin_time = time.time()
 
         print(f'Took {fin_time - init_time:.2f} seconds to finish the job')

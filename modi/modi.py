@@ -2,8 +2,9 @@
 
 import os
 import time
-import traceback
+import json
 import signal
+import traceback
 
 import threading as th
 import multiprocessing as mp
@@ -131,6 +132,14 @@ class MODI:
             except ProcessLookupError:
                 continue
         os.kill(os.getpid(), signal.SIGTERM)
+
+    def send(self, message):
+        self._send_q.put(message)
+
+    def recv(self):
+        if self._recv_q.empty():
+            return None
+        return self._recv_q.get()
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """Prints out the topology map
