@@ -25,7 +25,7 @@ class CanTask(ConnTask):
     def __del__(self):
         self._close_conn()
 
-    def __can_recv(self) -> None:
+    def __can_recv(self) -> None:  # pragma: no cover
         """Reads data through CAN and put it on recv_q
 
         :return: None
