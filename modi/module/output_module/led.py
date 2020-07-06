@@ -73,7 +73,6 @@ class Led(OutputModule):
         :type red: int
         :return: None
         """
-        _ = self.red
         self.rgb = red, self.green, self.blue
 
     @property
@@ -94,7 +93,6 @@ class Led(OutputModule):
         :type green: int
         :return: None
         """
-        _ = self.green
         self.rgb = self.red, green, self.blue
 
     @property
@@ -115,5 +113,4 @@ class Led(OutputModule):
         :type blue: int
         :return: None
         """
-        _ = self.blue
         self.rgb = self.red, self.green, blue
