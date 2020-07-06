@@ -1,0 +1,5 @@
+#!/bin/sh; C:/Program Files/Git/bin/sh.exe
+
+INPUT_FILE=$1
+MSG=$(head -n1 $INPUT_FILE)
+echo $MSG
