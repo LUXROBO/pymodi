@@ -25,6 +25,14 @@ class CanTask(ConnTask):
     def __del__(self):
         self._close_conn()
 
+    @property
+    def can0(self):
+        return self.__can0
+
+    @can0.setter
+    def can0(self, can_port):
+        self.__can0 = can_port
+
     def __can_recv(self) -> None:
         """Reads data through CAN and put it on recv_q
 
