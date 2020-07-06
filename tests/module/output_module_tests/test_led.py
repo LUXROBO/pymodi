@@ -25,7 +25,7 @@ class TestLed(unittest.TestCase):
         set_message = parse_message(0x04, 16, -1, parse_data(
             expected_color, 'int'))
         sent_messages = []
-        for i in range(7):
+        while not self.send_q.empty():
             sent_messages.append(self.send_q.get_nowait())
         self.assertTrue(Led.request_property(
             -1, Led.PropertyType.RED) in sent_messages)
@@ -42,7 +42,7 @@ class TestLed(unittest.TestCase):
         set_message = parse_message(0x04, 16, -1, parse_data(
             expected_color, 'int'))
         sent_messages = []
-        for i in range(7):
+        while not self.send_q.empty():
             sent_messages.append(self.send_q.get_nowait())
         self.assertTrue(Led.request_property(
             -1, Led.PropertyType.RED) in sent_messages)
@@ -59,7 +59,7 @@ class TestLed(unittest.TestCase):
         set_message = parse_message(0x04, 16, -1, parse_data(
             expected_color, 'int'))
         sent_messages = []
-        for i in range(7):
+        while not self.send_q.empty():
             sent_messages.append(self.send_q.get_nowait())
         self.assertTrue(Led.request_property(
             -1, Led.PropertyType.RED) in sent_messages)
@@ -76,7 +76,7 @@ class TestLed(unittest.TestCase):
             expected_color, 'int'))
         sent_messages = []
         self.led.red = 20
-        for i in range(10):
+        while not self.send_q.empty():
             sent_messages.append(self.send_q.get_nowait())
         self.assertTrue(Led.request_property(
             -1, Led.PropertyType.RED) in sent_messages)
@@ -100,7 +100,7 @@ class TestLed(unittest.TestCase):
             expected_color, 'int'))
         sent_messages = []
         self.led.green = 20
-        for i in range(10):
+        while not self.send_q.empty():
             sent_messages.append(self.send_q.get_nowait())
         self.assertTrue(Led.request_property(
             -1, Led.PropertyType.RED) in sent_messages)
@@ -124,7 +124,7 @@ class TestLed(unittest.TestCase):
             expected_color, 'int'))
         sent_messages = []
         self.led.blue = 20
-        for i in range(10):
+        while not self.send_q.empty():
             sent_messages.append(self.send_q.get_nowait())
         self.assertTrue(Led.request_property(
             -1, Led.PropertyType.RED) in sent_messages)
