@@ -47,4 +47,4 @@ class CommunicationQueue:
         except json.JSONDecodeError:
             return False
         command = message['c']
-        return command in (0x04, 0x1F, 0x05, 0x09, 0x07)
+        return command in (0x03, 0x04, 0x1F, 0x05, 0x09, 0x07)

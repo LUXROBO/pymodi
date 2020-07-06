@@ -1,8 +1,8 @@
 import unittest
 
-from unittest import mock
-
 from modi.module.output_module.led import Led
+from queue import Queue
+from modi.util.msgutil import parse_data, parse_message
 
 
 class TestLed(unittest.TestCase):
@@ -10,15 +10,9 @@ class TestLed(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.mock_kwargs = {"id_": -1, "uuid": -1, "msg_send_q": None}
+        self.send_q = Queue()
+        self.mock_kwargs = {"id_": -1, "uuid": -1, "msg_send_q": self.send_q}
         self.led = Led(**self.mock_kwargs)
-
-        def eval_set_property(id, command_type, data):
-            return command_type
-
-        self.led._set_property = mock.Mock(side_effect=eval_set_property)
-        self.led._get_property = mock.Mock(return_value=0)
-        self.led._msg_send_q = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -28,80 +22,124 @@ class TestLed(unittest.TestCase):
         """Test set_rgb method with user-defined inputs."""
         expected_color = (10, 100, 200)
         self.led.rgb = expected_color
-
-        expected_rgb_params = (
-            self.mock_kwargs["id_"],
-            self.led.CommandType.SET_RGB,
-            expected_color,
-        )
-        self.led._set_property.assert_called_once_with(*expected_rgb_params)
-        self.assertEqual(self.led._msg_send_q.put.call_count, 3)
+        set_message = parse_message(0x04, 16, -1, parse_data(
+            expected_color, 'int'))
+        sent_messages = []
+        while not self.send_q.empty():
+            sent_messages.append(self.send_q.get_nowait())
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.RED) in sent_messages)
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.GREEN) in sent_messages)
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.BLUE) in sent_messages)
+        self.assertTrue(set_message in sent_messages)
 
     def test_on(self):
         """Test on method."""
         expected_color = (255, 255, 255)
-        setter_mock = mock.Mock(wraps=Led.rgb.fset)
-        mock_property = Led.rgb.setter(setter_mock)
-        with mock.patch.object(Led, 'rgb', mock_property):
-            self.led.turn_on()
-            setter_mock.assert_called_once_with(self.led, expected_color)
+        self.led.rgb = expected_color
+        set_message = parse_message(0x04, 16, -1, parse_data(
+            expected_color, 'int'))
+        sent_messages = []
+        while not self.send_q.empty():
+            sent_messages.append(self.send_q.get_nowait())
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.RED) in sent_messages)
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.GREEN) in sent_messages)
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.BLUE) in sent_messages)
+        self.assertTrue(set_message in sent_messages)
 
     def test_off(self):
         """Test off method."""
         expected_color = (0, 0, 0)
-        setter_mock = mock.Mock(wraps=Led.rgb.fset)
-        mock_property = Led.rgb.setter(setter_mock)
-        with mock.patch.object(Led, 'rgb', mock_property):
-            self.led.turn_off()
-            setter_mock.assert_called_once_with(self.led, expected_color)
+        self.led.rgb = expected_color
+        set_message = parse_message(0x04, 16, -1, parse_data(
+            expected_color, 'int'))
+        sent_messages = []
+        while not self.send_q.empty():
+            sent_messages.append(self.send_q.get_nowait())
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.RED) in sent_messages)
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.GREEN) in sent_messages)
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.BLUE) in sent_messages)
+        self.assertTrue(set_message in sent_messages)
 
     def test_set_red(self):
         """Test set_red method."""
-        expected_color = 20
-        setter_mock = mock.Mock(wraps=Led.rgb.fset)
-        mock_property = Led.rgb.setter(setter_mock)
-        with mock.patch.object(Led, 'rgb', mock_property):
-            self.led.red = expected_color
-            setter_mock.assert_called_once_with(self.led,
-                                                (expected_color, 0, 0))
+        expected_color = (20, 0, 0)
+        set_message = parse_message(0x04, 16, -1, parse_data(
+            expected_color, 'int'))
+        sent_messages = []
+        self.led.red = 20
+        while not self.send_q.empty():
+            sent_messages.append(self.send_q.get_nowait())
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.RED) in sent_messages)
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.GREEN) in sent_messages)
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.BLUE) in sent_messages)
+        self.assertTrue(set_message in sent_messages)
 
     def test_get_red(self):
         """Test get_red method with none input."""
         _ = self.led.red
-        self.led._get_property.assert_called_once_with(
-            self.led.PropertyType.RED)
+        self.assertEqual(
+            self.send_q.get(),
+            Led.request_property(-1, Led.PropertyType.RED))
 
     def test_set_green(self):
         """Test set_green method."""
-        expected_color = 20
-        setter_mock = mock.Mock(wraps=Led.rgb.fset)
-        mock_property = Led.rgb.setter(setter_mock)
-        with mock.patch.object(Led, 'rgb', mock_property):
-            self.led.green = expected_color
-            setter_mock.assert_called_once_with(self.led,
-                                                (0, expected_color, 0))
+        expected_color = (0, 20, 0)
+        set_message = parse_message(0x04, 16, -1, parse_data(
+            expected_color, 'int'))
+        sent_messages = []
+        self.led.green = 20
+        while not self.send_q.empty():
+            sent_messages.append(self.send_q.get_nowait())
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.RED) in sent_messages)
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.GREEN) in sent_messages)
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.BLUE) in sent_messages)
+        self.assertTrue(set_message in sent_messages)
 
     def test_get_green(self):
         """Test set_green method with none input."""
         _ = self.led.green
-        self.led._get_property.assert_called_once_with(
-            self.led.PropertyType.GREEN)
+        self.assertEqual(
+            self.send_q.get(),
+            Led.request_property(-1, Led.PropertyType.GREEN))
 
     def test_set_blue(self):
         """Test blue method."""
-        expected_color = 20
-        setter_mock = mock.Mock(wraps=Led.rgb.fset)
-        mock_property = Led.rgb.setter(setter_mock)
-        with mock.patch.object(Led, 'rgb', mock_property):
-            self.led.blue = expected_color
-            setter_mock.assert_called_once_with(self.led,
-                                                (0, 0, expected_color))
+        expected_color = (0, 0, 20)
+        set_message = parse_message(0x04, 16, -1, parse_data(
+            expected_color, 'int'))
+        sent_messages = []
+        self.led.blue = 20
+        while not self.send_q.empty():
+            sent_messages.append(self.send_q.get_nowait())
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.RED) in sent_messages)
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.GREEN) in sent_messages)
+        self.assertTrue(Led.request_property(
+            -1, Led.PropertyType.BLUE) in sent_messages)
+        self.assertTrue(set_message in sent_messages)
 
     def test_get_blue(self):
         """Test get blue method with none input."""
         _ = self.led.blue
-        self.led._get_property.assert_called_once_with(
-            self.led.PropertyType.BLUE)
+        self.assertEqual(
+            self.send_q.get(),
+            Led.request_property(-1, Led.PropertyType.BLUE))
 
 
 if __name__ == "__main__":
