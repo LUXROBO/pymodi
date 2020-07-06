@@ -2,4 +2,9 @@
 
 INPUT_FILE=$1
 MSG=$(head -n1 $INPUT_FILE)
-echo $MSG
+
+if [[ $MSG =~ [ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ] ]]; then
+    echo "Please use english for your commit message"
+    exit 1
+fi
+exit 0
