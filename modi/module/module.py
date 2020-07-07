@@ -4,14 +4,14 @@ import json
 import time
 import base64
 
-from enum import Enum
+from enum import IntEnum
 
 
 class Module:
     """
-    :param int id: The id of the module.
+    :param int id_: The id of the module.
     :param int uuid: The uuid of the module.
-    :param serial_write_q: multiprocessing.queue of the serial writing
+    :param msg_send_q: multiprocessing.queue of the serial writing
     """
 
     class Property:
@@ -20,7 +20,7 @@ class Module:
             self.last_update_time = 0
             self.last_request_time = 0
 
-    class State(Enum):
+    class State(IntEnum):
         RUN = 0
         WARNING = 1
         FORCED_PAUSE = 2
@@ -36,36 +36,59 @@ class Module:
         self._uuid = uuid
         self._msg_send_q = msg_send_q
 
+        self._type = str()
         self._properties = dict()
 
         self._is_connected = True
 
+        self.position = (0, 0)
+
+    def __gt__(self, other):
+        if self.distance == other.distance:
+            if self.position[0] == other.position[0]:
+                return self.position[1] < other.position[1]
+            else:
+                return self.position[0] > other.position[0]
+        else:
+            return self.distance > other.distance
+
     @property
-    def id(self):
+    def distance(self):
+        return self.position[0] ** 2 + self.position[1] ** 2
+
+    @property
+    def id(self) -> int:
         return self._id
 
     @property
-    def uuid(self):
+    def uuid(self) -> int:
         return self._uuid
 
     @property
-    def is_connected(self):
+    def type(self):
+        return self._type
+
+    @property
+    def is_connected(self) -> bool:
         return self._is_connected
 
-    def set_connection_state(self, connection_state):
+    def set_connection_state(self, connection_state: bool) -> None:
         self._is_connected = connection_state
 
-    def _get_property(self, property_type):
+    def _get_property(self, property_type: IntEnum) -> float:
         """ Get module property value and request
+
+        :param property_type: Type of the requested property
+        :type property_type: IntEnum
         """
 
         # Register property if not exists
         if property_type not in self._properties.keys():
             self._properties[property_type] = self.Property()
-            modi_serialtemp = self.request_property(
-                self._id, property_type.value
+            request_property_msg = self.request_property(
+                self._id, property_type
             )
-            self._msg_send_q.put(modi_serialtemp)
+            self._msg_send_q.put(request_property_msg)
             self._properties[property_type].last_request_time = time.time()
 
         # Request property value if not updated for 0.5 sec
@@ -73,25 +96,38 @@ class Module:
             self._properties[property_type].last_update_time
         if duration > 1:
             modi_serialtemp = self.request_property(
-                self._id, property_type.value
+                self._id, property_type
             )
             self._msg_send_q.put(modi_serialtemp)
             self._properties[property_type].last_request_time = time.time()
 
         return self._properties[property_type].value
 
-    def update_property(self, property_type, property_value):
+    def update_property(self, property_type: IntEnum,
+                        property_value: float) -> None:
         """ Update property value and time
-        """
 
+        :param property_type: Type of the updated property
+        :type property_type: IntEnum
+        :param property_value: Value to update the property
+        :type property_value: float
+        """
         if property_type in self._properties.keys():
             self._properties[property_type].value = property_value
             self._properties[property_type].last_update_time = time.time()
 
-    def request_property(self, destination_id, property_type):
+    @staticmethod
+    def request_property(destination_id: int,
+                         property_type: IntEnum) -> str:
         """ Generate message for request property
-        """
 
+        :param destination_id: Id of the destination module
+        :type destination_id: int
+        :param property_type: Type of the requested property
+        :type property_type: int
+        :return: json serialized message for request property
+        :rtype: str
+        """
         message = dict()
 
         message["c"] = 0x03

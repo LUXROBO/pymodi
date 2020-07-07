@@ -1,83 +1,105 @@
-import json
-import struct
-import base64
-
-from enum import Enum
-
+from enum import IntEnum
+from typing import Tuple, List
 from modi.module.module import Module
+from modi.util.msgutil import parse_message, parse_data
 
 
 class OutputModule(Module):
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
 
-    class PropertyDataType(Enum):
+    class PropertyDataType(IntEnum):
         INT = 0
         FLOAT = 1
         STRING = 2
         RAW = 3
         DISPLAY_VAR = 4
 
-    def _set_property(self, destination_id,
-                      property_type, property_values, property_data_type=None):
-        """ Generate message for setting property
+    def __parse_set_message(self, destination_id: int,
+                            property_type: IntEnum,
+                            property_values: Tuple,
+                            property_data_type: IntEnum) -> List[str]:
+        """Generate set_property json serialized message
+
+        :param destination_id: Id of the destination module
+        :type destination_id: int
+        :param property_type: Property Type
+        :type property_type: IntEnum
+        :param property_values: Property values
+        :type property_values: Tuple
+        :param property_data_type: Property Data Type
+        :type property_data_type: IntEnum
+        :return: List of json messages
+        :rtype: List[str]
         """
-        message = dict()
-
-        message["c"] = 0x04
-        message["s"] = property_type
-        message["d"] = destination_id
-        # Generate property according to their property type
-        property_values_bytes = bytearray(8)
-        if (
-            property_data_type is None
-            or property_data_type == self.PropertyDataType.INT
-        ):
-            for index, property_value in enumerate(property_values):
-                property_value = int(property_value)
-                property_values_bytes[index * 2] = property_value & 0xFF
-                property_values_bytes[index * 2 +
-                                      1] = (property_value & 0xFF00) >> 8
-
+        data_list = []
+        if property_data_type == self.PropertyDataType.INT:
+            data_list.append(parse_data(property_values, 'int'))
         elif property_data_type == self.PropertyDataType.FLOAT:
-            for index, property_value in enumerate(property_values):
-                property_values_bytes[index * 4: index * 4 + 4] = struct.pack(
-                    "f", float(property_value)
-                )
-
+            data_list.append(parse_data(property_values, 'float'))
         elif property_data_type == self.PropertyDataType.STRING:
-            messages = list()
-            property_value = str(property_values)[:27]
-            number_of_chunks = int(len(property_value) / 8) + 1
-
-            for index in range(number_of_chunks):
-                property_values_bytes[:] = [
-                    ord(character)
-                    for character in property_value[index * 8: index * 8 + 8]
-                ]
-                message["b"] = base64.b64encode(
-                    bytes(property_values_bytes)
-                ).decode("utf-8")
-                message["l"] = len(property_values_bytes)
-                messages.append(json.dumps(message, separators=(",", ":")))
-            return messages
-
+            for i in range(0, len(property_values), 8):
+                chunk = str(property_values)[i:i + 8]
+                data_list.append(parse_data(chunk, 'string'))
         elif property_data_type == self.PropertyDataType.RAW:
-            message["b"] = base64.b64encode(
-                bytearray(property_values)).decode("utf-8")
-            message["l"] = len(property_values)
-
+            data_list.append(parse_data(property_values, 'raw'))
         elif property_data_type == self.PropertyDataType.DISPLAY_VAR:
-            property_values_bytes[:4] = struct.pack(
-                "f", float(property_values[0]))
-            property_values_bytes[4] = property_values[1]
-            property_values_bytes[5] = 0x00
-            property_values_bytes[6] = property_values[2]
-            property_values_bytes[7] = 0x00
+            data_list.append(parse_data(property_values, 'display_var'))
         else:
             raise RuntimeError("Not supported property data type.")
-        message["b"] = base64.b64encode(
-            bytes(property_values_bytes)).decode("utf-8")
-        message["l"] = 8
 
-        return json.dumps(message, separators=(",", ":"))
+        messages = []
+        for data in data_list:
+            messages.append(
+                parse_message(0x04, property_type, destination_id, data)
+            )
+        return messages
+
+    def _set_property(self, destination_id: int,
+                      property_type: IntEnum, property_values: Tuple,
+                      property_data_type: IntEnum
+                      = PropertyDataType.INT) -> None:
+        """Send the message of set_property command to the module
+
+        :param destination_id: Id of the destination module
+        :type destination_id: int
+        :param property_type: Property Type
+        :type property_type: IntEnum
+        :param property_values: Property Values
+        :type property_values: Tuple
+        :param property_data_type: Property Data Type
+        :type property_data_type: IntEnum
+        :return: None
+        """
+        messages = self.__parse_set_message(
+            destination_id,
+            property_type,
+            property_values,
+            property_data_type)
+
+        for message in messages:
+            self._msg_send_q.put(message)
+
+    @staticmethod
+    def _validate_property(nb_values: int, value_range: Tuple = None):
+        def check_value(setter):
+            def set_property(self, value):
+                if nb_values > 1 and isinstance(value, int):
+                    raise ValueError(f"{setter.__name__} needs {nb_values} "
+                                     f"values")
+                elif value_range and nb_values == 1 and not (
+                        value_range[1] >= value >= value_range[0]):
+                    raise ValueError(f"{setter.__name__} should be in range "
+                                     f"{value_range[0]}~{value_range[1]}")
+                elif value_range and nb_values > 1:
+                    for val in value:
+                        if not (value_range[1] >= val >= value_range[0]):
+                            raise ValueError(f"{setter.__name__} "
+                                             f"should be in range"
+                                             f" {value_range[0]}~"
+                                             f"{value_range[1]}")
+                setter(self, value)
+
+            return set_property
+
+        return check_value

@@ -1,4 +1,4 @@
 pyserial
 enum34
-networkx
 python-can
+requests
