@@ -37,7 +37,6 @@ jobs:
         username: ${{secrets.MAIL_USERNAME}}
         password: ${{secrets.MAIL_PASSWORD}}
         subject: A new version of PyMODI is successfully released!
-        # Literal body:
         body: file://HISTORY.md
         to: tech@luxrobo.com
         from: PyMODI Manager
