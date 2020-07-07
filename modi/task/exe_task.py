@@ -312,8 +312,6 @@ class ExeTask:
                     module_id, Module.State.REBOOT, Module.State.PNP_OFF
                 )
                 self._send_q.put(reboot_message)
-
-                self.__delay()
                 self._modules.append(module_instance)
                 print(f"{type(module_instance).__name__} ({module_id}) "
                       f"has been connected!")
@@ -476,7 +474,7 @@ class ExeTask:
         self.__delay()
 
         # Request topology data
-        request_topology_message = self.__request_topology()
+        request_topology_message = self.request_topology()
         self._send_q.put(request_topology_message)
         self.__delay()
 
@@ -516,16 +514,16 @@ class ExeTask:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def __request_topology(self) -> str:
+    def request_topology(self, cmd: int = 0x07, module_id: int = 0xFFF) -> str:
         """Request module topology
 
         :return: json serialized topology request message
         :rtype: str
         """
         message = dict()
-        message["c"] = 0x07
+        message["c"] = cmd
         message["s"] = 0
-        message["d"] = 0xFFF
+        message["d"] = module_id
 
         direction_data = bytearray(8)
         message["b"] = base64.b64encode(bytes(direction_data)).decode("utf-8")

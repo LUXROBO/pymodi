@@ -21,6 +21,9 @@ class ExeThrd(th.Thread):
         )
         self.__init_flag = init_flag
 
+    def request_topology(self, cmd: int = 0x07, module_id: int = 0xFFF):
+        self.__exe_task.request_topology(cmd, module_id)
+
     def run(self) -> None:
         """ Run executor task
 

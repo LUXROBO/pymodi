@@ -93,7 +93,8 @@ class MODI:
 
         init_flag.wait()
 
-        self._topology_manager = TopologyManager(self._topology_data)
+        self._topology_manager = TopologyManager(self._topology_data,
+                                                 self._modules)
         if nb_modules:
             module_init_flag.wait()
             if not module_init_flag.is_set():
@@ -102,6 +103,8 @@ class MODI:
             print("MODI modules are initialized!")
 
         check_complete(self)
+        while not self._topology_manager.is_topology_complete(self._exe_thrd):
+            time.sleep(0.1)
 
     def update_module_firmware(self) -> None:
         """Updates firmware of connected modules"""
