@@ -19,8 +19,7 @@ class TestExeTask(unittest.TestCase):
                             "modules": [],
                             "module_ids": None,
                             "init_event": None,
-                            "nb_modules": 1,
-                            "firmware_updater": None}
+                            "nb_modules": 1}
         self.exe_task = ExeTask(**self.mock_kwargs)
 
     def tearDown(self):

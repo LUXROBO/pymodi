@@ -24,9 +24,16 @@ def __encode_bytes(byte_data: Tuple):
         if not byte_data[idx]:
             idx += 1
         elif byte_data[idx] > 256:
-            data[idx] = int(byte_data[idx] % 256)
-            data[idx + 1] = int(byte_data[idx] >> 8)
-            idx += 2
+            length = 1
+            for i in range(idx + 1, len(byte_data)):
+                if not byte_data[i]:
+                    length += 1
+                else:
+                    break
+            data[idx: idx + length] = int.to_bytes(byte_data[idx],
+                                                   length=length,
+                                                   byteorder='little')
+            idx += length
         elif byte_data[idx] < 256:
             data[idx] = int(byte_data[idx])
             idx += 1

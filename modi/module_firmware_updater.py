@@ -2,7 +2,6 @@ import io
 import sys
 import time
 import json
-import base64
 import zipfile
 import requests
 
@@ -11,11 +10,11 @@ import urllib.request as ur
 import serial
 from urllib.error import URLError
 from enum import IntEnum
-from modi.util.msgutil import unpack_data, decode_message
+from modi.util.msgutil import unpack_data, decode_message, parse_message
 from modi.module.module import Module
 
 
-class FirmwareUpdater:
+class ModuleFirmwareUpdater:
     """Module Firmware Updater: Updates a firmware of given module"""
 
     class State(IntEnum):
@@ -118,7 +117,6 @@ class FirmwareUpdater:
         :type module_id: int
         :return: None
         """
-
         firmware_update_ready_message = self.__set_module_state(
             module_id, Module.State.UPDATE_FIRMWARE_READY, Module.State.PNP_OFF
         )
@@ -142,7 +140,8 @@ class FirmwareUpdater:
             if module_id == curr_module_id:
                 return
 
-        print(f"Adding {module_type} ({module_id}) to waiting list..")
+        print(f"Adding {module_type} ({module_id}) to waiting list.."
+              f"{' ' * 30}")
 
         # Add the module to the waiting list
         module_elem = module_id, module_type
@@ -324,20 +323,8 @@ class FirmwareUpdater:
         :return: Json serialized message
         :rtype: str
         """
-        message = dict()
-
-        message["c"] = 0x09
-        message["s"] = 0
-        message["d"] = destination_id
-
-        state_bytes = bytearray(2)
-        state_bytes[0] = module_state
-        state_bytes[1] = pnp_state
-
-        message["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
-        message["l"] = 2
-
-        return json.dumps(message, separators=(",", ":"))
+        return parse_message(0x09, 0, destination_id,
+                             (module_state, pnp_state))
 
     # TODO: Use retry decorator here
     def send_end_flash_data(self, module_type: str, module_id: int,
@@ -398,33 +385,9 @@ class FirmwareUpdater:
         :return: Json serialized message
         :rtype: str
         """
-        message = dict()
-        message["c"] = 0x0D
-
-        """ SID is 12-bits length in MODI CAN.
-            To fully utilize its capacity, we split 12-bits into 4 and 8 bits.
-            First 4 bits include rot_scmd information.
-            And the remaining bits represent rot_stype.
-        """
-        message["s"] = (rot_scmd << 8) | rot_stype
-        message["d"] = module_id
-
-        """ The firmware command data to be sent is 8-bytes length.
-            Where the first 4 bytes consist of CRC-32 information.
-            Last 4 bytes represent page address information.
-        """
-        crc32_and_page_addr_data = bytearray(8)
-        for i in range(4):
-            crc32_and_page_addr_data[i] = crc32 & 0xFF
-            crc32 >>= 8
-            crc32_and_page_addr_data[4 + i] = page_addr & 0xFF
-            page_addr >>= 8
-        message["b"] = base64.b64encode(
-            bytes(crc32_and_page_addr_data)
-        ).decode("utf-8")
-        message["l"] = 8
-
-        return json.dumps(message, separators=(",", ":"))
+        return parse_message(0x0D, (rot_scmd << 8) | rot_stype, module_id,
+                             (crc32, None, None, None,
+                              page_addr, None, None, None))
 
     def get_firmware_data(self, module_id: int, seq_num: int,
                           bin_data: bytes) -> str:
@@ -439,16 +402,7 @@ class FirmwareUpdater:
         :return: Json serialized message
         :rtype: str
         """
-
-        message = dict()
-        message["c"] = 0x0B
-        message["s"] = seq_num
-        message["d"] = module_id
-
-        message["b"] = base64.b64encode(bytes(bin_data)).decode("utf-8")
-        message["l"] = 8
-
-        return json.dumps(message, separators=(",", ":"))
+        return parse_message(0x0B, seq_num, module_id, tuple(bin_data))
 
     def calc_crc32(self, data: bytes, crc: int) -> int:
         """Checksum calculation
