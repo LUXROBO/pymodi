@@ -4,8 +4,9 @@
 name: Deployment (PyPI)
 
 on:
-  release:
-      types: [published]
+  push:
+    branches:
+      - master
 
 jobs:
   deploy:
