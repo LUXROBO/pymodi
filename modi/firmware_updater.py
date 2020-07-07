@@ -8,10 +8,10 @@ import requests
 
 import threading as th
 import urllib.request as ur
-
+import serial
 from urllib.error import URLError
 from enum import IntEnum
-
+from modi.util.msgutil import unpack_data, decode_message
 from modi.module.module import Module
 
 
@@ -28,9 +28,11 @@ class FirmwareUpdater:
         ERASE_ERROR = 6
         ERASE_COMPLETE = 7
 
-    def __init__(self, send_q):
-        self._send_q = send_q
-
+    def __init__(self):
+        self.__ser = serial.Serial('COM4')
+        self.__stream = self.__open_serial(self.__ser)
+        next(self.__stream)
+        th.Thread(target=self.__read_serial, daemon=True).start()
         self.response_flag = False
         self.response_error_flag = False
         self.response_error_count = 0
@@ -40,7 +42,20 @@ class FirmwareUpdater:
         self.modules_to_update = []
         self.modules_updated = []
 
-    def __get_module_type_from_uuid(self, uuid: int) -> str:
+    def update_module_firmware(self):
+        self.reset_state()
+        self.request_to_update_firmware()
+        self.update_event.wait()
+        print("Module firmwares have been updated!")
+
+    @staticmethod
+    def __open_serial(ser):
+        while True:
+            msg_to_send = yield
+            ser.write(msg_to_send.encode())
+
+    @staticmethod
+    def __get_module_type_from_uuid(uuid: int) -> str:
         """Returns the name of the module based on uuid
 
         :param uuid: uuid of the module
@@ -94,7 +109,7 @@ class FirmwareUpdater:
         firmware_update_message = self.__set_module_state(
             0xFFF, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
         )
-        self._send_q.put(firmware_update_message)
+        self.__stream.send(firmware_update_message)
 
     def check_to_update_firmware(self, module_id: int) -> None:
         """ Check if modules with no firmware are ready to update its firmware
@@ -107,7 +122,7 @@ class FirmwareUpdater:
         firmware_update_ready_message = self.__set_module_state(
             module_id, Module.State.UPDATE_FIRMWARE_READY, Module.State.PNP_OFF
         )
-        self._send_q.put(firmware_update_ready_message)
+        self.__stream.send(firmware_update_ready_message)
 
     def add_to_waitlist(self, module_id: int, module_type: str) -> None:
         """Add the module to the waitlist to update
@@ -188,7 +203,7 @@ class FirmwareUpdater:
             'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
         )
         bin_path = (
-            f"skeleton/{module_type}.bin"
+            f"skeleton/{module_type.lower()}.bin"
             if module_type != 'env' else
             "skeleton/environment.bin"
         )
@@ -291,7 +306,7 @@ class FirmwareUpdater:
             reboot_message = self.__set_module_state(
                 0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
             )
-            self._send_q.put(reboot_message)
+            self.__stream.send(reboot_message)
             print("Reboot message has been sent to all connected modules")
             self.reset_state()
             self.update_event.set()
@@ -495,7 +510,7 @@ class FirmwareUpdater:
         request_message = self.get_firmware_command(
             module_id, 1, rot_scmd, crc_val, page_addr=dest_addr + page_addr
         )
-        self._send_q.put(request_message)
+        self.__stream.send(request_message)
 
         return self.receive_command_response()
 
@@ -555,7 +570,7 @@ class FirmwareUpdater:
         data_message = self.get_firmware_data(
             module_id, seq_num=seq_num, bin_data=bin_data
         )
-        self._send_q.put(data_message)
+        self.__stream.send(data_message)
 
         # Calculate crc32 checksum twice
         checksum = self.calc_crc64(data=bin_data, checksum=crc_val)
@@ -574,3 +589,76 @@ class FirmwareUpdater:
         curr_bar = 50 * current // total
         rest_bar = 50 - curr_bar
         return f"Updating: [{'=' * curr_bar}>{'.' * rest_bar}]"
+
+    def __read_serial(self):
+        while True:
+            self.__handle_message()
+            time.sleep(0.02)
+
+    def __handle_message(self):
+        b = self.__ser.in_waiting
+        msgs = self.__ser.read(b).decode('utf8')
+        msg_list = []
+        json_msg = ""
+        for c in msgs:
+            if c == '}':
+                json_msg += c
+                msg_list.append(json_msg)
+                json_msg = ""
+            else:
+                json_msg += c
+        for msg in msg_list:
+            try:
+                ins, sid, did, data, length = decode_message(msg)
+            except json.JSONDecodeError:
+                continue
+
+            command = {
+                0x0A: self.__update_warning,
+                0x0C: self.__update_firmware_state
+            }.get(ins)
+
+            if command:
+                command(sid, data)
+
+    def __update_firmware_state(self, sid: int, data: str):
+        message_decoded = unpack_data(data, (4, 1))
+        stream_state = message_decoded[1]
+
+        if stream_state == self.State.CRC_ERROR:
+            self.update_response(response=True, is_error_response=True)
+        elif stream_state == self.State.CRC_COMPLETE:
+            self.update_response(response=True)
+        elif stream_state == self.State.ERASE_ERROR:
+            self.update_response(response=True, is_error_response=True)
+        elif stream_state == self.State.ERASE_COMPLETE:
+            self.update_response(response=True)
+
+    def __update_warning(self, sid: int, data: str) -> None:
+        """Update the warning message
+
+        :param message: Warning message in Dictionary format
+        :return: None
+        """
+        module_uuid = unpack_data(data, (6, 1))[0]
+        warning_type = unpack_data(data, (6, 1))[1]
+
+        # If warning shows current module works fine, return immediately
+        if not warning_type:
+            return
+
+        module_id = sid
+        module_type = self.__get_module_type_from_uuid(module_uuid)
+
+        # No need to update Network module's STM firmware
+        if module_type == 'Network':
+            return
+
+        if warning_type == 1:
+            self.check_to_update_firmware(module_id)
+        elif warning_type == 2:
+            # Note that more than one warning type 2 message can be received
+            if self.update_in_progress:
+                self.add_to_waitlist(module_id, module_type)
+            else:
+                self.update_module(module_id, module_type)
