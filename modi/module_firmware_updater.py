@@ -12,6 +12,7 @@ from urllib.error import URLError
 from enum import IntEnum
 from modi.util.msgutil import unpack_data, decode_message, parse_message
 from modi.module.module import Module
+from modi.task.conn_task import ConnTask
 
 
 class ModuleFirmwareUpdater:
@@ -28,7 +29,8 @@ class ModuleFirmwareUpdater:
         ERASE_COMPLETE = 7
 
     def __init__(self):
-        self.__ser = serial.Serial('COM4')
+        port = ConnTask._list_modi_ports()[0].device
+        self.__ser = serial.Serial(port)
         self.__stream = self.__open_serial(self.__ser)
         next(self.__stream)
         th.Thread(target=self.__read_serial, daemon=True).start()
@@ -72,7 +74,7 @@ class ModuleFirmwareUpdater:
             '2030': 'Button',
             '2040': 'Dial',
             '2050': 'Ultrasonic',
-            '2060': 'Infrared',
+            '2060': 'Ir',
 
             # Output modules
             '4000': 'Display',
