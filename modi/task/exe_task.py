@@ -133,7 +133,6 @@ class ExeTask:
         # BOTTOM ID
         bottom_id = message_decoded[7] << 8 | message_decoded[6]
         topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
-
         # Save topology data for current module
         if not self._topology_data.get(src_id):
             self._topology_data[src_id] = topology_by_id
@@ -454,7 +453,7 @@ class ExeTask:
 
         # Request topology data
         self.request_topology()
-        # self.__delay()
+        self.request_topology(0x2A)
 
     def __delay(self) -> None:
         """ Wait for delay
