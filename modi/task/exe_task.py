@@ -46,7 +46,7 @@ class ExeTask:
     }
 
     def __init__(self, modules, module_ids, topology_data,
-                 recv_q, send_q, init_event, nb_modules, firmware_updater):
+                 recv_q, send_q, init_event, nb_modules):
 
         self._modules = modules
         self._module_ids = module_ids
@@ -55,8 +55,6 @@ class ExeTask:
         self._send_q = send_q
         self._init_event = init_event
         self._nb_modules = nb_modules
-
-        self.firmware_updater = firmware_updater
 
         # Check if a user has been notified when firmware is outdated
         self.firmware_update_message_flag = False
@@ -94,30 +92,10 @@ class ExeTask:
 
         return {
             0x00: self.__update_health,
-            0x0A: self.__update_warning,
-            0x0C: self.__update_firmware_state,
             0x05: self.__update_modules,
             0x07: self.__update_topology,
             0x1F: self.__update_property,
         }.get(command, lambda _: None)
-
-    def __update_firmware_state(self, message):
-        byte_data = message["b"]
-        message_decoded = bytearray(base64.b64decode(byte_data))
-
-        stream_state = message_decoded[4]
-
-        # TODO: Remove this if and elif branches
-        if stream_state == self.firmware_updater.State.CRC_ERROR.value:
-            self.firmware_updater.update_response(response=True,
-                                                  is_error_response=True)
-        elif stream_state == self.firmware_updater.State.CRC_COMPLETE.value:
-            self.firmware_updater.update_response(response=True)
-        elif stream_state == self.firmware_updater.State.ERASE_ERROR.value:
-            self.firmware_updater.update_response(response=True,
-                                                  is_error_response=True)
-        elif stream_state == self.firmware_updater.State.ERASE_COMPLETE.value:
-            self.firmware_updater.update_response(response=True)
 
     def __update_topology(self, message: Dict[str, int]) -> None:
         """Update the topology of the connected modules
@@ -212,46 +190,6 @@ class ExeTask:
                 for module in self._modules:
                     if module.uuid == module_info["uuid"]:
                         module.set_connection_state(connection_state=False)
-
-    def __update_warning(self, message: Dict[str, int]) -> None:
-        """Update the warning message
-
-        :param message: Warning message in Dictionary format
-        :return: None
-        """
-        # print('Warning message:', message)
-
-        warning_data = bytearray(base64.b64decode(message["b"]))
-        warning_type = warning_data[6]
-
-        # If warning shows current module works fine, return immediately
-        if not warning_type:
-            return
-
-        module_uuid = warning_data[:6]
-        module_uuid_res = 0
-        for i, v in enumerate(module_uuid):
-            module_uuid_res |= v << 8 * i
-
-        module_id = message["s"]
-        module_type = self.__get_type_from_uuid(module_uuid_res)
-
-        # No need to update Network module's STM firmware
-        if module_type == 'Network':
-            return
-
-        if warning_type == 1:
-            self.firmware_updater.check_to_update_firmware(module_id)
-        elif warning_type == 2:
-            # Note that more than one warning type 2 message can be received
-            if self.firmware_updater.update_in_progress:
-                self.firmware_updater.add_to_waitlist(module_id, module_type)
-            else:
-                self.firmware_updater.update_module(module_id, module_type)
-        else:
-            # TODO: Handle warning_type of 7 and 10
-            # print("Unsupported warning type:", warning_type)
-            pass
 
     def __update_modules(self, message: Dict[str, str]) -> None:
         """ Update module information

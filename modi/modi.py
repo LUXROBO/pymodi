@@ -14,7 +14,6 @@ from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
 
 from modi.util.topology_manager import TopologyManager
-from modi.util.firmware_updater import FirmwareUpdater
 from modi.util.stranger import check_complete
 from modi.util.misc import module_list
 from modi.util.queues import CommunicationQueue
@@ -79,8 +78,6 @@ class MODI:
         if nb_modules:
             init_flag.wait()
 
-        self._firmware_updater = FirmwareUpdater(self._send_q)
-
         init_flag = th.Event()
 
         self._exe_thrd = ExeThrd(
@@ -91,7 +88,6 @@ class MODI:
             self._send_q,
             module_init_flag,
             nb_modules,
-            self._firmware_updater,
             init_flag
         )
         self._exe_thrd.daemon = True
@@ -111,14 +107,6 @@ class MODI:
 
         while not self._topology_manager.is_topology_complete(self._exe_thrd):
             time.sleep(0.1)
-
-    def update_module_firmware(self) -> None:
-        """Updates firmware of connected modules"""
-        print("Request to update firmware of connected MODI modules.")
-        self._firmware_updater.reset_state()
-        self._firmware_updater.request_to_update_firmware()
-        self._firmware_updater.update_event.wait()
-        print("Module firmwares have been updated!")
 
     def watch_child_process(self) -> None:
         while self._conn_proc.is_alive():

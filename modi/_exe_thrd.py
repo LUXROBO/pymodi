@@ -12,12 +12,11 @@ class ExeThrd(th.Thread):
     """
 
     def __init__(self, modules, module_ids, topology_data,
-                 recv_q, send_q, init_event, nb_modules, firmware_updater,
-                 init_flag):
+                 recv_q, send_q, init_event, nb_modules, init_flag):
         super().__init__()
         self.__exe_task = ExeTask(
             modules, module_ids, topology_data, recv_q, send_q,
-            init_event, nb_modules, firmware_updater,
+            init_event, nb_modules,
         )
         self.__init_flag = init_flag
 
