@@ -39,4 +39,4 @@ jobs:
         subject: A new version of PyMODI is successfully released!
         body: file://HISTORY.md
         to: tech@luxrobo.com
-        from: PyMODI Manager
+        from: PyMODI
