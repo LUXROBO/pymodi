@@ -40,10 +40,11 @@ jobs:
         body: file://HISTORY.md
         to: tech@luxrobo.com
         from: PyMODI Manager
-    - name: Build Docs
+    - name: Build the Docs
       run: |
-        pip install sphinx sphinx-apidoc
-        cd docs
-        sphinx-apidoc -fTEM -o . ../modi
-        make clean
-        make html
+          pip install sphinx m2r sphinx_rtd_theme
+          cd docs
+          sphinx-apidoc -fTEM -o . ../modi
+          make clean
+          make html
+
