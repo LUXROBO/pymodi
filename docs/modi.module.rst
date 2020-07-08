@@ -1,6 +1,14 @@
 modi.module package
 ===================
 
+.. automodule:: modi.module
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Subpackages
+-----------
+
 .. toctree::
    :maxdepth: 4
 
@@ -8,12 +16,12 @@ modi.module package
    modi.module.output_module
    modi.module.setup_module
 
-modi.module.module module
--------------------------
+Submodules
+----------
+
 
 .. automodule:: modi.module.module
    :members:
    :undoc-members:
    :show-inheritance:
-
 

@@ -1,24 +1,32 @@
 modi package
 ============
 
+.. automodule:: modi
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Subpackages
+-----------
+
 .. toctree::
    :maxdepth: 4
 
    modi.module
    modi.task
+   modi.util
 
-modi.modi module
-----------------
+Submodules
+----------
 
-.. automodule:: modi.modi
+
+.. automodule:: modi.about
    :members:
    :undoc-members:
    :show-inheritance:
 
-modi.topology\_manager module
------------------------------
 
-.. automodule:: modi.topology_manager
+.. automodule:: modi.modi
    :members:
    :undoc-members:
    :show-inheritance:
