@@ -46,7 +46,7 @@ class Motor(OutputModule):
             (
                 motor_channel,
                 control_mode,
-                control_value,
+                control_value if control_value >= 0 else -control_value,
                 0x00 if control_value >= 0 else 0xFFFF,
             ),
         )
@@ -69,7 +69,8 @@ class Motor(OutputModule):
         :type degree_value: int
         :return: None
         """
-        self.degree = degree_value, self.second_degree
+        _ = self.first_degree
+        self.set_motor_channel(0, 2, degree_value)
 
     @property
     def second_degree(self) -> float:
@@ -89,7 +90,8 @@ class Motor(OutputModule):
         :type degree_value
         :return: None
         """
-        self.degree = self.first_degree, degree_value
+        _ = self.second_degree
+        self.set_motor_channel(1, 2, degree_value)
 
     @property
     def first_speed(self) -> float:
@@ -101,14 +103,15 @@ class Motor(OutputModule):
         return self._get_property(self.PropertyType.FIRST_SPEED)
 
     @first_speed.setter
-    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
+    @OutputModule._validate_property(nb_values=1, value_range=(-100, 100))
     def first_speed(self, speed_value: int) -> None:
         """Set the speed of the motor at channel I
 
         :param speed_value: Angular speed to set the first motor.
         :return: None
         """
-        self.speed = speed_value, self.second_speed
+        _ = self.first_speed
+        self.set_motor_channel(0, 1, speed_value)
 
     @property
     def second_speed(self) -> float:
@@ -120,14 +123,15 @@ class Motor(OutputModule):
         return self._get_property(self.PropertyType.SECOND_SPEED)
 
     @second_speed.setter
-    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
+    @OutputModule._validate_property(nb_values=1, value_range=(-100, 100))
     def second_speed(self, speed_value: int) -> None:
         """Set the speed of the motor at channel II
 
         :param speed_value: Angular speed to set the second motor.
         :return: None
         """
-        self.speed = self.first_speed, speed_value
+        _ = self.second_speed
+        self.set_motor_channel(1, 1, speed_value)
 
     @property
     def first_torque(self) -> float:
@@ -139,7 +143,7 @@ class Motor(OutputModule):
         return self._get_property(self.PropertyType.FIRST_TORQUE)
 
     @first_torque.setter
-    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
+    @OutputModule._validate_property(nb_values=1, value_range=(-100, 100))
     def first_torque(self, torque_value: int) -> None:
         """Set the torque of the motor at channel I
 
@@ -147,7 +151,8 @@ class Motor(OutputModule):
         :type torque_value: int
         :return: None
         """
-        self.torque = torque_value, self.second_torque
+        _ = self.first_torque
+        self.set_motor_channel(0, 0, torque_value)
 
     @property
     def second_torque(self) -> float:
@@ -159,7 +164,7 @@ class Motor(OutputModule):
         return self._get_property(self.PropertyType.SECOND_TORQUE)
 
     @second_torque.setter
-    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
+    @OutputModule._validate_property(nb_values=1, value_range=(-100, 100))
     def second_torque(self, torque_value: int) -> None:
         """Set the torque of the motor at channel II
 
@@ -167,7 +172,8 @@ class Motor(OutputModule):
         :type torque_value: int
         :return: None
         """
-        self.torque = self.first_torque, torque_value
+        _ = self.second_torque
+        self.set_motor_channel(1, 0, torque_value)
 
     @property
     def torque(self) -> Tuple[float, float]:
@@ -182,7 +188,7 @@ class Motor(OutputModule):
         )
 
     @torque.setter
-    @OutputModule._validate_property(nb_values=2, value_range=(0, 100))
+    @OutputModule._validate_property(nb_values=2, value_range=(-100, 100))
     def torque(self, torque_value: Tuple[int, int]) -> None:
         """Set the torque of the motors at both channels
 
@@ -206,7 +212,7 @@ class Motor(OutputModule):
         )
 
     @speed.setter
-    @OutputModule._validate_property(2, (0, 100))
+    @OutputModule._validate_property(2, (-100, 100))
     def speed(self, speed_value: Tuple[int, int]) -> None:
         """Set the speed of the motors at both channels
 
