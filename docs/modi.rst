@@ -19,12 +19,16 @@ Subpackages
 Submodules
 ----------
 
+modi.about module
+-----------------
 
 .. automodule:: modi.about
    :members:
    :undoc-members:
    :show-inheritance:
 
+modi.modi module
+----------------
 
 .. automodule:: modi.modi
    :members:
