@@ -52,7 +52,7 @@ class TestMotor(unittest.TestCase):
 
     def test_set_first_torque(self):
         """Test set_first_torque method."""
-        first_torque_value, second_torque_value = 50, 0
+        first_torque_value = 50
         self.motor.first_torque = first_torque_value
         sent_messages = []
         while not self.send_q.empty():
@@ -61,34 +61,20 @@ class TestMotor(unittest.TestCase):
             Motor.request_property(
                 -1, Motor.PropertyType.FIRST_TORQUE) in sent_messages)
         self.assertTrue(
-            Motor.request_property(
-                -1, Motor.PropertyType.SECOND_TORQUE) in sent_messages)
-        self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
                 (0, 0, first_torque_value, 0), 'int'
-            )) in sent_messages)
-        self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (1, 0, second_torque_value, 0), 'int'
             )) in sent_messages)
 
     def test_set_second_torque(self):
         """Test set_second_torque method."""
-        first_torque_value, second_torque_value = 0, 50
+        second_torque_value = 50
         self.motor.second_torque = second_torque_value
         sent_messages = []
         while not self.send_q.empty():
             sent_messages.append(self.send_q.get_nowait())
         self.assertTrue(
             Motor.request_property(
-                -1, Motor.PropertyType.FIRST_TORQUE) in sent_messages)
-        self.assertTrue(
-            Motor.request_property(
                 -1, Motor.PropertyType.SECOND_TORQUE) in sent_messages)
-        self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (0, 0, first_torque_value, 0), 'int'
-            )) in sent_messages)
         self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
                 (1, 0, second_torque_value, 0), 'int'
@@ -164,9 +150,6 @@ class TestMotor(unittest.TestCase):
             Motor.request_property(
                 -1, Motor.PropertyType.FIRST_SPEED) in sent_messages)
         self.assertTrue(
-            Motor.request_property(
-                -1, Motor.PropertyType.SECOND_SPEED) in sent_messages)
-        self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
                 (0, 1, first_speed_value, 0), 'int'
             )) in sent_messages)
@@ -178,9 +161,6 @@ class TestMotor(unittest.TestCase):
         sent_messages = []
         while not self.send_q.empty():
             sent_messages.append(self.send_q.get_nowait())
-        self.assertTrue(
-            Motor.request_property(
-                -1, Motor.PropertyType.FIRST_SPEED) in sent_messages)
         self.assertTrue(
             Motor.request_property(
                 -1, Motor.PropertyType.SECOND_SPEED) in sent_messages)
@@ -259,9 +239,6 @@ class TestMotor(unittest.TestCase):
             Motor.request_property(
                 -1, Motor.PropertyType.FIRST_DEGREE) in sent_messages)
         self.assertTrue(
-            Motor.request_property(
-                -1, Motor.PropertyType.SECOND_DEGREE) in sent_messages)
-        self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
                 (0, 2, first_degree_value, 0), 'int'
             )) in sent_messages)
@@ -273,9 +250,6 @@ class TestMotor(unittest.TestCase):
         sent_messages = []
         while not self.send_q.empty():
             sent_messages.append(self.send_q.get_nowait())
-        self.assertTrue(
-            Motor.request_property(
-                -1, Motor.PropertyType.FIRST_DEGREE) in sent_messages)
         self.assertTrue(
             Motor.request_property(
                 -1, Motor.PropertyType.SECOND_DEGREE) in sent_messages)
