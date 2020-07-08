@@ -48,7 +48,7 @@ setup(
     install_requires=get_requirements(),
     license=about['__license__'],
     include_package_data=True,
-    keywords=["pymodi", "modi", "luxrobo"],
+    keywords=["python", "modi"],
     packages=find_packages(include=['modi', 'modi.util', 'modi.task',
                                     'modi.module',
                                     'modi.module.setup_module',
