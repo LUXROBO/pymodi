@@ -19,6 +19,8 @@ Subpackages
 Submodules
 ----------
 
+modi.module.module module
+-------------------------
 
 .. automodule:: modi.module.module
    :members:
