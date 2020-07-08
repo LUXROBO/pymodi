@@ -4,8 +4,9 @@
 name: Deployment (PyPI)
 
 on:
-  release:
-      types: [created]
+  push:
+    branches:
+      - master
 
 jobs:
   deploy:
@@ -36,7 +37,14 @@ jobs:
         username: ${{secrets.MAIL_USERNAME}}
         password: ${{secrets.MAIL_PASSWORD}}
         subject: A new version of PyMODI is successfully released!
-        # Literal body:
         body: file://HISTORY.md
         to: tech@luxrobo.com
         from: PyMODI Manager
+    - name: Build the Docs
+      run: |
+          pip install sphinx m2r sphinx_rtd_theme
+          cd docs
+          sphinx-apidoc -fTEM -o . ../modi
+          make clean
+          make html
+
