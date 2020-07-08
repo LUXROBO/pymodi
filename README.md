@@ -2,6 +2,7 @@
 	<img src="docs/_static/img/logo.png" width="500" height="150">
 </p>
 
+--------
 
 [![image](https://img.shields.io/pypi/pyversions/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
 [![image](https://img.shields.io/pypi/v/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
