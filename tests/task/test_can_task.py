@@ -2,7 +2,7 @@ import unittest
 
 from queue import Queue
 from modi.task.can_task import CanTask
-from modi.task.conn_task import ConnTask
+from modi.util.conn_util import is_on_pi
 from modi.util.msgutil import parse_message
 
 
@@ -35,7 +35,7 @@ class TestCanTask(unittest.TestCase):
 
     def test_open_conn(self):
         """Test open_conn method"""
-        if not ConnTask.is_on_pi():
+        if not is_on_pi():
             print("Aborting test on non-pi environment..")
             return
         else:
