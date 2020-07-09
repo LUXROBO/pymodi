@@ -51,6 +51,7 @@ setup(
     keywords=["python", "modi"],
     packages=find_packages(include=['modi', 'modi.util', 'modi.task',
                                     'modi.module',
+                                    'modi.module.ai_module',
                                     'modi.module.setup_module',
                                     'modi.module.input_module',
                                     'modi.module.output_module']),

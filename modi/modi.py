@@ -13,6 +13,11 @@ from typing import Tuple
 from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
 
+from modi.module.ai_module.ai_camera import AICamera
+from modi.module.ai_module.ai_speaker import AISpeaker
+from modi.module.ai_module.ai_mic import AIMic
+from modi.util.conn_util import is_modi_pi, AIModuleNotFoundException, \
+    AIModuleFaultsException
 from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
 from modi.util.stranger import check_complete
@@ -32,9 +37,13 @@ class MODI:
 
     def __init__(self, nb_modules: int = None, conn_mode: str = "serial",
                  module_uuid: str = "", test: bool = False,
-                 verbose: bool = False, port: str = None):
+                 ai_mode: bool = False, verbose: bool = False,
+                 port: str = None):
+
         self._modules = list()
+
         self._module_ids = dict()
+        self._ai_modules = list()
         self._topology_data = dict()
 
         self.__lazy = not nb_modules
@@ -112,6 +121,13 @@ class MODI:
         while not self._topology_manager.is_topology_complete(self._exe_thrd):
             time.sleep(0.1)
 
+        if ai_mode:
+            if not is_modi_pi():
+                raise AIModuleNotFoundException
+            self._init_ai_modules()
+            if len(self._ai_modules) > 1:
+                print("MODI AI modules are initialized!")
+
     def update_module_firmware(self) -> None:
         """Updates firmware of connected modules"""
         print("Request to update firmware of connected MODI modules.")
@@ -147,6 +163,41 @@ class MODI:
         :return: None
         """
         self._topology_manager.print_topology_map(print_id)
+
+    def _init_ai_modules(self) -> None:
+        """Initialize AI Module features
+
+        :return: None
+        """
+        try:
+            self._init_ai_camera()
+            self._init_ai_mic()
+            self._init_ai_speaker()
+        except AIModuleFaultsException as e:
+            print(e)
+            pass
+
+    def _init_ai_camera(self) -> None:
+        """Initialize AI Module's camera
+
+        :return: None
+        """
+        self._ai_modules.append(AICamera())
+        pass
+
+    def _init_ai_mic(self) -> None:
+        """Initialize AI Module's mic
+
+        :return: None
+        """
+        self._ai_modules.append(AIMic())
+
+    def _init_ai_speaker(self) -> None:
+        """Initialize AI Module's speaker
+
+        :return: None
+        """
+        self._ai_modules.append(AISpeaker())
 
     @property
     def modules(self) -> Tuple:
@@ -222,3 +273,29 @@ class MODI:
         """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
         return module_list(self._modules, "ultrasonic", self.__lazy)
+
+    @property
+    def ai_mics(self) -> Tuple[AIMic]:
+        """Tuple of connected :class:'~modi.module.ai_mic.AIMic' modules
+        """
+
+        return tuple([ai_module for ai_module in self._ai_modules
+                      if isinstance(ai_module, AIMic)])
+
+    @property
+    def ai_speakers(self) -> Tuple[AISpeaker]:
+        """Tuple of connected :class:'~modi.module.ai_speaker.AISpeaker'
+        modules
+        """
+
+        return tuple([ai_module for ai_module in self._ai_modules
+                      if isinstance(ai_module, AISpeaker)])
+
+    @property
+    def ai_cameras(self) -> Tuple[AICamera]:
+        """Tuple of connected :class:'~modi.module.ai_camera.AICamera'
+        modules
+        """
+        return tuple(
+            [ai_module for ai_module in self._ai_modules
+             if isinstance(ai_module, AICamera)])

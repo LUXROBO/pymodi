@@ -2,3 +2,11 @@ pyserial
 enum34
 python-can
 requests
+sounddevice
+soundfile
+numpy
+pyUSB
+pillow
+Image
+opencv-python
+ipython
