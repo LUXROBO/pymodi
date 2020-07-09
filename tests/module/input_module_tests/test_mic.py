@@ -1,8 +1,7 @@
 
 import unittest
 
-from unittest import mock
-
+from queue import Queue
 from modi.module.input_module.mic import Mic
 
 
@@ -11,9 +10,9 @@ class TestMic(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        mock_args = (-1, -1, None)
+        self.send_q = Queue()
+        mock_args = (-1, -1, self.send_q)
         self.mic = Mic(*mock_args)
-        self.mic._get_property = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -21,16 +20,18 @@ class TestMic(unittest.TestCase):
 
     def test_get_volume(self):
         """Test get_volume method."""
-        self.mic.get_volume()
-
-        self.mic._get_property.assert_called_once_with(
-            self.mic.PropertyType.VOLUME
-        )
+        _ = self.mic.volume
+        self.assertEqual(
+            self.send_q.get(),
+            Mic.request_property(-1, Mic.PropertyType.VOLUME))
 
     def test_get_frequency(self):
         """Test get_frequency method."""
-        self.mic.get_frequency()
+        _ = self.mic.frequency
+        self.assertEqual(
+            self.send_q.get(),
+            Mic.request_property(-1, Mic.PropertyType.FREQUENCY))
 
-        self.mic._get_property.assert_called_once_with(
-            self.mic.PropertyType.FREQUENCY
-        )
+
+if __name__ == '__main__':
+    unittest.main()

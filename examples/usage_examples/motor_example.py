@@ -10,17 +10,17 @@ if __name__ == "__main__":
     bundle = modi.MODI(1)
     motor = bundle.motors[0]
 
-    motor.set_degree(0, 0)
+    motor.degree = 0, 0
     time.sleep(3)
-    motor.set_first_degree(50)
+    motor.first_degree = 50
     time.sleep(3)
-    motor.set_second_degree(50)
+    motor.second_degree = 50
     time.sleep(3)
-    motor.set_speed(50, 50)
+    motor.speed = 50, 50
     time.sleep(3)
-    motor.set_first_speed(100)
+    motor.first_speed = 100
     time.sleep(3)
-    motor.set_second_speed(100)
+    motor.second_speed = 100
     time.sleep(3)
-    motor.set_speed(0, 0)
+    motor.speed = 0, 0
     time.sleep(1)

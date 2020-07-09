@@ -16,8 +16,8 @@ def update_screen(pos: Tuple[int, int],
     :param display: Reference to display module
     :return: Tuple[Tuple[int, int], Tuple[int, int]]
     """
-    display.set_variable(0, pos[0], pos[1])
-    display.set_variable(1, bar, 60)
+    display.show_variable(0, pos[0], pos[1])
+    display.show_variable(1, bar, 60)
     pos = (pos[0] + vel[0], pos[1] + vel[1])
     if pos[0] < 0 or pos[0] > 40:
         vel = (-vel[0], vel[1])
@@ -42,21 +42,21 @@ def initialize(display: Module, led: Module, speaker: Module,
     """
     ball_pos = (20, 30)
     ball_vel = (1, -1)
-    led.set_rgb(0, 50, 0)
+    led.rgb = 0, 50, 0
     score = 0
     while True:
-        bar_pos = int(50 * dial.get_degree() / 100)
+        bar_pos = int(50 * dial.degree / 100)
         ball_pos, ball_vel = update_screen(ball_pos, ball_vel, bar_pos,
                                            display)
         time.sleep(0.02)
         if ball_pos[1] > 55 and (ball_pos[0] > bar_pos + 10
                                  or ball_pos[0] < bar_pos - 10):
-            led.set_rgb(50, 0, 0)
+            led.rgb = 50, 0, 0
             break
         elif ball_pos[1] > 55:
-            speaker.set_tune(700, 100)
+            speaker.tune = 700, 100
             time.sleep(0.1)
-            speaker.set_volume(0)
+            speaker.volume = 0
             score += 1
         display.clear()
     return score
@@ -83,23 +83,23 @@ def check_complete(bundle):
     dial = bundle.dials[0]
     speaker = bundle.speakers[0]
 
-    button.get_pressed()
+    _ = button.pressed
     time.sleep(0.1)
-    if not button.get_pressed():
+    if not button.pressed:
         return
     cmd = input("You have found an easter egg!\nContinue??(y/n)")
     if cmd.lower() != 'y':
         return
-    display.set_text("Press\nButton")
+    display.text = "Press Button"
     running = True
     while running:
         while True:
-            if button.get_double_clicked():
+            if button.double_clicked:
                 running = False
                 display.clear()
                 break
-            elif button.get_clicked():
-                display.set_text("PONG!!")
+            elif button.clicked:
+                display.text = "PONG!!"
                 break
             time.sleep(0.02)
         if not running:
@@ -107,6 +107,6 @@ def check_complete(bundle):
         time.sleep(1)
         point = initialize(display, led, speaker, dial)
         time.sleep(3)
-        display.set_text("Score: {0}".format(point))
+        display.text = "Score: {0}".format(point)
         time.sleep(2)
-        display.set_text("Re: Click / No: Double Click")
+        display.text = "Re: Click / No: Double Click"

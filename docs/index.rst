@@ -8,9 +8,9 @@ Welcome to pymodi's documentation!
    readme
    installation
    usage
-   modules
-   contributing
+   modi
    authors
+   contributing
    history
 
 Indices and tables

@@ -1,6 +1,14 @@
 modi.task package
 =================
 
+.. automodule:: modi.task
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
 modi.task.can\_task module
 --------------------------
 
@@ -40,5 +48,4 @@ modi.task.spp\_task module
    :members:
    :undoc-members:
    :show-inheritance:
-
 

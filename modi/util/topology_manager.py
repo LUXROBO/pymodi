@@ -1,16 +1,17 @@
-
 from typing import Dict, List, Tuple
+from modi.util.misc import module_list
 
 
 class TopologyMap:
-    def __init__(self, tp_data, nb_modules):
+    def __init__(self, tp_data, nb_modules, modules):
         self._nb_modules = nb_modules
         self._tp_data = tp_data
-
+        self._modules = modules
         # 2D array that will contain the topology information of the modules.
         # It stores the module id
         self._tp_map = [[0 for _ in range(2 * self._nb_modules)]
                         for _ in range(2 * self._nb_modules)]
+        self.__module_position = dict()
 
     @staticmethod
     def __get_module_orientation(mod_data: Dict[str, int], prev_id: int,
@@ -71,6 +72,7 @@ class TopologyMap:
             return
         module_data = self._tp_data[module_id]
         self._tp_map[y][x] = module_id
+        self.__module_position[module_id] = (x, y)
         visited.append(module_id)
         up_vector = self.__get_module_orientation(module_data, prev_id, toward)
         for d in ['t', 'b', 'l', 'r']:
@@ -84,7 +86,7 @@ class TopologyMap:
 
         :return: None
         """
-        first_id = list(self._tp_data.keys())[0]
+        first_id = self.network_id
         visited = []
         self.__update_map(first_id, self._nb_modules, self._nb_modules,
                           prev_id=-1, toward=(1, 0), visited=visited)
@@ -141,28 +143,72 @@ class TopologyMap:
         for i in range(y + h - 1, y - 1, -1):
             line = ""
             row = self._tp_map[i]
-            for j in range(x, x + w + 1):
+            for j in range(x, x + w):
                 curr_elem = row[j]
                 if not curr_elem:
                     line += " " * padding
                 else:
+                    name = TopologyManager.get_type_from_uuid(
+                        self._tp_data[curr_elem]['uuid'])
+                    idx = module_list(self._modules,
+                                      name.lower()).find(curr_elem)
+                    if idx < 0:
+                        idx = ''
                     if print_id:
-                        line += "{0:^17s}".format(
-                            TopologyManager.get_type_from_uuid(
-                                self._tp_data[curr_elem]['uuid']) + ":" +
-                            str(curr_elem))
+                        line += f"{name + str(idx) + f' ({curr_elem})':^17}"
                     else:
-                        line += "{0:^10s}".format(
-                            TopologyManager.get_type_from_uuid(
-                                self._tp_data[curr_elem]['uuid']))
+                        line += f"{name + str(idx):^10}"
             print(line)
+
+    @property
+    def network_id(self):
+        for mid in self._tp_data:
+            if TopologyManager.get_type_from_uuid(self._tp_data[mid]['uuid']) \
+                    == 'Network':
+                return mid
+        return list(self._tp_data.keys())[0]
+
+    def update_module_data(self, modules):
+        network_position = self.__module_position[self.network_id]
+        for module in modules:
+            module_position = self.__module_position[module.id]
+
+            module.position = (module_position[0] - network_position[0],
+                               module_position[1] - network_position[1])
 
 
 class TopologyManager:
 
-    def __init__(self, topology_data):
+    def __init__(self, topology_data, modules):
         self._tp_data = topology_data
-        self._nb_modules = len(self._tp_data.keys())
+        self._nb_modules = len(self._tp_data)
+        self._modules = modules
+
+    def __update_module_position(self):
+        self._nb_modules = len(self._tp_data)
+        tp_map = TopologyMap(self._tp_data, self._nb_modules, self._modules)
+        tp_map.construct_map()
+        tp_map.update_module_data(self._modules)
+
+    def is_uuid_initialized(self):
+        count = 0
+        for module in self._tp_data:
+            if not self._tp_data[module]['uuid']:
+                count += 1
+        return count <= 1
+
+    def is_topology_complete(self, exe_thrd):
+        if len(self._tp_data) < 1:
+            return False
+        try:
+            self.__update_module_position()
+        except KeyError as e:
+            exe_thrd.request_topology(module_id=int(str(e)))
+            if int(str(e)) not in [module.id for module in self._modules]:
+                exe_thrd.request_topology(0x2A, int(str(e)))
+            return False
+        return len(self._modules) == len(self._tp_data) - 1 \
+            and self.is_uuid_initialized()
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """ Print the topology map
@@ -170,7 +216,8 @@ class TopologyManager:
         :param print_id: If True, the result includes module ids
         :return: None
         """
-        tp_map = TopologyMap(self._tp_data, self._nb_modules)
+        self._nb_modules = len(self._tp_data)
+        tp_map = TopologyMap(self._tp_data, self._nb_modules, self._modules)
         tp_map.construct_map()
         tp_map.print_map(print_id)
 
@@ -196,7 +243,7 @@ class TopologyManager:
             '2030': 'Button',
             '2040': 'Dial',
             '2050': 'Ultrasonic',
-            '2060': 'Infrared',
+            '2060': 'Ir',
 
             # Output modules
             '4000': 'Display',

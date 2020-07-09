@@ -5,8 +5,8 @@ from modi.task.exe_task import ExeTask
 
 class ExeThrd(th.Thread):
     """
-    :param queue send_q: Inter-process queue for serial writing message
-    :param queue recv_q: Inter-process queue for receiving json message
+    :param send_q: Inter-process queue for serial writing message
+    :param recv_q: Inter-process queue for receiving json message
     :param dict() module_ids: dict() of module_id : ['timestamp', 'uuid']
     :param list() modules: list() of module instance
     """
@@ -20,6 +20,9 @@ class ExeThrd(th.Thread):
             init_event, nb_modules, firmware_updater,
         )
         self.__init_flag = init_flag
+
+    def request_topology(self, cmd=0x07, module_id=0xFFF):
+        self.__exe_task.request_topology(cmd, module_id)
 
     def run(self) -> None:
         """ Run executor task

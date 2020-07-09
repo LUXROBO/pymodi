@@ -2,12 +2,13 @@
 
 import os
 import time
+import signal
 import traceback
 
 import threading as th
 import multiprocessing as mp
 
-from typing import Any, Tuple
+from typing import Tuple
 
 from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
@@ -20,6 +21,8 @@ from modi.util.conn_util import is_modi_pi, AIModuleNotFoundException, \
 from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import FirmwareUpdater
 from modi.util.stranger import check_complete
+from modi.util.misc import module_list
+from modi.util.queues import CommunicationQueue
 
 
 class MODI:
@@ -29,18 +32,24 @@ class MODI:
     >>> bundle = modi.MODI()
     """
 
-    def __init__(self, nb_modules: int, conn_mode: str = "serial",
-                 module_uuid: str = "", ai_mode: bool = False,
-                 test: bool = False,
-                 verbose: bool = False):
+    # Keeps track of all the connection processes spawned
+    __conn_procs = []
+
+    def __init__(self, nb_modules: int = None, conn_mode: str = "serial",
+                 module_uuid: str = "", test: bool = False,
+                 ai_mode: bool = False, verbose: bool = False,
+                 port: str = None):
 
         self._modules = list()
+
         self._module_ids = dict()
         self._ai_modules = list()
         self._topology_data = dict()
 
-        self._recv_q = mp.Queue()
-        self._send_q = mp.Queue()
+        self.__lazy = not nb_modules
+
+        self._recv_q = CommunicationQueue()
+        self._send_q = CommunicationQueue()
 
         self._conn_proc = None
         self._exe_thrd = None
@@ -56,7 +65,7 @@ class MODI:
 
         self._conn_proc = ConnProc(
             self._recv_q, self._send_q, conn_mode, module_uuid, verbose,
-            init_flag
+            init_flag, port
         )
         self._conn_proc.daemon = True
         try:
@@ -70,15 +79,16 @@ class MODI:
                 traceback.print_exc()
             exit(1)
 
+        MODI.__conn_procs.append(self._conn_proc.pid)
+
         self._child_watch = th.Thread(target=self.watch_child_process)
         self._child_watch.daemon = True
         self._child_watch.start()
 
-        init_flag.wait()
+        if nb_modules:
+            init_flag.wait()
 
-        self._firmware_updater = FirmwareUpdater(
-            self._send_q, self._module_ids, nb_modules
-        )
+        self._firmware_updater = FirmwareUpdater(self._send_q)
 
         init_flag = th.Event()
 
@@ -95,16 +105,21 @@ class MODI:
         )
         self._exe_thrd.daemon = True
         self._exe_thrd.start()
+        if nb_modules:
+            init_flag.wait()
 
-        init_flag.wait()
+        self._topology_manager = TopologyManager(self._topology_data,
+                                                 self._modules)
+        if nb_modules:
+            module_init_flag.wait()
+            if not module_init_flag.is_set():
+                raise Exception("Modules are not initialized properly!")
+                exit(1)
+            print("MODI modules are initialized!")
+            check_complete(self)
 
-        self._topology_manager = TopologyManager(self._topology_data)
-
-        module_init_flag.wait()
-        if not module_init_flag.is_set():
-            raise Exception("Modules are not initialized properly!")
-        print("MODI modules are initialized!")
-        check_complete(self)
+        while not self._topology_manager.is_topology_complete(self._exe_thrd):
+            time.sleep(0.1)
 
         if ai_mode:
             if not is_modi_pi():
@@ -118,13 +133,28 @@ class MODI:
         print("Request to update firmware of connected MODI modules.")
         self._firmware_updater.reset_state()
         self._firmware_updater.request_to_update_firmware()
-        # self.firmware_updater.update_event.wait()
+        self._firmware_updater.update_event.wait()
         print("Module firmwares have been updated!")
 
     def watch_child_process(self) -> None:
         while self._conn_proc.is_alive():
             time.sleep(0.1)
-        os._exit(1)
+        for pid in MODI.__conn_procs:
+            try:
+                os.kill(pid, signal.SIGTERM)
+            except PermissionError:
+                continue
+            except ProcessLookupError:
+                continue
+        os.kill(os.getpid(), signal.SIGTERM)
+
+    def send(self, message):
+        self._send_q.put(message)
+
+    def recv(self):
+        if self._recv_q.empty():
+            return None
+        return self._recv_q.get()
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """Prints out the topology map
@@ -170,7 +200,7 @@ class MODI:
         self._ai_modules.append(AISpeaker())
 
     @property
-    def modules(self) -> Tuple[Any]:
+    def modules(self) -> Tuple:
         """Tuple of connected modules except network module.
         Example:
         >>> bundle = modi.MODI()
@@ -179,93 +209,70 @@ class MODI:
         return tuple(self._modules)
 
     @property
-    def buttons(self) -> Tuple[Any]:
+    def buttons(self) -> module_list:
         """Tuple of connected :class:`~modi.module.button.Button` modules.
         """
-
-        return tuple([module for module in self.modules
-                      if module.type == "button"])
+        return module_list(self._modules, 'button', self.__lazy)
 
     @property
-    def dials(self) -> Tuple[Any]:
+    def dials(self) -> module_list:
         """Tuple of connected :class:`~modi.module.dial.Dial` modules.
         """
-
-        return tuple([module for module in self.modules
-                      if module.type == "dial"])
+        return module_list(self._modules, "dial", self.__lazy)
 
     @property
-    def displays(self) -> Tuple[Any]:
+    def displays(self) -> module_list:
         """Tuple of connected :class:`~modi.module.display.Display` modules.
         """
-
-        return tuple([module for module in self.modules
-                      if module.type == "display"])
+        return module_list(self._modules, "display", self.__lazy)
 
     @property
-    def envs(self) -> Tuple[Any]:
+    def envs(self) -> module_list:
         """Tuple of connected :class:`~modi.module.env.Env` modules.
         """
-
-        return tuple([module for module in self.modules
-                      if module.type == "env"])
+        return module_list(self._modules, "env", self.__lazy)
 
     @property
-    def gyros(self) -> Tuple[Any]:
+    def gyros(self) -> module_list:
         """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
         """
-
-        return tuple([module for module in self.modules
-                      if module.type == "gyro"])
+        return module_list(self._modules, "gyro", self.__lazy)
 
     @property
-    def irs(self) -> Tuple[Any]:
+    def irs(self) -> module_list:
         """Tuple of connected :class:`~modi.module.ir.Ir` modules.
         """
-
-        return tuple([module for module in self.modules
-                      if module.type == "ir"])
+        return module_list(self._modules, "ir", self.__lazy)
 
     @property
-    def leds(self) -> Tuple[Any]:
+    def leds(self) -> module_list:
         """Tuple of connected :class:`~modi.module.led.Led` modules.
         """
-
-        return tuple([module for module in self.modules
-                      if module.type == "led"])
+        return module_list(self._modules, "led", self.__lazy)
 
     @property
-    def mics(self) -> Tuple[Any]:
+    def mics(self) -> module_list:
         """Tuple of connected :class:`~modi.module.mic.Mic` modules.
         """
-
-        return tuple([module for module in self.modules
-                      if module.type == "mic"])
+        return module_list(self._modules, "mic", self.__lazy)
 
     @property
-    def motors(self) -> Tuple[Any]:
+    def motors(self) -> module_list:
         """Tuple of connected :class:`~modi.module.motor.Motor` modules.
         """
-
-        return tuple([module for module in self.modules
-                      if module.type == "motor"])
+        return module_list(self._modules, "motor", self.__lazy)
 
     @property
-    def speakers(self) -> Tuple[Any]:
+    def speakers(self) -> module_list:
         """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
         """
-
-        return tuple([module for module in self.modules
-                      if module.type == "speaker"])
+        return module_list(self._modules, "speaker", self.__lazy)
 
     @property
-    def ultrasonics(self) -> Tuple[Any]:
-        """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic`
-        modules.
+    def ultrasonics(self) -> module_list:
+        """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
         """
-
-        return tuple([module for module in self.modules
-                      if module.type == "ultrasonic"])
+        return module_list(self._modules, "ultrasonic", self.__lazy)
 
     @property
     def ai_mics(self) -> Tuple[AIMic]:

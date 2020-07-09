@@ -12,7 +12,7 @@ from modi.task.conn_task import ConnTask
 
 class CanTask(ConnTask):
 
-    def __init__(self, can_recv_q, can_send_q, verbose):
+    def __init__(self, can_recv_q, can_send_q, verbose, port=None):
         print("Run Can Task.")
         self._can_recv_q = can_recv_q
         self._can_send_q = can_send_q
@@ -24,6 +24,14 @@ class CanTask(ConnTask):
 
     def __del__(self):
         self._close_conn()
+
+    @property
+    def can0(self):
+        return self.__can0
+
+    @can0.setter
+    def can0(self, can_port):
+        self.__can0 = can_port
 
     def __can_recv(self) -> None:
         """Reads data through CAN and put it on recv_q

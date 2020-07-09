@@ -4,6 +4,10 @@ import queue
 import base64
 import struct
 
+import urllib.request as ur
+
+from urllib.error import URLError
+
 from enum import IntEnum
 from typing import Callable, Dict
 
@@ -21,6 +25,7 @@ from modi.module.output_module.motor import Motor
 from modi.module.output_module.speaker import Speaker
 
 from modi.module.module import Module
+from modi.util.msgutil import unpack_data as up
 
 
 class ExeTask:
@@ -53,6 +58,9 @@ class ExeTask:
 
         self.firmware_updater = firmware_updater
 
+        # Check if a user has been notified when firmware is outdated
+        self.firmware_update_message_flag = False
+
         self.__init_modules()
         print('Start initializing connected MODI modules')
 
@@ -62,7 +70,6 @@ class ExeTask:
         :param delay: time value to wait in seconds
         :type delay: float
         """
-
         time.sleep(delay)
 
         try:
@@ -123,7 +130,7 @@ class ExeTask:
         # Setup prerequisites
         src_id = message["s"]
         byte_data = message["b"]
-        broadcast_id = 2**16-1
+        broadcast_id = 2 ** 16 - 1
         topology_by_id = {}
 
         message_decoded = bytearray(base64.b64decode(byte_data))
@@ -150,7 +157,13 @@ class ExeTask:
         topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
 
         # Save topology data for current module
-        self._topology_data[src_id] = topology_by_id
+        if not self._topology_data.get(src_id):
+            self._topology_data[src_id] = topology_by_id
+        else:
+            # If the topology data already exists, update it
+            for key in self._topology_data[src_id]:
+                if not self._topology_data[src_id][key]:
+                    self._topology_data[src_id][key] = topology_by_id[key]
 
     def __get_uuid_by_id(self, id_: int) -> int:
         """Find id of a module which has corresponding uuid
@@ -218,7 +231,7 @@ class ExeTask:
         module_uuid = warning_data[:6]
         module_uuid_res = 0
         for i, v in enumerate(module_uuid):
-            module_uuid_res |= v << 8*i
+            module_uuid_res |= v << 8 * i
 
         module_id = message["s"]
         module_type = self.__get_type_from_uuid(module_uuid_res)
@@ -232,14 +245,15 @@ class ExeTask:
         elif warning_type == 2:
             # Note that more than one warning type 2 message can be received
             if self.firmware_updater.update_in_progress:
-                self.firmware_updater.add_to_wait_list(module_id, module_type)
+                self.firmware_updater.add_to_waitlist(module_id, module_type)
             else:
                 self.firmware_updater.update_module(module_id, module_type)
         else:
             # TODO: Handle warning_type of 7 and 10
-            print("Unsupported warning type:", warning_type)
+            # print("Unsupported warning type:", warning_type)
+            pass
 
-    def __update_modules(self, message: Dict[str, int]) -> None:
+    def __update_modules(self, message: Dict[str, str]) -> None:
         """ Update module information
 
         :param message: Dictionary format module info
@@ -264,6 +278,27 @@ class ExeTask:
         module_info_bytes = message_decoded[-4:]
 
         module_info = (module_info_bytes[1] << 8) + module_info_bytes[0]
+        module_version_info = module_info_bytes[3] << 8 | module_info_bytes[2]
+
+        # Retrieve most recent skeleton version from the server
+        version_path = (
+            "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
+        )
+        version_info = None
+        try:
+            for line in ur.urlopen(version_path, timeout=1):
+                version_info = line.decode('utf-8').lstrip('v')
+            version_digits = [int(digit) for digit in version_info.split('.')]
+            """ Version number is formed by concatenating all three version bits
+                e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
+            """
+            latest_version = (
+                version_digits[0] << 13
+                | version_digits[1] << 8
+                | version_digits[2]
+            )
+        except URLError:
+            latest_version = module_version_info
 
         module_category_idx = module_info >> 13
         module_type_idx = (module_info >> 4) & 0x1FF
@@ -279,6 +314,17 @@ class ExeTask:
                 + module_uuid_bytes[0]
             ),
         )
+
+        module_uuid = up(message['b'], (6, 2))[0]
+
+        if module_category != 'network' and \
+                not self.firmware_update_message_flag and \
+                module_version_info < latest_version:
+
+            print("Your MODI module(s) is not up-to-date.")
+            print("You can update your MODI modules by calling "
+                  "'update_module_firmware()'")
+            self.firmware_update_message_flag = True
 
         self._module_ids[module_id]["uuid"] = module_uuid
 
@@ -306,8 +352,10 @@ class ExeTask:
                     module_id=module_instance.id,
                     module_pnp_state=Module.State.PNP_OFF
                 )
+
                 self._modules.append(module_instance)
-                print(str(type(module_instance))+" has been connected!")
+                print(f"{type(module_instance).__name__} ({module_id}) "
+                      f"has been connected!")
 
                 if self.__is_all_connected():
                     self._init_event.set()
@@ -452,24 +500,23 @@ class ExeTask:
             BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
         )
         self._send_q.put(reboot_message)
-        self.__delay()
+        # self.__delay()
 
         # Command module pnp off
         pnp_off_message = self.__set_module_state(
             BROADCAST_ID, Module.State.RUN, Module.State.PNP_OFF
         )
         self._send_q.put(pnp_off_message)
-        self.__delay()
+        # self.__delay()
 
         # Command module uuid
         request_uuid_message = self.__request_uuid(BROADCAST_ID)
         self._send_q.put(request_uuid_message)
-        self.__delay()
+        # self.__delay()
 
         # Request topology data
-        request_topology_message = self.__request_topology()
-        self._send_q.put(request_topology_message)
-        self.__delay()
+        self.request_topology()
+        # self.__delay()
 
     def __delay(self) -> None:
         """ Wait for delay
@@ -477,7 +524,7 @@ class ExeTask:
         :return: None
         """
 
-        time.sleep(1)
+        time.sleep(0.5)
 
     def __request_uuid(self, source_id: int,
                        is_network_module: bool = False) -> str:
@@ -507,22 +554,23 @@ class ExeTask:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def __request_topology(self) -> str:
+    def request_topology(self, cmd: int = 0x07,
+                         module_id: int = 0xFFF) -> None:
         """Request module topology
 
         :return: json serialized topology request message
         :rtype: str
         """
         message = dict()
-        message["c"] = 0x07
+        message["c"] = cmd
         message["s"] = 0
-        message["d"] = 0xFFF
+        message["d"] = module_id
 
         direction_data = bytearray(8)
         message["b"] = base64.b64encode(bytes(direction_data)).decode("utf-8")
         message["l"] = 8
 
-        return json.dumps(message, separators=(",", ":"))
+        self._send_q.put(json.dumps(message, separators=(",", ":")))
 
     def update_firmware(self) -> None:
         """ Remove firmware of MODI modules

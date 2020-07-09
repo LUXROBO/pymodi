@@ -1,8 +1,8 @@
 import unittest
 
-from unittest import mock
-
+from queue import Queue
 from modi.module.output_module.display import Display
+from modi.util.msgutil import parse_data, parse_message
 
 
 class TestDisplay(unittest.TestCase):
@@ -10,19 +10,9 @@ class TestDisplay(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.mock_kwargs = {"id_": -1, "uuid": -1, "msg_send_q": None}
+        self.send_q = Queue()
+        self.mock_kwargs = {"id_": -1, "uuid": -1, "msg_send_q": self.send_q}
         self.display = Display(**self.mock_kwargs)
-
-        def eval_set_property(id, property_type, data, property_data_type):
-            eval_result = {
-                self.display.PropertyType.TEXT: [property_type],
-                self.display.PropertyType.VARIABLE: property_type,
-                self.display.PropertyType.CLEAR: property_type,
-            }.get(property_type)
-            return eval_result
-
-        self.display._set_property = mock.Mock(side_effect=eval_set_property)
-        self.display._msg_send_q = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -31,67 +21,39 @@ class TestDisplay(unittest.TestCase):
     def test_set_text(self):
         """Test set_text method."""
         mock_text = "abcd"
-        self.display.set_text(text=mock_text)
-
-        expected_clear_params = (
-            self.mock_kwargs["id_"],
-            self.display.PropertyType.CLEAR,
-            bytes(2),
-            self.display.PropertyDataType.RAW,
-        )
-
-        expected_text_params = (
-           self.mock_kwargs["id_"],
-           self.display.PropertyType.TEXT,
-           mock_text,
-           self.display.PropertyDataType.STRING,
-        )
-
-        self.assertEqual(self.display._set_property.call_count, 2)
-
-        # TODO: Refactor two functions calls below to use assert_has_calls()
+        self.display.text = mock_text
+        clear_message = parse_message(0x04, 21, -1, (0, 0))
+        text_message = parse_message(0x04, 17, -1, parse_data(mock_text,
+                                                              'string'))
         self.assertEqual(
-           mock.call(*expected_clear_params),
-           self.display._set_property.call_args_list[0],
+            self.send_q.get(),
+            clear_message
         )
         self.assertEqual(
-           mock.call(*expected_text_params),
-           self.display._set_property.call_args_list[1],
+            self.send_q.get(),
+            text_message
         )
 
-    def test_set_variable(self):
+    def test_show_variable(self):
         """Test set_variable method."""
-        mock_variable = "12345"
+        mock_variable = 123
         mock_position = 5
-        self.display.set_variable(mock_variable, mock_position, mock_position)
-
-        expected_variable_params = (
-            self.mock_kwargs["id_"],
-            self.display.PropertyType.VARIABLE,
-            (mock_variable, mock_position, mock_position),
-            self.display.PropertyDataType.DISPLAY_VAR,
-        )
-
-        self.assertEqual(self.display._set_property.call_count, 1)
-
+        self.display.show_variable(mock_variable, mock_position, mock_position)
         self.assertEqual(
-            mock.call(*expected_variable_params),
-            self.display._set_property.call_args_list[0],
+            self.send_q.get(),
+            parse_message(0x04, 22, -1, parse_data(
+                (mock_variable, mock_position, mock_position), 'display_var'
+            ))
         )
 
     def test_clear(self):
         """Test clear method."""
         self.display.clear()
-
-        # Check if set_property is called once with the specified arguments
-        expected_clear_params = (
-            self.mock_kwargs["id_"],
-            self.display.PropertyType.CLEAR,
-            bytes(2),
-            self.display.PropertyDataType.RAW,
+        clear_message = parse_message(0x04, 21, -1, (0, 0))
+        self.assertEqual(
+            self.send_q.get(),
+            clear_message
         )
-        self.display._set_property.assert_called_once_with(
-            *expected_clear_params)
 
 
 if __name__ == "__main__":

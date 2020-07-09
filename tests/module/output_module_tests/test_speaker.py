@@ -1,8 +1,8 @@
 import unittest
 
-from unittest import mock
-
+from queue import Queue
 from modi.module.output_module.speaker import Speaker
+from modi.util.msgutil import parse_data, parse_message
 
 
 class TestSpeaker(unittest.TestCase):
@@ -10,85 +10,116 @@ class TestSpeaker(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.mock_kwargs = {"id_": -1, "uuid": -1, "msg_send_q": None}
+        self.send_q = Queue()
+        self.mock_kwargs = {"id_": -1, "uuid": -1, "msg_send_q": self.send_q}
         self.speaker = Speaker(**self.mock_kwargs)
-
-        def eval_set_property(id, command_type, data, property_data_type):
-            return command_type
-
-        self.speaker._set_property = mock.Mock(side_effect=eval_set_property)
-        self.speaker._get_property = mock.Mock()
-        self.speaker._msg_send_q = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
         del self.speaker
 
-    @mock.patch.object(Speaker, "set_volume")
-    @mock.patch.object(Speaker, "set_frequency")
-    def test_set_tune(self, mock_set_frequency, mock_set_volume):
+    def test_set_tune(self):
         """Test set_tune method."""
         expected_values = frequency, volume = (
             self.speaker.Scale.F_RA_6.value, 30
         )
-        self.speaker.set_tune(*expected_values)
+        self.speaker.tune = expected_values
+        sent_messages = []
+        while not self.send_q.empty():
+            sent_messages.append(self.send_q.get_nowait())
+        self.assertTrue(
+            Speaker.request_property(
+                -1, Speaker.PropertyType.FREQUENCY) in sent_messages)
+        self.assertTrue(
+            Speaker.request_property(
+                -1, Speaker.PropertyType.VOLUME) in sent_messages)
+        self.assertTrue(
+            parse_message(
+                0x04, 16, -1, parse_data(
+                    expected_values, 'float')) in sent_messages)
 
-        expected_tune_params = (
-            self.mock_kwargs["id_"],
-            self.speaker.CommandType.SET_TUNE,
-            expected_values,
-            self.speaker.PropertyDataType.FLOAT,
-        )
-
-        self.assertEqual(self.speaker._msg_send_q.put.call_count, 2)
-        self.speaker._set_property.assert_called_once_with(
-            *expected_tune_params)
-
-    @mock.patch.object(Speaker, "get_volume")
-    @mock.patch.object(Speaker, "get_frequency")
-    def test_get_tune(self, mock_get_frequency, mock_get_volume):
+    def test_get_tune(self):
         """Test get_tune method with none input."""
-        self.speaker.get_tune()
+        _ = self.speaker.tune
+        sent_messages = []
+        while not self.send_q.empty():
+            sent_messages.append(self.send_q.get_nowait())
+        self.assertTrue(
+            Speaker.request_property(
+                -1, Speaker.PropertyType.FREQUENCY) in sent_messages)
+        self.assertTrue(
+            Speaker.request_property(
+                -1, Speaker.PropertyType.VOLUME) in sent_messages)
 
-        mock_get_frequency.assert_called_once_with()
-        mock_get_volume.assert_called_once_with()
-
-    @mock.patch.object(Speaker, "set_tune")
-    def test_set_frequency(self, mock_set_tune):
+    def test_set_frequency(self):
         """Test set_frequency method."""
-        expeceted_frequency = 50
-        self.speaker.set_frequency(frequency_value=expeceted_frequency)
-        mock_set_tune.assert_called_once_with(
-            frequency_value=expeceted_frequency)
+        expecetd_frequency = 50
+        self.speaker.frequency = expecetd_frequency
+        expected_values = (50, 0)
+        sent_messages = []
+        while not self.send_q.empty():
+            sent_messages.append(self.send_q.get_nowait())
+        self.assertTrue(
+            Speaker.request_property(
+                -1, Speaker.PropertyType.FREQUENCY) in sent_messages)
+        self.assertTrue(
+            Speaker.request_property(
+                -1, Speaker.PropertyType.VOLUME) in sent_messages)
+        self.assertTrue(
+            parse_message(
+                0x04, 16, -1, parse_data(
+                    expected_values, 'float')) in sent_messages)
 
     def test_get_frequency(self):
         """Test get_frequency method with none input."""
-        self.speaker.get_frequency()
-        self.speaker._get_property.assert_called_once_with(
-            self.speaker.PropertyType.FREQUENCY
-        )
+        _ = self.speaker.frequency
+        self.assertEqual(
+            self.send_q.get(),
+            Speaker.request_property(-1, Speaker.PropertyType.FREQUENCY))
 
-    @mock.patch.object(Speaker, "set_tune")
-    def test_set_volume(self, mock_set_tune):
+    def test_set_volume(self):
         """Test set_volume method."""
-        expeceted_volume = 50
-        self.speaker.set_volume(volume_value=expeceted_volume)
-        mock_set_tune.assert_called_once_with(volume_value=expeceted_volume)
+        expected_volume = 50
+        expected_values = (0, 50)
+        self.speaker.volume = expected_volume
+        sent_messages = []
+        while not self.send_q.empty():
+            sent_messages.append(self.send_q.get_nowait())
+        self.assertTrue(
+            Speaker.request_property(
+                -1, Speaker.PropertyType.FREQUENCY) in sent_messages)
+        self.assertTrue(
+            Speaker.request_property(
+                -1, Speaker.PropertyType.VOLUME) in sent_messages)
+        self.assertTrue(
+            parse_message(
+                0x04, 16, -1, parse_data(
+                    expected_values, 'float')) in sent_messages)
 
     def test_get_volume(self):
         """Test get_volume method with none input."""
-        self.speaker.get_volume()
-        self.speaker._get_property.assert_called_once_with(
-            self.speaker.PropertyType.VOLUME
-        )
+        _ = self.speaker.volume
+        self.assertEqual(
+            self.send_q.get(),
+            Speaker.request_property(-1, Speaker.PropertyType.VOLUME))
 
-    @mock.patch.object(Speaker, "set_tune")
-    def test_set_off(self, mock_set_tune):
+    def test_set_off(self):
         """Test set_off method"""
-        self.speaker.set_off()
-
-        expeceted_values = frequency, volume = 0, 0
-        mock_set_tune.assert_called_once_with(*expeceted_values)
+        expected_values = (0, 0)
+        self.speaker.tune = expected_values
+        sent_messages = []
+        while not self.send_q.empty():
+            sent_messages.append(self.send_q.get_nowait())
+        self.assertTrue(
+            Speaker.request_property(
+                -1, Speaker.PropertyType.FREQUENCY) in sent_messages)
+        self.assertTrue(
+            Speaker.request_property(
+                -1, Speaker.PropertyType.VOLUME) in sent_messages)
+        self.assertTrue(
+            parse_message(
+                0x04, 16, -1, parse_data(
+                    expected_values, 'float')) in sent_messages)
 
 
 if __name__ == "__main__":
