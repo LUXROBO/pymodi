@@ -24,6 +24,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install coveralls
         pip install -r requirements.txt
+        sudo apt-get install libsndfile1-dev
+        sudo apt-get install libportaudio2
     - name: Run coverage
       env:
         COVERALLS_REPO_TOKEN: qwWtAcClZM9uduEHYvmoPGhtwhElXGTbU
