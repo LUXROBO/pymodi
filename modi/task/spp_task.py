@@ -12,7 +12,8 @@ from modi.task.conn_task import ConnTask
 
 class SppTask(ConnTask):
 
-    def __init__(self, spp_recv_q, spp_send_q, module_uuid, verbose):
+    def __init__(self, spp_recv_q, spp_send_q, module_uuid, verbose,
+                 port=None):
         print("Run Spp Task.")
         super().__init__(spp_recv_q, spp_send_q)
         self._spp_recv_q = spp_recv_q
@@ -50,9 +51,9 @@ class SppTask(ConnTask):
         modi_ports = list()
         ports = stl.comports()
         for port in ports:
-            if self._module_uuid in port.device or \
-                ("Bluetooth" in port.description and
-                 port.hwid.split('&')[1][:4] == '0002'):
+            if self._module_uuid in port.device \
+                or ("Bluetooth" in port.description
+                    and port.hwid.split('&')[1][:4] == '0002'):
                 modi_ports.append(port)
 
         if not modi_ports:

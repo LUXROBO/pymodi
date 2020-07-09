@@ -1,11 +1,12 @@
+.. role:: raw-html-m2r(raw)
+   :format: html
+
 
 Contributing
 ============
 
-Contributions are welcome, and they are greatly appreciated! Every
+Contributions are welcomed, and they are greatly appreciated! Every
 little bit helps, and credit will always be given.
-
-You can contribute in many ways:
 
 Types of Contributions
 ----------------------
@@ -13,126 +14,159 @@ Types of Contributions
 Report Bugs
 ^^^^^^^^^^^
 
-Report bugs at https://github.com/LUXROBO/pymodi/issues.
-
-If you are reporting a bug, please include:
-
-
-* Your operating system name and version.
-* Any details about your local setup that might be helpful in
-  troubleshooting.
-* Detailed steps to reproduce the bug.
+Report bugs at https://github.com/LUXROBO/pymodi/issues. Fill in all the information required at issue template.
 
 Fix Bugs
 ^^^^^^^^
 
-Look through the GitHub issues for bugs. Anything tagged with \"bug\"
-and \"help wanted\" is open to whoever wants to implement it.
+Look through the GitHub issues for bugs. You are welcome to implement anything tagged with \"bug\"
+and \"help wanted\".
 
 Implement Features
 ^^^^^^^^^^^^^^^^^^
 
-Look through the GitHub issues for features. Anything tagged with
-\"enhancement\" and \"help wanted\" is open to whoever wants to
-implement it.
+Look through the GitHub issues for features. You are welcome to implement anything tagged with \"bug\"
+and \"help wanted\".
 
 Write Documentation
 ^^^^^^^^^^^^^^^^^^^
 
-pyMODI could always use more documentation, whether as part of the
-official pyMODI docs, in docstrings, or even on the web in blog posts,
+PyMODI could always use more documentation, whether it be part of the
+official PyMODI docs, docstrings, or even blog posts,
 articles, and such.
 
 Submit Feedback
 ^^^^^^^^^^^^^^^
 
 The best way to send feedback is to file an issue at
-https://github.com/LUXROBO/pyMODI/issues.
 
 If you are proposing a feature:
 
 
 * Explain in detail how it would work.
-* Keep the scope as narrow as possible, to make it easier to
+* Keep the scope as narrow as possible to make it easier to
   implement.
-* Remember that this is a volunteer-driven project, and that
+* Remember that this is a volunteer-driven project and that
   contributions are welcome :)
 
-Get Started!
-------------
+Pre-requisites
+--------------
 
-Ready to contribute? Here\'s how to set up [modi]{.title-ref} for local
-development.
+You should be familiar with the following items.
 
 
-#. Fork the [modi]{.title-ref} repo on GitHub.
+#. git-flow
+#. python unit-test
+#. git commit message naming convention
+#. docstring
+#. python type annotations
+
+Getting Ready for PyMODI Contribution
+-------------------------------------
+
+Please read the following to get ready for the contribution!!
+
+
 #. 
-   Clone your fork locally:
+   Fork the pymodi repo on GitHub
+
+    
+   .. image:: docs/_static/img/fork_button.jpg
+      :target: https://github.com/LUXROBO/pymodi/fork
+      :alt: Fork PyMODI
+
+
+     ^ Click this to fork the repo!!
+
+#. 
+   In your device, clone your fork locally:
 
    .. code-block::
 
-      $ git clone git@github.com:your_name_here/LUXROBO/pymodi.git
+       $ git clone git@github.com:your_name_here/LUXROBO/pymodi.git
 
 #. 
-   Install your local copy into a virtualenv. Assuming you have
-   virtualenvwrapper installed, this is how you set up your fork for
-   local development:
+   Install the version of PyMODI in your branch:
 
    .. code-block::
 
-      $ mkvirtualenv modi
-      $ cd modi/
-      $ python setup.py develop
+       $ python setup.py develop
 
 #. 
-   Create a branch for local development:
+   Setup the git hooks to facilitate contribution:
 
    .. code-block::
 
-      $ git checkout -b name-of-your-bugfix-or-feature
-
-
-   Now you can make your changes locally.
+       $ git config core.hooksPath .githooks
 
 #. 
-   When you\'re done making changes, check that your changes pass
-   flake8 and the tests, including testing other Python versions with
-   tox:
+   Do NOT manipulate master branch or develop branch directly. Create a new branch for local development.
+
+    PyMODI's branch naming convention follows a git-flow convention,
+
+    If you fixed a bug:
 
    .. code-block::
 
-      $ flake8 modi tests
-      $ python setup.py test or py.test
-      $ tox
+       $ git checkout -b hotfix/name-of-your-bug-fix
 
 
-   To get flake8 and tox, just pip install them into your virtualenv.
-
-#. 
-   Commit your changes and push your branch to GitHub:
+    If you implemented a new feature:
 
    .. code-block::
 
-      $ git add .
-      $ git commit -m "Your detailed description of your changes."
-      $ git push origin name-of-your-bugfix-or-feature
+       $ git checkout -b feature/name-of-your-feature
 
 #. 
-   Submit a pull request through the GitHub website.
+   Whenever you make major changes, make a commit to the repository:
 
-Pull Request Guidelines
------------------------
+   .. code-block::
 
-Before you submit a pull request, check that it meets these guidelines:
+       $ git add file-you-have-changed
+       $ git commit -m your-commit-message
 
 
-#. The pull request should include tests.
-#. If the pull request adds functionality, the docs should be updated.
-   Put your new functionality into a function with a docstring, and add
-   the feature to the list in README.md.
-#. The pull request should work for Python 3.6 and 3.7, 3.8 and
-   for PyPy. Check https://travis-ci.org/LUXROBO/pymodi/pull_requests
-   and make sure that the tests pass for all supported Python versions.
+    PyMODI contribution follows a git naming convention for the commit messages.
+    https://chris.beams.io/posts/git-commit/
+
+    TL;DR: When writing a commit message, imagine your message is preceded by
+
+    "This commit will... your-commit-mesage"
+
+    e.g.
+
+   .. code-block::
+
+       $ git commit -m "Fix error in motor module communication"
+       $ git commit -m "Refactor contribution document"
+       $ git commit -m "Remove redundant import in modi.py"
+
+#. 
+   After you push your changes to local branch, make sure your code passes
+   all unittests and flake8 convention tests. If you have set your githooks path at step 4,
+   git will automatically run the tests when you push your changes.
+
+#. 
+   Make a pull request to LUXROBO/pymodi/develop branch.
+
+    
+   .. image:: docs/_static/img/pr_guide.png
+      :target: docs/_static/img/pr_guide.png
+      :alt: PR guide
+
+
+   Name the pull request based on the default PR templates. Choose either of the templates based on the type of your contribution.
+
+#. 
+   Congratulations! You made a meaningful contribution to PyMODI.
+
+
+.. raw:: html
+
+   <p align="center">
+       <img src="docs/_static/img/modi_thankyou.jpg" alt="thanks" width=300, height=180>
+   </p>
+
 
 Tips
 ----
@@ -144,17 +178,14 @@ To run a subset of tests:
    $ python -m unittest tests.test_modi
 
 
-Deploying
----------
-
-A reminder for the maintainers on how to deploy. Make sure all your
-changes are committed (including an entry in HISTORY.md). Then run:
+To automatically intialize the MODI object in an interactive shell:
 
 .. code-block::
 
-   $ bumpversion [major|minor|patch]
-   $ git push
-   $ git push --tags
+   $ python -im modi -d
 
 
-Travis will then deploy to PyPI if tests pass.
+Contact Us
+----------
+
+If you have any questions regarding PyMODI, contact us at :raw-html-m2r:`<mailto> tech@luxrobo.com </mailto>`

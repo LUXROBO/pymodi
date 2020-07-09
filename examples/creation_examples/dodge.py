@@ -34,7 +34,7 @@ class DodgeManager(GameManager):
         self.fire.x, self.fire.y = 25, 20
 
     def update(self):
-        pitch = self.gyro.get_pitch()
+        pitch = self.gyro.pitch
         if pitch < -5 and self.player.x < 48:
             self.player.x += 30 * self.delta_time
         elif pitch > 5 and self.player.x > 0:

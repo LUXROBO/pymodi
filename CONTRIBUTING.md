@@ -49,7 +49,7 @@ Please read the following to get ready for the contribution!!
 
 1. Fork the pymodi repo on GitHub
 
-    [![Fork PyMODI](https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/Fork_btn.JPG)](https://github.com/LUXROBO/pymodi/fork)
+    [![Fork PyMODI](docs/_static/img/fork_button.jpg)](https://github.com/LUXROBO/pymodi/fork)
 
      ^ Click this to fork the repo!!
 
@@ -101,14 +101,14 @@ git will automatically run the tests when you push your changes.
 
 8. Make a pull request to LUXROBO/pymodi/develop branch.
 
-    ![PR guide](https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/PR_guide.png)
+    ![PR guide](docs/_static/img/pr_guide.png)
 
    Name the pull request based on the default PR templates. Choose either of the templates based on the type of your contribution.
 
 9. Congratulations! You made a meaningful contribution to PyMODI.
 
 <p align="center">
-    <img src="https://github.com/k2sebeom/pymodi/blob/feature/refactor-contribution-guideline/docs/_static/img/modi_thank.JPG" alt="thanks" width=300, height=180>
+    <img src="docs/_static/img/modi_thankyou.jpg" alt="thanks" width=300, height=180>
 </p>
 
 Tips
@@ -116,10 +116,10 @@ Tips
 To run a subset of tests:
 
     $ python -m unittest tests.test_modi
-    
+
 To automatically intialize the MODI object in an interactive shell:
 
-    $ python -im modi -n <nb_modules>
+    $ python -im modi -d
 
 Contact Us
 ---

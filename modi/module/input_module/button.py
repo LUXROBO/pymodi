@@ -17,34 +17,38 @@ class Button(InputModule):
         super().__init__(id_, uuid, msg_send_q)
         self._type = "button"
 
-    def get_clicked(self) -> bool:
+    @property
+    def clicked(self) -> bool:
         """Returns true when button is clicked
 
         :return: `True` if clicked or `False`.
         :rtype: bool
         """
-        return self._get_property(self.PropertyType.CLICKED) == 100.0
+        return self._get_property(self.PropertyType.CLICKED) == 100.
 
-    def get_double_clicked(self) -> bool:
+    @property
+    def double_clicked(self) -> bool:
         """Returns true when button is double clicked
 
         :return: `True` if double clicked or `False`.
         :rtype: bool
         """
-        return self._get_property(self.PropertyType.DOUBLE_CLICKED) == 100.0
+        return self._get_property(self.PropertyType.DOUBLE_CLICKED) == 100.
 
-    def get_pressed(self) -> bool:
+    @property
+    def pressed(self) -> bool:
         """Returns true while button is pressed
 
         :return: `True` if pressed or `False`.
         :rtype: bool
         """
-        return self._get_property(self.PropertyType.PRESSED) == 100.0
+        return self._get_property(self.PropertyType.PRESSED) == 100.
 
-    def get_toggled(self) -> bool:
+    @property
+    def toggled(self) -> bool:
         """Returns true when button is toggled
 
         :return: `True` if toggled or `False`.
         :rtype: bool
         """
-        return self._get_property(self.PropertyType.TOGGLED) == 100.0
+        return self._get_property(self.PropertyType.TOGGLED) == 100.

@@ -1,6 +1,14 @@
 modi.module.output\_module package
 ==================================
 
+.. automodule:: modi.module.output_module
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
 modi.module.output\_module.display module
 -----------------------------------------
 
@@ -40,5 +48,4 @@ modi.module.output\_module.speaker module
    :members:
    :undoc-members:
    :show-inheritance:
-
 

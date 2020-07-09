@@ -41,6 +41,21 @@ class Module:
 
         self._is_connected = True
 
+        self.position = (0, 0)
+
+    def __gt__(self, other):
+        if self.distance == other.distance:
+            if self.position[0] == other.position[0]:
+                return self.position[1] < other.position[1]
+            else:
+                return self.position[0] > other.position[0]
+        else:
+            return self.distance > other.distance
+
+    @property
+    def distance(self):
+        return self.position[0] ** 2 + self.position[1] ** 2
+
     @property
     def id(self) -> int:
         return self._id
@@ -85,7 +100,7 @@ class Module:
             )
             self._msg_send_q.put(modi_serialtemp)
             self._properties[property_type].last_request_time = time.time()
-
+        time.sleep(0.001)
         return self._properties[property_type].value
 
     def update_property(self, property_type: IntEnum,
@@ -101,7 +116,8 @@ class Module:
             self._properties[property_type].value = property_value
             self._properties[property_type].last_update_time = time.time()
 
-    def request_property(self, destination_id: int,
+    @staticmethod
+    def request_property(destination_id: int,
                          property_type: IntEnum) -> str:
         """ Generate message for request property
 

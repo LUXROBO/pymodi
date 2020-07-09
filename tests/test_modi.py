@@ -21,6 +21,8 @@ from modi.module.output_module.led import Led
 from modi.module.output_module.motor import Motor
 from modi.module.output_module.speaker import Speaker
 
+from modi.util.misc import module_list
+
 
 class TestModi(unittest.TestCase):
     """Tests for 'modi' class."""
@@ -71,112 +73,112 @@ class TestModi(unittest.TestCase):
     def test_get_buttons(self):
         """Test buttons getter method."""
         actual_modules = self.modi.buttons
-        expected_modules = tuple(
-            [m for m in self.modi.modules if isinstance(m, Button)]
+        expected_modules = module_list(
+            self.modi.modules, 'button'
         )
 
-        self.assertIsInstance(actual_modules, tuple)
-        self.assertTupleEqual(actual_modules, expected_modules)
+        self.assertIsInstance(actual_modules, module_list)
+        self.assertEqual(actual_modules, expected_modules)
 
     def test_get_dials(self):
         """Test dials getter method."""
         actual_modules = self.modi.dials
-        expected_modules = tuple(
-            [m for m in self.modi.modules if isinstance(m, Dial)]
+        expected_modules = module_list(
+            self.modi.modules, 'dial'
         )
 
-        self.assertIsInstance(actual_modules, tuple)
-        self.assertTupleEqual(actual_modules, expected_modules)
+        self.assertIsInstance(actual_modules, module_list)
+        self.assertEqual(actual_modules, expected_modules)
 
     def test_get_envs(self):
         """Test envs getter method."""
         actual_modules = self.modi.envs
-        expected_modules = tuple(
-            [m for m in self.modi.modules if isinstance(m, Env)]
+        expected_modules = module_list(
+            self.modi.modules, 'env'
         )
 
-        self.assertIsInstance(actual_modules, tuple)
-        self.assertTupleEqual(actual_modules, expected_modules)
+        self.assertIsInstance(actual_modules, module_list)
+        self.assertEqual(actual_modules, expected_modules)
 
     def test_get_gyros(self):
         """Test gyros getter method."""
         actual_modules = self.modi.gyros
-        expected_modules = tuple(
-            [m for m in self.modi.modules if isinstance(m, Gyro)]
+        expected_modules = module_list(
+            self.modi.modules, 'gyro'
         )
 
-        self.assertIsInstance(actual_modules, tuple)
-        self.assertTupleEqual(actual_modules, expected_modules)
+        self.assertIsInstance(actual_modules, module_list)
+        self.assertEqual(actual_modules, expected_modules)
 
     def test_get_irs(self):
         """Test irs getter method."""
         actual_modules = self.modi.irs
-        expected_modules = tuple(
-            [m for m in self.modi.modules if isinstance(m, Ir)]
+        expected_modules = module_list(
+            self.modi.modules, 'ir'
         )
 
-        self.assertIsInstance(actual_modules, tuple)
-        self.assertTupleEqual(actual_modules, expected_modules)
+        self.assertIsInstance(actual_modules, module_list)
+        self.assertEqual(actual_modules, expected_modules)
 
     def test_get_mics(self):
         """Test mics getter method."""
         actual_modules = self.modi.mics
-        expected_modules = tuple(
-            [m for m in self.modi.modules if isinstance(m, Mic)]
+        expected_modules = module_list(
+            self.modi.modules, 'mic'
         )
 
-        self.assertIsInstance(actual_modules, tuple)
-        self.assertTupleEqual(actual_modules, expected_modules)
+        self.assertIsInstance(actual_modules, module_list)
+        self.assertEqual(actual_modules, expected_modules)
 
     def test_get_ultrasonics(self):
         """Test ultrasonics getter method."""
         actual_modules = self.modi.ultrasonics
-        expected_modules = tuple(
-            [m for m in self.modi.modules if isinstance(m, Ultrasonic)]
+        expected_modules = module_list(
+            self.modi.modules, 'ultrasonic'
         )
 
-        self.assertIsInstance(actual_modules, tuple)
-        self.assertTupleEqual(actual_modules, expected_modules)
+        self.assertIsInstance(actual_modules, module_list)
+        self.assertEqual(actual_modules, expected_modules)
 
     def test_get_displays(self):
         """Test displays getter method."""
         actual_modules = self.modi.displays
-        expected_modules = tuple(
-            [m for m in self.modi.modules if isinstance(m, Display)]
+        expected_modules = module_list(
+            self.modi.modules, 'display'
         )
 
-        self.assertIsInstance(actual_modules, tuple)
-        self.assertTupleEqual(actual_modules, expected_modules)
+        self.assertIsInstance(actual_modules, module_list)
+        self.assertEqual(actual_modules, expected_modules)
 
     def test_get_leds(self):
         """Test leds getter method."""
         actual_modules = self.modi.leds
-        expected_modules = tuple(
-            [m for m in self.modi.modules if isinstance(m, Led)]
+        expected_modules = module_list(
+            self.modi.modules, 'led'
         )
 
-        self.assertIsInstance(actual_modules, tuple)
-        self.assertTupleEqual(actual_modules, expected_modules)
+        self.assertIsInstance(actual_modules, module_list)
+        self.assertEqual(actual_modules, expected_modules)
 
     def test_get_motors(self):
         """Test motors getter method."""
         actual_modules = self.modi.motors
-        expected_modules = tuple(
-            [m for m in self.modi.modules if isinstance(m, Motor)]
+        expected_modules = module_list(
+            self.modi.modules, 'motor'
         )
 
-        self.assertIsInstance(actual_modules, tuple)
-        self.assertTupleEqual(actual_modules, expected_modules)
+        self.assertIsInstance(actual_modules, module_list)
+        self.assertEqual(actual_modules, expected_modules)
 
     def test_get_speakers(self):
         """Test speakers getter method."""
         actual_modules = self.modi.speakers
-        expected_modules = tuple(
-            [m for m in self.modi.modules if isinstance(m, Speaker)]
+        expected_modules = module_list(
+            self.modi.modules, 'speaker'
         )
 
-        self.assertIsInstance(actual_modules, tuple)
-        self.assertTupleEqual(actual_modules, expected_modules)
+        self.assertIsInstance(actual_modules, module_list)
+        self.assertEqual(actual_modules, expected_modules)
 
     # def test_print_topology_map(self):
     #     """Test print_topology_map method"""

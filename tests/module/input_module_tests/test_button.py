@@ -1,8 +1,8 @@
 import unittest
 
-from unittest import mock
-
+from queue import Queue
 from modi.module.input_module.button import Button
+from modi.module.module import Module
 
 
 class TestButton(unittest.TestCase):
@@ -10,9 +10,9 @@ class TestButton(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        mock_args = (-1, -1, None)
+        self.send_q = Queue()
+        mock_args = (-1, -1, self.send_q)
         self.button = Button(*mock_args)
-        self.button._get_property = mock.Mock()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -20,31 +20,31 @@ class TestButton(unittest.TestCase):
 
     def test_get_clicked(self):
         """Test get_clicked method."""
-        self.button.get_clicked()
-        self.button._get_property.assert_called_once_with(
-            self.button.PropertyType.CLICKED
-        )
+        _ = self.button.clicked
+        self.assertEqual(
+            self.send_q.get(),
+            Module.request_property(-1, Button.PropertyType.CLICKED))
 
     def test_get_double_clicked(self):
         """Test get_double_clicked method."""
-        self.button.get_double_clicked()
-        self.button._get_property.assert_called_once_with(
-            self.button.PropertyType.DOUBLE_CLICKED
-        )
+        _ = self.button.double_clicked
+        self.assertEqual(
+            self.send_q.get(),
+            Module.request_property(-1, Button.PropertyType.DOUBLE_CLICKED))
 
     def test_get_pressed(self):
         """Test get_pressed method."""
-        self.button.get_pressed()
-        self.button._get_property.assert_called_once_with(
-            self.button.PropertyType.PRESSED
-        )
+        _ = self.button.pressed
+        self.assertEqual(
+            self.send_q.get(),
+            Module.request_property(-1, Button.PropertyType.PRESSED))
 
     def test_get_toggled(self):
         """Test get_toggled method."""
-        self.button.get_toggled()
-        self.button._get_property.assert_called_once_with(
-            self.button.PropertyType.TOGGLED
-        )
+        _ = self.button.toggled
+        self.assertEqual(
+            self.send_q.get(),
+            Module.request_property(-1, Button.PropertyType.TOGGLED))
 
 
 if __name__ == "__main__":

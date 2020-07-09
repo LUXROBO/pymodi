@@ -1,18 +1,19 @@
 <p align="center">
-	<img src="https://github.com/k2sebeom/pymodi/blob/feature/pymodi-logo/docs/_static/img/Logo3.JPG" width="500" height="150">
+	<img src="docs/_static/img/logo.png" width="500" height="150">
 </p>
 
----------
+--------
 
 [![image](https://img.shields.io/pypi/pyversions/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
 [![image](https://img.shields.io/pypi/v/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
-[![Documentation Status](https://readthedocs.org/projects/pymodi/badge/?version=latest)](https://pymodi.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/pymodi/badge/?version=master)](https://pymodi.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://github.com/LUXROBO/pymodi/workflows/Build%20Status/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions)
 [![Coverage Status](https://coveralls.io/repos/github/LUXROBO/pymodi/badge.svg)](https://coveralls.io/github/LUXROBO/pymodi)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5a62f1585d723099e337/maintainability)](https://codeclimate.com/github/LUXROBO/pymodi/maintainability)
-[![License](https://img.shields.io/pypi/l/pymodi.svg?color=blue)](https://github.com/LUXROBO/pyMODI/blob/master/LICENSE)
+[![License](https://img.shields.io/pypi/l/pymodi.svg?color=blue)](https://github.com/LUXROBO/pymodi/blob/master/LICENSE)
 
 Description
--------
+=========
 Easy😆 and fast💨 MODI Python API package.
 
 -   Free software: MIT license
@@ -29,7 +30,7 @@ Features
 UML Diagram
 --------
 <p align="center">
-<img src="https://gituml-media.s3.amazonaws.com/production_diagram_201.svg?AWSAccessKeyId=AKIA5BNPSF2PVKDZ4QNO&Signature=5dzm1VMNGOYCgtYIIwk%2BPTQRx8A%3D&Expires=1590641498" width="800" height="500">
+    <img src="/docs/_static/img/umldiagram.svg">
 </p>
 
 Build Status
@@ -37,15 +38,15 @@ Build Status
 
 |master|develop|
 |:---:|:---:|
-|[![image](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi)|[![image](https://travis-ci.org/LUXROBO/pymodi.svg?branch=develop)](https://travis-ci.org/LUXROBO/pymodi)|
+| [![Build Status](https://github.com/LUXROBO/pymodi/workflows/Build%20Status/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Build Status](https://github.com/LUXROBO/pymodi/workflows/Build%20Status/badge.svg?branch=develop)](https://github.com/LUXROBO/pymodi/actions) |
 
 System Support
 ---------
 | System | 3.6 | 3.7 | 3.8 |
 | :---: | :---: | :---: | :--: |
-| Linux | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) |
-| Mac OS | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) |
-| Windows | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) | [![Build Status](https://travis-ci.org/LUXROBO/pymodi.svg?branch=master)](https://travis-ci.org/LUXROBO/pymodi) |
+| Linux | [![Unit Test (Ubuntu)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Ubuntu)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (Ubuntu)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Ubuntu)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (Ubuntu)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Ubuntu)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) |
+| Mac OS | [![Unit Test (macOS)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(macOS)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (macOS)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(macOS)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (macOS)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(macOS)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) |
+| Windows | [![Unit Test (Windows)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Windows)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (Windows)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Windows)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (Windows)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Windows)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) |
 
 Contribution Guidelines
 --------
@@ -64,13 +65,12 @@ Install the latest PyMODI if you haven\'t installed it yet:
 
 You can also install PyMODI at develop branch with:
 
-    pip install git+https://github.com/LUXROBO/pymodi.git@develop --user
+    pip install git+https://github.com/LUXROBO/pymodi.git@develop --user --upgrade
 
-Import [modi]{.title-ref} package and create [MODI]{.title-ref}
-instance:
+Import **modi** package and create **MODI** instance:
 
     import modi
-    bundle = modi.MODI(nb_modules=1)
+    bundle = modi.MODI()
 
 List connected modules:
 
@@ -88,13 +88,13 @@ Let\'s blink the LED\'s light 5 times:
     led = bundle.leds[0]
 
     for _ in range(5):
-        led.set_on()
+        led.turn_on()
         time.sleep(1)
-        led.set_off()
+        led.turn_off()
         time.sleep(1)
 
 If you are still not sure how to use PyMODI, you can play an interactive PyMODI tutorial by running a command of
 
     $ python -m modi --tutorial
-    
-  
+
+Moreover, we provide some [usage and creation examples.](examples)
