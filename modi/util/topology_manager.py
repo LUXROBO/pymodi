@@ -1,5 +1,6 @@
 from typing import Dict, List, Tuple
 from modi.util.misc import module_list
+from modi.task.conn_task import ConnTask
 
 
 class TopologyMap:
@@ -205,10 +206,17 @@ class TopologyManager:
         except KeyError as e:
             exe_thrd.request_topology(module_id=int(str(e)))
             if int(str(e)) not in [module.id for module in self._modules]:
-                exe_thrd.request_topology(0x2A, int(str(e)))
-            return False
-        return len(self._modules) == len(self._tp_data) - 1 \
-            and self.is_uuid_initialized()
+                if ConnTask.is_network_module_connected():
+                    exe_thrd.request_topology(0x2A, int(str(e)))
+                    return False
+            else:
+                return False
+        if ConnTask.is_network_module_connected():
+            return len(self._modules) == len(self._tp_data) - 1 \
+                and self.is_uuid_initialized()
+        else:
+            return len(self._modules) == len(self._tp_data) \
+                and self.is_uuid_initialized()
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """ Print the topology map
