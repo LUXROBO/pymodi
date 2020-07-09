@@ -1,11 +1,12 @@
 from typing import Dict, List, Tuple
+from modi.util.misc import module_list
 
 
 class TopologyMap:
-    def __init__(self, tp_data, nb_modules):
+    def __init__(self, tp_data, nb_modules, modules):
         self._nb_modules = nb_modules
         self._tp_data = tp_data
-
+        self._modules = modules
         # 2D array that will contain the topology information of the modules.
         # It stores the module id
         self._tp_map = [[0 for _ in range(2 * self._nb_modules)]
@@ -147,15 +148,16 @@ class TopologyMap:
                 if not curr_elem:
                     line += " " * padding
                 else:
+                    name = TopologyManager.get_type_from_uuid(
+                        self._tp_data[curr_elem]['uuid'])
+                    idx = module_list(self._modules,
+                                      name.lower()).find(curr_elem)
+                    if idx < 0:
+                        idx = ''
                     if print_id:
-                        line += "{0:^17s}".format(
-                            TopologyManager.get_type_from_uuid(
-                                self._tp_data[curr_elem]['uuid']) + ":"
-                            + str(curr_elem))
+                        line += f"{name + str(idx) + f' ({curr_elem})':^17}"
                     else:
-                        name = TopologyManager.get_type_from_uuid(
-                            self._tp_data[curr_elem]['uuid'])
-                        line += f"{name:^10}"
+                        line += f"{name + str(idx):^10}"
             print(line)
 
     @property
@@ -184,7 +186,7 @@ class TopologyManager:
 
     def __update_module_position(self):
         self._nb_modules = len(self._tp_data)
-        tp_map = TopologyMap(self._tp_data, self._nb_modules)
+        tp_map = TopologyMap(self._tp_data, self._nb_modules, self._modules)
         tp_map.construct_map()
         tp_map.update_module_data(self._modules)
 
@@ -215,7 +217,7 @@ class TopologyManager:
         :return: None
         """
         self._nb_modules = len(self._tp_data)
-        tp_map = TopologyMap(self._tp_data, self._nb_modules)
+        tp_map = TopologyMap(self._tp_data, self._nb_modules, self._modules)
         tp_map.construct_map()
         tp_map.print_map(print_id)
 
@@ -241,7 +243,7 @@ class TopologyManager:
             '2030': 'Button',
             '2040': 'Dial',
             '2050': 'Ultrasonic',
-            '2060': 'Infrared',
+            '2060': 'Ir',
 
             # Output modules
             '4000': 'Display',

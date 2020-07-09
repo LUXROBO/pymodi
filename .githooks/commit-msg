@@ -3,8 +3,8 @@
 INPUT_FILE=$1
 MSG=$(head -n1 $INPUT_FILE)
 
-if [[ $MSG =~ [^\x00-\x7F] ]]; then
-    if [[ ! $MSG =~ [-] ]]; then
+if [[ $MSG =~ [^0-9A-Za-z\-\"\'_] ]]; then
+    if [[ ! $MSG =~ [-\"\'_] ]]; then
         echo "Please use english for your commit message"
         exit 1
     fi
