@@ -100,7 +100,7 @@ class Module:
             )
             self._msg_send_q.put(modi_serialtemp)
             self._properties[property_type].last_request_time = time.time()
-
+        time.sleep(0.001)
         return self._properties[property_type].value
 
     def update_property(self, property_type: IntEnum,
