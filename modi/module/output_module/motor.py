@@ -46,8 +46,7 @@ class Motor(OutputModule):
             (
                 motor_channel,
                 control_mode,
-                control_value if control_value >= 0 else -control_value,
-                0x00 if control_value >= 0 else 0xFFFF,
+                control_value
             ),
         )
 
