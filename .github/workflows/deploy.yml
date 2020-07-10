@@ -48,8 +48,8 @@ jobs:
     - name: Send email
       uses: dawidd6/action-send-mail@v2.2.0
       with:
-        server_address: smtp.gmail.com
-        server_port: 465
+        server_address: smtp-mail.outlook.com
+        server_port: 587
         username: ${{secrets.MAIL_USERNAME}}
         password: ${{secrets.MAIL_PASSWORD}}
         subject: A new version of PyMODI is successfully released!
