@@ -28,12 +28,15 @@ jobs:
         bumpversion minor
         BRANCH_NAME="release/$(cat setup.cfg | grep 'current_version = ' | cut -d '=' -f 2 | cut -c 2-5)0"
         echo $BRANCH_NAME
+        echo "::set-output name=new_branch::$BRANCH_NAME"
         git checkout -b $BRANCH_NAME
         git push --set-upstream origin $BRANCH_NAME
+      id: checkout_branch
     - name: Create a pull request to master branch
       uses: repo-sync/pull-request@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        source_branch: ${{ steps.checkout_branch.outputs.new_branch }}
         pr_title: "Merge new release of ${{ github.ref }}"
     - name: Build and publish
       env:
