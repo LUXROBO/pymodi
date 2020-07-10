@@ -25,7 +25,7 @@ class TestMotor(unittest.TestCase):
         self.assertEqual(
             self.send_q.get_nowait(),
             parse_message(0x04, 19, -1, parse_data(
-                (motor_channel, control_mode, control_value, 0), 'int'))
+                (motor_channel, control_mode, control_value), 'int'))
         )
 
     def test_set_torque(self):
@@ -43,11 +43,11 @@ class TestMotor(unittest.TestCase):
                 -1, Motor.PropertyType.SECOND_TORQUE) in sent_messages)
         self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
-                (0, 0, first_torque_value, 0), 'int'
+                (0, 0, first_torque_value), 'int'
             )) in sent_messages)
         self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
-                (1, 0, second_torque_value, 0), 'int'
+                (1, 0, second_torque_value), 'int'
             )) in sent_messages)
 
     def test_set_first_torque(self):
@@ -62,7 +62,7 @@ class TestMotor(unittest.TestCase):
                 -1, Motor.PropertyType.FIRST_TORQUE) in sent_messages)
         self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
-                (0, 0, first_torque_value, 0), 'int'
+                (0, 0, first_torque_value), 'int'
             )) in sent_messages)
 
     def test_set_second_torque(self):
@@ -77,7 +77,7 @@ class TestMotor(unittest.TestCase):
                 -1, Motor.PropertyType.SECOND_TORQUE) in sent_messages)
         self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
-                (1, 0, second_torque_value, 0), 'int'
+                (1, 0, second_torque_value), 'int'
             )) in sent_messages)
 
     def test_get_torque(self):
@@ -132,11 +132,11 @@ class TestMotor(unittest.TestCase):
                 -1, Motor.PropertyType.SECOND_SPEED) in sent_messages)
         self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
-                (0, 1, first_speed_value, 0), 'int'
+                (0, 1, first_speed_value), 'int'
             )) in sent_messages)
         self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
-                (1, 1, second_speed_value, 0), 'int'
+                (1, 1, second_speed_value), 'int'
             )) in sent_messages)
 
     def test_set_first_speed(self):
@@ -151,7 +151,7 @@ class TestMotor(unittest.TestCase):
                 -1, Motor.PropertyType.FIRST_SPEED) in sent_messages)
         self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
-                (0, 1, first_speed_value, 0), 'int'
+                (0, 1, first_speed_value), 'int'
             )) in sent_messages)
 
     def test_set_second_speed(self):
@@ -166,7 +166,7 @@ class TestMotor(unittest.TestCase):
                 -1, Motor.PropertyType.SECOND_SPEED) in sent_messages)
         self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
-                (1, 1, second_speed_value, 0), 'int'
+                (1, 1, second_speed_value), 'int'
             )) in sent_messages)
 
     def test_get_speed(self):
@@ -221,11 +221,11 @@ class TestMotor(unittest.TestCase):
                 -1, Motor.PropertyType.SECOND_DEGREE) in sent_messages)
         self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
-                (0, 2, first_degree_value, 0), 'int'
+                (0, 2, first_degree_value), 'int'
             )) in sent_messages)
         self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
-                (1, 2, second_degree_value, 0), 'int'
+                (1, 2, second_degree_value), 'int'
             )) in sent_messages)
 
     def test_set_first_degree(self):
@@ -240,7 +240,7 @@ class TestMotor(unittest.TestCase):
                 -1, Motor.PropertyType.FIRST_DEGREE) in sent_messages)
         self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
-                (0, 2, first_degree_value, 0), 'int'
+                (0, 2, first_degree_value), 'int'
             )) in sent_messages)
 
     def test_set_second_degree(self):
@@ -255,7 +255,7 @@ class TestMotor(unittest.TestCase):
                 -1, Motor.PropertyType.SECOND_DEGREE) in sent_messages)
         self.assertTrue(
             parse_message(0x04, 19, -1, parse_data(
-                (1, 2, second_degree_value, 0), 'int'
+                (1, 2, second_degree_value), 'int'
             )) in sent_messages)
 
     def test_get_degree(self):
