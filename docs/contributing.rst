@@ -150,8 +150,8 @@ Please read the following to get ready for the contribution!!
    Make a pull request to LUXROBO/pymodi/develop branch.
 
     
-   .. image:: /docs/_static/img/pr_guide.png
-      :target: /docs/_static/img/pr_guide.png
+   .. image:: _static/img/pr_guide.png
+      :target: _static/img/pr_guide.png
       :alt: PR guide
 
 
@@ -164,7 +164,7 @@ Please read the following to get ready for the contribution!!
 .. raw:: html
 
    <p align="center">
-       <img src="/docs/_static/img/modi_thankyou.jpg" alt="thanks" width=300, height=180>
+       <img src="_static/img/modi_thankyou.jpg" alt="thanks" width=300, height=180>
    </p>
 
 
