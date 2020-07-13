@@ -3,6 +3,7 @@ import sys
 import time
 import modi
 
+from modi.module_firmware_updater import ModuleFirmwareUpdater
 from modi.util.msgutil import parse_message, decode_message
 from getopt import getopt, GetoptError
 
@@ -78,6 +79,11 @@ if __name__ == "__main__":
         print(f"Took {took} seconds for message transfer")
         exit(0)
 
+    if check_option('-u', '--update'):
+        updater = ModuleFirmwareUpdater()
+        updater.update_module_firmware()
+        exit(0)
+
     if check_option('-d', '--debug'):
         nb_modules = check_option('-n', '--nb_modules')
         is_update = check_option('-u', '--update')
@@ -104,7 +110,3 @@ if __name__ == "__main__":
             print(f'Took {fin_time - init_time:.2f} seconds '
                   f'to get {module_name}')
         print(">>>")
-
-        if is_update:
-            print(">>> bundle.update_module_firmware()")
-            bundle.update_module_firmware()

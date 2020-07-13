@@ -138,6 +138,7 @@ class ModuleFirmwareUpdater:
             if module_id == curr_module_id:
                 return
 
+        # Check if module is already updated
         for curr_module_id, curr_module_type in self.modules_updated:
             if module_id == curr_module_id:
                 return
@@ -161,6 +162,7 @@ class ModuleFirmwareUpdater:
         if self.update_in_progress:
             return
 
+        self.update_in_progress = True
         updater_thread = th.Thread(
             target=self.__update_firmware, args=(module_id, module_type)
         )
@@ -205,7 +207,7 @@ class ModuleFirmwareUpdater:
         )
         bin_path = (
             f"skeleton/{module_type.lower()}.bin"
-            if module_type != 'env' else
+            if module_type != 'Env' else
             "skeleton/environment.bin"
         )
 
@@ -330,7 +332,7 @@ class ModuleFirmwareUpdater:
 
     # TODO: Use retry decorator here
     def send_end_flash_data(self, module_type: str, module_id: int,
-                            end_flash_data: bool) -> None:
+                            end_flash_data: bytearray) -> None:
         """Send the end flash data
 
         :param module_type: Name of the module
