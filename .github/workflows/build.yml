@@ -28,16 +28,3 @@ jobs:
         python -m unittest
     - name: Run convention tests
       run: python -m flake8 modi tests
-    - name: Microsoft Teams Notification
-      uses: jdcargile/ms-teams-notification@v1.2
-      with:
-        # GitHub Token
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        # Microsoft Teams Webhook URI
-        ms-teams-webhook-uri: https://outlook.office.com/webhook/6a71efde-c9bd-46f3-a4a3-a40b25bfa5d4@ac338f03-1812-4534-b284-4284315b0fa9/IncomingWebhook/87b82fad1c5846ae8823c38fe01a97c2/f7ddc081-fea9-4879-a490-f45d7dc8a387
-        # Message to be sent to Microsoft Teams channel
-        notification-summary: PyMODI Build Notification
-        # Color of notification header line
-        notification-color: 17a2b8
-        # Timezone (ex. America/Denver)
-        timezone: Korea/Seoul
