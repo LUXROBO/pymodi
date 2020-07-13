@@ -260,7 +260,7 @@ class ModuleFirmwareUpdater:
                     bin_data=curr_data,
                     crc_val=checksum
                 )
-                time.sleep(0.0025)
+                time.sleep(0.001)
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_page_success = self.send_firmware_command(
@@ -290,7 +290,7 @@ class ModuleFirmwareUpdater:
         # Set end-flash data to be sent at the end of the firmware update
         end_flash_data = bytearray(8)
         end_flash_data[0] = 0xAA
-        end_flash_data[1] = 0
+        end_flash_data[1] = 1
         end_flash_data[2] = 0
         end_flash_data[6] = version & 0xFF
         end_flash_data[7] = (version >> 8) & 0xFF
