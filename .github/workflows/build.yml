@@ -2,7 +2,7 @@
 name: Build Status
 
 on:
-  [ "push" ]
+  [ "push", "pull_request" ]
 
 jobs:
   build:

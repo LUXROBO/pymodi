@@ -35,3 +35,9 @@ class module_list(list):
                    if module.type == self.__module_type]
         modules.sort()
         return modules
+
+    def find(self, module_id):
+        for idx, module in enumerate(self.sublist()):
+            if module_id == module.id:
+                return idx
+        return -1

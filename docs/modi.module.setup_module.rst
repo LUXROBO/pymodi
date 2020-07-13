@@ -1,6 +1,14 @@
 modi.module.setup\_module package
 =================================
 
+.. automodule:: modi.module.setup_module
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
 modi.module.setup\_module.network module
 ----------------------------------------
 
@@ -16,5 +24,4 @@ modi.module.setup\_module.setup\_module module
    :members:
    :undoc-members:
    :show-inheritance:
-
 

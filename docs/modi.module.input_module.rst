@@ -1,6 +1,14 @@
 modi.module.input\_module package
 =================================
 
+.. automodule:: modi.module.input_module
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
 modi.module.input\_module.button module
 ---------------------------------------
 
@@ -64,5 +72,4 @@ modi.module.input\_module.ultrasonic module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
