@@ -80,8 +80,11 @@ if __name__ == "__main__":
         exit(0)
 
     if check_option('-u', '--update'):
+        init_time = time.time()
         updater = ModuleFirmwareUpdater()
         updater.update_module_firmware()
+        fin_time = time.time()
+        print(f"Took {fin_time - init_time:.2f} seconds to update")
         exit(0)
 
     if check_option('-d', '--debug'):
