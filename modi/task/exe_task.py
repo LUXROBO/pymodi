@@ -289,7 +289,9 @@ class ExeTask:
                     module_id=module_instance.id,
                     module_pnp_state=Module.State.PNP_OFF
                 )
-
+                module_instance.version = module_version_info
+                module_instance.is_up_to_date = \
+                    (module_version_info == latest_version)
                 self._modules.append(module_instance)
                 print(f"{type(module_instance).__name__} ({module_id}) "
                       f"has been connected!")
