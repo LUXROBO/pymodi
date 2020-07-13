@@ -3,7 +3,7 @@
 .. raw:: html
 
    <p align="center">
-       <img src="docs/_static/img/logo.png" width="500" height="150">
+       <img src="/docs/_static/img/logo.png" width="500" height="150">
    </p>
 
 
