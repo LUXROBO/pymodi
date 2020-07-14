@@ -56,3 +56,16 @@ jobs:
         body: file://HISTORY.md
         to: tech@luxrobo.com
         from: PyMODI
+    - name: Microsoft Teams Notification
+      uses: jdcargile/ms-teams-notification@v1.2
+      with:
+        # GitHub Token
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        # Microsoft Teams Webhook URI
+        ms-teams-webhook-uri: ${{ secrets.TEAMS_WEBHOOK }}
+        # Message to be sent to Microsoft Teams channel
+        notification-summary: A new version of PyMODI is released!!
+        # Color of notification header line
+        notification-color: 17a2b8
+        # Timezone (ex. America/Denver)
+        timezone: Korea/Seoul
