@@ -25,8 +25,13 @@ jobs:
       run: |
         git config --local user.email ${{ secrets.GH_MAIL }}
         git config --local user.name ${{ secrets.GH_USER }}
-        bumpversion minor
-        BRANCH_NAME="release/$(cat setup.cfg | grep 'current_version = ' | cut -d '=' -f 2 | cut -c 2-5)0"
+        NEW_VERSION=$(git describe --tags | cut -d - -f 1 | cut -c2-)
+        CURR_VERSION=$(cat setup.cfg | grep 'current_version = ' | cut -d '=' -f 2 | cut -c 2-6)
+        if [[ $(echo $NEW_VERSION | cut -d '.' -f 1 ) != $(echo $CURR_VERSION | cut -d '.' -f 1) ]]; then bumpversion major;
+        elif [[ $(echo $NEW_VERSION | cut -d '.' -f 2 ) != $(echo $CURR_VERSION | cut -d '.' -f 2) ]]; then bumpversion minor;
+        elif [[ $(echo $NEW_VERSION | cut -d '.' -f 3 ) != $(echo $CURR_VERSION | cut -d '.' -f 3) ]]; then bumpversion patch;
+        fi
+        BRANCH_NAME="release/$NEW_VERSION"
         echo $BRANCH_NAME
         echo "::set-output name=new_branch::$BRANCH_NAME"
         git checkout -b $BRANCH_NAME
