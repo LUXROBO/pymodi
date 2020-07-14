@@ -42,6 +42,8 @@ class Module:
         self._is_connected = True
 
         self.position = (0, 0)
+        self.__version = None
+        self.is_up_to_date = None
 
     def __gt__(self, other):
         if self.distance == other.distance:
@@ -51,6 +53,18 @@ class Module:
                 return self.position[0] > other.position[0]
         else:
             return self.distance > other.distance
+
+    @property
+    def version(self):
+        version_string = ""
+        version_string += str(self.__version >> 13) + '.'
+        version_string += str(self.__version % (2 ** 13) >> 8) + '.'
+        version_string += str(self.__version % (2 ** 8))
+        return version_string
+
+    @version.setter
+    def version(self, version_info):
+        self.__version = version_info
 
     @property
     def distance(self):
@@ -100,7 +114,7 @@ class Module:
             )
             self._msg_send_q.put(modi_serialtemp)
             self._properties[property_type].last_request_time = time.time()
-
+        time.sleep(0.001)
         return self._properties[property_type].value
 
     def update_property(self, property_type: IntEnum,

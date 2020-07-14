@@ -1,3 +1,5 @@
+import time
+
 from enum import IntEnum
 from typing import Tuple, List
 from modi.module.module import Module
@@ -79,6 +81,7 @@ class OutputModule(Module):
 
         for message in messages:
             self._msg_send_q.put(message)
+        time.sleep(0.001)
 
     @staticmethod
     def _validate_property(nb_values: int, value_range: Tuple = None):
