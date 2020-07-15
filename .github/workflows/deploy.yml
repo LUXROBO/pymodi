@@ -43,9 +43,17 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         source_branch: ${{ steps.checkout_branch.outputs.new_branch }}
         pr_title: "Merge new release"
+    - name: Create a pull request to master branch
+      uses: repo-sync/pull-request@master
+      with:
+        destination_branch: "develop"
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        source_branch: ${{ steps.checkout_branch.outputs.new_branch }}
+        pr_title: "Merge new release"
     - name: Build and publish
       env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_USERNAME: $
+        {{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         python setup.py sdist bdist_wheel
