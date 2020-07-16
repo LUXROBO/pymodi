@@ -77,7 +77,7 @@ jobs:
         # Microsoft Teams Webhook URI
         ms-teams-webhook-uri: ${{ secrets.TEAMS_WEBHOOK }}
         # Message to be sent to Microsoft Teams channel
-        notification-summary: A new version of PyMODI is released!!
+        notification-summary: PyMODI ${{ steps.checkout_branch.outputs.new_branch }} is released!
         # Color of notification header line
         notification-color: 17a2b8
         # Timezone (ex. America/Denver)
