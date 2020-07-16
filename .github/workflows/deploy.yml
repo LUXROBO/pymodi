@@ -34,6 +34,7 @@ jobs:
         BRANCH_NAME="release/$NEW_VERSION"
         echo $BRANCH_NAME
         echo "::set-output name=new_branch::$BRANCH_NAME"
+        echo "::set-output name=version::$NEW_VERSION"
         git checkout -b $BRANCH_NAME
         git push --set-upstream origin $BRANCH_NAME
       id: checkout_branch
@@ -64,7 +65,7 @@ jobs:
         server_port: 587
         username: ${{secrets.MAIL_USERNAME}}
         password: ${{secrets.MAIL_PASSWORD}}
-        subject: A new version of PyMODI is successfully released!
+        subject: PyMODI ${{ steps.checkout_branch.outputs.new_branch }} is released!!
         body: file://HISTORY.md
         to: tech@luxrobo.com
         from: PyMODI
