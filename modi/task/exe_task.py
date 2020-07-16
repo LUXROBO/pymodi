@@ -200,10 +200,12 @@ class ExeTask:
         # Check if user code is in the module
         if not self.__user_code_checked:
             user_code_state = up(message['b'])[4]
+
             if user_code_state % 2 == 1:
                 print("Your MODI module(s) has user code in it.")
                 print("You can reset your MODI modules by calling "
                       "'update_module_firmware()'")
+                self.__user_code_checked = True
 
         # Request uuid from network modules and other modules
         if not self._module_ids[module_id]["uuid"]:
