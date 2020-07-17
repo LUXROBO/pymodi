@@ -100,9 +100,10 @@ class SerTask(ConnTask):
             self.__json_buffer += self.__ser.read(
                 serial_buffer
             ).decode("utf-8")
-
             # Once json buffer is obtained, we parse and send json message
             self.__parse_serial()
+        else:
+            time.sleep(0.01)
 
     def _send_data(self) -> None:
         """ Write serial message in serial write queue
@@ -112,7 +113,7 @@ class SerTask(ConnTask):
         try:
             message_to_send = self._ser_send_q.get_nowait().encode()
         except queue.Empty:
-            pass
+            time.sleep(0.01)
         else:
             self.__ser.write(message_to_send)
             if self.__verbose:
@@ -132,7 +133,6 @@ class SerTask(ConnTask):
                 print("\nMODI connection is lost!!!")
                 traceback.print_exc()
                 os._exit(1)
-            time.sleep(delay)
 
     def run_send_data(self, delay: float) -> None:
         """Write data through serial port
@@ -148,7 +148,6 @@ class SerTask(ConnTask):
                 print("\nMODI connection is lost!!!")
                 traceback.print_exc()
                 os._exit(1)
-            time.sleep(delay)
 
     #
     # Helper method
