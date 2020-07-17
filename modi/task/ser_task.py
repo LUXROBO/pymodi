@@ -99,7 +99,7 @@ class SerTask(ConnTask):
             # Flush the serial buffer and concatenate it to json buffer
             self.__json_buffer += self.__ser.read(
                 serial_buffer
-            ).decode("utf-8")
+            ).decode("utf8")
 
             # Once json buffer is obtained, we parse and send json message
             self.__parse_serial()
