@@ -208,7 +208,7 @@ class ExeTask:
                 self.__user_code_checked = True
 
         # Request uuid from network modules and other modules
-        if not self._module_ids[module_id]["uuid"]:
+        if module_id and not self._module_ids[module_id]["uuid"]:
             message_to_write = self.__request_uuid(
                 module_id, is_network_module=False)
             self._send_q.put(message_to_write)

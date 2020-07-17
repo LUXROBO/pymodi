@@ -200,6 +200,8 @@ class TopologyManager:
 
     def is_topology_complete(self, exe_thrd):
         if len(self._tp_data) < 1:
+            exe_thrd.request_topology()
+            exe_thrd.request_topology(0x2A)
             return False
         try:
             self.__update_module_position()
