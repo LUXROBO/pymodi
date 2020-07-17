@@ -156,14 +156,8 @@ class ExeTask:
         bottom_id = message_decoded[7] << 8 | message_decoded[6]
         topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
 
-        # Save topology data for current module
-        if not self._topology_data.get(src_id):
-            self._topology_data[src_id] = topology_by_id
-        else:
-            # If the topology data already exists, update it
-            for key in self._topology_data[src_id]:
-                if not self._topology_data[src_id][key]:
-                    self._topology_data[src_id][key] = topology_by_id[key]
+        # Update topology data for the module
+        self._topology_data[src_id] = topology_by_id
 
     def __get_uuid_by_id(self, id_: int) -> int:
         """Find id of a module which has corresponding uuid
