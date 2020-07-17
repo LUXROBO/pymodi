@@ -34,12 +34,20 @@ jobs:
         BRANCH_NAME="release/$NEW_VERSION"
         echo $BRANCH_NAME
         echo "::set-output name=new_branch::$BRANCH_NAME"
+        echo "::set-output name=version::$NEW_VERSION"
         git checkout -b $BRANCH_NAME
         git push --set-upstream origin $BRANCH_NAME
       id: checkout_branch
     - name: Create a pull request to master branch
       uses: repo-sync/pull-request@master
       with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        source_branch: ${{ steps.checkout_branch.outputs.new_branch }}
+        pr_title: "Merge new release"
+    - name: Create a pull request to master branch
+      uses: repo-sync/pull-request@master
+      with:
+        destination_branch: "develop"
         github_token: ${{ secrets.GITHUB_TOKEN }}
         source_branch: ${{ steps.checkout_branch.outputs.new_branch }}
         pr_title: "Merge new release"
@@ -57,7 +65,7 @@ jobs:
         server_port: 587
         username: ${{secrets.MAIL_USERNAME}}
         password: ${{secrets.MAIL_PASSWORD}}
-        subject: A new version of PyMODI is successfully released!
+        subject: PyMODI ${{ steps.checkout_branch.outputs.version }} is released!!
         body: file://HISTORY.md
         to: tech@luxrobo.com
         from: PyMODI
@@ -69,7 +77,7 @@ jobs:
         # Microsoft Teams Webhook URI
         ms-teams-webhook-uri: ${{ secrets.TEAMS_WEBHOOK }}
         # Message to be sent to Microsoft Teams channel
-        notification-summary: A new version of PyMODI is released!!
+        notification-summary: PyMODI ${{ steps.checkout_branch.outputs.version }} is released!
         # Color of notification header line
         notification-color: 17a2b8
         # Timezone (ex. America/Denver)

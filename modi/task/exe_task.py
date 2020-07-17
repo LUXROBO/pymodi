@@ -60,7 +60,7 @@ class ExeTask:
 
         # Check if a user has been notified when firmware is outdated
         self.firmware_update_message_flag = False
-
+        self.__user_code_checked = False
         self.__init_modules()
         print('Start initializing connected MODI modules')
 
@@ -156,14 +156,8 @@ class ExeTask:
         bottom_id = message_decoded[7] << 8 | message_decoded[6]
         topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
 
-        # Save topology data for current module
-        if not self._topology_data.get(src_id):
-            self._topology_data[src_id] = topology_by_id
-        else:
-            # If the topology data already exists, update it
-            for key in self._topology_data[src_id]:
-                if not self._topology_data[src_id][key]:
-                    self._topology_data[src_id][key] = topology_by_id[key]
+        # Update topology data for the module
+        self._topology_data[src_id] = topology_by_id
 
     def __get_uuid_by_id(self, id_: int) -> int:
         """Find id of a module which has corresponding uuid
@@ -178,7 +172,7 @@ class ExeTask:
                 return module.uuid
         return None
 
-    def __update_health(self, message: Dict[str, int]) -> None:
+    def __update_health(self, message: Dict[str, str]) -> None:
         """ Update information by health message
 
         :param message: Dictionary format message of the module
@@ -197,8 +191,18 @@ class ExeTask:
         )
         self._module_ids[module_id]["battery"] = int(message_decoded[3])
 
+        # Check if user code is in the module
+        if not self.__user_code_checked:
+            user_code_state = up(message['b'])[4]
+
+            if user_code_state % 2 == 1:
+                print("Your MODI module(s) has user code in it.")
+                print("You can reset your MODI modules by calling "
+                      "'update_module_firmware()'")
+                self.__user_code_checked = True
+
         # Request uuid from network modules and other modules
-        if not self._module_ids[module_id]["uuid"]:
+        if module_id and not self._module_ids[module_id]["uuid"]:
             message_to_write = self.__request_uuid(
                 module_id, is_network_module=False)
             self._send_q.put(message_to_write)

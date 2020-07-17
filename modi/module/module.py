@@ -28,8 +28,8 @@ class Module:
         UPDATE_FIRMWARE = 4
         UPDATE_FIRMWARE_READY = 5
         REBOOT = 6
-        PNP_ON = 7
-        PNP_OFF = 8
+        PNP_ON = 1
+        PNP_OFF = 2
 
     def __init__(self, id_, uuid, msg_send_q):
         self._id = id_
