@@ -112,7 +112,7 @@ class CanTask(ConnTask):
         try:
             self.__can0.send(can_msg)
         except can.CanError:
-            pass
+            print("Can connection is lost, please check your modules")
 
     def run_recv_data(self, delay: float) -> None:
         """Read the data and wait a given time
