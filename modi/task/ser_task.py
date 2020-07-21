@@ -4,6 +4,7 @@ import time
 import queue
 import serial
 import traceback
+import sys
 
 from serial.serialutil import SerialException
 
@@ -23,6 +24,7 @@ class SerTask(ConnTask):
         self.__port = port
         if self.__verbose:
             print('PyMODI log...\n==================================')
+            sys.stdout.flush()
 
     @property
     def get_serial(self) -> serial.Serial:
@@ -118,7 +120,8 @@ class SerTask(ConnTask):
         else:
             self.__ser.write(message_to_send)
             if self.__verbose:
-                print(f'send: {message_to_send.decode("utf8")}')
+                sys.stdout.write(f'send: {message_to_send.decode("utf8")}\n')
+                sys.stdout.flush()
 
     def run_recv_data(self, delay: float) -> None:
         """Read data through serial port
@@ -166,6 +169,7 @@ class SerTask(ConnTask):
             json_msg = self.__json_buffer[:split_index]
             self._ser_recv_q.put(json_msg)
             if self.__verbose:
-                print(f'recv: {json_msg}')
+                sys.stdout.write(f'recv: {json_msg}\n')
+                sys.stdout.flush()
             # Update json buffer, remove the json message sent
             self.__json_buffer = self.__json_buffer[split_index:]
