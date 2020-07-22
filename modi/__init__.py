@@ -10,8 +10,11 @@ __version__ = about.__version__
 import json
 import urllib.request as ur
 from urllib.error import URLError
+from multiprocessing import current_process
 
-print(f'Running PyMODI (v{__version__})')
+if "Main" in current_process().name:
+    print(f'Running PyMODI (v{__version__})')
+
 try:
     url = "https://pypi.org/pypi/pymodi/json"
     pypi_pymodi_data = json.load(ur.urlopen(url))

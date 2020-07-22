@@ -31,9 +31,16 @@ def __encode_bytes(byte_data: Tuple):
                 else:
                     break
             data[idx: idx + length] = int.to_bytes(byte_data[idx],
+                                                   byteorder='little',
                                                    length=length,
-                                                   byteorder='little')
+                                                   signed=True)
             idx += length
+        elif byte_data[idx] < 0:
+            data[idx: idx + 4] = int.to_bytes(int(byte_data[idx]),
+                                              byteorder='little',
+                                              length=4,
+                                              signed=True)
+            idx += 4
         elif byte_data[idx] < 256:
             data[idx] = int(byte_data[idx])
             idx += 1
@@ -65,8 +72,11 @@ def parse_data(values, data_type: str) -> Tuple:
     data = []
     if data_type == 'int':
         for value in values:
-            data.append(value)
-            data.append(None)
+            if value >= 0:
+                data += int.to_bytes(int(value), byteorder='little', length=2)
+            else:
+                data += int.to_bytes(int(value), byteorder='little',
+                                     length=4, signed=True)
     elif data_type == 'float':
         for value in values:
             data += struct.pack("f", float(value))

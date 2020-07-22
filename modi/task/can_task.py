@@ -39,10 +39,13 @@ class CanTask(ConnTask):
         :return: None
         """
         can_msg = self._recv_data()
-        json_msg = self.__parse_can_msg(can_msg)
-        self._can_recv_q.put(json_msg)
-        if self.__verbose:
-            print(f'recv: {json_msg}')
+        if not can_msg:
+            time.sleep(0.01)
+        else:
+            json_msg = self.__parse_can_msg(can_msg)
+            self._can_recv_q.put(json_msg)
+            if self.__verbose:
+                print(f'recv: {json_msg}')
 
     def __can_send(self) -> None:
         """Write data through CAN
@@ -52,7 +55,7 @@ class CanTask(ConnTask):
         try:
             message_to_send = self._can_send_q.get_nowait().encode()
         except queue.Empty:
-            pass
+            time.sleep(0.01)
         else:
             self._send_data(message_to_send)
             if self.__verbose:
@@ -80,7 +83,7 @@ class CanTask(ConnTask):
         """
         os.system("sudo ifconfig can0 down")
 
-    def _recv_data(self, timeout: float = None) -> can.Message:
+    def _recv_data(self, timeout: float = 0.01) -> can.Message:
         """Read data from CAN and returns CAN message
 
         :param timeout: timeout value
@@ -93,8 +96,6 @@ class CanTask(ConnTask):
             raise ValueError("Can is not initialized")
 
         can_msg = self.__can0.recv(timeout=timeout)
-        if can_msg is None:
-            raise ValueError("Can message not received!")
         return can_msg
 
     def _send_data(self, str_msg: str) -> None:
@@ -111,7 +112,7 @@ class CanTask(ConnTask):
         try:
             self.__can0.send(can_msg)
         except can.CanError:
-            raise ValueError("Can message not sent!")
+            print("Can connection is lost, please check your modules")
 
     def run_recv_data(self, delay: float) -> None:
         """Read the data and wait a given time
@@ -122,7 +123,6 @@ class CanTask(ConnTask):
         """
         while True:
             self.__can_recv()
-            time.sleep(delay)
 
     def run_send_data(self, delay: float) -> None:
         """Write the data and wait a given time
@@ -133,7 +133,6 @@ class CanTask(ConnTask):
         """
         while True:
             self.__can_send()
-            time.sleep(delay)
 
     #
     # Can helper methods

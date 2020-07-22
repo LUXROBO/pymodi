@@ -4,6 +4,7 @@ import time
 import queue
 import serial
 import traceback
+import sys
 
 from serial.serialutil import SerialException
 
@@ -23,6 +24,7 @@ class SerTask(ConnTask):
         self.__port = port
         if self.__verbose:
             print('PyMODI log...\n==================================')
+            sys.stdout.flush()
 
     @property
     def get_serial(self) -> serial.Serial:
@@ -99,10 +101,12 @@ class SerTask(ConnTask):
             # Flush the serial buffer and concatenate it to json buffer
             self.__json_buffer += self.__ser.read(
                 serial_buffer
-            ).decode("utf-8")
+            ).decode("utf8")
 
             # Once json buffer is obtained, we parse and send json message
             self.__parse_serial()
+        else:
+            time.sleep(0.01)
 
     def _send_data(self) -> None:
         """ Write serial message in serial write queue
@@ -112,11 +116,12 @@ class SerTask(ConnTask):
         try:
             message_to_send = self._ser_send_q.get_nowait().encode()
         except queue.Empty:
-            pass
+            time.sleep(0.01)
         else:
             self.__ser.write(message_to_send)
             if self.__verbose:
-                print(f'send: {message_to_send.decode("utf8")}')
+                sys.stdout.write(f'send: {message_to_send.decode("utf8")}\n')
+                sys.stdout.flush()
 
     def run_recv_data(self, delay: float) -> None:
         """Read data through serial port
@@ -132,7 +137,6 @@ class SerTask(ConnTask):
                 print("\nMODI connection is lost!!!")
                 traceback.print_exc()
                 os._exit(1)
-            time.sleep(delay)
 
     def run_send_data(self, delay: float) -> None:
         """Write data through serial port
@@ -148,7 +152,6 @@ class SerTask(ConnTask):
                 print("\nMODI connection is lost!!!")
                 traceback.print_exc()
                 os._exit(1)
-            time.sleep(delay)
 
     #
     # Helper method
@@ -166,6 +169,7 @@ class SerTask(ConnTask):
             json_msg = self.__json_buffer[:split_index]
             self._ser_recv_q.put(json_msg)
             if self.__verbose:
-                print(f'recv: {json_msg}')
+                sys.stdout.write(f'recv: {json_msg}\n')
+                sys.stdout.flush()
             # Update json buffer, remove the json message sent
             self.__json_buffer = self.__json_buffer[split_index:]
