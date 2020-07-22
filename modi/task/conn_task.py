@@ -17,7 +17,7 @@ class ConnTask(ABC):
         self._send_q = send_q
 
     @staticmethod
-    def _list_modi_ports() -> List[ListPortInfo]:
+    def list_modi_ports() -> List[ListPortInfo]:
         """Returns a list of connected MODI ports
 
         :return: List[ListPortInfo]
