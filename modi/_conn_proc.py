@@ -30,9 +30,14 @@ class ConnProc(mp.Process):
         :return: Corresponding connection task
         :rtype: ConnTask
         """
-        if conn_mode.startswith("b"):
+        if conn_mode == 'spp':
             return SppTask
-        return CanTask if self.__is_modi_pi() else SerTask
+        elif conn_mode == 'can':
+            return CanTask
+        elif conn_mode == 'ser':
+            return SerTask
+        else:
+            return CanTask if self.__is_modi_pi() else SerTask
 
     @staticmethod
     def __is_modi_pi() -> bool:
