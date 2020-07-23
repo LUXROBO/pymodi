@@ -20,7 +20,7 @@ class CanTask(ConnTask):
             raise Exception("can0 device already in use")
         self._can_recv_q = can_recv_q
         self._can_send_q = can_send_q
-
+        self._instances.add(self)
         self.__can0 = None
         self.__verbose = verbose
         if self.__verbose:
