@@ -12,8 +12,12 @@ from modi.task.conn_task import ConnTask
 
 class CanTask(ConnTask):
 
+    _instances = set()
+
     def __init__(self, can_recv_q, can_send_q, verbose, port=None):
         print("Run Can Task.")
+        if CanTask._instances:
+            raise Exception("can0 device already in use")
         self._can_recv_q = can_recv_q
         self._can_send_q = can_send_q
 
