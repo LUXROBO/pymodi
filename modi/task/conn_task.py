@@ -47,7 +47,7 @@ class ConnTask(ABC):
         :return: true if connected
         :rtype: bool
         """
-        return bool(ConnTask._list_modi_ports())
+        return bool(ConnTask.list_modi_ports())
 
     #
     # Abstract Methods

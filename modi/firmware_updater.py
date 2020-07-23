@@ -659,9 +659,9 @@ class ESP32FirmwareUpdater(serial.Serial):
         super().__init__(modi_ports[0].device, timeout=0.1, baudrate=921600)
         print(f"Connecting to MODI network module at {modi_ports[0].device}")
 
-        self.__address = [0x1000, 0x8000, 0xD000, 0x10000, 0xD0000]
+        self.__address = [0x1000, 0x8000, 0x10000, 0xD0000]
         self.file_path = ['bootloader.bin', 'partitions.bin',
-                          'ota_data_initial.bin', 'modi_ota_factory.bin',
+                          'modi_ota_factory.bin',
                           'esp32.bin']
         self.id = None
         self.version = None
@@ -686,8 +686,13 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.__device_sync()
         self.__flash_attach()
         self.__set_flash_param()
-
-        self.__write_binary_firmware(firmware_buffer)
+        try:
+            from modi.util.jump import JumpManager
+            manager = JumpManager()
+            th.Thread(target=manager.start, daemon=True).start()
+        except ImportError:
+            manager = None
+        self.__write_binary_firmware(firmware_buffer, manager)
         print("Booting to application...")
         self.__wait_for_json()
         self.__boot_to_app()
@@ -830,17 +835,17 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     def __compose_binary_firmware(self):
         binary_firmware = b''
-        # esp_path = 'https://download.luxrobo.com/modi-esp32-firmware/esp.zip'
-        # ota_path = 'https://download.luxrobo.com/modi-ota-firmware/ota.zip'
+        esp_path = 'https://download.luxrobo.com/modi-esp32-firmware/esp.zip'
+        ota_path = 'https://download.luxrobo.com/modi-ota-firmware/ota.zip'
         for i, bin_path in enumerate(self.file_path):
             # TODO
             # Download files from the modi_download_server
-            # if 'ota' in bin_path:
-            #     bin_data = self.__download_bin_file(ota_path, bin_path)
-            # else:
-            #     bin_data = self.__download_bin_file(esp_path, bin_path)
-            with open(f'esp/{bin_path}', 'rb') as bin_file:
-                bin_data = bin_file.read()
+            if 'ota' in bin_path:
+                bin_data = self.__download_bin_file(ota_path, bin_path)
+            else:
+                bin_data = self.__download_bin_file(esp_path, bin_path)
+            # with open(f'esp/{bin_path}', 'rb') as bin_file:
+            #     bin_data = bin_file.read()
             binary_firmware += bin_data
             if i < len(self.__address) - 1:
                 binary_firmware += b'\xFF' * (self.__address[i + 1]
@@ -893,7 +898,7 @@ class ESP32FirmwareUpdater(serial.Serial):
         block_pkt = self.__parse_pkt(block_data)
         self.__send_pkt(block_pkt)
 
-    def __write_binary_firmware(self, binary_firmware: bytes):
+    def __write_binary_firmware(self, binary_firmware: bytes, manager):
         chunk_queue = []
         num_blocks = len(binary_firmware) // self.ESP_FLASH_BLOCK + 1
         while binary_firmware:
@@ -910,11 +915,13 @@ class ESP32FirmwareUpdater(serial.Serial):
             self.__erase_chunk(len(chunk),
                                self.__address[0] + seq * self.ESP_FLASH_CHUNK)
             blocks_downloaded += self.__write_chunk(chunk, blocks_downloaded,
-                                                    num_blocks)
+                                                    num_blocks, manager)
+        if manager:
+            manager.quit()
         print(self.__progress_bar(1, 1))
         print("Firmware Upload Complete")
 
-    def __write_chunk(self, chunk, curr_seq, total_seq):
+    def __write_chunk(self, chunk, curr_seq, total_seq, manager):
         block_queue = []
         while chunk:
             if self.ESP_FLASH_BLOCK < len(chunk):
@@ -924,6 +931,8 @@ class ESP32FirmwareUpdater(serial.Serial):
                 block_queue.append(chunk[:])
                 chunk = b''
         for seq, block in enumerate(block_queue):
+            if manager:
+                manager.status = self.__progress_bar(curr_seq + seq, total_seq)
             print(self.__progress_bar(curr_seq + seq, total_seq), end='\r')
             self.__write_flash_block(block, seq)
         return len(block_queue)
@@ -933,7 +942,7 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     @staticmethod
     def __progress_bar(current: int, total: int) -> str:
-        curr_bar = 100 * current // total
-        rest_bar = 100 - curr_bar
+        curr_bar = 70 * current // total
+        rest_bar = 70 - curr_bar
         return f"Firmware Upload: [{'=' * curr_bar}>{'.' * rest_bar}] " \
                f"{100 * current / total:3.2f}%"
