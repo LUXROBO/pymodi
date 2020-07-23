@@ -28,8 +28,8 @@ class Module:
         UPDATE_FIRMWARE = 4
         UPDATE_FIRMWARE_READY = 5
         REBOOT = 6
-        PNP_ON = 7
-        PNP_OFF = 8
+        PNP_ON = 1
+        PNP_OFF = 2
 
     def __init__(self, id_, uuid, msg_send_q):
         self._id = id_
@@ -42,6 +42,8 @@ class Module:
         self._is_connected = True
 
         self.position = (0, 0)
+        self.__version = None
+        self.is_up_to_date = None
 
     def __gt__(self, other):
         if self.distance == other.distance:
@@ -51,6 +53,18 @@ class Module:
                 return self.position[0] > other.position[0]
         else:
             return self.distance > other.distance
+
+    @property
+    def version(self):
+        version_string = ""
+        version_string += str(self.__version >> 13) + '.'
+        version_string += str(self.__version % (2 ** 13) >> 8) + '.'
+        version_string += str(self.__version % (2 ** 8))
+        return version_string
+
+    @version.setter
+    def version(self, version_info):
+        self.__version = version_info
 
     @property
     def distance(self):
