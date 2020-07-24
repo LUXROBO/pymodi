@@ -30,10 +30,9 @@ class JumpManager(GameManager):
             self.obstacle.speed = 30
             self.obstacle.x = 160
         self.set_title(self.status)
-        if self.obstacle.on_collision(self.dino):
+        if 0 < self.obstacle.x - self.dino.x < 4 and self.dino.y < 3:
             self.dino.vel = 0
             self.obstacle.speed = 0
-            self.dino.y = 0
             self.game_over = True
 
 
