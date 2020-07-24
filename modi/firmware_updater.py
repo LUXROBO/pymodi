@@ -657,8 +657,7 @@ class ESP32FirmwareUpdater(serial.Serial):
                 return last_error
 
             print("send network module usb mode")
-            self._port.write(
-                str(b'{"c":43,"s":0,"d":4095,"b":"Kw==","l":1}'))
+            self._port.write(b'{"c":43,"s":0,"d":4095,"b":"Kw==","l":1}')
             self.flush_input()
             self._port.flushOutput()
             time.sleep(0.5)
