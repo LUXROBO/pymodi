@@ -17,16 +17,14 @@
         <link href="css/styles.css" rel="stylesheet" />
     </head>
     <body id="page-top">
-        <script type="text/javascript">
-          /* NOTE : Use web server to view HTML files as real-time update will not work if you directly open the HTML file in the browser. */
-          (function(d, m){
-            var kommunicateSettings = {"appId":"397eee2452bd6848182783ccccbb03b78","popupWidget":true,"automaticChatOpenOnNavigation":true};
-            var s = document.createElement("script"); s.type = "text/javascript"; s.async = true;
-            s.src = "https://widget.kommunicate.io/v2/kommunicate.app";
-            var h = document.getElementsByTagName("head")[0]; h.appendChild(s);
-            window.kommunicate = m; m._globals = kommunicateSettings;
-          })(document, window.kommunicate || {});
-        </script>
+        <!-- Dialogflow Messenger-->
+        <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+        <df-messenger
+            intent="WELCOME"
+            chat-title="pymodi-qnabot"
+            agent-id="c8def732-3607-44cb-97a7-805e4f4f6ad8"
+            language-code="ko"
+        ></df-messenger> 
 
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
