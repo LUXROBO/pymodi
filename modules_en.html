@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>PyMODI</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body id="page-top">
+        <script type="text/javascript">
+          /* NOTE : Use web server to view HTML files as real-time update will not work if you directly open the HTML file in the browser. */
+          (function(d, m){
+            var kommunicateSettings = {"appId":"397eee2452bd6848182783ccccbb03b78","popupWidget":true,"automaticChatOpenOnNavigation":true};
+            var s = document.createElement("script"); s.type = "text/javascript"; s.async = true;
+            s.src = "https://widget.kommunicate.io/v2/kommunicate.app";
+            var h = document.getElementsByTagName("head")[0]; h.appendChild(s);
+            window.kommunicate = m; m._globals = kommunicateSettings;
+          })(document, window.kommunicate || {});
+        </script>
+
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand js-scroll-trigger" href="index.html#page-top">PyMODI</a>
+                <button class="navbar-toggler navbar-toggler-right text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="index.html#introduction">Introduction</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="index.html#creations">Creations</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="index.html#about">About</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="mailto:tech@luxrobo.com">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Masthead-->
+        <header class="masthead bg-primary text-white text-center">
+            <div class="container d-flex align-items-center flex-column">
+                <h1 class="page-section-heading text-center text-uppercase text-white">How To Use PyMODI</h1>
+                <!-- Icon Divider-->
+                <div class="divider-custom divider-light">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+                <h2><a href="modules_kr.html" style="color: white;">[한글로 보기]</a></h2>
+            </div>
+        </header>
+
+        <!-- section -->
+        <section class="page-section mb-0" id="input-modules">
+            <div class="container">
+                <!-- About Section Heading-->
+                <h3 class="page-section-heading text-center text-uppercase text-secondary">Input Modules</h3>
+                <!-- Icon Divider-->
+                <div class="divider-custom">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+
+                <div class="module-section">
+                    <img class='img-fluid module-img' src="assets/img/modules/button.jpg">
+                    <h2 class="text-center module-title">Button Module</h2>
+                    <ul class="module-desc">
+                        <li class="module-funcs">
+                            <b>clicked</b>: Returns whether the button is pressed and released
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: True / False</li>
+                                <li class="module-funcs"><b>Usage</b>: button.clicked</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>double_clicked</b>: Returns whether the button is double clicked
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: True / False</li>
+                                <li class="module-funcs"><b>Usage</b>: button.double_clicked</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>pressed</b>: Returns whether the button is pressed
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: True / False</li>
+                                <li class="module-funcs"><b>Usage</b>: button.pressed</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>toggled</b>: Returns whether the button is toggled. It changes the value when the button is pressed.
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: True / False</li>
+                                <li class="module-funcs"><b>Usage</b>: button.toggled</li>
+                            </ul>
+                        </li>
+                        <br>
+                    </ul>
+                </div>
+
+                <div class="module-section">
+                    <img class='img-fluid module-img' src="assets/img/modules/dial.jpg">
+                    <h2 class="text-center module-title">Dial Module</h2>
+                    <ul class="module-desc">
+                        <li class="module-funcs">
+                            <b>degree</b>: Returns the angle of the dial
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: dial.degree</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>turnspeed</b>: Returns the turnspeed of the dial
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: dial.turnspeed</li>
+                            </ul>
+                        </li>
+                        <br>
+                    </ul>
+                </div>
+
+                <div class="module-section">
+                    <img class='img-fluid module-img' src="assets/img/modules/env.jpg">
+                    <h2 class="text-center module-title">Environment Module</h2>
+                    <ul class="module-desc">
+                        <li class="module-funcs">
+                            <b>brightness</b>: Returns the brightness value
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: env.brightness</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>humidity</b>: Returns the current humidity
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: env.humidity</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>temperature</b>: Returns the current temperature
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: env.temperature</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>red</b>: Returns the red value of the light
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0 ~ 255</li>
+                                <li class="module-funcs"><b>Usage</b>: env.red</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>green</b>: Returns the green value of the light
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0 ~ 255</li>
+                                <li class="module-funcs"><b>Usage</b>: env.green</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>red</b>: Returns the blue value of the light
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0 ~ 255</li>
+                                <li class="module-funcs"><b>Usage</b>: env.blue</li>
+                            </ul>
+                        </li>
+                        <br>
+                    </ul>
+                </div>
+
+                <div class="module-section">
+                    <img class='img-fluid module-img' src="assets/img/modules/gyro.jpg">
+                    <h2 class="text-center module-title">Gyro Module</h2>
+                    <ul class="module-desc">
+                        <li class="module-funcs">
+                            <b>pitch</b>: Returns the pitch value
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: -180 ~ 180</li>
+                                <li class="module-funcs"><b>Usage</b>: gyro.pitch</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>roll</b>: Returns the roll value
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: -180 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: gyro.roll</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>yaw</b>: Returns the yaw value
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: -180 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: gyro.yaw</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>angular_vel_x</b>: Returns the angular velocity with respect to x axis
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: gyro.angular_vel_x</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>angular_vel_y</b>: Returns the angular velocity with respect to y axis
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: gyro.angular_vel_y</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>angular_vel_z</b>: Returns the angular velocity with respect to z axis
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: gyro.angular_vel_z</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>acceleration_x</b>: Returns the acceleration to x axis
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: gyro.acceleration_x</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>acceleration_y</b>: Returns the acceleration to y axis
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: gyro.acceleration_y</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>acceleration_z</b>: Returns the acceleration to z axis
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: gyro.acceleration_z</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>vibration</b>: Returns the magnitude of vibration
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: gyro.vibration</li>
+                            </ul>
+                        </li>
+                        <br>
+                    </ul>
+                </div>
+
+                <div class="module-section">
+                    <img class='img-fluid module-img' src="assets/img/modules/ir.jpg">
+                    <h2 class="text-center module-title">Infrared Module</h2>
+                    <ul class="module-desc">
+                        <li class="module-funcs">
+                            <b>proximity</b>: Returns the proximity value
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: ir.proximity</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="module-section">
+                    <img class='img-fluid module-img' src="assets/img/modules/mic.jpg">
+                    <h2 class="text-center module-title">Mic Module</h2>
+                    <ul class="module-desc">
+                        <li class="module-funcs">
+                            <b>frequency</b>: Returns the frequency of the input sound
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: float value</li>
+                                <li class="module-funcs"><b>Usage</b>: mic.frequency</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>volume</b>: Returns the volume of the input sound
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: mic.volume</li>
+                            </ul>
+                        </li>
+                        <br>
+                    </ul>
+                </div>
+
+                <div class="module-section">
+                    <img class='img-fluid module-img' src="assets/img/modules/ultrasonic.jpg">
+                    <h2 class="text-center module-title">Ultrasonic Module</h2>
+                    <ul class="module-desc">
+                        <li class="module-funcs">
+                            <b>distance</b>: Returns the distance to the object
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
+                                <li class="module-funcs"><b>Usage</b>: ultrasonic.distance</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- section -->
+        <section class="page-section mb-0" id="output-modules">
+            <div class="container">
+                <!-- About Section Heading-->
+                <h3 class="page-section-heading text-center text-uppercase text-secondary">Output Modules</h3>
+                <!-- Icon Divider-->
+                <div class="divider-custom">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+
+                <div class="module-section">
+                    <img class='img-fluid module-img' src="assets/img/modules/display.jpg">
+                    <h2 class="text-center module-title">Display Module</h2>
+                    <ul class="module-desc">
+                        <li class="module-funcs">
+                            <b>text</b>: Sets the text of the display module
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: current text of the module</li>
+                                <li class="module-funcs"><b>Usage</b>: display.text = "Hello World"</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>clear()</b>: Clears the screen of display module
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: None</li>
+                                <li class="module-funcs"><b>Usage</b>: display.clear()</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>show_variable()</b>: Show a number on the display
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: None</li>
+                                <li class="module-funcs"><b>Parameters</b>: <ul>
+                                    <li>variable: number to show on the screen</li>
+                                    <li>position_x: vertical position of the number</li>
+                                    <li>position_y: horizontal position of the number</li></ul>
+                                <li class="module-funcs"><b>Usage</b>: display.show_variable(2.3, 5, 3) # Show 2.3 on position (5, 3) of the screen</li>
+                            </ul>
+                        </li>
+                        <br>
+                    </ul>
+                </div>
+
+                <div class="module-section">
+                    <img class='img-fluid module-img' src="assets/img/modules/led.jpg">
+                    <h2 class="text-center module-title">Led Module</h2>
+                    <ul class="module-desc">
+                        <li class="module-funcs">
+                            <b>red</b>: Sets the red componenet of the light
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: red component of the current light</li>
+                                <li class="module-funcs"><b>Usage</b>: led.red = 255</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>green</b>: Sets the green componenet of the light
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: green component of the current light</li>
+                                <li class="module-funcs"><b>Usage</b>: led.green = 255</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>blue</b>: Sets the blue componenet of the light
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: blue component of the current light</li>
+                                <li class="module-funcs"><b>Usage</b>: led.blue = 255</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>rgb</b>: Sets the rgb components of the light
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: Current rgb values</li>
+                                <li class="module-funcs"><b>Usage</b>: led.rgb = 255, 10, 30</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>turn_on()</b>: Turns on the led to maximum brightness
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 255, 255, 255</li>
+                                <li class="module-funcs"><b>Usage</b>: led.turn_on() </li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>turn_off()</b>: Turns off the led
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0, 0, 0</li>
+                                <li class="module-funcs"><b>Usage</b>: led.turn_off() </li>
+                            </ul>
+                        </li>
+                        <br>
+                    </ul>
+                </div>
+
+                <div class="module-section">
+                    <img class='img-fluid module-img' src="assets/img/modules/motor.jpg">
+                    <h2 class="text-center module-title">Motor Module</h2>
+                    <ul class="module-desc">
+                        <li class="module-funcs">
+                            <b>degree</b>: Sets the degree of motors on both channel
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: Current degree of the motors</li>
+                                <li class="module-funcs"><b>Usage</b>: motor.degree = 30, 90</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>first_degree</b>: Sets the degree of motors on channel I
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: Current degree of the motor on channel I</li>
+                                <li class="module-funcs"><b>Usage</b>: motor.first_degree = 50</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>second_degree</b>: Sets the degree of motors on channel II
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: Current degree of the motor on channel II</li>
+                                <li class="module-funcs"><b>Usage</b>: motor.second_degree = 50</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>speed</b>: Sets the speed of motors on both channel
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: Current speed of the motors</li>
+                                <li class="module-funcs"><b>Usage</b>: motor.speed = 50, 100</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>first_speed</b>: Sets the speed of motors on channel I
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: Current speed of the motor on channel I</li>
+                                <li class="module-funcs"><b>Usage</b>: motor.first_speed = 50</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>second_speed</b>: Sets the speed of motors on channel II
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: Current speed of the motor on channel II</li>
+                                <li class="module-funcs"><b>Usage</b>: motor.second_speed = 50</li>
+                            </ul>
+                        </li>
+                        <br>
+                    </ul>
+                </div>
+
+                <div class="module-section">
+                    <img class='img-fluid module-img' src="assets/img/modules/speaker.jpg">
+                    <h2 class="text-center module-title">Speaker Module</h2>
+                    <ul class="module-desc">
+                        <li class="module-funcs">
+                            <b>tune</b>: Sets the frequency and volume of the sound
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: Current frequency, current volume</li>
+                                <li class="module-funcs"><b>Usage</b>: speaker.tune = 220, 100 # Plays the sound with frequency 220Hz and volume 100</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>frequency</b>: Sets the frequency of the sound
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: Current frequency</li>
+                                <li class="module-funcs"><b>Usage</b>: speaker.frequency = 550</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>volume</b>: Sets the volume of the sound
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: Current volume</li>
+                                <li class="module-funcs"><b>Usage</b>: speaker.volume = 50</li>
+                            </ul>
+                        </li>
+                        <br>
+                        <li class="module-funcs">
+                            <b>turn_off()</b>: Turns off the sound
+                            <ul class="module-detail">
+                                <li class="module-funcs"><b>Return value</b>: 0</li>
+                                <li class="module-funcs"><b>Usage</b>: speaker.turn_off() </li>
+                            </ul>
+                        </li>
+                        <br>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+    
+        <!-- Footer-->
+        <footer class="footer text-center">
+            <div class="container">
+                <div class="row">
+                    <!-- Footer Location-->
+                    <div class="col-lg-4 mb-5 mb-lg-0">
+                        <h4 class="text-uppercase mb-4">Location</h4>
+                        <p class="lead mb-0">
+                            13F, 311, Gangnam-daero, Seocho-gu, Seoul, Republic of Korea
+                        </p>
+                    </div>
+                    <!-- Footer Social Icons-->
+                    <div class="col-lg-4 mb-5 mb-lg-0">
+                        <h4 class="text-uppercase mb-4">Around the Web</h4>
+                        <a class="btn btn-outline-light btn-social mx-1" href="https://www.facebook.com/luxrobo/"><i class="fab fa-fw fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-light btn-social mx-1" href="https://twitter.com/luxrobo"><i class="fab fa-fw fa-twitter"></i></a>
+                        <a class="btn btn-outline-light btn-social mx-1" href="https://www.linkedin.com/company/luxrobo/"><i class="fab fa-fw fa-linkedin-in"></i></a>
+                        <a class="btn btn-outline-light btn-social mx-1" href="https://github.com/LUXROBO/pymodi"><i class="fab fa-fw fa-github"></i></a>
+                    </div>
+                    <!-- Footer About Text-->
+                    <div class="col-lg-4">
+                        <h4 class="text-uppercase mb-4">About Us</h4>
+                        <p class="lead mb-0">
+                            LUXROBO is a platform-based startup that develops interactive learning platforms which makes it easy for anyone to make robots and IoT devices. <br>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Copyright Section-->
+        <div class="copyright py-4 text-center text-white">
+            <div class="container"><small>Copyright © PyMODI Official 2020</small></div>
+        </div>
+        <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+        <div class="scroll-to-top d-lg-none position-fixed">
+            <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
+        </div>
+
+        <!-- Bootstrap core JS-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+        <!-- Third party plugin JS-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+        <!-- Contact form JS-->
+        <script src="assets/mail/jqBootstrapValidation.js"></script>
+        <script src="assets/mail/contact_me.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
