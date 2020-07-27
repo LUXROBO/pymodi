@@ -34,7 +34,7 @@ if "Main" in current_process().name:
             pypi_pymodi_data['info']['classifiers'] if
             c.startswith('Programming Language :: Python :: 3.')
         ]
-        if major != 3 or not (min(pypi_minors) < minor < max(pypi_minors)):
+        if major != 3 or not (min(pypi_minors) <= minor <= max(pypi_minors)):
             raise Exception(f"Latest PyMODI does not support "
                             f"running python version {major}.{minor}.{micro}")
     except URLError:
