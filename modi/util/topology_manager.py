@@ -225,10 +225,10 @@ class TopologyManager:
             return False
         if ConnTask.is_network_module_connected():
             return len(self._modules) == len(self._tp_data) - 1 \
-                   and self.is_uuid_initialized()
+               and self.is_uuid_initialized()
         else:
             return len(self._modules) == len(self._tp_data) \
-                   and self.is_uuid_initialized()
+               and self.is_uuid_initialized()
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """ Print the topology map
