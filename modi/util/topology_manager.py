@@ -92,13 +92,8 @@ class TopologyMap:
         self.__update_map(first_id, self._nb_modules, self._nb_modules,
                           prev_id=-1, toward=(1, 0), visited=visited)
 
-    def print_map(self, print_id: bool = False) -> None:
-        """ Prints out the topology map
-
-        :param print_id: If True, the result includes id in the topology map
-        :type print_id: bool
-        :return: None
-        """
+    @staticmethod
+    def __trim_map(raw_map: List):
         # Trims the matrix to get rid of empty spaces, containing zeros only
         x, y, w, h = -1, -1, 1, 1
 
@@ -113,22 +108,33 @@ class TopologyMap:
         # Iterates through the rows until it finds the first non-zero row.
         # Saves the index to y, and increases h until it finds next all-zero
         # row
-        for i in range(len(self._tp_map)):
-            if sum(self._tp_map[i]) > 0 and y < 0:
+        for i in range(len(raw_map)):
+            if sum(raw_map[i]) > 0 and y < 0:
                 y = i
-            elif sum(self._tp_map[i]) > 0 and y >= 0:
+            elif sum(raw_map[i]) > 0 and y >= 0:
                 h += 1
 
         # Iterates through the columns until it finds the first non-zero column
         # Saves the index to x, and increases w until it finds next all-zero
         # column.
-        for i in range(len(self._tp_map[0])):
-            col = list(map(lambda m: m[i], self._tp_map))
+        for i in range(len(raw_map[0])):
+            col = list(map(lambda m: m[i], raw_map))
             if sum(col) > 0 and x < 0:
                 x = i
             elif sum(col) > 0 and x >= 0:
                 w += 1
 
+        return x, y, w, h
+
+    def print_map(self, print_id: bool = False) -> None:
+        """ Prints out the topology map
+
+        :param print_id: If True, the result includes id in the topology map
+        :type print_id: bool
+        :return: None
+        """
+
+        x, y, w, h = self.__trim_map(self._tp_map)
         """
         Prints out the map by a format
         padding is the length of the placeholder for the module names.
