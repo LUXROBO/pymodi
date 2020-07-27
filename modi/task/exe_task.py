@@ -1,15 +1,14 @@
 import time
 import json
-import queue
-import base64
 import struct
 
 import urllib.request as ur
 
 from urllib.error import URLError
-
+from base64 import b64encode, b64decode
 from enum import IntEnum
 from typing import Callable, Dict
+from queue import Empty
 
 from modi.module.input_module.button import Button
 from modi.module.input_module.dial import Dial
@@ -75,7 +74,7 @@ class ExeTask:
         try:
             raw_message = self._recv_q.get_nowait()
             message = json.loads(raw_message)
-        except queue.Empty:
+        except Empty:
             pass
         except json.decoder.JSONDecodeError:
             print('current json message:', raw_message)
@@ -103,7 +102,7 @@ class ExeTask:
 
     def __update_firmware_state(self, message):
         byte_data = message["b"]
-        message_decoded = bytearray(base64.b64decode(byte_data))
+        message_decoded = bytearray(b64decode(byte_data))
 
         stream_state = message_decoded[4]
 
@@ -133,7 +132,7 @@ class ExeTask:
         broadcast_id = 2 ** 16 - 1
         topology_by_id = {}
 
-        message_decoded = bytearray(base64.b64decode(byte_data))
+        message_decoded = bytearray(b64decode(byte_data))
         # print('topology_msg_dec:', message_decoded)
 
         # UUID
@@ -182,7 +181,7 @@ class ExeTask:
         # Record current time and uuid, timestamp, battery information
         module_id = message["s"]
         curr_time_ms = int(time.time() * 1000)
-        message_decoded = bytearray(base64.b64decode(message["b"]))
+        message_decoded = bytearray(b64decode(message["b"]))
 
         self._module_ids[module_id] = self._module_ids.get(module_id, dict())
         self._module_ids[module_id]["timestamp"] = curr_time_ms
@@ -225,7 +224,7 @@ class ExeTask:
         """
         # print('Warning message:', message)
 
-        warning_data = bytearray(base64.b64decode(message["b"]))
+        warning_data = bytearray(b64decode(message["b"]))
         warning_type = warning_data[6]
 
         # If warning shows current module works fine, return immediately
@@ -277,7 +276,7 @@ class ExeTask:
         )
 
         # Extract uuid from message "b"
-        message_decoded = bytearray(base64.b64decode(message["b"]))
+        message_decoded = bytearray(b64decode(message["b"]))
         module_uuid_bytes = message_decoded[:4]
         module_info_bytes = message_decoded[-4:]
 
@@ -414,7 +413,7 @@ class ExeTask:
         # Decode message of module id and module property for update property
         for module in self._modules:
             if module.id == message["s"]:
-                message_decoded = bytearray(base64.b64decode(message["b"]))
+                message_decoded = bytearray(b64decode(message["b"]))
                 property_type = module.PropertyType(property_number)
                 module.update_property(
                     property_type,
@@ -488,7 +487,7 @@ class ExeTask:
         state_bytes[0] = module_state
         state_bytes[1] = pnp_state
 
-        message["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
+        message["b"] = b64encode(bytes(state_bytes)).decode("utf-8")
         message["l"] = 2
 
         return json.dumps(message, separators=(",", ":"))
@@ -555,7 +554,7 @@ class ExeTask:
         id_bytes[0] = 0xFF
         id_bytes[1] = 0x0F
 
-        message["b"] = base64.b64encode(bytes(id_bytes)).decode("utf-8")
+        message["b"] = b64encode(bytes(id_bytes)).decode("utf-8")
         message["l"] = 8
 
         return json.dumps(message, separators=(",", ":"))
@@ -573,7 +572,7 @@ class ExeTask:
         message["d"] = module_id
 
         direction_data = bytearray(8)
-        message["b"] = base64.b64encode(bytes(direction_data)).decode("utf-8")
+        message["b"] = b64encode(bytes(direction_data)).decode("utf-8")
         message["l"] = 8
 
         self._send_q.put(json.dumps(message, separators=(",", ":")))

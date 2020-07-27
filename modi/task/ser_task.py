@@ -1,13 +1,12 @@
 
 import os
 import time
-import queue
 import serial
 import traceback
 import sys
 
 from serial.serialutil import SerialException
-
+from queue import Empty
 from modi.task.conn_task import ConnTask
 
 
@@ -115,7 +114,7 @@ class SerTask(ConnTask):
         """
         try:
             message_to_send = self._ser_send_q.get_nowait().encode()
-        except queue.Empty:
+        except Empty:
             time.sleep(0.01)
         else:
             self.__ser.write(message_to_send)

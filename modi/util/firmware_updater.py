@@ -2,7 +2,6 @@ import io
 import sys
 import time
 import json
-import base64
 import zipfile
 import requests
 
@@ -11,7 +10,7 @@ import urllib.request as ur
 
 from urllib.error import URLError
 from enum import IntEnum
-
+from base64 import b64encode
 from modi.module.module import Module
 
 
@@ -319,7 +318,7 @@ class FirmwareUpdater:
         state_bytes[0] = module_state
         state_bytes[1] = pnp_state
 
-        message["b"] = base64.b64encode(bytes(state_bytes)).decode("utf-8")
+        message["b"] = b64encode(bytes(state_bytes)).decode("utf-8")
         message["l"] = 2
 
         return json.dumps(message, separators=(",", ":"))
@@ -404,7 +403,7 @@ class FirmwareUpdater:
             crc32 >>= 8
             crc32_and_page_addr_data[4 + i] = page_addr & 0xFF
             page_addr >>= 8
-        message["b"] = base64.b64encode(
+        message["b"] = b64encode(
             bytes(crc32_and_page_addr_data)
         ).decode("utf-8")
         message["l"] = 8
@@ -430,7 +429,7 @@ class FirmwareUpdater:
         message["s"] = seq_num
         message["d"] = module_id
 
-        message["b"] = base64.b64encode(bytes(bin_data)).decode("utf-8")
+        message["b"] = b64encode(bytes(bin_data)).decode("utf-8")
         message["l"] = 8
 
         return json.dumps(message, separators=(",", ":"))

@@ -1,10 +1,7 @@
-
 import os
-
 import serial.tools.list_ports as stl
 
 from serial.tools.list_ports_common import ListPortInfo
-
 from abc import ABC
 from abc import abstractmethod
 from typing import List
