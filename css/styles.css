@@ -10261,21 +10261,21 @@ form .row:first-child .floating-label-form-group {
   background-color: #1a252f;
 }
 
-.module-img {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .module-title {
   margin-top: 1rem;
 }
 
 .module-desc {
   margin-top: 2rem;
-  padding-left: 10%;
-  padding-right: 10%;
+  padding-left: 3%;
+  padding-right: 3%;
   font-size: 1.3rem;
+}
+
+.module-img {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1.2rem;
 }
 
 .module-funcs {
@@ -10288,5 +10288,7 @@ form .row:first-child .floating-label-form-group {
 }
 
 .module-section {
-  margin-bottom: 1rem;
+  margin-bottom: 4rem;
+  display: flex;
+  flex-wrap: wrap;
 }
