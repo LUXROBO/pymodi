@@ -123,7 +123,6 @@ class TopologyMap:
                 x = i
             elif sum(col) > 0 and x >= 0:
                 w += 1
-
         return x, y, w, h
 
     def __compose_line(self, module_id, padding, print_id):
@@ -208,6 +207,12 @@ class TopologyManager:
                 count += 1
         return count <= 1
 
+    def __request_topology(self, module_id, exe_thrd):
+        exe_thrd.request_topology(module_id=module_id)
+        if module_id not in [module.id for module in self._modules] \
+                and ConnTask.is_network_module_connected():
+            exe_thrd.request_topology(0x2A, module_id)
+
     def is_topology_complete(self, exe_thrd):
         if len(self._tp_data) < 1:
             exe_thrd.request_topology()
@@ -216,19 +221,14 @@ class TopologyManager:
         try:
             self.__update_module_position()
         except KeyError as e:
-            exe_thrd.request_topology(module_id=int(str(e)))
-            if int(str(e)) not in [module.id for module in self._modules]:
-                if ConnTask.is_network_module_connected():
-                    exe_thrd.request_topology(0x2A, int(str(e)))
-                    return False
-            else:
-                return False
+            self.__request_topology(int(str(e)), exe_thrd)
+            return False
         if ConnTask.is_network_module_connected():
             return len(self._modules) == len(self._tp_data) - 1 \
-                and self.is_uuid_initialized()
+                   and self.is_uuid_initialized()
         else:
             return len(self._modules) == len(self._tp_data) \
-                and self.is_uuid_initialized()
+                   and self.is_uuid_initialized()
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """ Print the topology map
