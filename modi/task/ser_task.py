@@ -98,6 +98,8 @@ class SerTask(ConnTask):
             json_pkt = b''
             while json_pkt != b'{':
                 json_pkt = self.__ser.read()
+                if not json_pkt:
+                    return
             json_pkt += self.__ser.read_until(b'}')
             self._ser_recv_q.put(json_pkt.decode('utf8'))
             if self.__verbose:
