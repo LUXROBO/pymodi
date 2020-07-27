@@ -2,8 +2,8 @@
 
 import json
 import time
-import base64
 
+from base64 import b64encode
 from enum import IntEnum
 
 
@@ -152,7 +152,7 @@ class Module:
         property_bytes[0] = property_type
         property_bytes[2] = 95
 
-        message["b"] = base64.b64encode(bytes(property_bytes)).decode("utf-8")
+        message["b"] = b64encode(bytes(property_bytes)).decode("utf-8")
         message["l"] = 4
 
         return json.dumps(message, separators=(",", ":"))
