@@ -20,7 +20,6 @@ class SerTask(ConnTask):
         self._ser_send_q = ser_send_q
         self.__verbose = verbose
         self.__ser = None
-        self.__json_buffer = ""
         self.__port = port
         if self.__verbose:
             print('PyMODI log...\n==================================')
@@ -95,18 +94,18 @@ class SerTask(ConnTask):
 
         :return: None
         """
-
-        serial_buffer = self.__ser.in_waiting
-        if serial_buffer:
-            # Flush the serial buffer and concatenate it to json buffer
-            self.__json_buffer += self.__ser.read(
-                serial_buffer
-            ).decode("utf8")
-
-            # Once json buffer is obtained, we parse and send json message
-            self.__parse_serial()
-        else:
-            time.sleep(0.01)
+        while self.__ser.in_waiting:
+            json_pkt = b''
+            while json_pkt != b'{':
+                json_pkt = self.__ser.read()
+                if not json_pkt:
+                    return
+            json_pkt += self.__ser.read_until(b'}')
+            self._ser_recv_q.put(json_pkt.decode('utf8'))
+            if self.__verbose:
+                sys.stdout.write(f'recv: {json_pkt}\n')
+                sys.stdout.flush()
+        time.sleep(0.01)
 
     def _send_data(self) -> None:
         """ Write serial message in serial write queue
@@ -152,24 +151,3 @@ class SerTask(ConnTask):
                 print("\nMODI connection is lost!!!")
                 traceback.print_exc()
                 os._exit(1)
-
-    #
-    # Helper method
-    #
-    def __parse_serial(self) -> None:
-        """Update the json buffer
-
-        :return: None
-        """
-        # While there is a valid json in the json buffer
-        while "{" in self.__json_buffer and "}" in self.__json_buffer:
-            split_index = self.__json_buffer.find("}") + 1
-
-            # Parse json message and send it
-            json_msg = self.__json_buffer[:split_index]
-            self._ser_recv_q.put(json_msg)
-            if self.__verbose:
-                sys.stdout.write(f'recv: {json_msg}\n')
-                sys.stdout.flush()
-            # Update json buffer, remove the json message sent
-            self.__json_buffer = self.__json_buffer[split_index:]
