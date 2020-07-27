@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="https://github.com/LUXROBO/pymodi/blob/master/docs/_static/img/logo.png" width="500" height="150">
+	<img src="https://github.com/LUXROBO/pymodi/blob/master/docs/_static/img/logo.png?raw=true" width="500" height="150">
 </p>
 
 --------
@@ -30,7 +30,7 @@ PyMODI supports a control of modular electronics based on MODI modules developed
 UML Diagram
 --------
 <p align="center">
-    <img src="https://github.com/LUXROBO/pymodi/blob/master/docs/_static/img/umldiagram.svg">
+    <img src="https://github.com/LUXROBO/pymodi/blob/master/docs/_static/img/umldiagram.svg?raw=true">
 </p>
 
 Build Status
