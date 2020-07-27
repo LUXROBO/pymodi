@@ -10260,3 +10260,33 @@ form .row:first-child .floating-label-form-group {
 .copyright {
   background-color: #1a252f;
 }
+
+.module-img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.module-title {
+  margin-top: 1rem;
+}
+
+.module-desc {
+  margin-top: 2rem;
+  padding-left: 10%;
+  padding-right: 10%;
+  font-size: 1.3rem;
+}
+
+.module-funcs {
+  margin-top: 0.5rem;
+}
+
+.module-detail {
+  font-size: 1.1rem;
+  margin-top: 0.2rem;
+}
+
+.module-section {
+  margin-bottom: 1rem;
+}
