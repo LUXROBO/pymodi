@@ -126,6 +126,23 @@ class TopologyMap:
 
         return x, y, w, h
 
+    def __compose_line(self, module_id, padding, print_id):
+        line = ""
+        if not module_id:
+            line += " " * padding
+        else:
+            name = TopologyManager.get_type_from_uuid(
+                self._tp_data[module_id]['uuid'])
+            idx = module_list(self._modules,
+                              name.lower()).find(module_id)
+            if idx < 0:
+                idx = ''
+            if print_id:
+                line += f"{name + str(idx) + f' ({module_id})':^17}"
+            else:
+                line += f"{name + str(idx):^10}"
+        return line
+
     def print_map(self, print_id: bool = False) -> None:
         """ Prints out the topology map
 
@@ -133,7 +150,6 @@ class TopologyMap:
         :type print_id: bool
         :return: None
         """
-
         x, y, w, h = self.__trim_map(self._tp_map)
         """
         Prints out the map by a format
@@ -152,19 +168,7 @@ class TopologyMap:
             row = self._tp_map[i]
             for j in range(x, x + w):
                 curr_elem = row[j]
-                if not curr_elem:
-                    line += " " * padding
-                else:
-                    name = TopologyManager.get_type_from_uuid(
-                        self._tp_data[curr_elem]['uuid'])
-                    idx = module_list(self._modules,
-                                      name.lower()).find(curr_elem)
-                    if idx < 0:
-                        idx = ''
-                    if print_id:
-                        line += f"{name + str(idx) + f' ({curr_elem})':^17}"
-                    else:
-                        line += f"{name + str(idx):^10}"
+                line += self.__compose_line(curr_elem, padding, print_id)
             print(line)
 
     @property
