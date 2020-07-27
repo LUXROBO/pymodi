@@ -21,11 +21,11 @@ Easy😆 and fast💨 MODI Python API package.
 
 Features
 --------
--   Connect to the MODI network module and control input & output
-    modules.
--   List serial ports of MODI network modules.
--   Turn on or off the PnP mode of MODI modules.
--   Get the position information of each modules.
+PyMODI supports a control of modular electronics based on MODI modules developed by LUXROBO
+* Easy control of modules through serial connection on Windows, Linux, and MacOS
+* Direct CAN communication on raspberry pi and other platforms
+* Support on Python version >= 3.6
+* Utilities of firmware update and low-level debugging of the modules
 
 UML Diagram
 --------
