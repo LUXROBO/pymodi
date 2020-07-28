@@ -2,21 +2,24 @@ import os
 import can
 import time
 import json
-import queue
-import base64
 
+from queue import Empty
+from base64 import b64decode, b64encode
 from typing import Dict, Tuple
-
 from modi.task.conn_task import ConnTask
 
 
 class CanTask(ConnTask):
 
+    _instances = set()
+
     def __init__(self, can_recv_q, can_send_q, verbose, port=None):
         print("Run Can Task.")
+        if CanTask._instances:
+            raise Exception("can0 device already in use")
         self._can_recv_q = can_recv_q
         self._can_send_q = can_send_q
-
+        self._instances.add(self)
         self.__can0 = None
         self.__verbose = verbose
         if self.__verbose:
@@ -54,7 +57,7 @@ class CanTask(ConnTask):
         """
         try:
             message_to_send = self._can_send_q.get_nowait().encode()
-        except queue.Empty:
+        except Empty:
             time.sleep(0.01)
         else:
             self._send_data(message_to_send)
@@ -155,7 +158,7 @@ class CanTask(ConnTask):
 
         json_msg = dict()
         json_msg["c"], json_msg["s"], json_msg["d"] = c, s, d
-        json_msg["b"] = base64.b64encode(can_data).decode("utf-8")
+        json_msg["b"] = b64encode(can_data).decode("utf-8")
         json_msg["l"] = can_dlc
         return json.dumps(json_msg, separators=(",", ":"))
 
@@ -192,7 +195,7 @@ class CanTask(ConnTask):
         can_id = int(ins + sid + did, 2)
 
         data = json_msg["b"]
-        data_decoded = base64.b64decode(data)
+        data_decoded = b64decode(data)
         data_decoded_in_bytes = bytearray(data_decoded)
 
         can_msg = can.Message(

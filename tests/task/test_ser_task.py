@@ -14,9 +14,14 @@ class TestSerTask(unittest.TestCase):
     class MockSerial:
         def __init__(self):
             self.in_waiting = 1
-            self.read = mock.Mock(return_value=bytes(1))
+            self.read = mock.Mock(side_effect=self.read_mock)
+            self.read_until = mock.Mock(return_value=b'complete}')
             self.write = mock.Mock()
             self.close = mock.Mock()
+
+        def read_mock(self):
+            self.in_waiting = 0
+            return b'{'
 
     def setUp(self):
         """Set up test fixtures, if any."""
@@ -52,7 +57,7 @@ class TestSerTask(unittest.TestCase):
         """Test _read_data method"""
         self.ser_task.set_serial(self.MockSerial())
         self.ser_task._recv_data()
-        self.ser_task.get_serial.read.assert_called_once_with(1)
+        self.assertEqual(self.ser_task._ser_recv_q.get(), '{complete}')
 
     def test_send_data(self):
         """Test _write_data method"""

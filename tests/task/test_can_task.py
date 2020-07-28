@@ -32,6 +32,7 @@ class TestCanTask(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
         del self.can_task
+        CanTask._instances.clear()
 
     def test_open_conn(self):
         """Test open_conn method"""

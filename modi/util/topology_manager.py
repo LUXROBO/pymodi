@@ -1,6 +1,7 @@
 from typing import Dict, List, Tuple
 from modi.util.misc import module_list
 from modi.task.conn_task import ConnTask
+from modi.util.misc import get_type_from_uuid
 
 
 class TopologyMap:
@@ -92,13 +93,8 @@ class TopologyMap:
         self.__update_map(first_id, self._nb_modules, self._nb_modules,
                           prev_id=-1, toward=(1, 0), visited=visited)
 
-    def print_map(self, print_id: bool = False) -> None:
-        """ Prints out the topology map
-
-        :param print_id: If True, the result includes id in the topology map
-        :type print_id: bool
-        :return: None
-        """
+    @staticmethod
+    def __trim_map(raw_map: List):
         # Trims the matrix to get rid of empty spaces, containing zeros only
         x, y, w, h = -1, -1, 1, 1
 
@@ -113,22 +109,48 @@ class TopologyMap:
         # Iterates through the rows until it finds the first non-zero row.
         # Saves the index to y, and increases h until it finds next all-zero
         # row
-        for i in range(len(self._tp_map)):
-            if sum(self._tp_map[i]) > 0 and y < 0:
+        for i in range(len(raw_map)):
+            if sum(raw_map[i]) > 0 and y < 0:
                 y = i
-            elif sum(self._tp_map[i]) > 0 and y >= 0:
+            elif sum(raw_map[i]) > 0 and y >= 0:
                 h += 1
 
         # Iterates through the columns until it finds the first non-zero column
         # Saves the index to x, and increases w until it finds next all-zero
         # column.
-        for i in range(len(self._tp_map[0])):
-            col = list(map(lambda m: m[i], self._tp_map))
+        for i in range(len(raw_map[0])):
+            col = list(map(lambda m: m[i], raw_map))
             if sum(col) > 0 and x < 0:
                 x = i
             elif sum(col) > 0 and x >= 0:
                 w += 1
+        return x, y, w, h
 
+    def __compose_line(self, module_id, padding, print_id):
+        line = ""
+        if not module_id:
+            line += " " * padding
+        else:
+            name = get_type_from_uuid(
+                self._tp_data[module_id]['uuid'])
+            idx = module_list(self._modules,
+                              name.lower()).find(module_id)
+            if idx < 0:
+                idx = ''
+            if print_id:
+                line += f"{name + str(idx) + f' ({module_id})':^17}"
+            else:
+                line += f"{name + str(idx):^10}"
+        return line
+
+    def print_map(self, print_id: bool = False) -> None:
+        """ Prints out the topology map
+
+        :param print_id: If True, the result includes id in the topology map
+        :type print_id: bool
+        :return: None
+        """
+        x, y, w, h = self.__trim_map(self._tp_map)
         """
         Prints out the map by a format
         padding is the length of the placeholder for the module names.
@@ -146,25 +168,13 @@ class TopologyMap:
             row = self._tp_map[i]
             for j in range(x, x + w):
                 curr_elem = row[j]
-                if not curr_elem:
-                    line += " " * padding
-                else:
-                    name = TopologyManager.get_type_from_uuid(
-                        self._tp_data[curr_elem]['uuid'])
-                    idx = module_list(self._modules,
-                                      name.lower()).find(curr_elem)
-                    if idx < 0:
-                        idx = ''
-                    if print_id:
-                        line += f"{name + str(idx) + f' ({curr_elem})':^17}"
-                    else:
-                        line += f"{name + str(idx):^10}"
+                line += self.__compose_line(curr_elem, padding, print_id)
             print(line)
 
     @property
     def network_id(self):
         for mid in self._tp_data:
-            if TopologyManager.get_type_from_uuid(self._tp_data[mid]['uuid']) \
+            if get_type_from_uuid(self._tp_data[mid]['uuid']) \
                     == 'Network':
                 return mid
         return list(self._tp_data.keys())[0]
@@ -198,6 +208,12 @@ class TopologyManager:
                 count += 1
         return count <= 1
 
+    def __request_topology(self, module_id, exe_thrd):
+        exe_thrd.request_topology(module_id=module_id)
+        if module_id not in [module.id for module in self._modules] \
+                and ConnTask.is_network_module_connected():
+            exe_thrd.request_topology(0x2A, module_id)
+
     def is_topology_complete(self, exe_thrd):
         if len(self._tp_data) < 1:
             exe_thrd.request_topology()
@@ -206,13 +222,8 @@ class TopologyManager:
         try:
             self.__update_module_position()
         except KeyError as e:
-            exe_thrd.request_topology(module_id=int(str(e)))
-            if int(str(e)) not in [module.id for module in self._modules]:
-                if ConnTask.is_network_module_connected():
-                    exe_thrd.request_topology(0x2A, int(str(e)))
-                    return False
-            else:
-                return False
+            self.__request_topology(int(str(e)), exe_thrd)
+            return False
         if ConnTask.is_network_module_connected():
             return len(self._modules) == len(self._tp_data) - 1 \
                 and self.is_uuid_initialized()
@@ -230,35 +241,3 @@ class TopologyManager:
         tp_map = TopologyMap(self._tp_data, self._nb_modules, self._modules)
         tp_map.construct_map()
         tp_map.print_map(print_id)
-
-    @staticmethod
-    def get_type_from_uuid(uuid: int) -> str:
-        """Returns type based on uuid
-
-        :param uuid: UUID of the required type
-        :type uuid: int
-        :return: Corresponding type
-        :rtype: str
-        """
-        if uuid is None:
-            return 'Network'
-
-        hexadecimal = hex(uuid).lstrip("0x")
-        type_indicator = str(hexadecimal)[:4]
-        module_type = {
-            # Input modules
-            '2000': 'Env',
-            '2010': 'Gyro',
-            '2020': 'Mic',
-            '2030': 'Button',
-            '2040': 'Dial',
-            '2050': 'Ultrasonic',
-            '2060': 'Ir',
-
-            # Output modules
-            '4000': 'Display',
-            '4010': 'Motor',
-            '4020': 'Led',
-            '4030': 'Speaker',
-        }.get(type_indicator)
-        return module_type
