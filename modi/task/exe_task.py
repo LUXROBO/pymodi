@@ -427,29 +427,3 @@ class ExeTask:
         """
         self._send_q.put(
             parse_message(cmd, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0)))
-
-    def update_firmware(self) -> None:
-        """ Remove firmware of MODI modules
-
-        :return: None
-        """
-        BROADCAST_ID = 0xFFF
-        firmware_update_message = self.__set_module_state(
-            BROADCAST_ID, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
-        )
-        self._send_q.put(firmware_update_message)
-        self.__delay()
-
-    def update_firmware_ready(self, module_id: int) -> None:
-        """ Check if modules with no firmware are ready to update its firmware
-
-        :param module_id: Id of the target module
-        :type module_id: int
-        :return: None
-        """
-
-        firmware_update_ready_message = self.__set_module_state(
-            module_id, Module.State.UPDATE_FIRMWARE_READY, Module.State.PNP_OFF
-        )
-        self._send_q.put(firmware_update_ready_message)
-        self.__delay()
