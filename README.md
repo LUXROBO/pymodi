@@ -60,18 +60,19 @@ Quickstart
 --------
 
 Install the latest PyMODI if you haven\'t installed it yet:
-
-    pip install -U pymodi --user
+```commandline
+pip install -U pymodi --user
+```
 
 You can also install PyMODI at develop branch with:
 
     pip install git+https://github.com/LUXROBO/pymodi.git@develop --user --upgrade
 
 Import **modi** package and create **MODI** instance:
-
-    import modi
-    bundle = modi.MODI()
-
+```python
+import modi
+bundle = modi.MODI()
+```
 List connected modules:
 
     bundle.modules
