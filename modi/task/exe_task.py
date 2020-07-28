@@ -242,10 +242,9 @@ class ExeTask:
             if module.uuid == module_uuid and not module.is_connected:
                 module.set_connection_state(connection_state=True)
                 # When reconnected, turn-off module pnp state
-                pnp_off_message = self.__set_module_state(
+                self.__set_module_state(
                     0xFFF, Module.State.RUN, Module.State.PNP_OFF
                 )
-                self._send_q.put(pnp_off_message)
 
         # Handle newly-connected modules
         if not next(
@@ -257,10 +256,8 @@ class ExeTask:
                 module_instance = module_template(
                     module_id, module_uuid, self._send_q
                 )
-                self.__set_pnp(
-                    module_id=module_instance.id,
-                    module_pnp_state=Module.State.PNP_OFF
-                )
+                self.__set_module_state(module_instance.id, Module.State.RUN,
+                                        Module.State.PNP_OFF)
                 module_instance.version = module_version_info
                 module_instance.is_up_to_date = \
                     (module_version_info == latest_version)
@@ -277,7 +274,6 @@ class ExeTask:
         :return: true is all modules are connected
         :rtype: bool
         """
-
         return self._nb_modules == len(self._modules)
 
     def __init_module(self, module_type: str) -> Module:
@@ -325,31 +321,6 @@ class ExeTask:
                     decode_data(message['b']),
                 )
 
-    def __set_pnp(self, module_id: int, module_pnp_state: IntEnum) -> None:
-        """ Generate module pnp on/off command
-
-        :param module_id: ID of the target module
-        :type module_id: int
-        :param module_pnp_state: Pnp state value
-        :type module_pnp_state: IntEnum
-        :return: None
-        """
-
-        # If no module_id is specified, it will broadcast incoming pnp state
-        if module_id is None:
-            for curr_module_id in self._module_ids:
-                pnp_message = self.__set_module_state(
-                    curr_module_id, Module.State.RUN, module_pnp_state
-                )
-                self._send_q.put(pnp_message)
-
-        # Otherwise, it sets pnp state of the given module
-        else:
-            pnp_message = self.__set_module_state(
-                module_id, Module.State.RUN, module_pnp_state
-            )
-            self._send_q.put(pnp_message)
-
     def __set_module_state(self, destination_id: int, module_state: IntEnum,
                            pnp_state: IntEnum) -> str:
         """ Generate message for set module state and pnp state
@@ -363,8 +334,8 @@ class ExeTask:
         :return: json serialized message
         :rtype: str
         """
-        return parse_message(0x09, 0, destination_id,
-                             (module_state, pnp_state))
+        self._send_q.put(parse_message(0x09, 0, destination_id,
+                                       (module_state, pnp_state)))
 
     def __init_modules(self) -> None:
         """ Initialize module on first run
@@ -375,23 +346,18 @@ class ExeTask:
         BROADCAST_ID = 0xFFF
 
         # Reboot module
-        reboot_message = self.__set_module_state(
+        self.__set_module_state(
             BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
         )
-        self._send_q.put(reboot_message)
-        # self.__delay()
 
         # Command module pnp off
-        pnp_off_message = self.__set_module_state(
+        self.__set_module_state(
             BROADCAST_ID, Module.State.RUN, Module.State.PNP_OFF
         )
-        self._send_q.put(pnp_off_message)
-        # self.__delay()
 
         # Command module uuid
         request_uuid_message = self.__request_uuid(BROADCAST_ID)
         self._send_q.put(request_uuid_message)
-        # self.__delay()
 
         # Request topology data
         self.request_topology()
