@@ -1,6 +1,7 @@
 from typing import Dict, List, Tuple
 from modi.util.misc import module_list
 from modi.task.conn_task import ConnTask
+from modi.util.misc import get_type_from_uuid
 
 
 class TopologyMap:
@@ -130,7 +131,7 @@ class TopologyMap:
         if not module_id:
             line += " " * padding
         else:
-            name = TopologyManager.get_type_from_uuid(
+            name = get_type_from_uuid(
                 self._tp_data[module_id]['uuid'])
             idx = module_list(self._modules,
                               name.lower()).find(module_id)
@@ -173,7 +174,7 @@ class TopologyMap:
     @property
     def network_id(self):
         for mid in self._tp_data:
-            if TopologyManager.get_type_from_uuid(self._tp_data[mid]['uuid']) \
+            if get_type_from_uuid(self._tp_data[mid]['uuid']) \
                     == 'Network':
                 return mid
         return list(self._tp_data.keys())[0]
@@ -240,35 +241,3 @@ class TopologyManager:
         tp_map = TopologyMap(self._tp_data, self._nb_modules, self._modules)
         tp_map.construct_map()
         tp_map.print_map(print_id)
-
-    @staticmethod
-    def get_type_from_uuid(uuid: int) -> str:
-        """Returns type based on uuid
-
-        :param uuid: UUID of the required type
-        :type uuid: int
-        :return: Corresponding type
-        :rtype: str
-        """
-        if uuid is None:
-            return 'Network'
-
-        hexadecimal = hex(uuid).lstrip("0x")
-        type_indicator = str(hexadecimal)[:4]
-        module_type = {
-            # Input modules
-            '2000': 'Env',
-            '2010': 'Gyro',
-            '2020': 'Mic',
-            '2030': 'Button',
-            '2040': 'Dial',
-            '2050': 'Ultrasonic',
-            '2060': 'Ir',
-
-            # Output modules
-            '4000': 'Display',
-            '4010': 'Motor',
-            '4020': 'Led',
-            '4030': 'Speaker',
-        }.get(type_indicator)
-        return module_type

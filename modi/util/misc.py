@@ -1,6 +1,31 @@
 import time
 
 
+def get_type_from_uuid(uuid):
+    if uuid is None:
+        return 'Network'
+
+    hexadecimal = hex(uuid).lstrip("0x")
+    type_indicator = str(hexadecimal)[:4]
+    module_type = {
+        # Input modules
+        '2000': 'env',
+        '2010': 'gyro',
+        '2020': 'mic',
+        '2030': 'button',
+        '2040': 'dial',
+        '2050': 'ultrasonic',
+        '2060': 'ir',
+
+        # Output modules
+        '4000': 'display',
+        '4010': 'motor',
+        '4020': 'led',
+        '4030': 'speaker',
+    }.get(type_indicator)
+    return 'Network' if module_type is None else module_type
+
+
 class module_list(list):
 
     def __init__(self, src, module_type, lazy=True):

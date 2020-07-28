@@ -1,11 +1,9 @@
 import time
 import json
-import struct
-
 import urllib.request as ur
 
 from urllib.error import URLError
-from base64 import b64encode, b64decode
+from base64 import b64decode
 from enum import IntEnum
 from typing import Callable, Dict
 from queue import Empty
@@ -24,7 +22,8 @@ from modi.module.output_module.motor import Motor
 from modi.module.output_module.speaker import Speaker
 
 from modi.module.module import Module
-from modi.util.msgutil import unpack_data as up
+from modi.util.msgutil import unpack_data, decode_data, parse_message
+from modi.util.misc import get_type_from_uuid
 
 
 class ExeTask:
@@ -69,13 +68,11 @@ class ExeTask:
         :param delay: time value to wait in seconds
         :type delay: float
         """
-        time.sleep(delay)
-
         try:
             raw_message = self._recv_q.get_nowait()
             message = json.loads(raw_message)
         except Empty:
-            pass
+            time.sleep(delay)
         except json.decoder.JSONDecodeError:
             print('current json message:', raw_message)
         else:
@@ -118,41 +115,34 @@ class ExeTask:
         elif stream_state == self.firmware_updater.State.ERASE_COMPLETE.value:
             self.firmware_updater.update_response(response=True)
 
-    def __update_topology(self, message: Dict[str, int]) -> None:
+    def __update_topology(self, message: Dict[str, str]) -> None:
         """Update the topology of the connected modules
 
         :param message: Dictionary format message of the module
         :return: None
         """
-        # print('topology_msg:', message)
-
         # Setup prerequisites
         src_id = message["s"]
         byte_data = message["b"]
-        broadcast_id = 2 ** 16 - 1
+        broadcast_id = 0xFFFF
         topology_by_id = {}
 
-        message_decoded = bytearray(b64decode(byte_data))
-        # print('topology_msg_dec:', message_decoded)
-
+        right_id, top_id, left_id, bottom_id = unpack_data(
+            byte_data, (2, 2, 2, 2))
         # UUID
         src_uuid = self.__get_uuid_by_id(src_id)
         topology_by_id['uuid'] = src_uuid
 
         # RIGHT ID
-        right_id = message_decoded[1] << 8 | message_decoded[0]
         topology_by_id['r'] = right_id if right_id != broadcast_id else None
 
         # TOP ID
-        top_id = message_decoded[3] << 8 | message_decoded[2]
         topology_by_id['t'] = top_id if top_id != broadcast_id else None
 
         # LEFT ID
-        left_id = message_decoded[5] << 8 | message_decoded[4]
         topology_by_id['l'] = left_id if left_id != broadcast_id else None
 
         # BOTTOM ID
-        bottom_id = message_decoded[7] << 8 | message_decoded[6]
         topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
 
         # Update topology data for the module
@@ -183,16 +173,12 @@ class ExeTask:
         curr_time_ms = int(time.time() * 1000)
         message_decoded = bytearray(b64decode(message["b"]))
 
-        self._module_ids[module_id] = self._module_ids.get(module_id, dict())
-        self._module_ids[module_id]["timestamp"] = curr_time_ms
-        self._module_ids[module_id]["uuid"] = self._module_ids[module_id].get(
-            "uuid", str()
-        )
+        self.__record_module_info(module_id, curr_time_ms)
         self._module_ids[module_id]["battery"] = int(message_decoded[3])
 
         # Check if user code is in the module
         if not self.__user_code_checked:
-            user_code_state = up(message['b'])[4]
+            user_code_state = unpack_data(message['b'])[4]
 
             if user_code_state % 2 == 1:
                 print("Your MODI module(s) has user code in it.")
@@ -237,7 +223,7 @@ class ExeTask:
             module_uuid_res |= v << 8 * i
 
         module_id = message["s"]
-        module_type = self.__get_type_from_uuid(module_uuid_res)
+        module_type = get_type_from_uuid(module_uuid_res)
 
         # No need to update Network module's STM firmware
         if module_type == 'Network':
@@ -256,6 +242,13 @@ class ExeTask:
             # print("Unsupported warning type:", warning_type)
             pass
 
+    def __record_module_info(self, module_id, curr_time):
+        self._module_ids[module_id] = self._module_ids.get(module_id, dict())
+        self._module_ids[module_id]["timestamp"] = curr_time
+        self._module_ids[module_id]["uuid"] = self._module_ids[module_id].get(
+            "uuid", str()
+        )
+
     def __update_modules(self, message: Dict[str, str]) -> None:
         """ Update module information
 
@@ -263,25 +256,12 @@ class ExeTask:
         :type message: Dictionary
         :return: None
         """
-
-        # Set time variable for timestamp
+        module_id = message['s']
         curr_time_ms = int(time.time() * 1000)
+        self.__record_module_info(module_id, curr_time_ms)
 
-        # Record information by module id
-        module_id = message["s"]
-        self._module_ids[module_id] = self._module_ids.get(module_id, dict())
-        self._module_ids[module_id]["timestamp"] = curr_time_ms
-        self._module_ids[module_id]["uuid"] = self._module_ids[module_id].get(
-            "uuid", str()
-        )
-
-        # Extract uuid from message "b"
-        message_decoded = bytearray(b64decode(message["b"]))
-        module_uuid_bytes = message_decoded[:4]
-        module_info_bytes = message_decoded[-4:]
-
-        module_info = (module_info_bytes[1] << 8) + module_info_bytes[0]
-        module_version_info = module_info_bytes[3] << 8 | module_info_bytes[2]
+        module_uuid, module_info, module_version_info = \
+            unpack_data(message['b'], (4, 2, 2))
 
         # Retrieve most recent skeleton version from the server
         version_path = (
@@ -308,22 +288,11 @@ class ExeTask:
 
         module_category = self.__module_categories[module_category_idx]
         module_type = self.__module_types[module_category][module_type_idx]
-        module_uuid = self.__fit_module_uuid(
-            module_info,
-            (
-                (module_uuid_bytes[3] << 24)
-                + (module_uuid_bytes[2] << 16)
-                + (module_uuid_bytes[1] << 8)
-                + module_uuid_bytes[0]
-            ),
-        )
-
-        module_uuid = up(message['b'], (6, 2))[0]
+        module_uuid = unpack_data(message['b'], (6, 2))[0]
 
         if module_category != 'network' and \
-                not self.firmware_update_message_flag and \
+            not self.firmware_update_message_flag and \
                 module_version_info < latest_version:
-
             print("Your MODI module(s) is not up-to-date.")
             print("You can update your MODI modules by calling "
                   "'update_module_firmware()'")
@@ -398,7 +367,7 @@ class ExeTask:
         }.get(module_type)
         return module
 
-    def __update_property(self, message: Dict[str, int]) -> None:
+    def __update_property(self, message: Dict[str, str]) -> None:
         """ Update module property
 
         :param message: Dictionary format message
@@ -413,12 +382,10 @@ class ExeTask:
         # Decode message of module id and module property for update property
         for module in self._modules:
             if module.id == message["s"]:
-                message_decoded = bytearray(b64decode(message["b"]))
                 property_type = module.PropertyType(property_number)
                 module.update_property(
                     property_type,
-                    round(struct.unpack("f", bytes(
-                        message_decoded[:4]))[0], 2),
+                    decode_data(message['b']),
                 )
 
     def __set_pnp(self, module_id: int, module_pnp_state: IntEnum) -> None:
@@ -446,23 +413,6 @@ class ExeTask:
             )
             self._send_q.put(pnp_message)
 
-    def __fit_module_uuid(self, module_info: int, module_uuid: int) -> int:
-        """ Generate uuid using bitwise operation
-
-        :param module_info: Module info
-        :type module_info: int
-        :param module_uuid: Module uuid
-        :type module_uuid: int
-        :return: Fitted uuid
-        :rtype: int
-        """
-
-        sizeof_module_uuid = 0
-        while (module_uuid >> sizeof_module_uuid) > 0:
-            sizeof_module_uuid += 1
-        sizeof_module_uuid += sizeof_module_uuid % 4
-        return (module_info << sizeof_module_uuid) | module_uuid
-
     def __set_module_state(self, destination_id: int, module_state: IntEnum,
                            pnp_state: IntEnum) -> str:
         """ Generate message for set module state and pnp state
@@ -476,21 +426,8 @@ class ExeTask:
         :return: json serialized message
         :rtype: str
         """
-
-        message = dict()
-
-        message["c"] = 0x09
-        message["s"] = 0
-        message["d"] = destination_id
-
-        state_bytes = bytearray(2)
-        state_bytes[0] = module_state
-        state_bytes[1] = pnp_state
-
-        message["b"] = b64encode(bytes(state_bytes)).decode("utf-8")
-        message["l"] = 2
-
-        return json.dumps(message, separators=(",", ":"))
+        return parse_message(0x09, 0, destination_id,
+                             (module_state, pnp_state))
 
     def __init_modules(self) -> None:
         """ Initialize module on first run
@@ -528,7 +465,6 @@ class ExeTask:
 
         :return: None
         """
-
         time.sleep(0.5)
 
     def __request_uuid(self, source_id: int,
@@ -542,22 +478,8 @@ class ExeTask:
         :return: json serialized message
         :rtype: str
         """
-
-        BROADCAST_ID = 0xFFF
-
-        message = dict()
-        message["c"] = 0x28 if is_network_module else 0x08
-        message["s"] = source_id
-        message["d"] = BROADCAST_ID
-
-        id_bytes = bytearray(8)
-        id_bytes[0] = 0xFF
-        id_bytes[1] = 0x0F
-
-        message["b"] = b64encode(bytes(id_bytes)).decode("utf-8")
-        message["l"] = 8
-
-        return json.dumps(message, separators=(",", ":"))
+        return parse_message(0x28 if is_network_module else 0x08,
+                             source_id, 0xFFF, (0xFF, 0x0F, 0, 0, 0, 0, 0, 0))
 
     def request_topology(self, cmd: int = 0x07,
                          module_id: int = 0xFFF) -> None:
@@ -566,23 +488,14 @@ class ExeTask:
         :return: json serialized topology request message
         :rtype: str
         """
-        message = dict()
-        message["c"] = cmd
-        message["s"] = 0
-        message["d"] = module_id
-
-        direction_data = bytearray(8)
-        message["b"] = b64encode(bytes(direction_data)).decode("utf-8")
-        message["l"] = 8
-
-        self._send_q.put(json.dumps(message, separators=(",", ":")))
+        self._send_q.put(
+            parse_message(cmd, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0)))
 
     def update_firmware(self) -> None:
         """ Remove firmware of MODI modules
 
         :return: None
         """
-
         BROADCAST_ID = 0xFFF
         firmware_update_message = self.__set_module_state(
             BROADCAST_ID, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
@@ -603,27 +516,3 @@ class ExeTask:
         )
         self._send_q.put(firmware_update_ready_message)
         self.__delay()
-
-    def __get_type_from_uuid(self, uuid):
-        if uuid is None:
-            return 'Network'
-
-        hexadecimal = hex(uuid).lstrip("0x")
-        type_indicator = str(hexadecimal)[:4]
-        module_type = {
-            # Input modules
-            '2000': 'env',
-            '2010': 'gyro',
-            '2020': 'mic',
-            '2030': 'button',
-            '2040': 'dial',
-            '2050': 'ultrasonic',
-            '2060': 'ir',
-
-            # Output modules
-            '4000': 'display',
-            '4010': 'motor',
-            '4020': 'led',
-            '4030': 'speaker',
-        }.get(type_indicator)
-        return 'Network' if module_type is None else module_type
