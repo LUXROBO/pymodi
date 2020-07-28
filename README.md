@@ -65,37 +65,37 @@ pip install -U pymodi --user
 ```
 
 You can also install PyMODI at develop branch with:
-
-    pip install git+https://github.com/LUXROBO/pymodi.git@develop --user --upgrade
-
+```commandline
+pip install git+https://github.com/LUXROBO/pymodi.git@develop --user --upgrade
+```
 Import **modi** package and create **MODI** instance:
 ```python
 import modi
 bundle = modi.MODI()
 ```
 List connected modules:
-
-    bundle.modules
-
+```python
+bundle.modules
+```
 List connected LED modules and pick the first one:
-
-    bundle.leds # List.
-    bundle.leds[0] # Pick.
-
+```python
+bundle.leds # List.
+bundle.leds[0] # Pick.
+```
 Let\'s blink the LED\'s light 5 times:
+```python
+import time
 
-    import time
+led = bundle.leds[0]
 
-    led = bundle.leds[0]
-
-    for _ in range(5):
-        led.turn_on()
-        time.sleep(1)
-        led.turn_off()
-        time.sleep(1)
-
+for _ in range(5):
+    led.turn_on()
+    time.sleep(1)
+    led.turn_off()
+    time.sleep(1)
+```
 If you are still not sure how to use PyMODI, you can play an interactive PyMODI tutorial by running a command of
-
-    $ python -m modi --tutorial
-
+```commandline
+$ python -m modi --tutorial
+```
 Moreover, we provide some [usage and creation examples.](examples)
