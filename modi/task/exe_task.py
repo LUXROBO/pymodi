@@ -22,7 +22,7 @@ class ExeTask:
     :param dict() module_ids: dict() of module_id : ['timestamp', 'uuid'].
     :param list() modules: list() of module instance.
     """
-    def __init__(self, modules, module_ids, topology_data,
+    def __init__(self, modules, topology_data,
                  recv_q: CommunicationQueue, send_q: CommunicationQueue):
         self._modules = modules
         self._topology_data = topology_data

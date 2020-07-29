@@ -11,10 +11,10 @@ class ExeThrd(th.Thread):
     :param list() modules: list() of module instance
     """
 
-    def __init__(self, modules, module_ids, topology_data, recv_q, send_q):
+    def __init__(self, modules, topology_data, recv_q, send_q):
         super().__init__()
         self.__exe_task = ExeTask(
-            modules, module_ids, topology_data, recv_q, send_q,
+            modules, topology_data, recv_q, send_q,
         )
 
     def run(self) -> None:

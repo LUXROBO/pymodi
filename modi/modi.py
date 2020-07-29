@@ -32,7 +32,6 @@ class MODI:
                  module_uuid: str = "", test: bool = False,
                  verbose: bool = False, port: str = None):
         self._modules = list()
-        self._module_ids = dict()
         self._topology_data = dict()
 
         self._recv_q = CommunicationQueue()
@@ -68,7 +67,6 @@ class MODI:
 
         self._exe_thrd = ExeThrd(
             self._modules,
-            self._module_ids,
             self._topology_data,
             self._recv_q,
             self._send_q,
