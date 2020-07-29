@@ -212,15 +212,8 @@ class ExeTask:
         property_number = message["d"]
         if property_number == 0 or property_number == 1:
             return
-
-        # Decode message of module id and module property for update property
-        for module in self._modules:
-            if module.id == message["s"]:
-                property_type = module.PropertyType(property_number)
-                module.update_property(
-                    property_type,
-                    decode_data(message['b']),
-                )
+        module = self.__get_module_by_id(message['s'])
+        module.update_property(property_number, decode_data(message['b']))
 
     def __set_module_state(self, destination_id: int, module_state: IntEnum,
                            pnp_state: IntEnum) -> str:
