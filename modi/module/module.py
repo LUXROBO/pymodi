@@ -43,7 +43,7 @@ class Module:
 
         self.position = (0, 0)
         self.__version = None
-        self.is_up_to_date = None
+        self.is_up_to_date = True
 
     def __gt__(self, other):
         if self.distance == other.distance:

@@ -7,22 +7,9 @@ from base64 import b64decode
 from enum import IntEnum
 from typing import Callable, Dict
 from queue import Empty
-
-from modi.module.input_module.button import Button
-from modi.module.input_module.dial import Dial
-from modi.module.input_module.env import Env
-from modi.module.input_module.gyro import Gyro
-from modi.module.input_module.ir import Ir
-from modi.module.input_module.mic import Mic
-from modi.module.input_module.ultrasonic import Ultrasonic
-
-from modi.module.output_module.display import Display
-from modi.module.output_module.led import Led
-from modi.module.output_module.motor import Motor
-from modi.module.output_module.speaker import Speaker
-
 from modi.module.module import Module
 from modi.util.msgutil import unpack_data, decode_data, parse_message
+from modi.util.misc import get_module_from_name, get_type_from_uuid
 
 
 class ExeTask:
@@ -33,15 +20,6 @@ class ExeTask:
     :param dict() module_ids: dict() of module_id : ['timestamp', 'uuid'].
     :param list() modules: list() of module instance.
     """
-
-    # variables shared across all class instances
-    __module_categories = ["network", "input", "output"]
-    __module_types = {
-        "network": ["usb", "usb/wifi/ble"],
-        "input": ["env", "gyro", "mic", "button", "dial", "ultrasonic", "ir"],
-        "output": ["display", "motor", "led", "speaker"],
-    }
-
     def __init__(self, modules, module_ids, topology_data,
                  recv_q, send_q, init_event, nb_modules):
 
@@ -103,24 +81,14 @@ class ExeTask:
         byte_data = message["b"]
         broadcast_id = 0xFFFF
         topology_by_id = {}
+        topology_ids = unpack_data(byte_data, (2, 2, 2, 2))
 
-        right_id, top_id, left_id, bottom_id = unpack_data(
-            byte_data, (2, 2, 2, 2))
         # UUID
         src_uuid = self.__get_uuid_by_id(src_id)
         topology_by_id['uuid'] = src_uuid
-
-        # RIGHT ID
-        topology_by_id['r'] = right_id if right_id != broadcast_id else None
-
-        # TOP ID
-        topology_by_id['t'] = top_id if top_id != broadcast_id else None
-
-        # LEFT ID
-        topology_by_id['l'] = left_id if left_id != broadcast_id else None
-
-        # BOTTOM ID
-        topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
+        for idx, direction in enumerate(('r', 't', 'l', 'b')):
+            topology_by_id[direction] = topology_ids[idx] \
+                if topology_ids[idx] != broadcast_id else None
 
         # Update topology data for the module
         self._topology_data[src_id] = topology_by_id
@@ -172,7 +140,7 @@ class ExeTask:
                 module_id, is_network_module=True)
             self._send_q.put(message_to_write)
 
-        # Disconnect modules with no health message for more than 2 seconds
+        # Disconnect modules with no health message for more than 1 second
         for module_id, module_info in list(self._module_ids.items()):
             if curr_time_ms - module_info["timestamp"] > 1000:
                 for module in self._modules:
@@ -186,21 +154,8 @@ class ExeTask:
             "uuid", str()
         )
 
-    def __update_modules(self, message: Dict[str, str]) -> None:
-        """ Update module information
-
-        :param message: Dictionary format module info
-        :type message: Dictionary
-        :return: None
-        """
-        module_id = message['s']
-        curr_time_ms = int(time.time() * 1000)
-        self.__record_module_info(module_id, curr_time_ms)
-
-        module_uuid, module_info, module_version_info = \
-            unpack_data(message['b'], (4, 2, 2))
-
-        # Retrieve most recent skeleton version from the server
+    @staticmethod
+    def __get_latest_version():
         version_path = (
             "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
         )
@@ -218,23 +173,29 @@ class ExeTask:
                 | version_digits[2]
             )
         except URLError:
+            latest_version = None
+        return latest_version
+
+    def __update_modules(self, message: Dict[str, str]) -> None:
+        """ Update module information
+
+        :param message: Dictionary format module info
+        :type message: Dictionary
+        :return: None
+        """
+        module_id = message['s']
+        curr_time_ms = int(time.time() * 1000)
+        self.__record_module_info(module_id, curr_time_ms)
+
+        module_uuid, module_version_info = \
+            unpack_data(message['b'], (6, 2))
+
+        # Retrieve most recent skeleton version from the server
+        latest_version = self.__get_latest_version()
+        if not latest_version:
             latest_version = module_version_info
 
-        module_category_idx = module_info >> 13
-        module_type_idx = (module_info >> 4) & 0x1FF
-
-        module_category = self.__module_categories[module_category_idx]
-        module_type = self.__module_types[module_category][module_type_idx]
-        module_uuid = unpack_data(message['b'], (6, 2))[0]
-
-        if module_category != 'network' and \
-            not self.firmware_update_message_flag and \
-                module_version_info < latest_version:
-            print("Your MODI module(s) is not up-to-date.")
-            print("You can update your MODI modules by calling "
-                  "'update_module_firmware()'")
-            self.firmware_update_message_flag = True
-
+        module_type = get_type_from_uuid(module_uuid)
         self._module_ids[module_id]["uuid"] = module_uuid
 
         # Handle re-connected modules
@@ -247,26 +208,33 @@ class ExeTask:
                 )
 
         # Handle newly-connected modules
-        if not next(
-            (module for module in self._modules if module.uuid == module_uuid),
-            None
-        ):
-            if module_category != "network":
-                module_template = self.__init_module(module_type)
-                module_instance = module_template(
-                    module_id, module_uuid, self._send_q
-                )
-                self.__set_module_state(module_instance.id, Module.State.RUN,
-                                        Module.State.PNP_OFF)
-                module_instance.version = module_version_info
-                module_instance.is_up_to_date = \
-                    (module_version_info == latest_version)
-                self._modules.append(module_instance)
-                print(f"{type(module_instance).__name__} ({module_id}) "
-                      f"has been connected!")
+        if module_uuid not in (module.uuid for module in self._modules):
+            new_module = self.__add_new_module(
+                module_type, module_id, module_uuid, module_version_info
+            )
+            if new_module and module_version_info < latest_version:
+                print("Your MODI module(s) is not up-to-date.")
+                print("You can update your MODI modules by calling "
+                      "'update_module_firmware()'")
+                new_module.is_up_to_date = False
 
-                if self.__is_all_connected():
-                    self._init_event.set()
+            if self.__is_all_connected():
+                self._init_event.set()
+
+    def __add_new_module(self, module_type, module_id,
+                         module_uuid, module_version_info):
+        if module_type != 'Network':
+            module_template = get_module_from_name(module_type)
+            module_instance = module_template(
+                module_id, module_uuid, self._send_q
+            )
+            self.__set_module_state(module_instance.id, Module.State.RUN,
+                                    Module.State.PNP_OFF)
+            module_instance.version = module_version_info
+            self._modules.append(module_instance)
+            print(f"{type(module_instance).__name__} ({module_id}) "
+                  f"has been connected!")
+            return module_instance
 
     def __is_all_connected(self) -> bool:
         """ Determine whether all modules are connected
@@ -275,30 +243,6 @@ class ExeTask:
         :rtype: bool
         """
         return self._nb_modules == len(self._modules)
-
-    def __init_module(self, module_type: str) -> Module:
-        """ Find module type for module initialize
-
-        :param module_type: Type of the module in string
-        :type module_type: str
-        :return: Module corresponding to the type
-        :rtype: Module
-        """
-
-        module = {
-            "button": Button,
-            "dial": Dial,
-            "display": Display,
-            "env": Env,
-            "gyro": Gyro,
-            "ir": Ir,
-            "led": Led,
-            "mic": Mic,
-            "motor": Motor,
-            "speaker": Speaker,
-            "ultrasonic": Ultrasonic,
-        }.get(module_type)
-        return module
 
     def __update_property(self, message: Dict[str, str]) -> None:
         """ Update module property

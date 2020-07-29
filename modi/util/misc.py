@@ -1,5 +1,18 @@
 import time
 
+from modi.module.input_module.button import Button
+from modi.module.input_module.dial import Dial
+from modi.module.input_module.env import Env
+from modi.module.input_module.gyro import Gyro
+from modi.module.input_module.ir import Ir
+from modi.module.input_module.mic import Mic
+from modi.module.input_module.ultrasonic import Ultrasonic
+
+from modi.module.output_module.display import Display
+from modi.module.output_module.led import Led
+from modi.module.output_module.motor import Motor
+from modi.module.output_module.speaker import Speaker
+
 
 def get_type_from_uuid(uuid):
     if uuid is None:
@@ -24,6 +37,30 @@ def get_type_from_uuid(uuid):
         '4030': 'speaker',
     }.get(type_indicator)
     return 'Network' if module_type is None else module_type
+
+
+def get_module_from_name(module_type: str):
+    """ Find module type for module initialize
+
+    :param module_type: Type of the module in string
+    :type module_type: str
+    :return: Module corresponding to the type
+    :rtype: Module
+    """
+    module = {
+        "button": Button,
+        "dial": Dial,
+        "display": Display,
+        "env": Env,
+        "gyro": Gyro,
+        "ir": Ir,
+        "led": Led,
+        "mic": Mic,
+        "motor": Motor,
+        "speaker": Speaker,
+        "ultrasonic": Ultrasonic,
+    }.get(module_type)
+    return module
 
 
 class module_list(list):
