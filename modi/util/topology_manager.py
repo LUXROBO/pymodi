@@ -1,6 +1,5 @@
 from typing import Dict, List, Tuple
 from modi.util.misc import module_list
-from modi.task.conn_task import ConnTask
 
 
 class TopologyMap:
@@ -130,8 +129,7 @@ class TopologyMap:
         if not module_id:
             line += " " * padding
         else:
-            name = TopologyManager.get_type_from_uuid(
-                self._tp_data[module_id]['uuid'])
+            name = self._tp_data[module_id]['type']
             idx = module_list(self._modules,
                               name.lower()).find(module_id)
             if idx < 0:
@@ -173,8 +171,7 @@ class TopologyMap:
     @property
     def network_id(self):
         for mid in self._tp_data:
-            if TopologyManager.get_type_from_uuid(self._tp_data[mid]['uuid']) \
-                    == 'Network':
+            if self._tp_data[mid]['type'] == 'Network':
                 return mid
         return list(self._tp_data.keys())[0]
 
@@ -200,35 +197,21 @@ class TopologyManager:
         tp_map.construct_map()
         tp_map.update_module_data(self._modules)
 
-    def is_uuid_initialized(self):
-        count = 0
+    def is_type_complete(self):
         for module in self._tp_data:
-            if not self._tp_data[module]['uuid']:
-                count += 1
-        return count <= 1
+            if not self._tp_data[module]['type']:
+                return False
+        return True
 
-    def __request_topology(self, module_id, exe_thrd):
-        exe_thrd.request_topology(module_id=module_id)
-        if module_id not in [module.id for module in self._modules] \
-                and ConnTask.is_network_module_connected():
-            exe_thrd.request_topology(0x2A, module_id)
-
-    def is_topology_complete(self, exe_thrd):
+    def is_topology_complete(self):
         if len(self._tp_data) < 1:
-            exe_thrd.request_topology()
-            exe_thrd.request_topology(0x2A)
             return False
         try:
             self.__update_module_position()
-        except KeyError as e:
-            self.__request_topology(int(str(e)), exe_thrd)
+        except KeyError:
             return False
-        if ConnTask.is_network_module_connected():
-            return len(self._modules) == len(self._tp_data) - 1 \
-                and self.is_uuid_initialized()
-        else:
-            return len(self._modules) == len(self._tp_data) \
-                and self.is_uuid_initialized()
+        return len(self._modules) == len(self._tp_data) \
+            and self.is_type_complete()
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """ Print the topology map
@@ -240,35 +223,3 @@ class TopologyManager:
         tp_map = TopologyMap(self._tp_data, self._nb_modules, self._modules)
         tp_map.construct_map()
         tp_map.print_map(print_id)
-
-    @staticmethod
-    def get_type_from_uuid(uuid: int) -> str:
-        """Returns type based on uuid
-
-        :param uuid: UUID of the required type
-        :type uuid: int
-        :return: Corresponding type
-        :rtype: str
-        """
-        if uuid is None:
-            return 'Network'
-
-        hexadecimal = hex(uuid).lstrip("0x")
-        type_indicator = str(hexadecimal)[:4]
-        module_type = {
-            # Input modules
-            '2000': 'Env',
-            '2010': 'Gyro',
-            '2020': 'Mic',
-            '2030': 'Button',
-            '2040': 'Dial',
-            '2050': 'Ultrasonic',
-            '2060': 'Ir',
-
-            # Output modules
-            '4000': 'Display',
-            '4010': 'Motor',
-            '4020': 'Led',
-            '4030': 'Speaker',
-        }.get(type_indicator)
-        return module_type

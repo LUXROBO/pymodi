@@ -16,11 +16,7 @@ class TestExeTask(unittest.TestCase):
         self.mock_kwargs = {"recv_q": self.recv_q,
                             "send_q": self.send_q,
                             "topology_data": self.topology_data,
-                            "modules": [],
-                            "module_ids": None,
-                            "init_event": None,
-                            "nb_modules": 1,
-                            "firmware_updater": None}
+                            "modules": []}
         self.exe_task = ExeTask(**self.mock_kwargs)
 
     def tearDown(self):

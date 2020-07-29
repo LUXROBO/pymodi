@@ -49,7 +49,7 @@ class SerTask(ConnTask):
         :return: None
         """
 
-        modi_ports = self._list_modi_ports()
+        modi_ports = ConnTask.list_modi_ports()
         if not modi_ports:
             raise SerialException("No MODI network module is connected.")
 

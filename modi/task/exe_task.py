@@ -1,30 +1,17 @@
 import time
 import json
-import struct
-
 import urllib.request as ur
 
 from urllib.error import URLError
-from base64 import b64encode, b64decode
 from enum import IntEnum
-from typing import Callable, Dict
+from typing import Callable, Dict, Union
 from queue import Empty
-
-from modi.module.input_module.button import Button
-from modi.module.input_module.dial import Dial
-from modi.module.input_module.env import Env
-from modi.module.input_module.gyro import Gyro
-from modi.module.input_module.ir import Ir
-from modi.module.input_module.mic import Mic
-from modi.module.input_module.ultrasonic import Ultrasonic
-
-from modi.module.output_module.display import Display
-from modi.module.output_module.led import Led
-from modi.module.output_module.motor import Motor
-from modi.module.output_module.speaker import Speaker
-
-from modi.module.module import Module
-from modi.util.msgutil import unpack_data as up
+from modi.util.queues import CommunicationQueue
+from modi.module.module import Module, BROADCAST_ID
+from modi.util.msgutil \
+    import unpack_data, decode_data, parse_message
+from modi.util.misc import get_module_from_name, get_type_from_uuid
+from modi.task.conn_task import ConnTask
 
 
 class ExeTask:
@@ -35,32 +22,18 @@ class ExeTask:
     :param dict() module_ids: dict() of module_id : ['timestamp', 'uuid'].
     :param list() modules: list() of module instance.
     """
-
-    # variables shared across all class instances
-    __module_categories = ["network", "input", "output"]
-    __module_types = {
-        "network": ["usb", "usb/wifi/ble"],
-        "input": ["env", "gyro", "mic", "button", "dial", "ultrasonic", "ir"],
-        "output": ["display", "motor", "led", "speaker"],
-    }
-
-    def __init__(self, modules, module_ids, topology_data,
-                 recv_q, send_q, init_event, nb_modules, firmware_updater):
-
+    def __init__(self, modules, topology_data,
+                 recv_q: CommunicationQueue, send_q: CommunicationQueue):
         self._modules = modules
-        self._module_ids = module_ids
         self._topology_data = topology_data
         self._recv_q = recv_q
         self._send_q = send_q
-        self._init_event = init_event
-        self._nb_modules = nb_modules
-
-        self.firmware_updater = firmware_updater
-
-        # Check if a user has been notified when firmware is outdated
-        self.firmware_update_message_flag = False
-        self.__user_code_checked = False
-        self.__init_modules()
+        # Reboot all modules
+        self.__set_module_state(
+            BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
+        )
+        if ConnTask.is_network_module_connected():
+            self.__request_network_uuid()
         print('Start initializing connected MODI modules')
 
     def run(self, delay: float):
@@ -69,13 +42,11 @@ class ExeTask:
         :param delay: time value to wait in seconds
         :type delay: float
         """
-        time.sleep(delay)
-
         try:
             raw_message = self._recv_q.get_nowait()
             message = json.loads(raw_message)
         except Empty:
-            pass
+            time.sleep(delay)
         except json.decoder.JSONDecodeError:
             print('current json message:', raw_message)
         else:
@@ -90,86 +61,42 @@ class ExeTask:
         :return: a function the corresponds to the command code
         :rtype: Callable[[Dict[str, int]], None]
         """
-
         return {
             0x00: self.__update_health,
-            0x0A: self.__update_warning,
-            0x0C: self.__update_firmware_state,
             0x05: self.__update_modules,
             0x07: self.__update_topology,
             0x1F: self.__update_property,
         }.get(command, lambda _: None)
 
-    def __update_firmware_state(self, message):
-        byte_data = message["b"]
-        message_decoded = bytearray(b64decode(byte_data))
-
-        stream_state = message_decoded[4]
-
-        # TODO: Remove this if and elif branches
-        if stream_state == self.firmware_updater.State.CRC_ERROR.value:
-            self.firmware_updater.update_response(response=True,
-                                                  is_error_response=True)
-        elif stream_state == self.firmware_updater.State.CRC_COMPLETE.value:
-            self.firmware_updater.update_response(response=True)
-        elif stream_state == self.firmware_updater.State.ERASE_ERROR.value:
-            self.firmware_updater.update_response(response=True,
-                                                  is_error_response=True)
-        elif stream_state == self.firmware_updater.State.ERASE_COMPLETE.value:
-            self.firmware_updater.update_response(response=True)
-
-    def __update_topology(self, message: Dict[str, int]) -> None:
+    def __update_topology(self, message: Dict[str, Union[int, str]]) -> None:
         """Update the topology of the connected modules
 
         :param message: Dictionary format message of the module
         :return: None
         """
-        # print('topology_msg:', message)
-
         # Setup prerequisites
         src_id = message["s"]
         byte_data = message["b"]
-        broadcast_id = 2 ** 16 - 1
         topology_by_id = {}
+        topology_ids = unpack_data(byte_data, (2, 2, 2, 2))
 
-        message_decoded = bytearray(b64decode(byte_data))
-        # print('topology_msg_dec:', message_decoded)
+        module = self.__get_module_by_id(src_id)
+        if module:
+            topology_by_id['type'] = get_type_from_uuid(module.uuid)
+        else:
+            topology_by_id['type'] = None
 
-        # UUID
-        src_uuid = self.__get_uuid_by_id(src_id)
-        topology_by_id['uuid'] = src_uuid
-
-        # RIGHT ID
-        right_id = message_decoded[1] << 8 | message_decoded[0]
-        topology_by_id['r'] = right_id if right_id != broadcast_id else None
-
-        # TOP ID
-        top_id = message_decoded[3] << 8 | message_decoded[2]
-        topology_by_id['t'] = top_id if top_id != broadcast_id else None
-
-        # LEFT ID
-        left_id = message_decoded[5] << 8 | message_decoded[4]
-        topology_by_id['l'] = left_id if left_id != broadcast_id else None
-
-        # BOTTOM ID
-        bottom_id = message_decoded[7] << 8 | message_decoded[6]
-        topology_by_id['b'] = bottom_id if bottom_id != broadcast_id else None
+        for idx, direction in enumerate(('r', 't', 'l', 'b')):
+            topology_by_id[direction] = topology_ids[idx] \
+                if topology_ids[idx] != 0xFFFF else None
 
         # Update topology data for the module
         self._topology_data[src_id] = topology_by_id
 
-    def __get_uuid_by_id(self, id_: int) -> int:
-        """Find id of a module which has corresponding uuid
-
-        :param id_: ID of the module
-        :type id_: int
-        :return: UUID
-        :rtype: int
-        """
+    def __get_module_by_id(self, module_id):
         for module in self._modules:
-            if module.id == id_:
-                return module.uuid
-        return None
+            if module.id == module_id:
+                return module
 
     def __update_health(self, message: Dict[str, str]) -> None:
         """ Update information by health message
@@ -178,112 +105,28 @@ class ExeTask:
         :type message: Dictionary
         :return: None
         """
-        # Record current time and uuid, timestamp, battery information
+        # Record battery information and user code state
         module_id = message["s"]
-        curr_time_ms = int(time.time() * 1000)
-        message_decoded = bytearray(b64decode(message["b"]))
-
-        self._module_ids[module_id] = self._module_ids.get(module_id, dict())
-        self._module_ids[module_id]["timestamp"] = curr_time_ms
-        self._module_ids[module_id]["uuid"] = self._module_ids[module_id].get(
-            "uuid", str()
-        )
-        self._module_ids[module_id]["battery"] = int(message_decoded[3])
-
-        # Check if user code is in the module
-        if not self.__user_code_checked:
-            user_code_state = up(message['b'])[4]
-
-            if user_code_state % 2 == 1:
-                print("Your MODI module(s) has user code in it.")
+        _, _, _, battery_state, user_code_state \
+            = unpack_data(message['b'], (1, 1, 1, 1, 1))
+        curr_time = time.time()
+        # Checking starts only when module is registered
+        if module_id in (module.id for module in self._modules):
+            module = self.__get_module_by_id(module_id)
+            module.last_updated = curr_time
+            # Warn if user code is in the module
+            if not module.is_user_code and user_code_state % 2 == 1:
+                print(f"Your MODI module {module_id} has user code in it.")
                 print("You can reset your MODI modules by calling "
                       "'update_module_firmware()'")
-                self.__user_code_checked = True
+                module.is_user_code = True
+        # Disconnect module with no health message for more than 2 second
+        for module in self._modules:
+            if curr_time - module.last_updated > 2:
+                module.is_connected = False
 
-        # Request uuid from network modules and other modules
-        if module_id and not self._module_ids[module_id]["uuid"]:
-            message_to_write = self.__request_uuid(
-                module_id, is_network_module=False)
-            self._send_q.put(message_to_write)
-            message_to_write = self.__request_uuid(
-                module_id, is_network_module=True)
-            self._send_q.put(message_to_write)
-
-        # Disconnect modules with no health message for more than 2 seconds
-        for module_id, module_info in list(self._module_ids.items()):
-            if curr_time_ms - module_info["timestamp"] > 1000:
-                for module in self._modules:
-                    if module.uuid == module_info["uuid"]:
-                        module.set_connection_state(connection_state=False)
-
-    def __update_warning(self, message: Dict[str, int]) -> None:
-        """Update the warning message
-
-        :param message: Warning message in Dictionary format
-        :return: None
-        """
-        # print('Warning message:', message)
-
-        warning_data = bytearray(b64decode(message["b"]))
-        warning_type = warning_data[6]
-
-        # If warning shows current module works fine, return immediately
-        if not warning_type:
-            return
-
-        module_uuid = warning_data[:6]
-        module_uuid_res = 0
-        for i, v in enumerate(module_uuid):
-            module_uuid_res |= v << 8 * i
-
-        module_id = message["s"]
-        module_type = self.__get_type_from_uuid(module_uuid_res)
-
-        # No need to update Network module's STM firmware
-        if module_type == 'Network':
-            return
-
-        if warning_type == 1:
-            self.firmware_updater.check_to_update_firmware(module_id)
-        elif warning_type == 2:
-            # Note that more than one warning type 2 message can be received
-            if self.firmware_updater.update_in_progress:
-                self.firmware_updater.add_to_waitlist(module_id, module_type)
-            else:
-                self.firmware_updater.update_module(module_id, module_type)
-        else:
-            # TODO: Handle warning_type of 7 and 10
-            # print("Unsupported warning type:", warning_type)
-            pass
-
-    def __update_modules(self, message: Dict[str, str]) -> None:
-        """ Update module information
-
-        :param message: Dictionary format module info
-        :type message: Dictionary
-        :return: None
-        """
-
-        # Set time variable for timestamp
-        curr_time_ms = int(time.time() * 1000)
-
-        # Record information by module id
-        module_id = message["s"]
-        self._module_ids[module_id] = self._module_ids.get(module_id, dict())
-        self._module_ids[module_id]["timestamp"] = curr_time_ms
-        self._module_ids[module_id]["uuid"] = self._module_ids[module_id].get(
-            "uuid", str()
-        )
-
-        # Extract uuid from message "b"
-        message_decoded = bytearray(b64decode(message["b"]))
-        module_uuid_bytes = message_decoded[:4]
-        module_info_bytes = message_decoded[-4:]
-
-        module_info = (module_info_bytes[1] << 8) + module_info_bytes[0]
-        module_version_info = module_info_bytes[3] << 8 | module_info_bytes[2]
-
-        # Retrieve most recent skeleton version from the server
+    @staticmethod
+    def __get_latest_version():
         version_path = (
             "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
         )
@@ -301,104 +144,62 @@ class ExeTask:
                 | version_digits[2]
             )
         except URLError:
-            latest_version = module_version_info
+            latest_version = None
+        return latest_version
 
-        module_category_idx = module_info >> 13
-        module_type_idx = (module_info >> 4) & 0x1FF
+    def __update_modules(self, message: Dict[str, Union[str, int]]) -> None:
+        """ Update module information
+        :param message: Dictionary format module info
+        :type message: Dictionary
+        :return: None
+        """
+        module_id = message['s']
+        module_uuid, module_version_info = \
+            unpack_data(message['b'], (6, 2))
 
-        module_category = self.__module_categories[module_category_idx]
-        module_type = self.__module_types[module_category][module_type_idx]
-        module_uuid = self.__fit_module_uuid(
-            module_info,
-            (
-                (module_uuid_bytes[3] << 24)
-                + (module_uuid_bytes[2] << 16)
-                + (module_uuid_bytes[1] << 8)
-                + module_uuid_bytes[0]
-            ),
-        )
+        # Handle new modules
+        if module_id not in (module.id for module in self._modules):
+            module_type = get_type_from_uuid(module_uuid)
+            self.request_topology(module_id)
+            new_module = self.__add_new_module(
+                module_type, module_id, module_uuid, module_version_info
+            )
+            new_module.module_type = module_type
+            if module_type != 'Network':
+                new_module.is_up_to_date = self.__check_module_version(
+                    module_version_info
+                )
+        elif not self.__get_module_by_id(module_id).is_connected:
+            # Handle Reconnected modules
+            self.__set_module_state(
+                module_id, Module.State.RUN, Module.State.PNP_OFF
+            )
+            self.__get_module_by_id(module_id).is_connected = True
 
-        module_uuid = up(message['b'], (6, 2))[0]
-
-        if module_category != 'network' and \
-                not self.firmware_update_message_flag and \
-                module_version_info < latest_version:
-
+    def __check_module_version(self, current_version):
+        latest_version = self.__get_latest_version()
+        if latest_version and current_version < latest_version:
             print("Your MODI module(s) is not up-to-date.")
             print("You can update your MODI modules by calling "
                   "'update_module_firmware()'")
-            self.firmware_update_message_flag = True
+            return False
+        return True
 
-        self._module_ids[module_id]["uuid"] = module_uuid
+    def __add_new_module(self, module_type, module_id,
+                         module_uuid, module_version_info):
+        module_template = get_module_from_name(module_type)
+        module_instance = module_template(
+            module_id, module_uuid, self._send_q
+        )
+        self.__set_module_state(module_instance.id, Module.State.RUN,
+                                Module.State.PNP_OFF)
+        module_instance.version = module_version_info
+        self._modules.append(module_instance)
+        print(f"{type(module_instance).__name__} ({module_id}) "
+              f"has been connected!")
+        return module_instance
 
-        # Handle re-connected modules
-        for module in self._modules:
-            if module.uuid == module_uuid and not module.is_connected:
-                module.set_connection_state(connection_state=True)
-                # When reconnected, turn-off module pnp state
-                pnp_off_message = self.__set_module_state(
-                    0xFFF, Module.State.RUN, Module.State.PNP_OFF
-                )
-                self._send_q.put(pnp_off_message)
-
-        # Handle newly-connected modules
-        if not next(
-            (module for module in self._modules if module.uuid == module_uuid),
-            None
-        ):
-            if module_category != "network":
-                module_template = self.__init_module(module_type)
-                module_instance = module_template(
-                    module_id, module_uuid, self._send_q
-                )
-                self.__set_pnp(
-                    module_id=module_instance.id,
-                    module_pnp_state=Module.State.PNP_OFF
-                )
-                module_instance.version = module_version_info
-                module_instance.is_up_to_date = \
-                    (module_version_info == latest_version)
-                self._modules.append(module_instance)
-                print(f"{type(module_instance).__name__} ({module_id}) "
-                      f"has been connected!")
-
-                if self.__is_all_connected():
-                    self._init_event.set()
-
-    def __is_all_connected(self) -> bool:
-        """ Determine whether all modules are connected
-
-        :return: true is all modules are connected
-        :rtype: bool
-        """
-
-        return self._nb_modules == len(self._modules)
-
-    def __init_module(self, module_type: str) -> Module:
-        """ Find module type for module initialize
-
-        :param module_type: Type of the module in string
-        :type module_type: str
-        :return: Module corresponding to the type
-        :rtype: Module
-        """
-
-        module = {
-            "button": Button,
-            "dial": Dial,
-            "display": Display,
-            "env": Env,
-            "gyro": Gyro,
-            "ir": Ir,
-            "led": Led,
-            "mic": Mic,
-            "motor": Motor,
-            "speaker": Speaker,
-            "ultrasonic": Ultrasonic,
-        }.get(module_type)
-        return module
-
-    def __update_property(self, message: Dict[str, int]) -> None:
+    def __update_property(self, message: Dict[str, str]) -> None:
         """ Update module property
 
         :param message: Dictionary format message
@@ -409,59 +210,8 @@ class ExeTask:
         property_number = message["d"]
         if property_number == 0 or property_number == 1:
             return
-
-        # Decode message of module id and module property for update property
-        for module in self._modules:
-            if module.id == message["s"]:
-                message_decoded = bytearray(b64decode(message["b"]))
-                property_type = module.PropertyType(property_number)
-                module.update_property(
-                    property_type,
-                    round(struct.unpack("f", bytes(
-                        message_decoded[:4]))[0], 2),
-                )
-
-    def __set_pnp(self, module_id: int, module_pnp_state: IntEnum) -> None:
-        """ Generate module pnp on/off command
-
-        :param module_id: ID of the target module
-        :type module_id: int
-        :param module_pnp_state: Pnp state value
-        :type module_pnp_state: IntEnum
-        :return: None
-        """
-
-        # If no module_id is specified, it will broadcast incoming pnp state
-        if module_id is None:
-            for curr_module_id in self._module_ids:
-                pnp_message = self.__set_module_state(
-                    curr_module_id, Module.State.RUN, module_pnp_state
-                )
-                self._send_q.put(pnp_message)
-
-        # Otherwise, it sets pnp state of the given module
-        else:
-            pnp_message = self.__set_module_state(
-                module_id, Module.State.RUN, module_pnp_state
-            )
-            self._send_q.put(pnp_message)
-
-    def __fit_module_uuid(self, module_info: int, module_uuid: int) -> int:
-        """ Generate uuid using bitwise operation
-
-        :param module_info: Module info
-        :type module_info: int
-        :param module_uuid: Module uuid
-        :type module_uuid: int
-        :return: Fitted uuid
-        :rtype: int
-        """
-
-        sizeof_module_uuid = 0
-        while (module_uuid >> sizeof_module_uuid) > 0:
-            sizeof_module_uuid += 1
-        sizeof_module_uuid += sizeof_module_uuid % 4
-        return (module_info << sizeof_module_uuid) | module_uuid
+        module = self.__get_module_by_id(message['s'])
+        module.update_property(property_number, decode_data(message['b']))
 
     def __set_module_state(self, destination_id: int, module_state: IntEnum,
                            pnp_state: IntEnum) -> str:
@@ -476,154 +226,23 @@ class ExeTask:
         :return: json serialized message
         :rtype: str
         """
+        self._send_q.put(parse_message(0x09, 0, destination_id,
+                                       (module_state, pnp_state)))
 
-        message = dict()
-
-        message["c"] = 0x09
-        message["s"] = 0
-        message["d"] = destination_id
-
-        state_bytes = bytearray(2)
-        state_bytes[0] = module_state
-        state_bytes[1] = pnp_state
-
-        message["b"] = b64encode(bytes(state_bytes)).decode("utf-8")
-        message["l"] = 2
-
-        return json.dumps(message, separators=(",", ":"))
-
-    def __init_modules(self) -> None:
-        """ Initialize module on first run
-
-        :return: None
-        """
-
-        BROADCAST_ID = 0xFFF
-
-        # Reboot module
-        reboot_message = self.__set_module_state(
-            BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
+    def __request_network_uuid(self):
+        self._send_q.put(
+            parse_message(0x28, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
         )
-        self._send_q.put(reboot_message)
-        # self.__delay()
 
-        # Command module pnp off
-        pnp_off_message = self.__set_module_state(
-            BROADCAST_ID, Module.State.RUN, Module.State.PNP_OFF
-        )
-        self._send_q.put(pnp_off_message)
-        # self.__delay()
-
-        # Command module uuid
-        request_uuid_message = self.__request_uuid(BROADCAST_ID)
-        self._send_q.put(request_uuid_message)
-        # self.__delay()
-
-        # Request topology data
-        self.request_topology()
-        # self.__delay()
-
-    def __delay(self) -> None:
-        """ Wait for delay
-
-        :return: None
-        """
-
-        time.sleep(0.5)
-
-    def __request_uuid(self, source_id: int,
-                       is_network_module: bool = False) -> str:
-        """ Generate broadcasting message for request uuid
-
-        :param source_id: Id of the source
-        :type source_id: int
-        :param is_network_module: true if network module
-        :type is_network_module: bool
-        :return: json serialized message
-        :rtype: str
-        """
-
-        BROADCAST_ID = 0xFFF
-
-        message = dict()
-        message["c"] = 0x28 if is_network_module else 0x08
-        message["s"] = source_id
-        message["d"] = BROADCAST_ID
-
-        id_bytes = bytearray(8)
-        id_bytes[0] = 0xFF
-        id_bytes[1] = 0x0F
-
-        message["b"] = b64encode(bytes(id_bytes)).decode("utf-8")
-        message["l"] = 8
-
-        return json.dumps(message, separators=(",", ":"))
-
-    def request_topology(self, cmd: int = 0x07,
-                         module_id: int = 0xFFF) -> None:
+    def request_topology(self, module_id: int = BROADCAST_ID) -> None:
         """Request module topology
 
         :return: json serialized topology request message
         :rtype: str
         """
-        message = dict()
-        message["c"] = cmd
-        message["s"] = 0
-        message["d"] = module_id
-
-        direction_data = bytearray(8)
-        message["b"] = b64encode(bytes(direction_data)).decode("utf-8")
-        message["l"] = 8
-
-        self._send_q.put(json.dumps(message, separators=(",", ":")))
-
-    def update_firmware(self) -> None:
-        """ Remove firmware of MODI modules
-
-        :return: None
-        """
-
-        BROADCAST_ID = 0xFFF
-        firmware_update_message = self.__set_module_state(
-            BROADCAST_ID, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
+        self._send_q.put(
+            parse_message(0x07, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0))
         )
-        self._send_q.put(firmware_update_message)
-        self.__delay()
-
-    def update_firmware_ready(self, module_id: int) -> None:
-        """ Check if modules with no firmware are ready to update its firmware
-
-        :param module_id: Id of the target module
-        :type module_id: int
-        :return: None
-        """
-
-        firmware_update_ready_message = self.__set_module_state(
-            module_id, Module.State.UPDATE_FIRMWARE_READY, Module.State.PNP_OFF
+        self._send_q.put(
+            parse_message(0x2A, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0))
         )
-        self._send_q.put(firmware_update_ready_message)
-        self.__delay()
-
-    def __get_type_from_uuid(self, uuid):
-        if uuid is None:
-            return 'Network'
-
-        hexadecimal = hex(uuid).lstrip("0x")
-        type_indicator = str(hexadecimal)[:4]
-        module_type = {
-            # Input modules
-            '2000': 'env',
-            '2010': 'gyro',
-            '2020': 'mic',
-            '2030': 'button',
-            '2040': 'dial',
-            '2050': 'ultrasonic',
-            '2060': 'ir',
-
-            # Output modules
-            '4000': 'display',
-            '4010': 'motor',
-            '4020': 'led',
-            '4030': 'speaker',
-        }.get(type_indicator)
-        return 'Network' if module_type is None else module_type
