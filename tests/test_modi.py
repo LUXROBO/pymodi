@@ -49,7 +49,7 @@ class TestModi(unittest.TestCase):
             Speaker(*mock_input_values),
         ]
 
-        self.modi = MODI(nb_modules=len(mock_modules), test=True)
+        self.modi = MODI(test=True)
 
         self.modi._ser_proc = mock.Mock()
         self.modi._exe_thrd = mock.Mock()
@@ -58,11 +58,6 @@ class TestModi(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
         del self.modi
-
-    def test_init(self):
-        """Test correct initialization of modi instance."""
-        # self.assertListEqual(self.modi._modules, list())
-        self.assertDictEqual(self.modi._module_ids, dict())
 
     def test_get_modules(self):
         """Test modules getter method."""

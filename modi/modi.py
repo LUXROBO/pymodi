@@ -39,7 +39,7 @@ class MODI:
 
         self._conn_proc = None
         self._exe_thrd = None
-
+        self.__lazy = False
         # If in test run, do not create process and thread
         if test:
             return
