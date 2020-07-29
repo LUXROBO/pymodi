@@ -214,15 +214,12 @@ class TopologyManager:
                 and ConnTask.is_network_module_connected():
             exe_thrd.request_topology(0x2A, module_id)
 
-    def is_topology_complete(self, exe_thrd):
+    def is_topology_complete(self):
         if len(self._tp_data) < 1:
-            exe_thrd.request_topology()
-            exe_thrd.request_topology(0x2A)
             return False
         try:
             self.__update_module_position()
-        except KeyError as e:
-            self.__request_topology(int(str(e)), exe_thrd)
+        except KeyError:
             return False
         if ConnTask.is_network_module_connected():
             return len(self._modules) == len(self._tp_data) - 1 \

@@ -6,6 +6,8 @@ import time
 from base64 import b64encode
 from enum import IntEnum
 
+BROADCAST_ID = 0xFFF
+
 
 class Module:
     """
@@ -13,7 +15,6 @@ class Module:
     :param int uuid: The uuid of the module.
     :param msg_send_q: multiprocessing.queue of the serial writing
     """
-
     class Property:
         def __init__(self):
             self.value = 0
@@ -39,11 +40,13 @@ class Module:
         self._type = str()
         self._properties = dict()
 
-        self._is_connected = True
-
+        self.is_connected = True
+        self.last_updated = time.time()
+        self.battery = 100
         self.position = (0, 0)
         self.__version = None
         self.is_up_to_date = True
+        self.is_user_code = False
 
     def __gt__(self, other):
         if self.distance == other.distance:
@@ -81,13 +84,6 @@ class Module:
     @property
     def type(self):
         return self._type
-
-    @property
-    def is_connected(self) -> bool:
-        return self._is_connected
-
-    def set_connection_state(self, connection_state: bool) -> None:
-        self._is_connected = connection_state
 
     def _get_property(self, property_type: IntEnum) -> float:
         """ Get module property value and request

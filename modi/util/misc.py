@@ -13,6 +13,8 @@ from modi.module.output_module.led import Led
 from modi.module.output_module.motor import Motor
 from modi.module.output_module.speaker import Speaker
 
+from modi.module.setup_module.network import Network
+
 
 def get_type_from_uuid(uuid):
     if uuid is None:
@@ -59,6 +61,7 @@ def get_module_from_name(module_type: str):
         "motor": Motor,
         "speaker": Speaker,
         "ultrasonic": Ultrasonic,
+        "Network": Network,
     }.get(module_type)
     return module
 

@@ -105,7 +105,7 @@ class MODI:
             print("MODI modules are initialized!")
             check_complete(self)
 
-        while not self._topology_manager.is_topology_complete(self._exe_thrd):
+        while not self._topology_manager.is_topology_complete():
             time.sleep(0.1)
 
     def watch_child_process(self) -> None:
