@@ -37,7 +37,7 @@ class Module:
         self._uuid = uuid
         self._msg_send_q = msg_send_q
 
-        self._type = str()
+        self.module_type = str()
         self._properties = dict()
 
         self.is_connected = True
@@ -80,10 +80,6 @@ class Module:
     @property
     def uuid(self) -> int:
         return self._uuid
-
-    @property
-    def type(self):
-        return self._type
 
     def _get_property(self, property_type: IntEnum) -> float:
         """ Get module property value and request

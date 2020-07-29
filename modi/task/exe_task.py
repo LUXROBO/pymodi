@@ -4,13 +4,14 @@ import urllib.request as ur
 
 from urllib.error import URLError
 from enum import IntEnum
-from typing import Callable, Dict, Optional, Union
+from typing import Callable, Dict, Union
 from queue import Empty
 from modi.util.queues import CommunicationQueue
 from modi.module.module import Module, BROADCAST_ID
 from modi.util.msgutil \
     import unpack_data, decode_data, parse_message
 from modi.util.misc import get_module_from_name, get_type_from_uuid
+from modi.task.conn_task import ConnTask
 
 
 class ExeTask:
@@ -33,6 +34,8 @@ class ExeTask:
         self.__set_module_state(
             BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
         )
+        if ConnTask.is_network_module_connected():
+            self.__request_network_uuid()
         print('Start initializing connected MODI modules')
 
     def run(self, delay: float):
@@ -67,7 +70,7 @@ class ExeTask:
             0x1F: self.__update_property,
         }.get(command, lambda _: None)
 
-    def __update_topology(self, message: Dict[str, int]) -> None:
+    def __update_topology(self, message: Dict[str, Union[int, str]]) -> None:
         """Update the topology of the connected modules
 
         :param message: Dictionary format message of the module
@@ -76,16 +79,18 @@ class ExeTask:
         # Setup prerequisites
         src_id = message["s"]
         byte_data = message["b"]
-        broadcast_id = 0xFFFF
         topology_by_id = {}
         topology_ids = unpack_data(byte_data, (2, 2, 2, 2))
 
-        # UUID
-        src_uuid = self.__get_uuid_by_id(src_id)
-        topology_by_id['uuid'] = src_uuid
+        module = self.__get_module_by_id(src_id)
+        if module:
+            topology_by_id['type'] = get_type_from_uuid(module.uuid)
+        else:
+            topology_by_id['type'] = None
+
         for idx, direction in enumerate(('r', 't', 'l', 'b')):
             topology_by_id[direction] = topology_ids[idx] \
-                if topology_ids[idx] != broadcast_id else None
+                if topology_ids[idx] != 0xFFFF else None
 
         # Update topology data for the module
         self._topology_data[src_id] = topology_by_id
@@ -94,19 +99,6 @@ class ExeTask:
         for module in self._modules:
             if module.id == module_id:
                 return module
-
-    def __get_uuid_by_id(self, id_: int) -> Optional[int]:
-        """Find id of a module which has corresponding uuid
-
-        :param id_: ID of the module
-        :type id_: int
-        :return: UUID
-        :rtype: int
-        """
-        for module in self._modules:
-            if module.id == id_:
-                return module.uuid
-        return None
 
     def __update_health(self, message: Dict[str, str]) -> None:
         """ Update information by health message
@@ -174,6 +166,7 @@ class ExeTask:
             new_module = self.__add_new_module(
                 module_type, module_id, module_uuid, module_version_info
             )
+            new_module.module_type = module_type
             if module_type != 'Network':
                 new_module.is_up_to_date = self.__check_module_version(
                     module_version_info
@@ -183,7 +176,6 @@ class ExeTask:
             self.__set_module_state(
                 module_id, Module.State.RUN, Module.State.PNP_OFF
             )
-            print("Reconnected")
             self.__get_module_by_id(module_id).is_connected = True
 
     def __check_module_version(self, current_version):
@@ -246,11 +238,10 @@ class ExeTask:
         self._send_q.put(parse_message(0x09, 0, destination_id,
                                        (module_state, pnp_state)))
 
-    def __delay(self) -> None:
-        """ Wait for delay
-        :return: None
-        """
-        time.sleep(0.5)
+    def __request_network_uuid(self):
+        self._send_q.put(
+            parse_message(0x28, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
+        )
 
     def request_topology(self, module_id: int = BROADCAST_ID) -> None:
         """Request module topology

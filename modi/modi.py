@@ -143,7 +143,8 @@ class MODI:
         >>> bundle = modi.MODI()
         >>> modules = bundle.modules
         """
-        return tuple(self._modules)
+        return tuple([module for module in self._modules
+                      if module.module_type != 'Network'])
 
     @property
     def buttons(self) -> module_list:

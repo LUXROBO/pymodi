@@ -97,7 +97,7 @@ class module_list(list):
 
     def sublist(self):
         modules = [module for module in self.__src
-                   if module.type == self.__module_type]
+                   if module.module_type == self.__module_type]
         modules.sort()
         return modules
 

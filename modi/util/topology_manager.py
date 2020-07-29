@@ -1,7 +1,5 @@
 from typing import Dict, List, Tuple
 from modi.util.misc import module_list
-from modi.task.conn_task import ConnTask
-from modi.util.misc import get_type_from_uuid
 
 
 class TopologyMap:
@@ -131,8 +129,7 @@ class TopologyMap:
         if not module_id:
             line += " " * padding
         else:
-            name = get_type_from_uuid(
-                self._tp_data[module_id]['uuid'])
+            name = self._tp_data[module_id]['type']
             idx = module_list(self._modules,
                               name.lower()).find(module_id)
             if idx < 0:
@@ -174,8 +171,7 @@ class TopologyMap:
     @property
     def network_id(self):
         for mid in self._tp_data:
-            if get_type_from_uuid(self._tp_data[mid]['uuid']) \
-                    == 'Network':
+            if self._tp_data[mid]['type'] == 'Network':
                 return mid
         return list(self._tp_data.keys())[0]
 
@@ -201,18 +197,11 @@ class TopologyManager:
         tp_map.construct_map()
         tp_map.update_module_data(self._modules)
 
-    def is_uuid_initialized(self):
-        count = 0
+    def is_type_complete(self):
         for module in self._tp_data:
-            if not self._tp_data[module]['uuid']:
-                count += 1
-        return count <= 1
-
-    def __request_topology(self, module_id, exe_thrd):
-        exe_thrd.request_topology(module_id=module_id)
-        if module_id not in [module.id for module in self._modules] \
-                and ConnTask.is_network_module_connected():
-            exe_thrd.request_topology(0x2A, module_id)
+            if not self._tp_data[module]['type']:
+                return False
+        return True
 
     def is_topology_complete(self):
         if len(self._tp_data) < 1:
@@ -221,12 +210,8 @@ class TopologyManager:
             self.__update_module_position()
         except KeyError:
             return False
-        if ConnTask.is_network_module_connected():
-            return len(self._modules) == len(self._tp_data) - 1 \
-                and self.is_uuid_initialized()
-        else:
-            return len(self._modules) == len(self._tp_data) \
-                and self.is_uuid_initialized()
+        return len(self._modules) == len(self._tp_data) \
+            and self.is_type_complete()
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """ Print the topology map
