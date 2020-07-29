@@ -11,20 +11,16 @@ class ExeThrd(th.Thread):
     :param list() modules: list() of module instance
     """
 
-    def __init__(self, modules, module_ids, topology_data,
-                 recv_q, send_q, init_event, nb_modules, init_flag):
+    def __init__(self, modules, module_ids, topology_data, recv_q, send_q):
         super().__init__()
         self.__exe_task = ExeTask(
             modules, module_ids, topology_data, recv_q, send_q,
-            init_event, nb_modules,
         )
-        self.__init_flag = init_flag
 
     def run(self) -> None:
         """ Run executor task
 
         :return: None
         """
-        self.__init_flag.set()
         while True:
             self.__exe_task.run(delay=0.001)

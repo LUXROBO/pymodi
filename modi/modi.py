@@ -6,7 +6,6 @@ import signal
 import traceback
 
 import threading as th
-import multiprocessing as mp
 
 from typing import Tuple
 
@@ -29,14 +28,12 @@ class MODI:
     # Keeps track of all the connection processes spawned
     __conn_procs = []
 
-    def __init__(self, nb_modules: int = None, conn_mode: str = "serial",
+    def __init__(self, conn_mode: str = "serial",
                  module_uuid: str = "", test: bool = False,
                  verbose: bool = False, port: str = None):
         self._modules = list()
         self._module_ids = dict()
         self._topology_data = dict()
-
-        self.__lazy = not nb_modules
 
         self._recv_q = CommunicationQueue()
         self._send_q = CommunicationQueue()
@@ -44,18 +41,12 @@ class MODI:
         self._conn_proc = None
         self._exe_thrd = None
 
-        # Init flag used to notify initialization of MODI modules
-        module_init_flag = th.Event()
-
         # If in test run, do not create process and thread
         if test:
             return
 
-        init_flag = mp.Event()
-
         self._conn_proc = ConnProc(
-            self._recv_q, self._send_q, conn_mode, module_uuid, verbose,
-            init_flag, port
+            self._recv_q, self._send_q, conn_mode, module_uuid, verbose, port
         )
         self._conn_proc.daemon = True
         try:
@@ -75,38 +66,23 @@ class MODI:
         self._child_watch.daemon = True
         self._child_watch.start()
 
-        if nb_modules:
-            init_flag.wait()
-
-        init_flag = th.Event()
-
         self._exe_thrd = ExeThrd(
             self._modules,
             self._module_ids,
             self._topology_data,
             self._recv_q,
             self._send_q,
-            module_init_flag,
-            nb_modules,
-            init_flag
         )
         self._exe_thrd.daemon = True
         self._exe_thrd.start()
-        if nb_modules:
-            init_flag.wait()
 
         self._topology_manager = TopologyManager(self._topology_data,
                                                  self._modules)
-        if nb_modules:
-            module_init_flag.wait()
-            if not module_init_flag.is_set():
-                raise Exception("Modules are not initialized properly!")
-                exit(1)
-            print("MODI modules are initialized!")
-            check_complete(self)
 
         while not self._topology_manager.is_topology_complete():
             time.sleep(0.1)
+        check_complete(self)
+        print("MODI modules are initialized!")
 
     def watch_child_process(self) -> None:
         while self._conn_proc.is_alive():

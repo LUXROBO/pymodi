@@ -23,13 +23,11 @@ class ExeTask:
     :param list() modules: list() of module instance.
     """
     def __init__(self, modules, module_ids, topology_data,
-                 recv_q: CommunicationQueue, send_q: CommunicationQueue,
-                 init_event, nb_modules):
+                 recv_q: CommunicationQueue, send_q: CommunicationQueue):
         self._modules = modules
         self._topology_data = topology_data
         self._recv_q = recv_q
         self._send_q = send_q
-        self._init_event = init_event
         # Reboot all modules
         self.__set_module_state(
             BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
