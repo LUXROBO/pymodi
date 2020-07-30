@@ -39,6 +39,9 @@ class Led(OutputModule):
             self.CommandType.SET_RGB,
             color,
         )
+        self.update_property(self.PropertyType.RED, color[0])
+        self.update_property(self.PropertyType.GREEN, color[1])
+        self.update_property(self.PropertyType.BLUE, color[2])
 
     def turn_on(self) -> None:
         """Turn on led at maximum brightness.
