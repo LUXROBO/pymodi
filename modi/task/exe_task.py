@@ -120,6 +120,11 @@ class ExeTask:
                 print("You can reset your MODI modules by calling "
                       "'update_module_firmware()'")
                 module.is_user_code = True
+            # Turn off pnp if pnp flag is on
+            if user_code_state < 2:
+                self.__set_module_state(
+                    module_id, Module.State.RUN, Module.State.PNP_OFF
+                )
         # Disconnect module with no health message for more than 2 second
         for module in self._modules:
             if curr_time - module.last_updated > 2:
@@ -171,9 +176,6 @@ class ExeTask:
                 )
         elif not self.__get_module_by_id(module_id).is_connected:
             # Handle Reconnected modules
-            self.__set_module_state(
-                module_id, Module.State.RUN, Module.State.PNP_OFF
-            )
             self.__get_module_by_id(module_id).is_connected = True
 
     def __check_module_version(self, current_version):
