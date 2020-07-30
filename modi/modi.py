@@ -7,8 +7,6 @@ import traceback
 
 import threading as th
 
-from typing import Tuple
-
 from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
 
@@ -39,7 +37,6 @@ class MODI:
 
         self._conn_proc = None
         self._exe_thrd = None
-        self.__lazy = False
         # If in test run, do not create process and thread
         if test:
             return
@@ -111,77 +108,75 @@ class MODI:
         self._topology_manager.print_topology_map(print_id)
 
     @property
-    def modules(self) -> Tuple:
+    def modules(self) -> module_list:
         """Tuple of connected modules except network module.
-        Example:
-        >>> bundle = modi.MODI()
-        >>> modules = bundle.modules
         """
-        return tuple([module for module in self._modules
-                      if module.module_type != 'Network'])
+        return module_list([module for module in self._modules
+                            if module.module_type != 'Network'])
 
     @property
     def buttons(self) -> module_list:
         """Tuple of connected :class:`~modi.module.button.Button` modules.
         """
-        return module_list(self._modules, 'button', self.__lazy)
+        return module_list(self._modules, 'button')
 
     @property
     def dials(self) -> module_list:
         """Tuple of connected :class:`~modi.module.dial.Dial` modules.
         """
-        return module_list(self._modules, "dial", self.__lazy)
+        return module_list(self._modules, "dial")
 
     @property
     def displays(self) -> module_list:
         """Tuple of connected :class:`~modi.module.display.Display` modules.
         """
-        return module_list(self._modules, "display", self.__lazy)
+        return module_list(self._modules, "display")
 
     @property
     def envs(self) -> module_list:
         """Tuple of connected :class:`~modi.module.env.Env` modules.
         """
-        return module_list(self._modules, "env", self.__lazy)
+        return module_list(self._modules, "env")
 
     @property
     def gyros(self) -> module_list:
         """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
         """
-        return module_list(self._modules, "gyro", self.__lazy)
+        return module_list(self._modules, "gyro")
 
     @property
     def irs(self) -> module_list:
         """Tuple of connected :class:`~modi.module.ir.Ir` modules.
         """
-        return module_list(self._modules, "ir", self.__lazy)
+        return module_list(self._modules, "ir")
 
     @property
     def leds(self) -> module_list:
         """Tuple of connected :class:`~modi.module.led.Led` modules.
         """
-        return module_list(self._modules, "led", self.__lazy)
+        return module_list(self._modules, "led")
 
     @property
     def mics(self) -> module_list:
         """Tuple of connected :class:`~modi.module.mic.Mic` modules.
         """
-        return module_list(self._modules, "mic", self.__lazy)
+        return module_list(self._modules, "mic")
 
     @property
     def motors(self) -> module_list:
         """Tuple of connected :class:`~modi.module.motor.Motor` modules.
         """
-        return module_list(self._modules, "motor", self.__lazy)
+        return module_list(self._modules, "motor")
 
     @property
     def speakers(self) -> module_list:
         """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
         """
-        return module_list(self._modules, "speaker", self.__lazy)
+        return module_list(self._modules, "speaker")
 
     @property
     def ultrasonics(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
+        """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic`
+        modules.
         """
-        return module_list(self._modules, "ultrasonic", self.__lazy)
+        return module_list(self._modules, "ultrasonic")
