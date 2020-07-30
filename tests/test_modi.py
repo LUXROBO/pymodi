@@ -62,8 +62,11 @@ class TestModi(unittest.TestCase):
     def test_get_modules(self):
         """Test modules getter method."""
         actual_modules = self.modi.modules
-        self.assertIsInstance(actual_modules, tuple)
-        self.assertTupleEqual(actual_modules, tuple(self.modi._modules))
+        self.assertIsInstance(actual_modules, module_list)
+        expected_modules = module_list(
+            self.modi.modules
+        )
+        self.assertEqual(actual_modules, expected_modules)
 
     def test_get_buttons(self):
         """Test buttons getter method."""
