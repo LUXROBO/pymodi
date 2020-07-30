@@ -49,13 +49,13 @@ class Module:
         self.has_user_code = False
 
     def __gt__(self, other):
-        if self.distance == other.distance:
+        if self.order == other.order:
             if self.position[0] == other.position[0]:
                 return self.position[1] < other.position[1]
             else:
                 return self.position[0] > other.position[0]
         else:
-            return self.distance > other.distance
+            return self.order > other.order
 
     @property
     def version(self):
@@ -70,7 +70,7 @@ class Module:
         self.__version = version_info
 
     @property
-    def distance(self):
+    def order(self):
         return self.position[0] ** 2 + self.position[1] ** 2
 
     @property
