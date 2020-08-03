@@ -46,7 +46,7 @@ class Module:
         self.position = (0, 0)
         self.__version = None
         self.is_up_to_date = True
-        self.is_user_code = False
+        self.has_user_code = False
 
     def __gt__(self, other):
         if self.order == other.order:
