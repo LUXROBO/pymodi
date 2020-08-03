@@ -1,21 +1,24 @@
 import io
-import sys
-import time
 import json
-import zipfile
-import requests
-import esptool
+import sys
 import threading as th
+import time
 import urllib.request as ur
-import serial
+import zipfile
+from base64 import b64encode, b64decode
+from io import BytesIO
 from urllib.error import URLError
+from zipfile import ZipFile
+
+import esptool
+import requests
+import serial
 from enum import IntEnum
-from modi.util.msgutil import unpack_data, decode_message, parse_message
+
+from modi.util.jump import JumpManager
 from modi.module.module import Module
 from modi.task.conn_task import ConnTask
-from base64 import b64encode, b64decode
-from zipfile import ZipFile
-from io import BytesIO
+from modi.util.msgutil import unpack_data, decode_message, parse_message
 
 
 class STM32FirmwareUpdater:
@@ -763,7 +766,6 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.__flash_attach()
         self.__set_flash_param()
         try:
-            from modi.util.jump import JumpManager
             manager = JumpManager()
             th.Thread(target=manager.start, daemon=True).start()
         except ImportError:

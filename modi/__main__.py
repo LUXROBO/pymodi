@@ -1,11 +1,12 @@
 import os
 import sys
 import time
-import modi
+from getopt import getopt, GetoptError
 
+import modi
+from modi.util.tutor import Tutor
 from modi.firmware_updater import STM32FirmwareUpdater
 from modi.util.msgutil import parse_message, decode_message
-from getopt import getopt, GetoptError
 
 
 def check_option(*options):
@@ -51,7 +52,6 @@ if __name__ == "__main__":
         os._exit(0)
 
     if check_option('-t', '--tutorial'):
-        from modi.util.tutor import Tutor
         modi_tutor = Tutor()
         modi_tutor.start()
         os._exit(0)

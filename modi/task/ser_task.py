@@ -1,12 +1,12 @@
-
 import os
-import time
-import serial
-import traceback
 import sys
-
-from serial.serialutil import SerialException
+import time
+import traceback
 from queue import Empty
+
+import serial
+from serial.serialutil import SerialException
+
 from modi.task.conn_task import ConnTask
 
 

@@ -1,15 +1,13 @@
 """Top-level package for pyMODI."""
 
 import json
-
 import urllib.request as ur
-
+from multiprocessing import current_process
 from sys import version_info
 from urllib.error import URLError
-from multiprocessing import current_process
 
-from modi.modi import MODI
 from modi import about
+from modi.modi import MODI
 
 __all__ = ["MODI"]
 __version__ = about.__version__
