@@ -5,6 +5,7 @@ import signal
 import threading as th
 import time
 import traceback
+from typing import Optional
 
 from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
@@ -12,7 +13,6 @@ from modi.util.misc import module_list
 from modi.util.queues import CommunicationQueue
 from modi.util.stranger import check_complete
 from modi.util.topology_manager import TopologyManager
-from typing import Optional
 
 
 class MODI:
@@ -115,7 +115,7 @@ class MODI:
 
     @property
     def modules(self) -> module_list:
-        """Tuple of connected modules except network module.
+        """Module List of connected modules except network module.
         """
         return module_list(
             list(filter(lambda module: module.module_type != 'Network',
@@ -124,67 +124,66 @@ class MODI:
 
     @property
     def buttons(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.button.Button` modules.
+        """Module List of connected Button modules.
         """
         return module_list(self._modules, 'button')
 
     @property
     def dials(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.dial.Dial` modules.
+        """Module List of connected Dial modules.
         """
         return module_list(self._modules, "dial")
 
     @property
     def displays(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.display.Display` modules.
+        """Module List of connected Display modules.
         """
         return module_list(self._modules, "display")
 
     @property
     def envs(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.env.Env` modules.
+        """Module List of connected Env modules.
         """
         return module_list(self._modules, "env")
 
     @property
     def gyros(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
+        """Module List of connected Gyro modules.
         """
         return module_list(self._modules, "gyro")
 
     @property
     def irs(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.ir.Ir` modules.
+        """Module List of connected Ir modules.
         """
         return module_list(self._modules, "ir")
 
     @property
     def leds(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.led.Led` modules.
+        """Module List of connected Led modules.
         """
         return module_list(self._modules, "led")
 
     @property
     def mics(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.mic.Mic` modules.
+        """Module List of connected Mic modules.
         """
         return module_list(self._modules, "mic")
 
     @property
     def motors(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.motor.Motor` modules.
+        """Module List of connected Motor modules.
         """
         return module_list(self._modules, "motor")
 
     @property
     def speakers(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
+        """Module List of connected Speaker modules.
         """
         return module_list(self._modules, "speaker")
 
     @property
     def ultrasonics(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic`
-        modules.
+        """Module List of connected Ultrasonic modules.
         """
         return module_list(self._modules, "ultrasonic")
