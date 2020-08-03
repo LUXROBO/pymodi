@@ -19,7 +19,7 @@ class MODI:
     # Keeps track of all the connection processes spawned
     __conn_procs = []
 
-    def __init__(self, conn_mode: str = "serial",
+    def __init__(self, conn_mode: str = "",
                  module_uuid: str = "", test: bool = False,
                  verbose: bool = False, port: str = None):
         self._modules = list()

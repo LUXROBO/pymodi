@@ -58,7 +58,7 @@ class CanTask(ConnTask):
         """
         os.system("sudo ifconfig can0 down")
 
-    def _recv_data(self, timeout: float = 0.01) -> None:
+    def _recv_data(self) -> None:
         """Read data from CAN and returns CAN message
 
         :param timeout: timeout value
@@ -68,7 +68,7 @@ class CanTask(ConnTask):
         if self.__can0 is None:
             raise MODIConnectionError("Can is not initialized")
 
-        can_msg = self.__can0.recv(timeout=timeout)
+        can_msg = self.__can0.recv(timeout=0.01)
         if not can_msg:
             time.sleep(0.01)
         else:
