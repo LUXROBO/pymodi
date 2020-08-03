@@ -57,12 +57,12 @@ class TestSerTask(unittest.TestCase):
         """Test _read_data method"""
         self.ser_task.set_serial(self.MockSerial())
         self.ser_task._recv_data()
-        self.assertEqual(self.ser_task._ser_recv_q.get(), '{complete}')
+        self.assertEqual(self.ser_task._recv_q.get(), '{complete}')
 
     def test_send_data(self):
         """Test _write_data method"""
         self.ser_task.set_serial(self.MockSerial())
-        self.ser_task._ser_send_q.put("foo")
+        self.ser_task._send_q.put("foo")
         self.ser_task._send_data()
         self.ser_task.get_serial.write.assert_called_once_with("foo".encode())
 
