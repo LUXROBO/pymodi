@@ -958,14 +958,11 @@ class ESP32FirmwareUpdater(serial.Serial):
         esp_path = 'https://download.luxrobo.com/modi-esp32-firmware/esp.zip'
         ota_path = 'https://download.luxrobo.com/modi-ota-firmware/ota.zip'
         for i, bin_path in enumerate(self.file_path):
-            # TODO
             # Download files from the modi_download_server
             if 'ota' in bin_path:
                 bin_data = self.__download_bin_file(ota_path, bin_path)
             else:
                 bin_data = self.__download_bin_file(esp_path, bin_path)
-            # with open(f'esp/{bin_path}', 'rb') as bin_file:
-            #     bin_data = bin_file.read()
             binary_firmware += bin_data
             if i < len(self.__address) - 1:
                 binary_firmware += b'\xFF' * (self.__address[i + 1]
