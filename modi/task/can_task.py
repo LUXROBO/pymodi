@@ -89,7 +89,7 @@ class CanTask(ConnTask):
             time.sleep(0.01)
         else:
             json_msg = json.loads(message_to_send)
-            can_msg = self.__compose_can_msg(json_msg)
+            can_msg = self.compose_can_msg(json_msg)
             try:
                 self.__can0.send(can_msg)
             except can.CanError:
@@ -142,7 +142,7 @@ class CanTask(ConnTask):
         return ins, sid, did
 
     @staticmethod
-    def __compose_can_msg(json_msg: Dict[str, str]) -> can.Message:
+    def compose_can_msg(json_msg: Dict[str, str]) -> can.Message:
         """Returns CAN message from a dictionary format message
 
         :param json_msg: Dictionary format json message
