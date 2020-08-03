@@ -214,6 +214,8 @@ class ExeTask:
         if property_number == 0 or property_number == 1:
             return
         module = self.__get_module_by_id(message['s'])
+        if not module:
+            return
         module.update_property(property_number, decode_data(message['b']))
 
     def __set_module_state(self, destination_id: int, module_state: IntEnum,
