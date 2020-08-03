@@ -10,7 +10,7 @@ from modi.util.queues import CommunicationQueue
 from modi.module.module import Module, BROADCAST_ID
 from modi.util.msgutil \
     import unpack_data, decode_data, parse_message
-from modi.util.misc import get_module_from_name, get_type_from_uuid
+from modi.util.misc import get_module_from_name, get_module_type_from_uuid
 from modi.task.conn_task import ConnTask
 
 
@@ -82,7 +82,7 @@ class ExeTask:
 
         module = self.__get_module_by_id(src_id)
         if module:
-            topology_by_id['type'] = get_type_from_uuid(module.uuid)
+            topology_by_id['type'] = get_module_type_from_uuid(module.uuid)
         else:
             topology_by_id['type'] = None
 
@@ -115,11 +115,11 @@ class ExeTask:
             module = self.__get_module_by_id(module_id)
             module.last_updated = curr_time
             # Warn if user code is in the module
-            if not module.is_user_code and user_code_state % 2 == 1:
+            if not module.has_user_code and user_code_state % 2 == 1:
                 print(f"Your MODI module {module_id} has user code in it.")
                 print("You can reset your MODI modules by calling "
                       "'update_module_firmware()'")
-                module.is_user_code = True
+                module.has_user_code = True
             # Turn off pnp if pnp flag is on
             if user_code_state < 2:
                 self.__set_module_state(
@@ -164,7 +164,7 @@ class ExeTask:
 
         # Handle new modules
         if module_id not in (module.id for module in self._modules):
-            module_type = get_type_from_uuid(module_uuid)
+            module_type = get_module_type_from_uuid(module_uuid)
             self.request_topology(module_id)
             new_module = self.__add_new_module(
                 module_type, module_id, module_uuid, module_version_info

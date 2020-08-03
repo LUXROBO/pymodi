@@ -14,7 +14,7 @@ from modi.module.output_module.speaker import Speaker
 from modi.module.setup_module.network import Network
 
 
-def get_type_from_uuid(uuid):
+def get_module_type_from_uuid(uuid):
     if uuid is None:
         return 'Network'
 
