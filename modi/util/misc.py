@@ -5,12 +5,10 @@ from modi.module.input_module.gyro import Gyro
 from modi.module.input_module.ir import Ir
 from modi.module.input_module.mic import Mic
 from modi.module.input_module.ultrasonic import Ultrasonic
-
 from modi.module.output_module.display import Display
 from modi.module.output_module.led import Led
 from modi.module.output_module.motor import Motor
 from modi.module.output_module.speaker import Speaker
-
 from modi.module.setup_module.network import Network
 
 
@@ -87,8 +85,12 @@ class module_list(list):
         :return: Module
         """
         if self.__module_type:
-            modules = [module for module in self.__src
-                       if module.module_type == self.__module_type]
+            modules = list(
+                filter(
+                    lambda module: module.module_type == self.__module_type,
+                    self.__src
+                )
+            )
         else:
             modules = self.__src
         modules.sort()

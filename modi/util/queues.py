@@ -1,5 +1,5 @@
-from multiprocessing import Queue
 import json
+from multiprocessing import Queue
 
 
 class CommunicationQueue:
