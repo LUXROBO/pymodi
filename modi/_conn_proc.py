@@ -13,15 +13,19 @@ class ConnProc(mp.Process):
                  port=None):
         super().__init__(daemon=True)
         params = [recv_q, send_q, verbose]
+        if not conn_mode:
+            conn_mode = 'can' if self.__is_modi_pi() else 'ser'
 
         if conn_mode.startswith("b"):
             params.append(module_uuid)
         if conn_mode.startswith('s'):
             params.append(port)
+
         self.__task = self.__init_task(conn_mode, *params)
         self.__delay = 0.05 if isinstance(self.__task, SppTask) else 0.001
 
-    def __init_task(self, conn_mode: str, *params) -> ConnTask:
+    @staticmethod
+    def __init_task(conn_mode: str, *params) -> ConnTask:
         """Initialize task with given connection mode
 
         :param conn_mode: Desired connection mode
@@ -35,10 +39,8 @@ class ConnProc(mp.Process):
             return CanTask(*params)
         elif conn_mode == 'ser':
             return SerTask(*params)
-        elif self.__is_modi_pi():
-            return CanTask(*params)
         else:
-            return SerTask(*params)
+            raise ValueError("Connection mode not specified")
 
     @staticmethod
     def __is_modi_pi() -> bool:
