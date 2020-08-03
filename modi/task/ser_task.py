@@ -13,8 +13,6 @@ class SerTask(ConnTask):
     def __init__(self, ser_recv_q, ser_send_q, verbose, port=None):
         print("Run Ser Task.")
         super().__init__(ser_recv_q, ser_send_q)
-        self._ser_recv_q = ser_recv_q
-        self._ser_send_q = ser_send_q
         self.__verbose = verbose
         self.__ser = None
         self.__port = port
@@ -103,7 +101,7 @@ class SerTask(ConnTask):
                 if not json_pkt:
                     return
             json_pkt += self.__ser.read_until(b'}')
-            self._ser_recv_q.put(json_pkt.decode('utf8'))
+            self._recv_q.put(json_pkt.decode('utf8'))
             if self.__verbose:
                 sys.stdout.write(f'recv: {json_pkt}\n')
                 sys.stdout.flush()
@@ -115,7 +113,7 @@ class SerTask(ConnTask):
         :return: None
         """
         try:
-            message_to_send = self._ser_send_q.get_nowait().encode()
+            message_to_send = self._send_q.get_nowait().encode()
         except Empty:
             time.sleep(0.01)
         else:
