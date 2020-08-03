@@ -1,28 +1,21 @@
 """Main MODI module."""
 
 import os
-import time
 import signal
-import traceback
-
 import threading as th
+import time
+import traceback
 
 from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
-
-from modi.util.topology_manager import TopologyManager
-from modi.util.stranger import check_complete
 from modi.util.misc import module_list
 from modi.util.queues import CommunicationQueue
+from modi.util.stranger import check_complete
+from modi.util.topology_manager import TopologyManager
+from typing import Optional
 
 
 class MODI:
-    """
-    Example:
-    >>> import modi
-    >>> bundle = modi.MODI()
-    """
-
     # Keeps track of all the connection processes spawned
     __conn_procs = []
 
@@ -44,7 +37,6 @@ class MODI:
         self._conn_proc = ConnProc(
             self._recv_q, self._send_q, conn_mode, module_uuid, verbose, port
         )
-        self._conn_proc.daemon = True
         try:
             self._conn_proc.start()
         except RuntimeError:
@@ -68,7 +60,6 @@ class MODI:
             self._recv_q,
             self._send_q,
         )
-        self._exe_thrd.daemon = True
         self._exe_thrd.start()
 
         self._topology_manager = TopologyManager(self._topology_data,
@@ -80,6 +71,11 @@ class MODI:
         print("MODI modules are initialized!")
 
     def watch_child_process(self) -> None:
+        """Continuously watches if any of the child processes are dead, and
+        if so, terminates all the existing processes.
+
+        :return: None
+        """
         while self._conn_proc.is_alive():
             time.sleep(0.1)
         for pid in MODI.__conn_procs:
@@ -91,10 +87,20 @@ class MODI:
                 continue
         os.kill(os.getpid(), signal.SIGTERM)
 
-    def send(self, message):
+    def send(self, message) -> None:
+        """Low level method to send json pkt directly to modules
+
+        :param message: Json packet to send
+        :return: None
+        """
         self._send_q.put(message)
 
-    def recv(self):
+    def recv(self) -> Optional[str]:
+        """Low level method to receive json pkt directly from modules
+
+        :return: Json msg received
+        :rtype: str if msg exists, else None
+        """
         if self._recv_q.empty():
             return None
         return self._recv_q.get()
@@ -111,8 +117,10 @@ class MODI:
     def modules(self) -> module_list:
         """Tuple of connected modules except network module.
         """
-        return module_list([module for module in self._modules
-                            if module.module_type != 'Network'])
+        return module_list(
+            list(filter(lambda module: module.module_type != 'Network',
+                        self._modules))
+        )
 
     @property
     def buttons(self) -> module_list:

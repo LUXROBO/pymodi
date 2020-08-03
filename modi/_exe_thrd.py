@@ -12,7 +12,7 @@ class ExeThrd(th.Thread):
     """
 
     def __init__(self, modules, topology_data, recv_q, send_q):
-        super().__init__()
+        super().__init__(daemon=True)
         self.__exe_task = ExeTask(
             modules, topology_data, recv_q, send_q,
         )

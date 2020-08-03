@@ -12,7 +12,7 @@ class ConnProc(mp.Process):
 
     def __init__(self, recv_q, send_q, conn_mode, module_uuid, verbose,
                  port=None):
-        super().__init__()
+        super().__init__(daemon=True)
         params = [recv_q, send_q, verbose]
         if conn_mode.startswith("b"):
             params.append(module_uuid)
