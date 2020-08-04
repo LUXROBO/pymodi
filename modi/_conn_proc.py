@@ -1,4 +1,3 @@
-
 import threading as th
 import multiprocessing as mp
 
@@ -12,16 +11,21 @@ class ConnProc(mp.Process):
 
     def __init__(self, recv_q, send_q, conn_mode, module_uuid, verbose,
                  port=None):
-        super().__init__()
+        super().__init__(daemon=True)
         params = [recv_q, send_q, verbose]
+        if not conn_mode:
+            conn_mode = 'can' if self.__is_modi_pi() else 'ser'
+
         if conn_mode.startswith("b"):
             params.append(module_uuid)
         if conn_mode.startswith('s'):
             params.append(port)
-        self.__task = self.__init_task(conn_mode)(*params)
+
+        self.__task = self.__init_task(conn_mode, *params)
         self.__delay = 0.05 if isinstance(self.__task, SppTask) else 0.001
 
-    def __init_task(self, conn_mode: str) -> ConnTask:
+    @staticmethod
+    def __init_task(conn_mode: str, *params) -> ConnTask:
         """Initialize task with given connection mode
 
         :param conn_mode: Desired connection mode
@@ -30,13 +34,13 @@ class ConnProc(mp.Process):
         :rtype: ConnTask
         """
         if conn_mode == 'spp':
-            return SppTask
+            return SppTask(*params)
         elif conn_mode == 'can':
-            return CanTask
+            return CanTask(*params)
         elif conn_mode == 'ser':
-            return SerTask
+            return SerTask(*params)
         else:
-            return CanTask if self.__is_modi_pi() else SerTask
+            raise ValueError("Connection mode not specified")
 
     @staticmethod
     def __is_modi_pi() -> bool:
@@ -56,15 +60,13 @@ class ConnProc(mp.Process):
         self.__task.open_conn()
 
         recv_thread = th.Thread(
-            target=self.__task.run_recv_data, args=(self.__delay,)
+            target=self.__task.run_recv_data, args=(self.__delay,), daemon=True
         )
-        recv_thread.daemon = True
         recv_thread.start()
 
         send_thread = th.Thread(
-            target=self.__task.run_send_data, args=(self.__delay,)
+            target=self.__task.run_send_data, args=(self.__delay,), daemon=True
         )
-        send_thread.daemon = True
         send_thread.start()
 
         recv_thread.join()

@@ -1,13 +1,11 @@
-
-import os
-import time
-import serial
-import traceback
 import sys
-
-from serial.serialutil import SerialException
+import time
 from queue import Empty
-from modi.task.conn_task import ConnTask
+
+import serial
+from serial.serialutil import SerialException
+
+from modi.task.conn_task import ConnTask, MODIConnectionError
 
 
 class SerTask(ConnTask):
@@ -15,8 +13,6 @@ class SerTask(ConnTask):
     def __init__(self, ser_recv_q, ser_send_q, verbose, port=None):
         print("Run Ser Task.")
         super().__init__(ser_recv_q, ser_send_q)
-        self._ser_recv_q = ser_recv_q
-        self._ser_send_q = ser_send_q
         self.__verbose = verbose
         self.__ser = None
         self.__port = port
@@ -93,6 +89,11 @@ class SerTask(ConnTask):
 
         :return: None
         """
+        try:
+            self.__ser.in_waiting
+        except SerialException:
+            raise MODIConnectionError()
+
         while self.__ser.in_waiting:
             json_pkt = b''
             while json_pkt != b'{':
@@ -100,7 +101,7 @@ class SerTask(ConnTask):
                 if not json_pkt:
                     return
             json_pkt += self.__ser.read_until(b'}')
-            self._ser_recv_q.put(json_pkt.decode('utf8'))
+            self._recv_q.put(json_pkt.decode('utf8'))
             if self.__verbose:
                 sys.stdout.write(f'recv: {json_pkt}\n')
                 sys.stdout.flush()
@@ -112,41 +113,14 @@ class SerTask(ConnTask):
         :return: None
         """
         try:
-            message_to_send = self._ser_send_q.get_nowait().encode()
+            message_to_send = self._send_q.get_nowait().encode()
         except Empty:
             time.sleep(0.01)
         else:
-            self.__ser.write(message_to_send)
+            try:
+                self.__ser.write(message_to_send)
+            except SerialException:
+                raise MODIConnectionError()
             if self.__verbose:
                 sys.stdout.write(f'send: {message_to_send.decode("utf8")}\n')
                 sys.stdout.flush()
-
-    def run_recv_data(self, delay: float) -> None:
-        """Read data through serial port
-
-        :param delay: time value to wait in seconds
-        :type delay: float
-        :return: None
-        """
-        while True:
-            try:
-                self._recv_data()
-            except SerialException:
-                print("\nMODI connection is lost!!!")
-                traceback.print_exc()
-                os._exit(1)
-
-    def run_send_data(self, delay: float) -> None:
-        """Write data through serial port
-
-        :param delay: time value to wait in seconds
-        :type delay: float
-        :return: None
-        """
-        while True:
-            try:
-                self._send_data()
-            except SerialException:
-                print("\nMODI connection is lost!!!")
-                traceback.print_exc()
-                os._exit(1)

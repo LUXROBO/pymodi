@@ -1,10 +1,10 @@
 """Module module."""
 
-import json
 import time
 
-from base64 import b64encode
 from enum import IntEnum
+
+from modi.util.msgutil import parse_message
 
 BROADCAST_ID = 0xFFF
 
@@ -56,6 +56,15 @@ class Module:
                 return self.position[0] > other.position[0]
         else:
             return self.order > other.order
+
+    def __lt__(self, other):
+        if self.order == other.order:
+            if self.position[0] == other.position[0]:
+                return self.position[1] < other.position[1]
+            else:
+                return self.position[0] < other.position[0]
+        else:
+            return self.order < other.order
 
     @property
     def version(self):
@@ -134,17 +143,5 @@ class Module:
         :return: json serialized message for request property
         :rtype: str
         """
-        message = dict()
-
-        message["c"] = 0x03
-        message["s"] = 0
-        message["d"] = destination_id
-
-        property_bytes = bytearray(4)
-        property_bytes[0] = property_type
-        property_bytes[2] = 95
-
-        message["b"] = b64encode(bytes(property_bytes)).decode("utf-8")
-        message["l"] = 4
-
-        return json.dumps(message, separators=(",", ":"))
+        return parse_message(0x03, 0, destination_id,
+                             (property_type, None, 95, None))

@@ -1,5 +1,4 @@
 import time
-
 from typing import Tuple
 
 from modi.module.output_module.display import Display

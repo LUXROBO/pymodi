@@ -1,21 +1,23 @@
 import io
-import sys
-import time
 import json
-import zipfile
-import requests
-import esptool
+import sys
 import threading as th
+import time
 import urllib.request as ur
-import serial
+import zipfile
+from base64 import b64encode, b64decode
+from io import BytesIO
 from urllib.error import URLError
+from zipfile import ZipFile
+
+import esptool
+import requests
+import serial
 from enum import IntEnum
-from modi.util.msgutil import unpack_data, decode_message
+
 from modi.module.module import Module
 from modi.task.conn_task import ConnTask
-from base64 import b64encode, b64decode
-from zipfile import ZipFile
-from io import BytesIO
+from modi.util.msgutil import unpack_data, decode_message
 
 
 class STM32FirmwareUpdater:
@@ -956,14 +958,11 @@ class ESP32FirmwareUpdater(serial.Serial):
         esp_path = 'https://download.luxrobo.com/modi-esp32-firmware/esp.zip'
         ota_path = 'https://download.luxrobo.com/modi-ota-firmware/ota.zip'
         for i, bin_path in enumerate(self.file_path):
-            # TODO
             # Download files from the modi_download_server
             if 'ota' in bin_path:
                 bin_data = self.__download_bin_file(ota_path, bin_path)
             else:
                 bin_data = self.__download_bin_file(esp_path, bin_path)
-            # with open(f'esp/{bin_path}', 'rb') as bin_file:
-            #     bin_data = bin_file.read()
             binary_firmware += bin_data
             if i < len(self.__address) - 1:
                 binary_firmware += b'\xFF' * (self.__address[i + 1]

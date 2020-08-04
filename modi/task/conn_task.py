@@ -1,10 +1,15 @@
 import os
-import serial.tools.list_ports as stl
-
-from serial.tools.list_ports_common import ListPortInfo
+import traceback
 from abc import ABC
 from abc import abstractmethod
 from typing import List
+
+import serial.tools.list_ports as stl
+from serial.tools.list_ports_common import ListPortInfo
+
+
+class MODIConnectionError(Exception):
+    pass
 
 
 class ConnTask(ABC):
@@ -65,10 +70,20 @@ class ConnTask(ABC):
     def open_conn(self):
         pass
 
-    @abstractmethod
     def run_recv_data(self, delay: float):
-        pass
+        while True:
+            try:
+                self._recv_data()
+            except MODIConnectionError:
+                print("\nMODI connection is lost!!!")
+                traceback.print_exc()
+                os._exit(1)
 
-    @abstractmethod
     def run_send_data(self, delay: float):
-        pass
+        while True:
+            try:
+                self._send_data()
+            except MODIConnectionError:
+                print("\nMODI connection is lost!!!")
+                traceback.print_exc()
+                os._exit(1)

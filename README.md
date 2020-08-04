@@ -9,6 +9,7 @@
 [![Documentation Status](https://readthedocs.org/projects/pymodi/badge/?version=master)](https://pymodi.readthedocs.io/en/master/?badge=master)
 [![Build Status](https://github.com/LUXROBO/pymodi/workflows/Build%20Status/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions)
 [![Coverage Status](https://coveralls.io/repos/github/LUXROBO/pymodi/badge.svg)](https://coveralls.io/github/LUXROBO/pymodi)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/LUXROBO/pymodi.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LUXROBO/pymodi/context:python)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5a62f1585d723099e337/maintainability)](https://codeclimate.com/github/LUXROBO/pymodi/maintainability)
 [![License](https://img.shields.io/pypi/l/pymodi.svg?color=blue)](https://github.com/LUXROBO/pymodi/blob/master/LICENSE)
 

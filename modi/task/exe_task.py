@@ -1,17 +1,17 @@
-import time
 import json
+import time
 import urllib.request as ur
-
-from urllib.error import URLError
-from enum import IntEnum
-from typing import Callable, Dict, Union
 from queue import Empty
-from modi.util.queues import CommunicationQueue
+from typing import Callable, Dict, Union
+from urllib.error import URLError
+
+from enum import IntEnum
+
 from modi.module.module import Module, BROADCAST_ID
-from modi.util.msgutil \
-    import unpack_data, decode_data, parse_message
-from modi.util.misc import get_module_from_name, get_module_type_from_uuid
 from modi.task.conn_task import ConnTask
+from modi.util.misc import get_module_from_name, get_module_type_from_uuid
+from modi.util.queues import CommunicationQueue
+from modi.util.msgutil import unpack_data, decode_data, parse_message
 
 
 class ExeTask:
@@ -19,9 +19,9 @@ class ExeTask:
     :param queue send_q: Inter-process queue for writing serial
     message.
     :param queue recv_q: Inter-process queue for parsing json message.
-    :param dict() module_ids: dict() of module_id : ['timestamp', 'uuid'].
     :param list() modules: list() of module instance.
     """
+
     def __init__(self, modules, topology_data,
                  recv_q: CommunicationQueue, send_q: CommunicationQueue):
         self._modules = modules
@@ -42,6 +42,7 @@ class ExeTask:
         :param delay: time value to wait in seconds
         :type delay: float
         """
+        raw_message = ""
         try:
             raw_message = self._recv_q.get_nowait()
             message = json.loads(raw_message)
@@ -98,7 +99,7 @@ class ExeTask:
             if module.id == module_id:
                 return module
 
-    def __update_health(self, message: Dict[str, str]) -> None:
+    def __update_health(self, message: Dict[str, Union[int, str]]) -> None:
         """ Update information by health message
 
         :param message: Dictionary format message of the module
@@ -213,10 +214,12 @@ class ExeTask:
         if property_number == 0 or property_number == 1:
             return
         module = self.__get_module_by_id(message['s'])
+        if not module:
+            return
         module.update_property(property_number, decode_data(message['b']))
 
     def __set_module_state(self, destination_id: int, module_state: IntEnum,
-                           pnp_state: IntEnum) -> str:
+                           pnp_state: IntEnum) -> None:
         """ Generate message for set module state and pnp state
 
         :param destination_id: Id to target destination
@@ -225,8 +228,7 @@ class ExeTask:
         :type module_state: int
         :param pnp_state: Pnp state value
         :type pnp_state: IntEnum
-        :return: json serialized message
-        :rtype: str
+        :return: None
         """
         self._send_q.put(parse_message(0x09, 0, destination_id,
                                        (module_state, pnp_state)))
