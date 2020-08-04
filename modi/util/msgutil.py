@@ -16,6 +16,16 @@ def parse_message(command: int, source: int, destination: int,
     return json.dumps(message, separators=(",", ":"))
 
 
+def __extract_length(begin: int, src: Tuple) -> int:
+    length = 1
+    for i in range(begin + 1, len(src)):
+        if not src[i]:
+            length += 1
+        else:
+            break
+    return length
+
+
 def __encode_bytes(byte_data: Tuple):
     idx = 0
     data = bytearray(len(byte_data))
@@ -23,12 +33,7 @@ def __encode_bytes(byte_data: Tuple):
         if not byte_data[idx]:
             idx += 1
         elif byte_data[idx] > 256:
-            length = 1
-            for i in range(idx + 1, len(byte_data)):
-                if not byte_data[i]:
-                    length += 1
-                else:
-                    break
+            length = __extract_length(idx, byte_data)
             data[idx: idx + length] = int.to_bytes(byte_data[idx],
                                                    byteorder='little',
                                                    length=length,
