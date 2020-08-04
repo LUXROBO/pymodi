@@ -33,6 +33,7 @@ class TestSerTask(unittest.TestCase):
             fake_port = ListPortInfo()
             fake_port.device = "TestDevice"
             return [fake_port]
+
         modi.util.conn_util.list_modi_ports = mock.Mock(
             side_effect=eval_list_modi_ports)
 
@@ -43,8 +44,6 @@ class TestSerTask(unittest.TestCase):
     def test_open_conn(self):
         """Test open_conn method"""
         self.assertRaises(SerialException, self.ser_task.open_conn)
-        self.assertEqual(self.ser_task.get_serial.port, "TestDevice")
-        self.assertEqual(self.ser_task.get_serial.baudrate, 921600)
 
     def test_close_conn(self):
         """Test close_conn method"""
