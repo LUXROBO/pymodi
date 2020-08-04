@@ -6,7 +6,7 @@ from queue import Queue
 from serial.tools.list_ports_common import ListPortInfo
 from serial.serialutil import SerialException
 from modi.task.ser_task import SerTask
-from modi.task.conn_task import ConnTask
+import modi.util.conn_util
 
 
 class TestSerTask(unittest.TestCase):
@@ -33,8 +33,7 @@ class TestSerTask(unittest.TestCase):
             fake_port = ListPortInfo()
             fake_port.device = "TestDevice"
             return [fake_port]
-
-        ConnTask.list_modi_ports = mock.Mock(
+        modi.util.conn_util.list_modi_ports = mock.Mock(
             side_effect=eval_list_modi_ports)
 
     def tearDown(self):
