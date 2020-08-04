@@ -57,6 +57,15 @@ class Module:
         else:
             return self.order > other.order
 
+    def __lt__(self, other):
+        if self.order == other.order:
+            if self.position[0] == other.position[0]:
+                return self.position[1] < other.position[1]
+            else:
+                return self.position[0] < other.position[0]
+        else:
+            return self.order < other.order
+
     @property
     def version(self):
         version_string = ""
