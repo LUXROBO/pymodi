@@ -1,7 +1,9 @@
 """Top-level package for pyMODI."""
 
 import json
+
 import urllib.request as ur
+
 from multiprocessing import current_process
 from sys import version_info
 from urllib.error import URLError
@@ -11,6 +13,7 @@ from modi.modi import MODI
 
 __all__ = ["MODI"]
 __version__ = about.__version__
+
 
 if "Main" in current_process().name:
     print(f'Running PyMODI (v{__version__})')
