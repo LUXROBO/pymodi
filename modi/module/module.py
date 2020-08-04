@@ -1,10 +1,12 @@
 """Module module."""
 
-import json
 import time
-import base64
 
 from enum import IntEnum
+
+from modi.util.msgutil import parse_message
+
+BROADCAST_ID = 0xFFF
 
 
 class Module:
@@ -13,7 +15,6 @@ class Module:
     :param int uuid: The uuid of the module.
     :param msg_send_q: multiprocessing.queue of the serial writing
     """
-
     class Property:
         def __init__(self):
             self.value = 0
@@ -28,32 +29,57 @@ class Module:
         UPDATE_FIRMWARE = 4
         UPDATE_FIRMWARE_READY = 5
         REBOOT = 6
-        PNP_ON = 7
-        PNP_OFF = 8
+        PNP_ON = 1
+        PNP_OFF = 2
 
     def __init__(self, id_, uuid, msg_send_q):
         self._id = id_
         self._uuid = uuid
         self._msg_send_q = msg_send_q
 
-        self._type = str()
+        self.module_type = str()
         self._properties = dict()
 
-        self._is_connected = True
-
+        self.is_connected = True
+        self.last_updated = time.time()
+        self.battery = 100
         self.position = (0, 0)
+        self.__version = None
+        self.is_up_to_date = True
+        self.has_user_code = False
 
     def __gt__(self, other):
-        if self.distance == other.distance:
+        if self.order == other.order:
             if self.position[0] == other.position[0]:
                 return self.position[1] < other.position[1]
             else:
                 return self.position[0] > other.position[0]
         else:
-            return self.distance > other.distance
+            return self.order > other.order
+
+    def __lt__(self, other):
+        if self.order == other.order:
+            if self.position[0] == other.position[0]:
+                return self.position[1] < other.position[1]
+            else:
+                return self.position[0] < other.position[0]
+        else:
+            return self.order < other.order
 
     @property
-    def distance(self):
+    def version(self):
+        version_string = ""
+        version_string += str(self.__version >> 13) + '.'
+        version_string += str(self.__version % (2 ** 13) >> 8) + '.'
+        version_string += str(self.__version % (2 ** 8))
+        return version_string
+
+    @version.setter
+    def version(self, version_info):
+        self.__version = version_info
+
+    @property
+    def order(self):
         return self.position[0] ** 2 + self.position[1] ** 2
 
     @property
@@ -63,17 +89,6 @@ class Module:
     @property
     def uuid(self) -> int:
         return self._uuid
-
-    @property
-    def type(self):
-        return self._type
-
-    @property
-    def is_connected(self) -> bool:
-        return self._is_connected
-
-    def set_connection_state(self, connection_state: bool) -> None:
-        self._is_connected = connection_state
 
     def _get_property(self, property_type: IntEnum) -> float:
         """ Get module property value and request
@@ -128,17 +143,5 @@ class Module:
         :return: json serialized message for request property
         :rtype: str
         """
-        message = dict()
-
-        message["c"] = 0x03
-        message["s"] = 0
-        message["d"] = destination_id
-
-        property_bytes = bytearray(4)
-        property_bytes[0] = property_type
-        property_bytes[2] = 95
-
-        message["b"] = base64.b64encode(bytes(property_bytes)).decode("utf-8")
-        message["l"] = 4
-
-        return json.dumps(message, separators=(",", ":"))
+        return parse_message(0x03, 0, destination_id,
+                             (property_type, None, 95, None))

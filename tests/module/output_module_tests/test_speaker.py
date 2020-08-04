@@ -21,7 +21,7 @@ class TestSpeaker(unittest.TestCase):
     def test_set_tune(self):
         """Test set_tune method."""
         expected_values = frequency, volume = (
-            self.speaker.Scale.F_RA_6.value, 30
+            self.speaker.Scale.F_LA_6.value, 30
         )
         self.speaker.tune = expected_values
         sent_messages = []

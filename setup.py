@@ -3,38 +3,23 @@ from io import open
 from setuptools import setup, find_packages
 
 
-def get_about():
-    here = path.dirname(__file__)
-    about = {}
-    with open(path.join(here, './modi/about.py'),
-              encoding='utf8') as about_file:
-        exec(about_file.read(), about)
-        return about
+def get_spec(filename: str, mode: str = "r"):
+    def wrapper():
+        here = path.dirname(__file__)
+        result = {}
+        with open(path.join(here, filename), encoding='utf8') as src_file:
+            if mode == 'd':
+                exec(src_file.read(), result)
+            else:
+                result = src_file.read()
+        return result
+    return wrapper
 
 
-def get_readme():
-    here = path.dirname(__file__)
-    with open(path.join(here, 'README.md'),
-              encoding='utf8') as readme_file:
-        readme = readme_file.read()
-        return readme
-
-
-def get_history():
-    here = path.dirname(__file__)
-    with open(path.join(here, 'HISTORY.md'),
-              encoding='utf8') as history_file:
-        history = history_file.read()
-        return history
-
-
-def get_requirements():
-    here = path.dirname(__file__)
-    with open(path.join(here, 'requirements.txt'),
-              encoding='utf8') as requirements_file:
-        requirements = requirements_file.read().splitlines()
-        return requirements
-
+get_about = get_spec('./modi/about.py', 'd')
+get_readme = get_spec('README.md')
+get_history = get_spec('HISTORY.md')
+get_requirements = get_spec('requirements.txt')
 
 about = get_about()
 setup(

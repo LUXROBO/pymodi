@@ -1,10 +1,14 @@
 import os
 import sys
 import time
+
+from getopt import getopt, GetoptError
+
 import modi
 
+from modi.util.tutor import Tutor
+from modi.firmware_updater import STM32FirmwareUpdater
 from modi.util.msgutil import parse_message, decode_message
-from getopt import getopt, GetoptError
 
 
 def check_option(*options):
@@ -50,7 +54,6 @@ if __name__ == "__main__":
         os._exit(0)
 
     if check_option('-t', '--tutorial'):
-        from modi.util.tutor import Tutor
         modi_tutor = Tutor()
         modi_tutor.start()
         os._exit(0)
@@ -76,6 +79,14 @@ if __name__ == "__main__":
         took = round((fin_time - init_time) / 2, 2)
         print(f"received message... {msg}")
         print(f"Took {took} seconds for message transfer")
+        exit(0)
+
+    if check_option('-u', '--update'):
+        init_time = time.time()
+        updater = STM32FirmwareUpdater()
+        updater.update_module_firmware()
+        fin_time = time.time()
+        print(f"Took {fin_time - init_time:.2f} seconds to update")
         exit(0)
 
     if check_option('-d', '--debug'):
@@ -104,7 +115,3 @@ if __name__ == "__main__":
             print(f'Took {fin_time - init_time:.2f} seconds '
                   f'to get {module_name}')
         print(">>>")
-
-        if is_update:
-            print(">>> bundle.update_module_firmware()")
-            bundle.update_module_firmware()
