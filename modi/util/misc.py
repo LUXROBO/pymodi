@@ -70,7 +70,10 @@ class module_list(list):
         super().__init__(self.sublist())
 
     def __len__(self):
-        return len(self.__src)
+        return len(self.sublist())
+
+    def __eq__(self, other):
+        return super().__eq__(other)
 
     def get(self, module_id):
         for module in self.sublist():
