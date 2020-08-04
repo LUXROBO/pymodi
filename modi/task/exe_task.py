@@ -115,6 +115,7 @@ class ExeTask:
         if module_id in (module.id for module in self._modules):
             module = self.__get_module_by_id(module_id)
             module.last_updated = curr_time
+            module.is_connected = True
             # Warn if user code is in the module
             if not module.has_user_code and user_code_state % 2 == 1:
                 print(f"Your MODI module {module_id} has user code in it.")
