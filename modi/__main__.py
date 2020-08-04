@@ -1,9 +1,11 @@
 import os
 import sys
 import time
+
 from getopt import getopt, GetoptError
 
 import modi
+
 from modi.util.tutor import Tutor
 from modi.firmware_updater import STM32FirmwareUpdater
 from modi.util.msgutil import parse_message, decode_message
