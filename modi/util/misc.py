@@ -72,9 +72,6 @@ class module_list(list):
     def __len__(self):
         return len(self.__src)
 
-    def __eq__(self, other):
-        super().__eq__(other)
-
     def get(self, module_id):
         for module in self.sublist():
             if module.id == module_id:
