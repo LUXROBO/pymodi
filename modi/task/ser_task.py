@@ -52,7 +52,7 @@ class SerTask(ConnTask):
         ser = serial.Serial(exclusive=True)
         ser.baudrate = 921600
         ser.port = port
-        ser.timeout = 1
+        ser.write_timeout = 0
         return ser
 
     def close_conn(self) -> None:

@@ -1,20 +1,36 @@
 import threading as th
-from tkinter import Tk, Canvas, Button, Entry, Label, NW
+from tkinter import Tk, Canvas, Button, Entry, Label, NW, WORD, END, INSERT
+from tkinter.scrolledtext import ScrolledText
 from _tkinter import TclError
 from modi.modi import MODI
+import sys
+from io import StringIO
 
 
-class Debugger(th.Thread):
-    def __init__(self, bundle: MODI):
+class Debugger(MODI):
+    def __init__(self, *args, **kwargs):
+        self._buffer = StringIO()
+        sys.stdout = self._buffer
+        super().__init__(verbose=True, *args, **kwargs)
+
+    def start(self):
+        _DebuggerWindow(self, self._buffer).start()
+
+
+class _DebuggerWindow(th.Thread):
+    def __init__(self, bundle: MODI, buffer: StringIO):
         super().__init__(daemon=True)
+        self._buffer = buffer
         self.bundle = bundle
         self.__input_box = None
         self._modules = []
+        self.__log = None
         self.__spec = None
         self.__curr_module = None
+        self.__tell = 0
 
     def run(self) -> None:
-        width, height = 700, 350
+        width, height = 900, 550
         window = Tk()
         window.title("PyMODI Debugger")
         window.geometry(f"{width}x{height}")
@@ -29,9 +45,14 @@ class Debugger(th.Thread):
         send_button = Button(window, text="Send", command=self.send)
         send_button.place(x=360, y=20)
 
+        self.__log = ScrolledText(window, wrap=WORD, font=('Helvetica', 12))
+        self.__log.place(x=420, y=10, width=470, height=330)
+        self.__log.insert(INSERT, "ASdasdasdas")
+        self.__log.delete('0.0', END)
+
         self.__spec = Label(window, text="Your MODI", bg='white', anchor=NW,
                             justify='left', font=('Helvetica', 10))
-        self.__spec.place(x=420, y=10, width=270, height=330)
+        self.__spec.place(x=10, y=350, width=300, height=200)
 
         for module in self.bundle._modules:
             self.__create_module_button(module, window)
@@ -39,10 +60,21 @@ class Debugger(th.Thread):
         while True:
             try:
                 window.update()
+                self.__update_log()
                 if self.__curr_module:
                     self.__change_spec(self.__curr_module)
             except TclError:
                 break
+
+    def __update_log(self):
+        log_text = self._buffer.getvalue()
+        new_text = log_text[self.__tell:]
+        for line in new_text.split('\n'):
+            if 'recv' in line or 'send' in line:
+                self.__log.insert(INSERT, line + '\n')
+            elif line:
+                sys.__stdout__.write(line + '\n')
+        self.__tell += len(new_text)
 
     def send(self):
         self.bundle.send(self.__input_box.get())
