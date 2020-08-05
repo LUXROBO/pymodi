@@ -128,7 +128,7 @@ class ExeTask:
         )
         version_info = None
         try:
-            for line in ur.urlopen(version_path, timeout=0.1):
+            for line in ur.urlopen(version_path, timeout=1):
                 version_info = line.decode('utf-8').lstrip('v')
             version_digits = [int(digit) for digit in version_info.split('.')]
             """ Version number is formed by concatenating all three version bits
