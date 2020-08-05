@@ -1,8 +1,9 @@
 import threading as th
-from tkinter import Tk, Canvas, Button, Entry, Label, NW, WORD, END, INSERT
+from tkinter import Tk, Canvas, Button, Entry, Label, NW, WORD, INSERT
 from tkinter.scrolledtext import ScrolledText
 from _tkinter import TclError
 from modi.modi import MODI
+import modi
 import sys
 from io import StringIO
 
@@ -47,12 +48,11 @@ class _DebuggerWindow(th.Thread):
 
         self.__log = ScrolledText(window, wrap=WORD, font=('Helvetica', 12))
         self.__log.place(x=420, y=10, width=470, height=330)
-        self.__log.insert(INSERT, "ASdasdasdas")
-        self.__log.delete('0.0', END)
 
-        self.__spec = Label(window, text="Your MODI", bg='white', anchor=NW,
-                            justify='left', font=('Helvetica', 10))
-        self.__spec.place(x=10, y=350, width=300, height=200)
+        self.__spec = Label(window, text=f"PyMODI v{modi.__version__}",
+                            bg='white', anchor=NW, justify='left',
+                            font=('Helvetica', 10))
+        self.__spec.place(x=10, y=350, width=400, height=190)
 
         for module in self.bundle._modules:
             self.__create_module_button(module, window)
