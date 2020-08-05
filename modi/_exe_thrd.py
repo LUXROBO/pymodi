@@ -5,8 +5,6 @@ from modi.task.exe_task import ExeTask
 
 class ExeThrd(th.Thread):
     """
-    :param send_q: Inter-process queue for serial writing message
-    :param recv_q: Inter-process queue for receiving json message
     :param list() modules: list() of module instance
     """
 
