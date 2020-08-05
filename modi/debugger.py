@@ -1,5 +1,5 @@
 import threading as th
-from tkinter import Tk, Canvas, Button, Entry, Label, NW, WORD, INSERT
+from tkinter import Tk, Canvas, Button, Entry, Label, NW, END, WORD, INSERT
 from tkinter.scrolledtext import ScrolledText
 from _tkinter import TclError
 from modi.modi import MODI
@@ -31,7 +31,7 @@ class _DebuggerWindow(th.Thread):
         self.__tell = 0
 
     def run(self) -> None:
-        width, height = 900, 550
+        width, height = 900, 750
         window = Tk()
         window.title("PyMODI Debugger")
         window.geometry(f"{width}x{height}")
@@ -47,12 +47,12 @@ class _DebuggerWindow(th.Thread):
         send_button.place(x=360, y=20)
 
         self.__log = ScrolledText(window, wrap=WORD, font=('Helvetica', 12))
-        self.__log.place(x=420, y=10, width=470, height=330)
+        self.__log.place(x=420, y=10, width=470, height=730)
 
         self.__spec = Label(window, text=f"PyMODI v{modi.__version__}",
                             bg='white', anchor=NW, justify='left',
                             font=('Helvetica', 10))
-        self.__spec.place(x=10, y=350, width=400, height=190)
+        self.__spec.place(x=10, y=350, width=400, height=390)
 
         for module in self.bundle._modules:
             self.__create_module_button(module, window)
@@ -60,21 +60,35 @@ class _DebuggerWindow(th.Thread):
         while True:
             try:
                 window.update()
-                self.__update_log()
+                self.__append_log()
                 if self.__curr_module:
                     self.__change_spec(self.__curr_module)
             except TclError:
                 break
 
     def __update_log(self):
+        sid = self.__curr_module.id
+        self.__log.delete('0.0', END)
+        log_text = self._buffer.getvalue()
+        for line in log_text.split('\n'):
+            if ('recv' in line or 'send' in line) \
+                and (str(sid) in line
+                     or self.__curr_module.module_type == 'Network'):
+                self.__log.insert(INSERT, line + '\n')
+
+    def __append_log(self):
         log_text = self._buffer.getvalue()
         new_text = log_text[self.__tell:]
         for line in new_text.split('\n'):
             if 'recv' in line or 'send' in line:
-                self.__log.insert(INSERT, line + '\n')
+                if not self.__curr_module \
+                    or self.__curr_module.module_type == 'Network' \
+                        or str(self.__curr_module.id) in line:
+                    self.__log.insert(INSERT, line + '\n')
             elif line:
                 sys.__stdout__.write(line + '\n')
         self.__tell += len(new_text)
+        self.__log.see(INSERT)
 
     def send(self):
         self.bundle.send(self.__input_box.get())
@@ -110,3 +124,4 @@ class _DebuggerWindow(th.Thread):
 
     def __change_module(self, module):
         self.__curr_module = module
+        self.__update_log()
