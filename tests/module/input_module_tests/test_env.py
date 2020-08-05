@@ -1,7 +1,8 @@
 import unittest
 
 from modi.module.input_module.env import Env
-from queue import Queue
+from modi.util.msgutil import parse_message
+from modi.util.misc import MockConn
 
 
 class TestEnv(unittest.TestCase):
@@ -9,8 +10,8 @@ class TestEnv(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.send_q = Queue()
-        mock_args = (-1, -1, self.send_q)
+        self.conn = MockConn()
+        mock_args = (-1, -1, self.conn)
         self.env = Env(*mock_args)
 
     def tearDown(self):
@@ -21,48 +22,54 @@ class TestEnv(unittest.TestCase):
         """Test get_temperature method."""
         _ = self.env.temperature
         self.assertEqual(
-            self.send_q.get(),
-            Env.request_property(-1, Env.PropertyType.TEMPERATURE)
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Env.PropertyType.TEMPERATURE, None, 95, None))
         )
 
     def test_get_humidity(self):
         """Test get_humidity method."""
         _ = self.env.humidity
         self.assertEqual(
-            self.send_q.get(),
-            Env.request_property(-1, Env.PropertyType.HUMIDITY)
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Env.PropertyType.HUMIDITY, None, 95, None))
         )
 
     def test_get_brightness(self):
         """Test get_brightness method."""
         _ = self.env.brightness
         self.assertEqual(
-            self.send_q.get(),
-            Env.request_property(-1, Env.PropertyType.BRIGHTNESS)
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Env.PropertyType.BRIGHTNESS, None, 95, None))
         )
 
     def test_get_red(self):
         """Test get_red method."""
         _ = self.env.red
         self.assertEqual(
-            self.send_q.get(),
-            Env.request_property(-1, Env.PropertyType.RED)
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Env.PropertyType.RED, None, 95, None))
         )
 
     def test_get_green(self):
         """Test get_green method."""
         _ = self.env.green
         self.assertEqual(
-            self.send_q.get(),
-            Env.request_property(-1, Env.PropertyType.GREEN)
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Env.PropertyType.GREEN, None, 95, None))
         )
 
     def test_get_blue(self):
         """Test get_blue method."""
         _ = self.env.blue
         self.assertEqual(
-            self.send_q.get(),
-            Env.request_property(-1, Env.PropertyType.BLUE)
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Env.PropertyType.BLUE, None, 95, None))
         )
 
 

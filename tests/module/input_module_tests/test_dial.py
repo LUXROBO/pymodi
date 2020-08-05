@@ -1,8 +1,8 @@
 import unittest
 
-from queue import Queue
 from modi.module.input_module.dial import Dial
-from modi.module.module import Module
+from modi.util.msgutil import parse_message
+from modi.util.misc import MockConn
 
 
 class TestDial(unittest.TestCase):
@@ -10,8 +10,8 @@ class TestDial(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.send_q = Queue()
-        mock_args = (-1, -1, self.send_q)
+        self.conn = MockConn()
+        mock_args = (-1, -1, self.conn)
         self.dial = Dial(*mock_args)
 
     def tearDown(self):
@@ -22,16 +22,18 @@ class TestDial(unittest.TestCase):
         """Test get_degree method."""
         _ = self.dial.degree
         self.assertEqual(
-            self.send_q.get(),
-            Module.request_property(-1, Dial.PropertyType.DEGREE)
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Dial.PropertyType.DEGREE, None, 95, None))
         )
 
     def test_get_turnspeed(self):
         """Test get_turnspeed method."""
         _ = self.dial.turnspeed
         self.assertEqual(
-            self.send_q.get(),
-            Module.request_property(-1, Dial.PropertyType.TURNSPEED)
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Dial.PropertyType.TURNSPEED, None, 95, None))
         )
 
 

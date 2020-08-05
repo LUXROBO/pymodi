@@ -38,7 +38,7 @@ class _DebuggerWindow(th.Thread):
     def run(self) -> None:
         width, height = 900, 750
         window = Tk()
-        window.title("PyMODI Debugger")
+        window.title(f"PyMODI v{modi.__version__}")
         window.geometry(f"{width}x{height}")
         window.resizable(False, False)
         canvas = Canvas(window, width=width, height=height)

@@ -107,3 +107,14 @@ class module_list(list):
             if module_id == module.id:
                 return idx
         return -1
+
+
+class MockConn:
+    def __init__(self):
+        self.send_list = []
+
+    def send(self, pkt):
+        self.send_list.append(pkt)
+
+    def recv(self):
+        return 'Test'

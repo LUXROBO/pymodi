@@ -1,8 +1,9 @@
 
 import unittest
 
-from queue import Queue
 from modi.module.input_module.mic import Mic
+from modi.util.msgutil import parse_message
+from modi.util.misc import MockConn
 
 
 class TestMic(unittest.TestCase):
@@ -10,8 +11,8 @@ class TestMic(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.send_q = Queue()
-        mock_args = (-1, -1, self.send_q)
+        self.conn = MockConn()
+        mock_args = (-1, -1, self.conn)
         self.mic = Mic(*mock_args)
 
     def tearDown(self):
@@ -22,15 +23,19 @@ class TestMic(unittest.TestCase):
         """Test get_volume method."""
         _ = self.mic.volume
         self.assertEqual(
-            self.send_q.get(),
-            Mic.request_property(-1, Mic.PropertyType.VOLUME))
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Mic.PropertyType.VOLUME, None, 95, None))
+        )
 
     def test_get_frequency(self):
         """Test get_frequency method."""
         _ = self.mic.frequency
         self.assertEqual(
-            self.send_q.get(),
-            Mic.request_property(-1, Mic.PropertyType.FREQUENCY))
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Mic.PropertyType.FREQUENCY, None, 95, None))
+        )
 
 
 if __name__ == '__main__':
