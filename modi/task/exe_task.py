@@ -1,7 +1,6 @@
 import json
 import time
 import urllib.request as ur
-from queue import Queue
 from typing import Callable, Dict, Union
 from urllib.error import URLError
 
@@ -183,7 +182,7 @@ class ExeTask:
                          module_uuid, module_version_info):
         module_template = get_module_from_name(module_type)
         module_instance = module_template(
-            module_id, module_uuid, Queue()
+            module_id, module_uuid, self._conn
         )
         self.__set_module_state(module_instance.id, Module.State.RUN,
                                 Module.State.PNP_OFF)
