@@ -1,11 +1,14 @@
-import threading as th
-from tkinter import Tk, Canvas, Button, Entry, Label, NW, END, WORD, INSERT
-from tkinter.scrolledtext import ScrolledText
-from _tkinter import TclError
-from modi.modi import MODI
-import modi
 import sys
+import threading as th
+from _tkinter import TclError
 from io import StringIO
+from tkinter import Tk, Canvas, Button, Entry, Label
+from tkinter import END, WORD, INSERT, NW
+from tkinter.scrolledtext import ScrolledText
+
+import modi
+from modi.modi import MODI
+from modi.util.msgutil import parse_message
 
 
 class Debugger(MODI):
@@ -29,6 +32,8 @@ class _DebuggerWindow(th.Thread):
         self.__spec = None
         self.__curr_module = None
         self.__tell = 0
+        self.__sid, self.__did, self.__cmd, self.__data = \
+            None, None, None, None
 
     def run(self) -> None:
         width, height = 900, 750
@@ -40,14 +45,29 @@ class _DebuggerWindow(th.Thread):
         canvas.create_rectangle(10, 60, 400, 340, outline='black')
         canvas.pack()
 
+        Label(window, text='c:').place(x=10, y=5)
+        self.__cmd = Entry(window)
+        self.__cmd.place(x=25, y=5, width=40)
+
+        Label(window, text='s:').place(x=80, y=5)
+        self.__sid = Entry(window)
+        self.__sid.place(x=95, y=5, width=40)
+        Label(window, text='d:').place(x=150, y=5)
+        self.__did = Entry(window)
+        self.__did.place(x=165, y=5, width=40)
+        Label(window, text='b:').place(x=220, y=5)
+        self.__data = Entry(window)
+        self.__data.place(x=235, y=5, width=500)
+        Button(window, text="Generate", command=self.__parse).place(x=750, y=5)
+
         self.__input_box = Entry(window)
-        self.__input_box.place(x=10, y=25, width=340)
+        self.__input_box.place(x=10, y=30, width=340)
 
         send_button = Button(window, text="Send", command=self.send)
-        send_button.place(x=360, y=20)
+        send_button.place(x=360, y=30)
 
         self.__log = ScrolledText(window, wrap=WORD, font=('Helvetica', 12))
-        self.__log.place(x=420, y=10, width=470, height=730)
+        self.__log.place(x=420, y=30, width=470, height=710)
 
         self.__spec = Label(window, text=f"PyMODI v{modi.__version__}",
                             bg='white', anchor=NW, justify='left',
@@ -65,6 +85,19 @@ class _DebuggerWindow(th.Thread):
                     self.__change_spec(self.__curr_module)
             except TclError:
                 break
+
+    def __parse(self):
+        try:
+            cmd = eval(self.__cmd.get())
+            sid = eval(self.__sid.get())
+            did = eval(self.__did.get())
+            data = eval(self.__data.get())
+            msg = parse_message(cmd, sid, did, data)
+            self.__input_box.delete(0, END)
+            self.__input_box.insert(0, msg)
+        except Exception:
+            self.__input_box.delete(0, END)
+            self.__input_box.insert(0, "Invalid Arguments")
 
     def __update_log(self):
         sid = self.__curr_module.id
