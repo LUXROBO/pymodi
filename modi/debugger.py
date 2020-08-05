@@ -1,6 +1,6 @@
 import threading as th
 from tkinter import Tk, Canvas, Button, Entry, Label, NW
-
+from _tkinter import TclError
 from modi.modi import MODI
 
 
@@ -36,10 +36,13 @@ class Debugger(th.Thread):
         for module in self.bundle._modules:
             self.__create_module_button(module, window)
 
-        while window.winfo_exists():
-            window.update()
-            if self.__curr_module:
-                self.__change_spec(self.__curr_module)
+        while True:
+            try:
+                window.update()
+                if self.__curr_module:
+                    self.__change_spec(self.__curr_module)
+            except TclError:
+                break
 
     def send(self):
         self.bundle.send(self.__input_box.get())
@@ -61,11 +64,11 @@ class Debugger(th.Thread):
                                text=f"{module.module_type}\n({module.id})")
         module_type = str(module.__class__)
         if 'output' in module_type:
-            color = 'purple'
+            color = '#fb973f'
         elif 'input' in module_type:
-            color = 'orange'
+            color = '#9672f9'
         else:
-            color = 'yellow'
+            color = '#f3c029'
         module_button.configure(bg=color,
                                 command=lambda: self.__change_module(module))
         module_button.place(x=170 + 60 * module.position[0],
