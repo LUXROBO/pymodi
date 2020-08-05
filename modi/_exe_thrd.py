@@ -10,10 +10,11 @@ class ExeThrd(th.Thread):
     :param list() modules: list() of module instance
     """
 
-    def __init__(self, modules, topology_data, recv_q, send_q):
+    def __init__(self, modules, topology_data, conn_task):
         super().__init__(daemon=True)
+        conn_task.open_conn()
         self.__exe_task = ExeTask(
-            modules, topology_data, recv_q, send_q,
+            modules, topology_data, conn_task
         )
 
     def run(self) -> None:
