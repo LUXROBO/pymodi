@@ -7,9 +7,6 @@ from modi.util.msgutil import parse_message, parse_data
 
 
 class OutputModule(Module):
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
-
     class PropertyDataType(IntEnum):
         INT = 0
         FLOAT = 1
@@ -80,7 +77,7 @@ class OutputModule(Module):
             property_data_type)
 
         for message in messages:
-            self._msg_send_q.put(message)
+            self._conn.send(message)
         time.sleep(0.001)
 
     @staticmethod
@@ -104,5 +101,4 @@ class OutputModule(Module):
                 setter(self, value)
 
             return set_property
-
         return check_value
