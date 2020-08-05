@@ -163,10 +163,10 @@ class ExeTask:
                 module_type, module_id, module_uuid, module_version_info
             )
             new_module.module_type = module_type
-            if module_type != 'Network':
-                new_module.is_up_to_date = self.__check_module_version(
-                    module_version_info
-                )
+            # if module_type != 'Network':
+            #     new_module.is_up_to_date = self.__check_module_version(
+            #         module_version_info
+            #     )
         elif not self.__get_module_by_id(module_id).is_connected:
             # Handle Reconnected modules
             self.__get_module_by_id(module_id).is_connected = True
