@@ -45,7 +45,6 @@ class Module:
         self.battery = 100
         self.position = (0, 0)
         self.__version = None
-        self.is_up_to_date = True
         self.has_user_code = False
 
     def __gt__(self, other):
