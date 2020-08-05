@@ -2,6 +2,7 @@ pyserial
 enum34
 python-can
 requests
+esptool
 sounddevice
 soundfile
 numpy

@@ -1,14 +1,12 @@
-
-import os
+import sys
 import time
-import queue
-import serial
-import traceback
+from queue import Empty
 
+import serial
 from serial.serialutil import SerialException
 
-from modi.task.conn_task import ConnTask
 from modi.util.conn_util import list_modi_ports
+from modi.task.conn_task import ConnTask, MODIConnectionError
 
 
 class SerTask(ConnTask):
@@ -16,14 +14,12 @@ class SerTask(ConnTask):
     def __init__(self, ser_recv_q, ser_send_q, verbose, port=None):
         print("Run Ser Task.")
         super().__init__(ser_recv_q, ser_send_q)
-        self._ser_recv_q = ser_recv_q
-        self._ser_send_q = ser_send_q
         self.__verbose = verbose
         self.__ser = None
-        self.__json_buffer = ""
         self.__port = port
         if self.__verbose:
             print('PyMODI log...\n==================================')
+            sys.stdout.flush()
 
     @property
     def get_serial(self) -> serial.Serial:
@@ -94,16 +90,23 @@ class SerTask(ConnTask):
 
         :return: None
         """
+        try:
+            self.__ser.in_waiting
+        except SerialException:
+            raise MODIConnectionError()
 
-        serial_buffer = self.__ser.in_waiting
-        if serial_buffer:
-            # Flush the serial buffer and concatenate it to json buffer
-            self.__json_buffer += self.__ser.read(
-                serial_buffer
-            ).decode("utf-8")
-
-            # Once json buffer is obtained, we parse and send json message
-            self.__parse_serial()
+        while self.__ser.in_waiting:
+            json_pkt = b''
+            while json_pkt != b'{':
+                json_pkt = self.__ser.read()
+                if not json_pkt:
+                    return
+            json_pkt += self.__ser.read_until(b'}')
+            self._recv_q.put(json_pkt.decode('utf8'))
+            if self.__verbose:
+                sys.stdout.write(f'recv: {json_pkt}\n')
+                sys.stdout.flush()
+        time.sleep(0.01)
 
     def _send_data(self) -> None:
         """ Write serial message in serial write queue
@@ -111,62 +114,14 @@ class SerTask(ConnTask):
         :return: None
         """
         try:
-            message_to_send = self._ser_send_q.get_nowait().encode()
-        except queue.Empty:
-            pass
+            message_to_send = self._send_q.get_nowait().encode()
+        except Empty:
+            time.sleep(0.01)
         else:
-            self.__ser.write(message_to_send)
-            if self.__verbose:
-                print(f'send: {message_to_send.decode("utf8")}')
-
-    def run_recv_data(self, delay: float) -> None:
-        """Read data through serial port
-
-        :param delay: time value to wait in seconds
-        :type delay: float
-        :return: None
-        """
-        while True:
             try:
-                self._recv_data()
+                self.__ser.write(message_to_send)
             except SerialException:
-                print("\nMODI connection is lost!!!")
-                traceback.print_exc()
-                os._exit(1)
-            time.sleep(delay)
-
-    def run_send_data(self, delay: float) -> None:
-        """Write data through serial port
-
-        :param delay: time value to wait in seconds
-        :type delay: float
-        :return: None
-        """
-        while True:
-            try:
-                self._send_data()
-            except SerialException:
-                print("\nMODI connection is lost!!!")
-                traceback.print_exc()
-                os._exit(1)
-            time.sleep(delay)
-
-    #
-    # Helper method
-    #
-    def __parse_serial(self) -> None:
-        """Update the json buffer
-
-        :return: None
-        """
-        # While there is a valid json in the json buffer
-        while "{" in self.__json_buffer and "}" in self.__json_buffer:
-            split_index = self.__json_buffer.find("}") + 1
-
-            # Parse json message and send it
-            json_msg = self.__json_buffer[:split_index]
-            self._ser_recv_q.put(json_msg)
+                raise MODIConnectionError()
             if self.__verbose:
-                print(f'recv: {json_msg}')
-            # Update json buffer, remove the json message sent
-            self.__json_buffer = self.__json_buffer[split_index:]
+                sys.stdout.write(f'send: {message_to_send.decode("utf8")}\n')
+                sys.stdout.flush()

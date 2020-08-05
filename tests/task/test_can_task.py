@@ -1,3 +1,4 @@
+import json
 import unittest
 
 from queue import Queue
@@ -11,7 +12,8 @@ class MockCan:
         self.recv_buffer = Queue()
 
     def recv(self, timeout):
-        return "Can Message"
+        json_pkt = parse_message(0x03, 0, 1)
+        return CanTask.compose_can_msg(json.loads(json_pkt))
 
     def send(self, item):
         self.recv_buffer.put(item)
@@ -32,6 +34,7 @@ class TestCanTask(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
         del self.can_task
+        CanTask._instances.clear()
 
     def test_open_conn(self):
         """Test open_conn method"""
@@ -43,16 +46,17 @@ class TestCanTask(unittest.TestCase):
 
     def test_recv_data(self):
         """Test _recv_data method"""
-        self.assertEqual(
-            self.can_task._recv_data(), "Can Message"
-        )
+        self.can_task._recv_data()
+        self.assertEqual(self.recv_q.get(), parse_message(0x03, 0, 1))
 
     def test_send_data(self):
         """Test _send_data method"""
-        self.can_task._send_data(parse_message(0x04, 2, 2, (20, 40)))
-        data = self.can_task.can0.recv_buffer.get().data
-        self.assertEqual(data[0], 20)
-        self.assertEqual(data[1], 40)
+        json_pkt = parse_message(0x03, 0, 1)
+        self.send_q.put(json_pkt)
+        self.can_task._send_data()
+        self.assertEqual(self.can_task.can0.recv_buffer.get().data,
+                         CanTask.compose_can_msg(json.loads(json_pkt)).data
+                         )
 
 
 if __name__ == "__main__":

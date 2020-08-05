@@ -46,8 +46,7 @@ class Motor(OutputModule):
             (
                 motor_channel,
                 control_mode,
-                control_value if control_value >= 0 else -control_value,
-                0x00 if control_value >= 0 else 0xFFFF,
+                control_value
             ),
         )
 
@@ -71,6 +70,7 @@ class Motor(OutputModule):
         """
         _ = self.first_degree
         self.set_motor_channel(0, 2, degree_value)
+        self.update_property(self.PropertyType.FIRST_DEGREE, degree_value)
 
     @property
     def second_degree(self) -> float:
@@ -92,6 +92,7 @@ class Motor(OutputModule):
         """
         _ = self.second_degree
         self.set_motor_channel(1, 2, degree_value)
+        self.update_property(self.PropertyType.SECOND_DEGREE, degree_value)
 
     @property
     def first_speed(self) -> float:
@@ -112,6 +113,7 @@ class Motor(OutputModule):
         """
         _ = self.first_speed
         self.set_motor_channel(0, 1, speed_value)
+        self.update_property(self.PropertyType.FIRST_SPEED, speed_value)
 
     @property
     def second_speed(self) -> float:
@@ -132,6 +134,7 @@ class Motor(OutputModule):
         """
         _ = self.second_speed
         self.set_motor_channel(1, 1, speed_value)
+        self.update_property(self.PropertyType.SECOND_SPEED, speed_value)
 
     @property
     def first_torque(self) -> float:
@@ -153,6 +156,7 @@ class Motor(OutputModule):
         """
         _ = self.first_torque
         self.set_motor_channel(0, 0, torque_value)
+        self.update_property(self.PropertyType.FIRST_TORQUE, torque_value)
 
     @property
     def second_torque(self) -> float:
@@ -174,6 +178,7 @@ class Motor(OutputModule):
         """
         _ = self.second_torque
         self.set_motor_channel(1, 0, torque_value)
+        self.update_property(self.PropertyType.SECOND_TORQUE, torque_value)
 
     @property
     def torque(self) -> Tuple[float, float]:
@@ -199,6 +204,8 @@ class Motor(OutputModule):
         _, _ = self.torque
         self.set_motor_channel(0, 0, torque_value[0])
         self.set_motor_channel(1, 0, torque_value[1])
+        self.update_property(self.PropertyType.FIRST_TORQUE, torque_value[0])
+        self.update_property(self.PropertyType.SECOND_TORQUE, torque_value[1])
 
     @property
     def speed(self):
@@ -223,6 +230,8 @@ class Motor(OutputModule):
         _, _ = self.speed
         self.set_motor_channel(0, 1, speed_value[0])
         self.set_motor_channel(1, 1, speed_value[1])
+        self.update_property(self.PropertyType.FIRST_SPEED, speed_value[0])
+        self.update_property(self.PropertyType.SECOND_SPEED, speed_value[1])
 
     @property
     def degree(self) -> Tuple[float, float]:
@@ -248,3 +257,5 @@ class Motor(OutputModule):
         _, _ = self.degree
         self.set_motor_channel(0, 2, degree_value[0])
         self.set_motor_channel(1, 2, degree_value[1])
+        self.update_property(self.PropertyType.FIRST_DEGREE, degree_value[0])
+        self.update_property(self.PropertyType.SECOND_DEGREE, degree_value[1])

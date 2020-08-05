@@ -1,7 +1,7 @@
 import modi
 import time
 
-from playscii.games.galaga import GalagaManager
+from playscii.games.galaga_modi import GalagaManager
 
 """
 HOW TO PLAY
