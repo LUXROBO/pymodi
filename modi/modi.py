@@ -1,64 +1,28 @@
 """Main MODI module."""
 
-import os
-import signal
-import threading as th
 import time
-import traceback
 from typing import Optional
 
-from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
+from modi.task.ser_task import SerTask
+from modi.task.can_task import CanTask
+from modi.util.conn_util import is_on_pi
 from modi.util.misc import module_list
-from modi.util.queues import CommunicationQueue
 from modi.util.stranger import check_complete
 from modi.util.topology_manager import TopologyManager
 
 
 class MODI:
-    # Keeps track of all the connection processes spawned
-    __conn_procs = []
 
-    def __init__(self, conn_mode: str = "",
-                 module_uuid: str = "", test: bool = False,
-                 verbose: bool = False, port: str = None):
+    def __init__(self, conn_mode: str = "", verbose: bool = False,
+                 port: str = None):
         self._modules = list()
         self._topology_data = dict()
 
-        self._recv_q = CommunicationQueue()
-        self._send_q = CommunicationQueue()
-
-        self._conn_proc = None
-        self._exe_thrd = None
-        # If in test run, do not create process and thread
-        if test:
-            return
-
-        self._conn_proc = ConnProc(
-            self._recv_q, self._send_q, conn_mode, module_uuid, verbose, port
-        )
-        try:
-            self._conn_proc.start()
-        except RuntimeError:
-            if os.name == 'nt':
-                print('\nProcess initialization failed!\nMake sure you are '
-                      'using\n    if __name__ == \'__main__\' \n '
-                      'in the main module.')
-            else:
-                traceback.print_exc()
-            exit(1)
-
-        MODI.__conn_procs.append(self._conn_proc.pid)
-
-        self._child_watch = th.Thread(target=self.watch_child_process)
-        self._child_watch.daemon = True
-        self._child_watch.start()
+        self._conn = self.__init_task(conn_mode, verbose, port)
 
         self._exe_thrd = ExeThrd(
-            self._modules,
-            self._topology_data,
-            self._recv_q,
-            self._send_q,
+            self._modules, self._topology_data, self._conn
         )
         self._exe_thrd.start()
 
@@ -67,25 +31,21 @@ class MODI:
 
         while not self._topology_manager.is_topology_complete():
             time.sleep(0.1)
+
         check_complete(self)
         print("MODI modules are initialized!")
 
-    def watch_child_process(self) -> None:
-        """Continuously watches if any of the child processes are dead, and
-        if so, terminates all the existing processes.
+    @staticmethod
+    def __init_task(conn_mode, verbose, port):
+        if not conn_mode:
+            conn_mode = 'can' if is_on_pi() else 'ser'
 
-        :return: None
-        """
-        while self._conn_proc.is_alive():
-            time.sleep(0.1)
-        for pid in MODI.__conn_procs:
-            try:
-                os.kill(pid, signal.SIGTERM)
-            except PermissionError:
-                continue
-            except ProcessLookupError:
-                continue
-        os.kill(os.getpid(), signal.SIGTERM)
+        if conn_mode == 'ser':
+            return SerTask(verbose, port)
+        elif conn_mode == 'can':
+            return CanTask(verbose)
+        else:
+            raise ValueError(f'Invalid conn mode {conn_mode}')
 
     def send(self, message) -> None:
         """Low level method to send json pkt directly to modules
@@ -93,7 +53,7 @@ class MODI:
         :param message: Json packet to send
         :return: None
         """
-        self._send_q.put(message)
+        self._conn.send(message)
 
     def recv(self) -> Optional[str]:
         """Low level method to receive json pkt directly from modules
@@ -101,9 +61,7 @@ class MODI:
         :return: Json msg received
         :rtype: str if msg exists, else None
         """
-        if self._recv_q.empty():
-            return None
-        return self._recv_q.get()
+        return self._conn.recv()
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """Prints out the topology map

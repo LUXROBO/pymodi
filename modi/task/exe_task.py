@@ -1,38 +1,29 @@
 import json
 import time
 import urllib.request as ur
-from queue import Empty
 from typing import Callable, Dict, Union
 from urllib.error import URLError
 
 from enum import IntEnum
 
 from modi.module.module import Module, BROADCAST_ID
-from modi.task.conn_task import ConnTask
 from modi.util.misc import get_module_from_name, get_module_type_from_uuid
-from modi.util.queues import CommunicationQueue
 from modi.util.msgutil import unpack_data, decode_data, parse_message
+from modi.util.conn_util import is_network_module_connected
 
 
 class ExeTask:
-    """
-    :param queue send_q: Inter-process queue for writing serial
-    message.
-    :param queue recv_q: Inter-process queue for parsing json message.
-    :param list() modules: list() of module instance.
-    """
 
-    def __init__(self, modules, topology_data,
-                 recv_q: CommunicationQueue, send_q: CommunicationQueue):
+    def __init__(self, modules, topology_data, conn_task):
         self._modules = modules
         self._topology_data = topology_data
-        self._recv_q = recv_q
-        self._send_q = send_q
+        self._conn = conn_task
+
         # Reboot all modules
         self.__set_module_state(
             BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
         )
-        if ConnTask.is_network_module_connected():
+        if is_network_module_connected():
             self.__request_network_uuid()
         print('Start initializing connected MODI modules')
 
@@ -42,16 +33,15 @@ class ExeTask:
         :param delay: time value to wait in seconds
         :type delay: float
         """
-        raw_message = ""
-        try:
-            raw_message = self._recv_q.get_nowait()
-            message = json.loads(raw_message)
-        except Empty:
+        json_pkt = self._conn.recv()
+        if not json_pkt:
             time.sleep(delay)
-        except json.decoder.JSONDecodeError:
-            print('current json message:', raw_message)
         else:
-            self.__command_handler(message["c"])(message)
+            try:
+                json_msg = json.loads(json_pkt)
+                self.__command_handler(json_msg['c'])(json_msg)
+            except json.decoder.JSONDecodeError:
+                print('current json message:', json_pkt)
 
     def __command_handler(self,
                           command: int) -> Callable[[Dict[str, int]], None]:
@@ -115,6 +105,7 @@ class ExeTask:
         if module_id in (module.id for module in self._modules):
             module = self.__get_module_by_id(module_id)
             module.last_updated = curr_time
+            module.is_connected = True
             # Warn if user code is in the module
             if not module.has_user_code and user_code_state % 2 == 1:
                 print(f"Your MODI module {module_id} has user code in it.")
@@ -150,6 +141,7 @@ class ExeTask:
                 | version_digits[2]
             )
         except URLError:
+            print("Cannot validate module version, please checkout internet")
             latest_version = None
         return latest_version
 
@@ -192,7 +184,7 @@ class ExeTask:
                          module_uuid, module_version_info):
         module_template = get_module_from_name(module_type)
         module_instance = module_template(
-            module_id, module_uuid, self._send_q
+            module_id, module_uuid, self._conn
         )
         self.__set_module_state(module_instance.id, Module.State.RUN,
                                 Module.State.PNP_OFF)
@@ -230,11 +222,11 @@ class ExeTask:
         :type pnp_state: IntEnum
         :return: None
         """
-        self._send_q.put(parse_message(0x09, 0, destination_id,
-                                       (module_state, pnp_state)))
+        self._conn.send(parse_message(0x09, 0, destination_id,
+                                      (module_state, pnp_state)))
 
     def __request_network_uuid(self):
-        self._send_q.put(
+        self._conn.send(
             parse_message(0x28, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
         )
 
@@ -244,9 +236,9 @@ class ExeTask:
         :return: json serialized topology request message
         :rtype: str
         """
-        self._send_q.put(
+        self._conn.send(
             parse_message(0x07, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0))
         )
-        self._send_q.put(
+        self._conn.send(
             parse_message(0x2A, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0))
         )

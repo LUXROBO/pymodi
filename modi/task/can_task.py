@@ -1,43 +1,30 @@
 import json
 import os
-import time
 from base64 import b64decode, b64encode
-from queue import Empty
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 
 import can
 
-from modi.task.conn_task import ConnTask, MODIConnectionError
+from modi.task.conn_task import ConnTask
+from modi.util.conn_util import MODIConnectionError
 
 
 class CanTask(ConnTask):
 
     _instances = set()
 
-    def __init__(self, can_recv_q, can_send_q, verbose):
-        super().__init__(can_recv_q, can_send_q)
-        print("Run Can Task.")
+    def __init__(self, verbose=False):
+        super().__init__(verbose)
+        print("Initiating serial connection...")
         if CanTask._instances:
             raise Exception("can0 device already in use")
         self._instances.add(self)
-        self.__can0 = None
-        self.__verbose = verbose
-        if self.__verbose:
-            print('PyMODI log...\n==================================')
 
     def __del__(self):
-        self._close_conn()
-
-    @property
-    def can0(self):
-        return self.__can0
-
-    @can0.setter
-    def can0(self, can_port):
-        self.__can0 = can_port
+        self.close_conn()
 
     #
-    # Can Methods
+    # Inherited Methods
     #
     def open_conn(self) -> None:
         """Open connection through CAN
@@ -47,56 +34,50 @@ class CanTask(ConnTask):
         os.system("sudo ip link set can0 type can bitrate 1000000")
         os.system("sudo ifconfig can0 up")
 
-        self.__can0 = can.interface.Bus(
+        self._bus = can.interface.Bus(
             channel="can0", bustype="socketcan_ctypes"
         )
 
-    def _close_conn(self) -> None:
+    def close_conn(self) -> None:
         """Close connection through CAN
 
         :return: None
         """
         os.system("sudo ifconfig can0 down")
 
-    def _recv_data(self) -> None:
-        """Read data from CAN and returns CAN message
+    def recv(self) -> Optional[str]:
+        """Read json msg from CAN
 
-        :param timeout: timeout value
-        :type timeout: float, optional
-        :return: None
+        :return: json pkt
+        :rtype: str
         """
-        if self.__can0 is None:
+        if self._bus is None:
             raise MODIConnectionError("Can is not initialized")
 
-        can_msg = self.__can0.recv(timeout=0.01)
+        can_msg = self._bus.recv(timeout=0.01)
         if not can_msg:
-            time.sleep(0.01)
+            return None
         else:
             json_msg = self.__parse_can_msg(can_msg)
-            self._recv_q.put(json_msg)
-            if self.__verbose:
+            if self.verbose:
                 print(f'recv: {json_msg}')
+            return json_msg
 
-    def _send_data(self) -> None:
-        """ Given parsed binary string message in json format,
-            convert and send the message as CAN format
+    def send(self, pkt: str) -> None:
+        """Send json pkt through can
 
+        :param pkt: Json pkt
+        :type pkt: str
         :return: None
         """
+        json_msg = json.loads(pkt)
+        can_msg = self.compose_can_msg(json_msg)
         try:
-            message_to_send = self._send_q.get_nowait().encode()
-        except Empty:
-            time.sleep(0.01)
-        else:
-            json_msg = json.loads(message_to_send)
-            can_msg = self.compose_can_msg(json_msg)
-            try:
-                self.__can0.send(can_msg)
-            except can.CanError:
-                print("Can connection is lost, please check your modules")
-
-            if self.__verbose:
-                print(f'send: {message_to_send.decode("utf8")}')
+            self._bus.send(can_msg)
+        except can.CanError:
+            print("Can connection is lost, please check your modules")
+        if self.verbose:
+            print(f'send: {pkt}')
 
     #
     # Can helper methods

@@ -16,8 +16,8 @@ import serial
 from enum import IntEnum
 
 from modi.module.module import Module
-from modi.task.conn_task import ConnTask
 from modi.util.msgutil import unpack_data, decode_message
+from modi.util.conn_util import list_modi_ports
 
 
 class STM32FirmwareUpdater:
@@ -34,7 +34,7 @@ class STM32FirmwareUpdater:
         ERASE_COMPLETE = 7
 
     def __init__(self):
-        port = ConnTask.list_modi_ports()[0].device
+        port = list_modi_ports()[0].device
         self.__ser = serial.Serial(port)
         self.__stream = self.__open_serial(self.__ser)
         next(self.__stream)
@@ -765,7 +765,7 @@ class ESP32FirmwareUpdater(serial.Serial):
     ESP_CHECKSUM_MAGIC = 0xEF
 
     def __init__(self):
-        modi_ports = ConnTask.list_modi_ports()
+        modi_ports = list_modi_ports()
         if not modi_ports:
             raise serial.SerialException("No MODI port is connected")
         super().__init__(modi_ports[0].device, timeout=0.1, baudrate=921600)

@@ -15,11 +15,11 @@ class Module:
     :param int uuid: The uuid of the module.
     :param msg_send_q: multiprocessing.queue of the serial writing
     """
+
     class Property:
         def __init__(self):
             self.value = 0
-            self.last_update_time = 0
-            self.last_request_time = 0
+            self.last_update_time = time.time()
 
     class State(IntEnum):
         RUN = 0
@@ -32,10 +32,10 @@ class Module:
         PNP_ON = 1
         PNP_OFF = 2
 
-    def __init__(self, id_, uuid, msg_send_q):
+    def __init__(self, id_, uuid, conn_task):
         self._id = id_
         self._uuid = uuid
-        self._msg_send_q = msg_send_q
+        self._conn = conn_task
 
         self.module_type = str()
         self._properties = dict()
@@ -97,24 +97,15 @@ class Module:
         """
 
         # Register property if not exists
-        if property_type not in self._properties.keys():
+        if property_type not in self._properties:
             self._properties[property_type] = self.Property()
-            request_property_msg = self.request_property(
-                self._id, property_type
-            )
-            self._msg_send_q.put(request_property_msg)
-            self._properties[property_type].last_request_time = time.time()
+            self.__request_property(self._id, property_type)
 
-        # Request property value if not updated for 0.5 sec
-        duration = time.time() - \
-            self._properties[property_type].last_update_time
-        if duration > 1:
-            modi_serialtemp = self.request_property(
-                self._id, property_type
-            )
-            self._msg_send_q.put(modi_serialtemp)
-            self._properties[property_type].last_request_time = time.time()
-        time.sleep(0.001)
+        # Request property value if not updated for 1 sec
+        last_update = self._properties[property_type].last_update_time
+        if time.time() - last_update > 1:
+            self.__request_property(self._id, property_type)
+
         return self._properties[property_type].value
 
     def update_property(self, property_type: IntEnum,
@@ -126,21 +117,20 @@ class Module:
         :param property_value: Value to update the property
         :type property_value: float
         """
-        if property_type in self._properties.keys():
+        if property_type in self._properties:
             self._properties[property_type].value = property_value
             self._properties[property_type].last_update_time = time.time()
 
-    @staticmethod
-    def request_property(destination_id: int,
-                         property_type: IntEnum) -> str:
+    def __request_property(self, destination_id: int,
+                           property_type: IntEnum) -> None:
         """ Generate message for request property
 
         :param destination_id: Id of the destination module
         :type destination_id: int
         :param property_type: Type of the requested property
         :type property_type: int
-        :return: json serialized message for request property
-        :rtype: str
+        :return: None
         """
-        return parse_message(0x03, 0, destination_id,
-                             (property_type, None, 95, None))
+        self._properties[property_type].last_update_time = time.time()
+        self._conn.send(parse_message(0x03, 0, destination_id,
+                                      (property_type, None, 95, None)))
