@@ -1,11 +1,24 @@
 from abc import ABC
 from abc import abstractmethod
+from typing import Optional
 
 
 class ConnTask(ABC):
 
-    def __init__(self):
-        self.__bus = None
+    def __init__(self, verbose=False):
+        self._bus = None
+        self.verbose = verbose
+
+    @property
+    def bus(self):
+        return self._bus
+
+    @bus.setter
+    def bus(self, new_bus):
+        if not isinstance(new_bus, type(self._bus)):
+            raise ValueError()
+        else:
+            self._bus = new_bus
 
     #
     # Abstract Methods
@@ -19,9 +32,9 @@ class ConnTask(ABC):
         pass
 
     @abstractmethod
-    def recv_data(self):
+    def recv(self) -> Optional[str]:
         pass
 
     @abstractmethod
-    def send_data(self):
+    def send(self, pkt: str) -> None:
         pass
