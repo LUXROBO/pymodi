@@ -31,7 +31,9 @@ class _DebuggerWindow(th.Thread):
         self.__log = None
         self.__spec = None
         self.__curr_module = None
+        self.__curr_cmd = None
         self.__tell = 0
+        self.__query = None
         self.__sid, self.__did, self.__cmd, self.__data = \
             None, None, None, None
 
@@ -66,8 +68,15 @@ class _DebuggerWindow(th.Thread):
         send_button = Button(window, text="Send", command=self.send)
         send_button.place(x=360, y=30)
 
+        Label(window, text='command query: ').place(x=420, y=30)
+        self.__query = Entry(window)
+        self.__query.place(x=525, y=32, width=25)
+        Button(window, text="Select", command=self.__change_query).place(
+            x=555, y=30
+        )
+
         self.__log = ScrolledText(window, wrap=WORD, font=('Helvetica', 12))
-        self.__log.place(x=420, y=30, width=470, height=710)
+        self.__log.place(x=420, y=60, width=470, height=680)
 
         self.__spec = Label(window, text=f"PyMODI v{modi.__version__}",
                             bg='white', anchor=NW, justify='left',
@@ -99,26 +108,35 @@ class _DebuggerWindow(th.Thread):
             self.__input_box.delete(0, END)
             self.__input_box.insert(0, "Invalid Arguments")
 
+    def __query_log(self, line: str) -> bool:
+        if 'recv' not in line and 'send' not in line:
+            return False
+        if self.__curr_module \
+                and str(self.__curr_module.id) not in line \
+                and self.__curr_module.module_type != 'Network':
+            return False
+        if self.__curr_cmd and f'"c":{self.__curr_cmd},' not in line:
+            return False
+        return True
+
+    def __change_query(self):
+        self.__curr_cmd = self.__query.get()
+        self.__update_log()
+
     def __update_log(self):
-        sid = self.__curr_module.id
         self.__log.delete('0.0', END)
         log_text = self._buffer.getvalue()
         for line in log_text.split('\n'):
-            if ('recv' in line or 'send' in line) \
-                and (str(sid) in line
-                     or self.__curr_module.module_type == 'Network'):
+            if self.__query_log(line):
                 self.__log.insert(INSERT, line + '\n')
 
     def __append_log(self):
         log_text = self._buffer.getvalue()
         new_text = log_text[self.__tell:]
         for line in new_text.split('\n'):
-            if 'recv' in line or 'send' in line:
-                if not self.__curr_module \
-                    or self.__curr_module.module_type == 'Network' \
-                        or str(self.__curr_module.id) in line:
-                    self.__log.insert(INSERT, line + '\n')
-            elif line:
+            if self.__query_log(line):
+                self.__log.insert(INSERT, line + '\n')
+            if line and 'send' not in line and 'recv' not in line:
                 sys.__stdout__.write(line + '\n')
         self.__tell += len(new_text)
         self.__log.see(INSERT)
