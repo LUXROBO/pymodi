@@ -1,8 +1,6 @@
 import json
 import time
-import urllib.request as ur
 from typing import Callable, Dict, Union
-from urllib.error import URLError
 
 from enum import IntEnum
 
@@ -122,29 +120,6 @@ class ExeTask:
             if curr_time - module.last_updated > 2:
                 module.is_connected = False
                 module._last_set_message = None
-
-    @staticmethod
-    def __get_latest_version():
-        version_path = (
-            "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
-        )
-        version_info = None
-        try:
-            for line in ur.urlopen(version_path, timeout=1):
-                version_info = line.decode('utf-8').lstrip('v')
-            version_digits = [int(digit) for digit in version_info.split('.')]
-            """ Version number is formed by concatenating all three version bits
-                e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
-            """
-            latest_version = (
-                version_digits[0] << 13
-                | version_digits[1] << 8
-                | version_digits[2]
-            )
-        except URLError:
-            print("Cannot validate module version, please checkout internet")
-            latest_version = None
-        return latest_version
 
     def __update_modules(self, message: Dict[str, Union[str, int]]) -> None:
         """ Update module information

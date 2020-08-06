@@ -5,6 +5,8 @@ import time
 from enum import IntEnum
 
 from modi.util.msgutil import parse_message
+import urllib.request as ur
+from urllib.error import URLError
 
 BROADCAST_ID = 0xFFF
 
@@ -89,6 +91,29 @@ class Module:
     @property
     def uuid(self) -> int:
         return self._uuid
+
+    @property
+    def is_up_to_date(self):
+        version_path = (
+            "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
+        )
+        version_info = None
+        try:
+            for line in ur.urlopen(version_path, timeout=1):
+                version_info = line.decode('utf-8').lstrip('v')
+            version_digits = [int(digit) for digit in version_info.split('.')]
+            """ Version number is formed by concatenating all three version bits
+                e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
+            """
+            latest_version = (
+                version_digits[0] << 13
+                | version_digits[1] << 8
+                | version_digits[2]
+            )
+        except URLError:
+            print("Cannot validate module version, please checkout internet")
+            return None
+        return latest_version <= self.__version
 
     def _get_property(self, property_type: IntEnum) -> float:
         """ Get module property value and request
