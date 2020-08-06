@@ -4,8 +4,6 @@ import time
 from typing import Optional
 
 from modi._exe_thrd import ExeThrd
-from modi.task.ser_task import SerTask
-from modi.task.can_task import CanTask
 from modi.util.conn_util import is_on_pi
 from modi.util.misc import module_list
 from modi.util.stranger import check_complete
@@ -41,8 +39,10 @@ class MODI:
             conn_mode = 'can' if is_on_pi() else 'ser'
 
         if conn_mode == 'ser':
+            from modi.task.ser_task import SerTask
             return SerTask(verbose, port)
         elif conn_mode == 'can':
+            from modi.task.can_task import CanTask
             return CanTask(verbose)
         else:
             raise ValueError(f'Invalid conn mode {conn_mode}')

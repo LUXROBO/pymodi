@@ -143,22 +143,9 @@ class ExeTask:
                 module_type, module_id, module_uuid, module_version_info
             )
             new_module.module_type = module_type
-            # if module_type != 'Network':
-            #     new_module.is_up_to_date = self.__check_module_version(
-            #         module_version_info
-            #     )
         elif not self.__get_module_by_id(module_id).is_connected:
             # Handle Reconnected modules
             self.__get_module_by_id(module_id).is_connected = True
-
-    def __check_module_version(self, current_version):
-        latest_version = self.__get_latest_version()
-        if latest_version and current_version < latest_version:
-            print("Your MODI module(s) is not up-to-date.")
-            print("You can update your MODI modules by calling "
-                  "'update_module_firmware()'")
-            return False
-        return True
 
     def __add_new_module(self, module_type, module_id,
                          module_uuid, module_version_info):
