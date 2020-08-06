@@ -121,6 +121,7 @@ class ExeTask:
         for module in self._modules:
             if curr_time - module.last_updated > 2:
                 module.is_connected = False
+                module._last_set_message = None
 
     @staticmethod
     def __get_latest_version():

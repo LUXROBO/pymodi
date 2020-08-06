@@ -76,8 +76,10 @@ class OutputModule(Module):
             property_values,
             property_data_type)
 
-        for message in messages:
-            self._conn.send(message)
+        if messages != self._last_set_message:
+            for message in messages:
+                self._conn.send(message)
+            self._last_set_message = messages
         time.sleep(0.001)
 
     @staticmethod
