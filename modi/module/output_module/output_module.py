@@ -14,10 +14,6 @@ class OutputModule(Module):
         RAW = 3
         DISPLAY_VAR = 4
 
-    def __init__(self, id_, uuid, conn_task):
-        super().__init__(id_, uuid, conn_task)
-        self._last_set_message = ""
-
     def __parse_set_message(self, destination_id: int,
                             property_type: IntEnum,
                             property_values: Tuple,
