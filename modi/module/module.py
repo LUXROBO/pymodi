@@ -5,8 +5,6 @@ import time
 from enum import IntEnum
 
 from modi.util.msgutil import parse_message
-import urllib.request as ur
-from urllib.error import URLError
 
 BROADCAST_ID = 0xFFF
 
@@ -15,7 +13,6 @@ class Module:
     """
     :param int id_: The id of the module.
     :param int uuid: The uuid of the module.
-    :param msg_send_q: multiprocessing.queue of the serial writing
     """
 
     class Property:
@@ -94,6 +91,9 @@ class Module:
 
     @property
     def is_up_to_date(self):
+        import urllib.request as ur
+        from urllib.error import URLError
+
         version_path = (
             "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
         )

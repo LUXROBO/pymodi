@@ -1,15 +1,4 @@
-from modi.module.input_module.button import Button
-from modi.module.input_module.dial import Dial
-from modi.module.input_module.env import Env
-from modi.module.input_module.gyro import Gyro
-from modi.module.input_module.ir import Ir
-from modi.module.input_module.mic import Mic
-from modi.module.input_module.ultrasonic import Ultrasonic
-from modi.module.output_module.display import Display
-from modi.module.output_module.led import Led
-from modi.module.output_module.motor import Motor
-from modi.module.output_module.speaker import Speaker
-from modi.module.setup_module.network import Network
+from importlib.util import find_spec
 
 
 def get_module_type_from_uuid(uuid):
@@ -45,21 +34,15 @@ def get_module_from_name(module_type: str):
     :return: Module corresponding to the type
     :rtype: Module
     """
-    module = {
-        "button": Button,
-        "dial": Dial,
-        "display": Display,
-        "env": Env,
-        "gyro": Gyro,
-        "ir": Ir,
-        "led": Led,
-        "mic": Mic,
-        "motor": Motor,
-        "speaker": Speaker,
-        "ultrasonic": Ultrasonic,
-        "Network": Network,
-    }.get(module_type)
-    return module
+    module_type = module_type[0].lower() + module_type[1:]
+    module_name = module_type[0].upper() + module_type[1:]
+    module_module = find_spec(f'modi.module.input_module.{module_type}')
+    if not module_module:
+        module_module = find_spec(f'modi.module.output_module.{module_type}')
+    if not module_module:
+        module_module = find_spec(f'modi.module.setup_module.{module_type}')
+    module_module = module_module.loader.load_module()
+    return getattr(module_module, module_name)
 
 
 class module_list(list):
