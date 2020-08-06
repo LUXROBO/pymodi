@@ -9,7 +9,6 @@ import modi
 from modi.util.tutor import Tutor
 from modi.firmware_updater import STM32FirmwareUpdater
 from modi.util.msgutil import parse_message, decode_message
-from modi.debugger import Debugger
 
 
 def check_option(*options):
@@ -94,6 +93,7 @@ if __name__ == "__main__":
         print(">>> bundle = modi.MODI()")
         init_time = time.time()
         if check_option('-g', '--gui'):
+            from modi.debugger import Debugger
             bundle = Debugger()
             bundle.start()
         else:
