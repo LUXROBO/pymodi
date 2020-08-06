@@ -5,6 +5,7 @@ from typing import Callable, Dict, Union
 from enum import IntEnum
 
 from modi.module.module import Module, BROADCAST_ID
+from modi.module.setup_module.battery import Battery
 from modi.util.misc import get_module_from_name, get_module_type_from_uuid
 from modi.util.msgutil import unpack_data, decode_data, parse_message
 from modi.util.conn_util import is_network_module_connected
@@ -79,9 +80,10 @@ class ExeTask:
             topology_by_id[direction] = topology_ids[idx] \
                 if 0 < topology_ids[idx] < 0xFFFF else None
             if topology_ids[idx] == 0 and not self.__is_battery_connected:
-                print("Battery module detected!! "
-                      "Please remove the battery module.")
+                print(f"{'#'*58}\nBattery module detected!! "
+                      f"Please remove the battery module.\n{'#'*58}")
                 self.__is_battery_connected = True
+                self._modules.append(Battery(-1, -1, self._conn))
 
         # Update topology data for the module
         self._topology_data[src_id] = topology_by_id
