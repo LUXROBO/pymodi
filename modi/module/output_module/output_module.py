@@ -78,7 +78,7 @@ class OutputModule(Module):
 
         for message in messages:
             self._conn.send(message)
-        time.sleep(0.01)
+        time.sleep(0.001)
 
     @staticmethod
     def _validate_property(nb_values: int, value_range: Tuple = None):
