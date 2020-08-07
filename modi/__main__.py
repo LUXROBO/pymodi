@@ -95,7 +95,6 @@ if __name__ == "__main__":
         if check_option('-g', '--gui'):
             from modi.debugger import Debugger
             bundle = Debugger()
-            bundle.start()
         else:
             bundle = modi.MODI(verbose=check_option('-v', '--verbose'))
         fin_time = time.time()

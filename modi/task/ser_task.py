@@ -78,7 +78,8 @@ class SerTask(ConnTask):
             return None
         json_pkt = self.__json_buffer[:idx + 1].decode('utf8')
         self.__json_buffer = self.__json_buffer[idx + 1:]
-        print(f'recv: {json_pkt}')
+        if self.verbose:
+            print(f'recv: {json_pkt}')
         return json_pkt
 
     def send(self, pkt: str) -> None:
