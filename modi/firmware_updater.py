@@ -12,7 +12,7 @@ from enum import IntEnum
 
 from modi.module.module import Module
 from modi.util.msgutil import unpack_data, decode_message
-from modi.util.conn_util import list_modi_ports
+from modi.util.conn_util import list_modi_ports, is_on_pi
 
 
 class STM32FirmwareUpdater:
@@ -221,6 +221,7 @@ class STM32FirmwareUpdater:
         bin_size = sys.getsizeof(bin_buffer)
         bin_begin = 0x9000
         bin_end = bin_size - ((bin_size - bin_begin) % page_size)
+        delay = 0.0025 if is_on_pi() else 0.001
         for page_begin in range(bin_begin, bin_end + 1, page_size):
             print(f"{self.__progress_bar(page_begin, bin_end)} "
                   f"{page_begin * 100 // bin_end}% \r", end='')
@@ -253,7 +254,7 @@ class STM32FirmwareUpdater:
                     bin_data=curr_data,
                     crc_val=checksum
                 )
-                time.sleep(0.001)
+                time.sleep(delay)
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_page_success = self.send_firmware_command(
