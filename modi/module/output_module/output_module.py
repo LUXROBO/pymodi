@@ -1,7 +1,7 @@
 import time
 
 from enum import IntEnum
-from typing import Tuple, List, Any
+from typing import Tuple, List
 from modi.module.module import Module
 from modi.util.msgutil import parse_message, parse_data
 
@@ -78,17 +78,24 @@ class OutputModule(Module):
 
         for message in messages:
             self._conn.send(message)
-        time.sleep(0.001)
+        time.sleep(0.01)
 
-    def update_properties(self, property_types: List[Any, ...],
-                          property_values: Tuple[Any, ...]):
+    def update_properties(self, property_types: List, property_values: Tuple):
         is_same_values = True
         for p_type, p_value in zip(property_types, property_values):
             if p_type in self._properties:
-                is_same_values &= self._properties[p_type].value == p_value
-                self.update_property(p_type, p_value)
+                property_target = self._properties[p_type]
+                # If the property is outdated, request and send set msg
+                if time.time() - property_target.last_update_time > 1:
+                    self._request_property(self.id, p_type)
+                    is_same_values = False
+                else:
+                    # Otherwise, check if the property is the same
+                    is_same_values &= property_target.value == p_value
             else:
-                self._get_property(p_type)
+                # If the property is new, sent the set msg
+                is_same_values = False
+            self.update_property(p_type, p_value)
         return not is_same_values
 
     @staticmethod
