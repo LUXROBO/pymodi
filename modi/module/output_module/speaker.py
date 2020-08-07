@@ -119,7 +119,8 @@ class Speaker(OutputModule):
         :type tune_value: Tuple[int, int]
         :return: None
         """
-        _, _ = self.tune
+        if tune_value == self.tune:
+            return
         self._set_property(
             self._id,
             self.CommandType.SET_TUNE,
