@@ -759,9 +759,9 @@ class ESP32FirmwareUpdater(serial.Serial):
         super().__init__(modi_ports[0].device, timeout=0.1, baudrate=921600)
         print(f"Connecting to MODI network module at {modi_ports[0].device}")
 
-        self.__address = [0x1000, 0x8000, 0x10000, 0xD0000]
+        self.__address = [0x1000, 0x8000, 0XD000, 0x10000, 0xD0000]
         self.file_path = ['bootloader.bin', 'partitions.bin',
-                          'modi_ota_factory.bin',
+                          'ota_data_initial.bin', 'modi_ota_factory.bin',
                           'esp32.bin']
         self.id = None
         self.version = None
