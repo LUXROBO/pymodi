@@ -11,14 +11,13 @@ class TestSerTask(unittest.TestCase):
     class MockSerial:
         def __init__(self):
             self.in_waiting = 1
-            self.read = mock.Mock(side_effect=self.read_mock)
-            self.read_until = mock.Mock(return_value=b'complete}')
+            self.read_all = mock.Mock(side_effect=self.read_mock)
             self.write = mock.Mock()
             self.close = mock.Mock()
 
         def read_mock(self):
             self.in_waiting = 0
-            return b'{'
+            return b'{complete}'
 
     def setUp(self):
         """Set up test fixtures, if any."""
