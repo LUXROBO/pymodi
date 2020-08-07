@@ -80,24 +80,6 @@ class OutputModule(Module):
             self._conn.send(message)
         time.sleep(0.01)
 
-    def update_properties(self, property_types: List, property_values: Tuple):
-        is_same_values = True
-        for p_type, p_value in zip(property_types, property_values):
-            if p_type in self._properties:
-                property_target = self._properties[p_type]
-                # If the property is outdated, request and send set msg
-                if time.time() - property_target.last_update_time > 1:
-                    self._request_property(self.id, p_type)
-                    is_same_values = False
-                else:
-                    # Otherwise, check if the property is the same
-                    is_same_values &= property_target.value == p_value
-            else:
-                # If the property is new, sent the set msg
-                is_same_values = False
-            self.update_property(p_type, p_value)
-        return not is_same_values
-
     @staticmethod
     def _validate_property(nb_values: int, value_range: Tuple = None):
         def check_value(setter):

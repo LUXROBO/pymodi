@@ -33,13 +33,16 @@ class Led(OutputModule):
         :type color: Tuple[int, int, int]
         :return: None
         """
-        if not self.update_properties([t for t in self.PropertyType], color):
+        if color == self.rgb:
             return
         self._set_property(
             self._id,
             self.CommandType.SET_RGB,
             color,
         )
+        self.update_property(self.PropertyType.RED, color[0])
+        self.update_property(self.PropertyType.GREEN, color[1])
+        self.update_property(self.PropertyType.BLUE, color[2])
 
     def turn_on(self) -> None:
         """Turn on led at maximum brightness.
