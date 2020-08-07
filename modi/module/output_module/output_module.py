@@ -80,13 +80,15 @@ class OutputModule(Module):
             self._conn.send(message)
         time.sleep(0.001)
 
-    def update_properties(self, property_types: Tuple[Any, ...],
+    def update_properties(self, property_types: List[Any, ...],
                           property_values: Tuple[Any, ...]):
         is_same_values = True
         for p_type, p_value in zip(property_types, property_values):
             if p_type in self._properties:
                 is_same_values &= self._properties[p_type].value == p_value
                 self.update_property(p_type, p_value)
+            else:
+                self._get_property(p_type)
         return not is_same_values
 
     @staticmethod

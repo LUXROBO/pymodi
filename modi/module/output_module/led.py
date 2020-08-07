@@ -33,9 +33,7 @@ class Led(OutputModule):
         :type color: Tuple[int, int, int]
         :return: None
         """
-        _, _, _ = self.rgb
-        if not self.update_properties(
-                tuple(t for t in self.PropertyType), color):
+        if not self.update_properties([t for t in self.PropertyType], color):
             return
         self._set_property(
             self._id,
