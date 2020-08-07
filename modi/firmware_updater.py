@@ -1,13 +1,11 @@
-import io
 import json
 import sys
 import threading as th
 import time
 import urllib.request as ur
-import zipfile
 from base64 import b64encode, b64decode
-from io import BytesIO
-from urllib.error import URLError
+from io import BytesIO, open
+from os import path
 from zipfile import ZipFile
 
 import esptool
@@ -206,23 +204,18 @@ class STM32FirmwareUpdater:
 
         # Init path to binary file
         root_path = (
-            'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
+            path.join(path.dirname(__file__), '..', 'firmware', 'stm32')
         )
         bin_path = (
-            f"skeleton/{module_type.lower()}.bin"
+            f"{module_type.lower()}.bin"
             if module_type != 'Env' else
-            "skeleton/environment.bin"
+            "environment.bin"
         )
 
-        try:
-            # Init bytes data from the given binary file of the current module
-            download_response = requests.get(root_path)
-        except URLError:
-            raise URLError("Failed to download firmware. Check your internet")
-        zip_content = zipfile.ZipFile(
-            io.BytesIO(download_response.content), 'r'
-        )
-        bin_buffer = zip_content.read(bin_path)
+        bin_path = path.join(root_path, bin_path)
+
+        with open(bin_path, 'rb') as bin_file:
+            bin_buffer = bin_file.read()
 
         # Init metadata of the bytes loaded
         page_size = 0x800
@@ -274,12 +267,10 @@ class STM32FirmwareUpdater:
                 page_begin -= page_size
 
         # Include MODI firmware version when writing end flash
-        version_path = (
-            "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
-        )
+        version_path = path.join(root_path, 'version.txt')
         version_info = None
-        for line in ur.urlopen(version_path):
-            version_info = line.decode('utf-8').lstrip('v')
+        with open(version_path) as version_file:
+            version_info = version_file.readline().lstrip('v').rstrip('\n')
         version_digits = [int(digit) for digit in version_info.split('.')]
         """ Version number is formed by concatenating all three version bits
             e.g. 2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
