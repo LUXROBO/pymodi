@@ -16,8 +16,6 @@ class Debugger(MODI):
         self._buffer = StringIO()
         sys.stdout = self._buffer
         super().__init__(verbose=True, *args, **kwargs)
-
-    def start(self):
         _DebuggerWindow(self, self._buffer).start()
 
 
