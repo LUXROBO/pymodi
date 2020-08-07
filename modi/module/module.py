@@ -45,7 +45,6 @@ class Module:
         self.position = (0, 0)
         self.__version = None
         self.has_user_code = False
-        self._last_set_message = None
 
     def __gt__(self, other):
         if self.order == other.order:
