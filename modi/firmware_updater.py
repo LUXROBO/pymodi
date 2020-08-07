@@ -265,7 +265,6 @@ class STM32FirmwareUpdater:
 
         # Include MODI firmware version when writing end flash
         version_path = path.join(root_path, 'version.txt')
-        version_info = None
         with open(version_path) as version_file:
             version_info = version_file.readline().lstrip('v').rstrip('\n')
         version_digits = [int(digit) for digit in version_info.split('.')]

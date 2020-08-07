@@ -2,6 +2,7 @@
 
 import time
 from typing import Union
+from os import path
 
 from enum import IntEnum
 
@@ -91,28 +92,18 @@ class Module:
 
     @property
     def is_up_to_date(self):
-        import urllib.request as ur
-        from urllib.error import URLError
-
-        version_path = (
-            "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
+        root_path = (
+            path.join(path.dirname(__file__), '..', '..', 'firmware', 'stm32')
         )
-        version_info = None
-        try:
-            for line in ur.urlopen(version_path, timeout=1):
-                version_info = line.decode('utf-8').lstrip('v')
-            version_digits = [int(digit) for digit in version_info.split('.')]
-            """ Version number is formed by concatenating all three version bits
-                e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
-            """
-            latest_version = (
-                version_digits[0] << 13
-                | version_digits[1] << 8
-                | version_digits[2]
-            )
-        except URLError:
-            print("Cannot validate module version, please checkout internet")
-            return None
+        version_path = path.join(root_path, 'version.txt')
+        with open(version_path) as version_file:
+            version_info = version_file.readline().lstrip('v').rstrip('\n')
+        version_digits = [int(digit) for digit in version_info.split('.')]
+        latest_version = (
+            version_digits[0] << 13
+            | version_digits[1] << 8
+            | version_digits[2]
+        )
         return latest_version <= self.__version
 
     def _get_property(self, property_type: IntEnum) -> float:
