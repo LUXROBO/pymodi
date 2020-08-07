@@ -959,7 +959,7 @@ class ESP32FirmwareUpdater(serial.Serial):
     @staticmethod
     def __get_latest_version():
         root_path = path.join(
-            path.dirname(__file__), '..', 'firmware', 'esp32'
+            path.dirname(__file__), 'firmware', 'esp32'
         )
         with open(path.join(root_path, 'version.txt'), 'r') as version_file:
             version_info = version_file.readline().lstrip('v').rstrip('\n')
