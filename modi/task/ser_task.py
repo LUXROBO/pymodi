@@ -2,7 +2,6 @@ from typing import Optional
 
 import serial
 from serial.serialutil import SerialException
-
 from modi.task.conn_task import ConnTask
 from modi.util.conn_util import list_modi_ports
 
@@ -13,6 +12,7 @@ class SerTask(ConnTask):
         print("Initiating serial connection...")
         super().__init__(verbose)
         self.__port = port
+        self.__json_buffer = b''
 
     #
     # Inherited Methods
@@ -67,20 +67,19 @@ class SerTask(ConnTask):
 
         :return: str
         """
-        if self._bus.in_waiting:
-            json_pkt = b''
-            while json_pkt != b'{':
-                if not self._bus.in_waiting:
-                    return None
-                json_pkt = self._bus.read()
-
-            json_pkt += self._bus.read_until(b'}')
-            json_pkt = json_pkt.decode('utf8')
-            if self.verbose:
-                print(f'recv: {json_pkt}')
-            return json_pkt
-        else:
+        self.__json_buffer += self._bus.read_all()
+        idx = self.__json_buffer.find(b'{')
+        if idx < 0:
+            self.__json_buffer = b''
             return None
+        self.__json_buffer = self.__json_buffer[idx:]
+        idx = self.__json_buffer.find(b'}')
+        if idx < 0:
+            return None
+        json_pkt = self.__json_buffer[:idx + 1].decode('utf8')
+        self.__json_buffer = self.__json_buffer[idx + 1:]
+        print(f'recv: {json_pkt}')
+        return json_pkt
 
     def send(self, pkt: str) -> None:
         """ Send json pkt
