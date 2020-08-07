@@ -1,3 +1,4 @@
+import time
 from typing import Dict, List, Tuple
 
 from modi.util.misc import module_list
@@ -205,6 +206,12 @@ class TopologyManager:
         return True
 
     def is_topology_complete(self):
+        for i, module in enumerate(self._modules):
+            if module.id < 0:
+                self._modules.pop(i)
+                time.sleep(2)
+                return True
+
         if len(self._tp_data) < 1:
             return False
         try:
