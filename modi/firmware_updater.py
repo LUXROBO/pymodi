@@ -201,7 +201,7 @@ class STM32FirmwareUpdater:
 
         # Init path to binary file
         root_path = (
-            path.join(path.dirname(__file__), '..', 'firmware', 'stm32')
+            path.join(path.dirname(__file__), 'firmware', 'stm32')
         )
         bin_path = (
             f"{module_type.lower()}.bin"
@@ -943,7 +943,7 @@ class ESP32FirmwareUpdater(serial.Serial):
     def __compose_binary_firmware(self):
         binary_firmware = b''
         root_path = path.join(
-            path.dirname(__file__), '..', 'firmware', 'esp32'
+            path.dirname(__file__), 'firmware', 'esp32'
         )
         for i, bin_path in enumerate(self.file_path):
             with open(path.join(root_path, bin_path), 'rb') as bin_file:

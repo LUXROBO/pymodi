@@ -8,7 +8,7 @@ include about.py
 
 include requirements.txt
 
-recursive-include firmware *
+recursive-include modi/firmware *
 
 recursive-include tests *
 recursive-exclude * __pycache__
