@@ -2,14 +2,11 @@ import json
 import sys
 import threading as th
 import time
-import urllib.request as ur
 from base64 import b64encode, b64decode
-from io import BytesIO, open
+from io import open
 from os import path
-from zipfile import ZipFile
 
 import esptool
-import requests
 import serial
 from enum import IntEnum
 
@@ -946,14 +943,12 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     def __compose_binary_firmware(self):
         binary_firmware = b''
-        esp_path = 'https://download.luxrobo.com/modi-esp32-firmware/esp.zip'
-        ota_path = 'https://download.luxrobo.com/modi-ota-firmware/ota.zip'
+        root_path = path.join(
+            path.dirname(__file__), '..', 'firmware', 'esp32'
+        )
         for i, bin_path in enumerate(self.file_path):
-            # Download files from the modi_download_server
-            if 'ota' in bin_path:
-                bin_data = self.__download_bin_file(ota_path, bin_path)
-            else:
-                bin_data = self.__download_bin_file(esp_path, bin_path)
+            with open(path.join(root_path, bin_path), 'rb') as bin_file:
+                bin_data = bin_file.read()
             binary_firmware += bin_data
             if i < len(self.__address) - 1:
                 binary_firmware += b'\xFF' * (self.__address[i + 1]
@@ -962,17 +957,13 @@ class ESP32FirmwareUpdater(serial.Serial):
         return binary_firmware
 
     @staticmethod
-    def __download_bin_file(root_path, file_path):
-        download_response = requests.get(root_path)
-        with ZipFile(BytesIO(download_response.content), 'r') as zip_content:
-            bin_data = zip_content.read(file_path)
-        return bin_data
-
-    @staticmethod
     def __get_latest_version():
-        ver_info = ur.urlopen(
-            'https://download.luxrobo.com/modi-esp32-firmware/version.txt')
-        return ver_info.read().decode('ascii').lstrip('v')
+        root_path = path.join(
+            path.dirname(__file__), '..', 'firmware', 'esp32'
+        )
+        with open(path.join(root_path, 'version.txt'), 'r') as version_file:
+            version_info = version_file.readline().lstrip('v').rstrip('\n')
+        return version_info
 
     def __erase_chunk(self, size, offset):
         num_blocks = size // self.ESP_FLASH_BLOCK + 1
