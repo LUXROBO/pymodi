@@ -81,7 +81,7 @@ class ExeTask:
                 if 0 < topology_ids[idx] < 0xFFFF else None
             if topology_ids[idx] == 0 and not self.__is_battery_connected:
                 print(f"{'#'*58}\nBattery module detected!! "
-                      f"Please remove the battery module.\n{'#'*58}")
+                      f"Topology may be incomplete.\n{'#'*58}")
                 self.__is_battery_connected = True
                 self._modules.append(Battery(-1, -1, self._conn))
 
