@@ -8,6 +8,7 @@ from modi.util.conn_util import is_on_pi
 from modi.util.misc import module_list
 from modi.util.stranger import check_complete
 from modi.util.topology_manager import TopologyManager
+from modi.firmware_updater import STM32FirmwareUpdater, ESP32FirmwareUpdater
 
 
 class MODI:
@@ -145,3 +146,13 @@ class MODI:
         """Module List of connected Ultrasonic modules.
         """
         return module_list(self._modules, "ultrasonic")
+
+
+def update_module_firmware():
+    updater = STM32FirmwareUpdater()
+    updater.update_module_firmware()
+
+
+def update_network_firmware(stub=True, force=False):
+    updater = ESP32FirmwareUpdater()
+    updater.start_update(stub=stub, force=force)

@@ -791,7 +791,7 @@ class ESP32FirmwareUpdater(serial.Serial):
                     f" Do you still want to proceed? [y/n]: ")
                 if 'y' not in response:
                     return
-
+        print(f"Updating v{self.version} to v{self.__version_to_update}")
         firmware_buffer = self.__compose_binary_firmware()
 
         self.__device_ready()

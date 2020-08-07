@@ -114,7 +114,7 @@ class ExeTask:
             if not module.has_user_code and user_code_state % 2 == 1:
                 print(f"Your MODI module {module_id} has user code in it.")
                 print("You can reset your MODI modules by calling "
-                      "'update_module_firmware()'")
+                      "'modi.update_module_firmware()'")
                 module.has_user_code = True
             # Turn off pnp if pnp flag is on
             if user_code_state < 2:
