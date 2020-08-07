@@ -9,6 +9,7 @@ from tkinter.scrolledtext import ScrolledText
 import modi
 from modi.modi import MODI
 from modi.util.msgutil import parse_message
+import time
 
 
 class Debugger(MODI):
@@ -16,8 +17,6 @@ class Debugger(MODI):
         self._buffer = StringIO()
         sys.stdout = self._buffer
         super().__init__(verbose=True, *args, **kwargs)
-
-    def start(self):
         _DebuggerWindow(self, self._buffer).start()
 
 
@@ -94,6 +93,7 @@ class _DebuggerWindow(th.Thread):
                     self.__change_spec(self.__curr_module)
             except TclError:
                 break
+            time.sleep(0.1)
 
     def __parse(self):
         try:
@@ -153,7 +153,9 @@ class _DebuggerWindow(th.Thread):
                           f"Connected: {module.is_connected}"])
         text += '\n[Properties]\n'
         for prop in module._properties:
-            text += f"{prop.name}: {module._properties[prop].value}\n"
+            text += f"{prop.name}: {module._properties[prop].value} " \
+                    f"last updated: " \
+                    f"{module._properties[prop].last_update_time}\n"
         self.__spec.configure(text=text)
 
     def __create_module_button(self, module, window):

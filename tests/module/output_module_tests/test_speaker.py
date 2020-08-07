@@ -116,6 +116,7 @@ class TestSpeaker(unittest.TestCase):
     def test_set_off(self):
         """Test set_off method"""
         expected_values = (0, 0)
+        self.speaker.tune = 100, 100
         self.speaker.tune = expected_values
         sent_messages = []
         while self.conn.send_list:

@@ -1,6 +1,7 @@
 """Module module."""
 
 import time
+from typing import Union
 
 from enum import IntEnum
 
@@ -16,8 +17,8 @@ class Module:
     """
 
     class Property:
-        def __init__(self):
-            self.value = 0
+        def __init__(self, value: Union[int, float] = 0):
+            self.value = value
             self.last_update_time = time.time()
 
     class State(IntEnum):
@@ -45,7 +46,6 @@ class Module:
         self.position = (0, 0)
         self.__version = None
         self.has_user_code = False
-        self._last_set_message = None
 
     def __gt__(self, other):
         if self.order == other.order:
@@ -127,9 +127,9 @@ class Module:
             self._properties[property_type] = self.Property()
             self.__request_property(self._id, property_type)
 
-        # Request property value if not updated for 1 sec
+        # Request property value if not updated for 1.5 sec
         last_update = self._properties[property_type].last_update_time
-        if time.time() - last_update > 1:
+        if time.time() - last_update > 1.5:
             self.__request_property(self._id, property_type)
 
         return self._properties[property_type].value
@@ -143,9 +143,10 @@ class Module:
         :param property_value: Value to update the property
         :type property_value: float
         """
-        if property_type in self._properties:
-            self._properties[property_type].value = property_value
-            self._properties[property_type].last_update_time = time.time()
+        if property_type not in self._properties:
+            self._properties[property_type] = self.Property()
+        self._properties[property_type].value = property_value
+        self._properties[property_type].last_update_time = time.time()
 
     def __request_property(self, destination_id: int,
                            property_type: IntEnum) -> None:

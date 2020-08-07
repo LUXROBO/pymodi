@@ -27,17 +27,6 @@ class TestLed(unittest.TestCase):
         sent_messages = []
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(
-            parse_message(0x03, 0, -1,
-                          (Led.PropertyType.RED, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1,
-                          (Led.PropertyType.GREEN, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Led.PropertyType.BLUE, None, 95, None))
-            in sent_messages)
         self.assertTrue(set_message in sent_messages)
 
     def test_on(self):
@@ -49,40 +38,18 @@ class TestLed(unittest.TestCase):
         sent_messages = []
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Led.PropertyType.RED, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Led.PropertyType.RED, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1,
-                          (Led.PropertyType.GREEN, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Led.PropertyType.BLUE, None, 95, None))
-            in sent_messages)
         self.assertTrue(set_message in sent_messages)
 
     def test_off(self):
         """Test off method."""
         expected_color = (0, 0, 0)
-        self.led.rgb = expected_color
+        self.led.turn_on()
+        self.led.turn_off()
         set_message = parse_message(0x04, 16, -1, parse_data(
             expected_color, 'int'))
         sent_messages = []
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Led.PropertyType.RED, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1,
-                          (Led.PropertyType.GREEN, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Led.PropertyType.BLUE, None, 95, None))
-            in sent_messages)
         self.assertTrue(set_message in sent_messages)
 
     def test_set_red(self):
@@ -94,16 +61,6 @@ class TestLed(unittest.TestCase):
         self.led.red = 20
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Led.PropertyType.RED, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1,
-                          (Led.PropertyType.GREEN, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Led.PropertyType.BLUE, None, 95, None))
-            in sent_messages)
         self.assertTrue(set_message in sent_messages)
 
     def test_get_red(self):
@@ -122,16 +79,6 @@ class TestLed(unittest.TestCase):
         self.led.green = 20
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Led.PropertyType.RED, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1,
-                          (Led.PropertyType.GREEN, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Led.PropertyType.BLUE, None, 95, None))
-            in sent_messages)
         self.assertTrue(set_message in sent_messages)
 
     def test_get_green(self):
@@ -151,16 +98,6 @@ class TestLed(unittest.TestCase):
         self.led.blue = 20
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Led.PropertyType.RED, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1,
-                          (Led.PropertyType.GREEN, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Led.PropertyType.BLUE, None, 95, None))
-            in sent_messages)
         self.assertTrue(set_message in sent_messages)
 
     def test_get_blue(self):
