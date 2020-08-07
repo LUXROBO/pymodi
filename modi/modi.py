@@ -153,6 +153,6 @@ def update_module_firmware():
     updater.update_module_firmware()
 
 
-def update_esp_firmware(stub=True, force=False):
+def update_network_firmware(stub=True, force=False):
     updater = ESP32FirmwareUpdater()
     updater.start_update(stub=stub, force=force)
