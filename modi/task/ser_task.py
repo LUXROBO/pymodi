@@ -24,7 +24,7 @@ class SerTask(ConnTask):
         """
         modi_ports = list_modi_ports()
         if not modi_ports:
-            raise SerialException("No MODI network module is connected.")
+            raise SerialException("No MODI network module is available")
 
         if self.__port:
             if self.__port not in map(lambda info: info.device, modi_ports):
