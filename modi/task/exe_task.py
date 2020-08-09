@@ -145,6 +145,11 @@ class ExeTask:
                 module_type, module_id, module_uuid, module_version_info
             )
             new_module.module_type = module_type
+            if module_type != 'Network' and not new_module.is_up_to_date:
+                print(f"Your module {module_type} ({module_id}) is not up to"
+                      f" date. Please update the module by calling "
+                      f"modi.update_module_firmware")
+
         elif not self.__get_module_by_id(module_id).is_connected:
             # Handle Reconnected modules
             self.__get_module_by_id(module_id).is_connected = True

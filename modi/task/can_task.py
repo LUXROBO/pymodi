@@ -15,7 +15,7 @@ class CanTask(ConnTask):
 
     def __init__(self, verbose=False):
         super().__init__(verbose)
-        print("Initiating serial connection...")
+        print("Initiating can connection...")
         if CanTask._instances:
             raise Exception("can0 device already in use")
         self._instances.add(self)

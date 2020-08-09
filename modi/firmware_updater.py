@@ -1,23 +1,18 @@
-import io
 import json
 import sys
 import threading as th
 import time
-import urllib.request as ur
-import zipfile
 from base64 import b64encode, b64decode
-from io import BytesIO
-from urllib.error import URLError
-from zipfile import ZipFile
+from io import open
+from os import path
 
 import esptool
-import requests
 import serial
 from enum import IntEnum
 
 from modi.module.module import Module
 from modi.util.msgutil import unpack_data, decode_message
-from modi.util.conn_util import list_modi_ports
+from modi.util.conn_util import list_modi_ports, is_on_pi
 
 
 class STM32FirmwareUpdater:
@@ -206,23 +201,18 @@ class STM32FirmwareUpdater:
 
         # Init path to binary file
         root_path = (
-            'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
+            path.join(path.dirname(__file__), 'firmware', 'stm32')
         )
         bin_path = (
-            f"skeleton/{module_type.lower()}.bin"
+            f"{module_type.lower()}.bin"
             if module_type != 'Env' else
-            "skeleton/environment.bin"
+            "environment.bin"
         )
 
-        try:
-            # Init bytes data from the given binary file of the current module
-            download_response = requests.get(root_path)
-        except URLError:
-            raise URLError("Failed to download firmware. Check your internet")
-        zip_content = zipfile.ZipFile(
-            io.BytesIO(download_response.content), 'r'
-        )
-        bin_buffer = zip_content.read(bin_path)
+        bin_path = path.join(root_path, bin_path)
+
+        with open(bin_path, 'rb') as bin_file:
+            bin_buffer = bin_file.read()
 
         # Init metadata of the bytes loaded
         page_size = 0x800
@@ -231,6 +221,7 @@ class STM32FirmwareUpdater:
         bin_size = sys.getsizeof(bin_buffer)
         bin_begin = 0x9000
         bin_end = bin_size - ((bin_size - bin_begin) % page_size)
+        delay = 0.0025 if is_on_pi() else 0.001
         for page_begin in range(bin_begin, bin_end + 1, page_size):
             print(f"{self.__progress_bar(page_begin, bin_end)} "
                   f"{page_begin * 100 // bin_end}% \r", end='')
@@ -263,7 +254,7 @@ class STM32FirmwareUpdater:
                     bin_data=curr_data,
                     crc_val=checksum
                 )
-                time.sleep(0.001)
+                time.sleep(delay)
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_page_success = self.send_firmware_command(
@@ -274,12 +265,9 @@ class STM32FirmwareUpdater:
                 page_begin -= page_size
 
         # Include MODI firmware version when writing end flash
-        version_path = (
-            "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
-        )
-        version_info = None
-        for line in ur.urlopen(version_path):
-            version_info = line.decode('utf-8').lstrip('v')
+        version_path = path.join(root_path, 'version.txt')
+        with open(version_path) as version_file:
+            version_info = version_file.readline().lstrip('v').rstrip('\n')
         version_digits = [int(digit) for digit in version_info.split('.')]
         """ Version number is formed by concatenating all three version bits
             e.g. 2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
@@ -771,9 +759,9 @@ class ESP32FirmwareUpdater(serial.Serial):
         super().__init__(modi_ports[0].device, timeout=0.1, baudrate=921600)
         print(f"Connecting to MODI network module at {modi_ports[0].device}")
 
-        self.__address = [0x1000, 0x8000, 0x10000, 0xD0000]
+        self.__address = [0x1000, 0x8000, 0XD000, 0x10000, 0xD0000]
         self.file_path = ['bootloader.bin', 'partitions.bin',
-                          'modi_ota_factory.bin',
+                          'ota_data_initial.bin', 'modi_ota_factory.bin',
                           'esp32.bin']
         self.id = None
         self.version = None
@@ -955,14 +943,12 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     def __compose_binary_firmware(self):
         binary_firmware = b''
-        esp_path = 'https://download.luxrobo.com/modi-esp32-firmware/esp.zip'
-        ota_path = 'https://download.luxrobo.com/modi-ota-firmware/ota.zip'
+        root_path = path.join(
+            path.dirname(__file__), 'firmware', 'esp32'
+        )
         for i, bin_path in enumerate(self.file_path):
-            # Download files from the modi_download_server
-            if 'ota' in bin_path:
-                bin_data = self.__download_bin_file(ota_path, bin_path)
-            else:
-                bin_data = self.__download_bin_file(esp_path, bin_path)
+            with open(path.join(root_path, bin_path), 'rb') as bin_file:
+                bin_data = bin_file.read()
             binary_firmware += bin_data
             if i < len(self.__address) - 1:
                 binary_firmware += b'\xFF' * (self.__address[i + 1]
@@ -971,17 +957,13 @@ class ESP32FirmwareUpdater(serial.Serial):
         return binary_firmware
 
     @staticmethod
-    def __download_bin_file(root_path, file_path):
-        download_response = requests.get(root_path)
-        with ZipFile(BytesIO(download_response.content), 'r') as zip_content:
-            bin_data = zip_content.read(file_path)
-        return bin_data
-
-    @staticmethod
     def __get_latest_version():
-        ver_info = ur.urlopen(
-            'https://download.luxrobo.com/modi-esp32-firmware/version.txt')
-        return ver_info.read().decode('ascii').lstrip('v')
+        root_path = path.join(
+            path.dirname(__file__), 'firmware', 'esp32'
+        )
+        with open(path.join(root_path, 'version.txt'), 'r') as version_file:
+            version_info = version_file.readline().lstrip('v').rstrip('\n')
+        return version_info
 
     def __erase_chunk(self, size, offset):
         num_blocks = size // self.ESP_FLASH_BLOCK + 1
