@@ -1,7 +1,9 @@
 import json
-import queue
 import base64
 import asyncio
+from typing import Optional
+from queue import Queue
+from threading import Thread
 
 from bleak import discover
 from bleak import BleakClient
@@ -16,13 +18,15 @@ class BleTask(ConnTask):
         super().__init__(verbose=verbose)
         self._loop = asyncio.get_event_loop()
         self.__uuid = uuid
+        self.__char_uuid = ""
+        self._recv_q = Queue()
+        self._send_q = Queue()
 
     async def _list_modi_devices(self):
         devices = await discover(timeout=2)
         modi_devies = []
         for d in devices:
             if 'MODI' in d.name:
-                print(f'Found MODI device of uuid {d.name.lstrip("MODI_")}')
                 modi_devies.append(d)
         if not self.__uuid:
             return modi_devies[0]
@@ -32,15 +36,63 @@ class BleTask(ConnTask):
                     return d
             return None
 
+    async def __connect(self, address):
+        client = BleakClient(address, self._loop)
+        await client.connect()
+        return client
+
+    async def __get_characteristic_uuid(self):
+        for service in self._bus.services:
+            for char in service.characteristics:
+                if 'notify' in char.properties:
+                    return char.uuid
+
+    def __run_loop(self):
+        asyncio.set_event_loop(self._loop)
+        self._loop.run_until_complete(self.__communicate())
+
+    async def __communicate(self):
+        await self._bus.start_notify(self.__char_uuid, self.__recv_handler)
+        while True:
+            if self._send_q.empty():
+                await asyncio.sleep(0.001)
+            else:
+                await self._bus.write_gatt_char(
+                    self.__char_uuid, self._send_q.get()
+                )
+
+    def __recv_handler(self, _, data):
+        self._recv_q.put(data)
+
     def open_conn(self):
         print("Searching for MODI network module...")
         modi_device = self._loop.run_until_complete(self._list_modi_devices())
         if modi_device:
+            self._bus = self._loop.run_until_complete(
+                self.__connect(modi_device.address)
+            )
+            self.__char_uuid = self._loop.run_until_complete(
+                self.__get_characteristic_uuid()
+            )
+            Thread(target=self.__run_loop, daemon=True).start()
             print(f"Connected to {modi_device.name}")
-            self._bus = modi_device
         else:
             raise MODIConnectionError(f"Network module of {self.__uuid}"
                                       f" not found!")
+
+    async def __close_client(self):
+        await self._bus.close()
+
+    def close_conn(self):
+        pass
+
+    def recv(self) -> Optional[str]:
+        if self._recv_q.empty():
+            return None
+        return self.__parse_ble_msg(self._recv_q.get())
+
+    def send(self, pkt: str) -> None:
+        self._send_q.put(self.__compose_ble_msg(pkt))
 
     #
     # Non-Async Methods
@@ -56,7 +108,7 @@ class BleTask(ConnTask):
 
     def __compose_ble_msg(self, json_msg):
         ble_msg = bytearray(16)
-
+        json_msg = json.loads(json_msg)
         ins = json_msg["c"]
         sid = json_msg["s"]
         did = json_msg["d"]
