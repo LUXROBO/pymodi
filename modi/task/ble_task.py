@@ -65,7 +65,7 @@ class BleTask(ConnTask):
         self._recv_q.put(data)
 
     def open_conn(self):
-        print("Searching for MODI network module...")
+        print("Initiating bluetooth connection...")
         modi_device = self._loop.run_until_complete(self._list_modi_devices())
         if modi_device:
             self._bus = self._loop.run_until_complete(
@@ -89,10 +89,15 @@ class BleTask(ConnTask):
     def recv(self) -> Optional[str]:
         if self._recv_q.empty():
             return None
-        return self.__parse_ble_msg(self._recv_q.get())
+        json_pkt = self.__parse_ble_msg(self._recv_q.get())
+        if self.verbose:
+            print(f'recv: {json_pkt}')
+        return json_pkt
 
     def send(self, pkt: str) -> None:
         self._send_q.put(self.__compose_ble_msg(pkt))
+        if self.verbose:
+            print(f'send: {pkt}')
 
     #
     # Non-Async Methods
@@ -101,7 +106,7 @@ class BleTask(ConnTask):
         json_msg = dict()
         json_msg["c"] = ble_msg[1] << 8 | ble_msg[0]
         json_msg["s"] = ble_msg[3] << 8 | ble_msg[2]
-        json_msg["d"] = ble_msg[5] << 8 | ble_msg[4]
+        json_msg["d"] = int.from_bytes(ble_msg[4:6], byteorder='little')
         json_msg["b"] = base64.b64encode(ble_msg[8:]).decode("utf-8")
         json_msg["l"] = ble_msg[7] << 8 | ble_msg[6]
         return json.dumps(json_msg, separators=(",", ":"))
