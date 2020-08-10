@@ -32,8 +32,14 @@ class MODI:
         while not self._topology_manager.is_topology_complete():
             time.sleep(0.1)
             if time.time() - init_time > timeout:
-                print("MODI init timeout over. "
-                      "Some modules are malfunctioning")
+                invalid_key = ""
+                for module_id in (module.id for module in self._modules):
+                    if module_id not in self._topology_data:
+                        invalid_key = module_id
+                        break
+                print(f"MODI init timeout over. "
+                      f"{self.modules.get(invalid_key).module_type} "
+                      f"({invalid_key}) is malfunctioning")
                 break
         check_complete(self)
         print("MODI modules are initialized!")
