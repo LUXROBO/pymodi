@@ -6,9 +6,6 @@ from typing import Optional
 
 import pygatt
 
-from pygatt.exceptions import BLEError
-from pygatt.exceptions import NotConnectedError
-
 from modi.task.conn_task import ConnTask
 
 
@@ -31,7 +28,8 @@ class BleTask(ConnTask):
     def _list_modi_devices(self):
         self.adapter.reset()
         devices = self.adapter.scan(run_as_root=True, timeout=2)
-        return [module for module in devices if module['name'] and 'MODI' in module['name']]
+        return [module for module in devices
+                if module['name'] and 'MODI' in module['name']]
 
     def open_conn(self):
         os.system("sudo hciconfig hci0 up")
@@ -40,10 +38,10 @@ class BleTask(ConnTask):
         devices = self._list_modi_devices()
         if not devices:
             raise ValueError('No MODI device found!')
-        if self.uuid:
+        if not self.uuid:
             modi_device = devices[0]
         else:
-            for d in modi_device:
+            for d in devices:
                 if self.uuid in d['name']:
                     modi_device = d
                     break
@@ -72,7 +70,6 @@ class BleTask(ConnTask):
     def send(self, pkt: str) -> None:
         json_msg = json.loads(pkt)
         ble_msg = self.__compose_ble_msg(json_msg)
-
         self.device.char_write(self.char_uuid, ble_msg)
 
     def recv(self) -> Optional[str]:
@@ -113,54 +110,3 @@ class BleTask(ConnTask):
         json_msg["l"] = ble_msg[7] << 8 | ble_msg[6]
         json_msg["b"] = base64.b64encode(ble_msg[8:]).decode("utf-8")
         return json.dumps(json_msg, separators=(",", ":"))
-
-    def __connect(self, target_name, max_retries=3):
-        target_addr = self.__find_addr(target_name)
-
-        while max_retries <= 3:
-            print("Try connecting to name: {}, addr: {}".format(
-                target_name, target_addr))
-
-            try:
-                device = self.adapter.connect(address=target_addr, timeout=10)
-            except NotConnectedError:
-                max_retries -= 1
-                continue
-            break
-
-        print("Successfully connected to the target device")
-        self.device = device
-
-    def __find_addr(self, target_name, max_retries=5):
-        """ Given target device name, find corresponding device address
-        """
-
-        target_addr = None
-        while target_addr is None:
-            if max_retries < 0:
-                raise ValueError("Cannot connect to the target_device")
-
-            try:
-                scanned_devices = self.adapter.scan(run_as_root=True)
-            except BLEError:
-                max_retries -= 1
-
-                # Re-initializing hci interface for re-scanning properly
-                os.system("sudo hciconfig hci0 down")
-                os.system("sudo hciconfig hci0 up")
-                continue
-
-            for scanned_device in scanned_devices:
-                device_name = scanned_device["name"]
-                device_addr = scanned_device["address"]
-
-                if device_name is None:
-                    continue
-
-                if device_name == target_name:
-                    target_addr = device_addr
-                    break
-
-            max_retries -= 1
-
-        return target_addr
