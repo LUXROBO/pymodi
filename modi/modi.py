@@ -14,7 +14,7 @@ from modi.firmware_updater import STM32FirmwareUpdater, ESP32FirmwareUpdater
 class MODI:
 
     def __init__(self, conn_mode: str = "", verbose: bool = False,
-                 port: str = None):
+                 port: str = None, timeout=5):
         self._modules = list()
         self._topology_data = dict()
 
@@ -28,9 +28,13 @@ class MODI:
         self._topology_manager = TopologyManager(self._topology_data,
                                                  self._modules)
 
+        init_time = time.time()
         while not self._topology_manager.is_topology_complete():
             time.sleep(0.1)
-
+            if time.time() - init_time > timeout:
+                print("MODI init timeout over. "
+                      "Some modules are malfunctioning")
+                break
         check_complete(self)
         print("MODI modules are initialized!")
 
