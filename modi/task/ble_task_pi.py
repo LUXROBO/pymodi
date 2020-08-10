@@ -38,6 +38,7 @@ class BleTask(ConnTask):
         devices = self._list_modi_devices()
         if not devices:
             raise ValueError('No MODI device found!')
+        modi_device = None
         if not self.uuid:
             modi_device = devices[0]
         else:
@@ -45,7 +46,8 @@ class BleTask(ConnTask):
                 if self.uuid in d['name']:
                     modi_device = d
                     break
-            raise ValueError('MODI with given uuid does not exist!')
+            if not modi_device:
+                raise ValueError('MODI with given uuid does not exist!')
         print(f'Found {modi_device["name"]}')
         self.device = self.adapter.connect(modi_device['address'])
         self.device.subscribe(self.char_uuid, callback=self.__ble_read)
