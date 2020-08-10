@@ -48,7 +48,7 @@ class MODI:
         elif conn_mode == 'ble':
             if is_on_pi():
                 from modi.task.ble_task_pi import BleTask
-                return BleTask(verbose=verbose)
+                return BleTask(verbose=verbose, uuid=uuid)
             else:
                 from modi.task.ble_task import BleTask
                 return BleTask(verbose=verbose, uuid=uuid)
