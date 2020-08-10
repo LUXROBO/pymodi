@@ -15,9 +15,9 @@ from modi.task.conn_task import ConnTask
 class BleTask(ConnTask):
     char_uuid = "00008421-0000-1000-8000-00805F9B34FB"
 
-    def __init__(self, verbose=False):
+    def __init__(self, verbose=False, uuid=""):
         super().__init__(verbose=verbose)
-
+        self.uuid = uuid
         self.adapter = pygatt.GATTToolBackend()
         self.device = None
         self._recv_q = queue.Queue()
@@ -28,11 +28,30 @@ class BleTask(ConnTask):
     def __exit__(self, exc_type, exc_value, traceback):
         self.close_conn()
 
+    def _list_modi_devices(self):
+        self.adapter.reset()
+        devices = self.adapter.scan(run_as_root=True, timeout=2)
+        return [module for module in devices if module['name'] and 'MODI' in module['name']]
+
     def open_conn(self):
         os.system("sudo hciconfig hci0 up")
         self.adapter.start()
-        self.__connect("MODI_4DD5FA00")
+        print('Searching for MODI device')
+        devices = self._list_modi_devices()
+        if not devices:
+            raise ValueError('No MODI device found!')
+        if self.uuid:
+            modi_device = devices[0]
+        else:
+            for d in modi_device:
+                if self.uuid in d['name']:
+                    modi_device = d
+                    break
+            raise ValueError('MODI with given uuid does not exist!')
+        print(f'Found {modi_device["name"]}')
+        self.device = self.adapter.connect(modi_device['address'])
         self.device.subscribe(self.char_uuid, callback=self.__ble_read)
+        print('Connection Complete')
 
     def close_conn(self):
         # Reboot modules to stop receiving channel messages
@@ -40,7 +59,7 @@ class BleTask(ConnTask):
         self.adapter.stop()
         os.system("sudo hciconfig hci0 down")
 
-    def __ble_read(self, value):
+    def __ble_read(self, _, value):
         """
         handle -- integer, characteristic read handle the data was received on
         value -- bytearray, the data returned in the notification
