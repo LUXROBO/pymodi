@@ -100,7 +100,7 @@ class BleTask(ConnTask):
         ble_msg[6] = dlc & 0xFF
         ble_msg[7] = dlc >> 8 & 0xFF
 
-        ble_msg[8:8+dlc] = bytearray(base64.b64decode(data))
+        ble_msg[8:8 + dlc] = bytearray(base64.b64decode(data))
 
         return ble_msg
 
