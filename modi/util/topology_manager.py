@@ -211,7 +211,6 @@ class TopologyManager:
                 self._modules.pop(i)
                 time.sleep(2)
                 return True
-
         if len(self._tp_data) < 1:
             return False
         try:
