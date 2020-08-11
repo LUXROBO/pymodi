@@ -19,7 +19,7 @@ class Network(SetupModule):
         TOGGLE = 0x00104
 
     class CommandType(IntEnum):
-        BUZZER = 0x0100
+        BUZZER = 0x0003
         CAMERA = 0x0101
 
     @property
@@ -69,3 +69,17 @@ class Network(SetupModule):
             (0x64, 0, 0, 0, 0, 0, 0, 0)
         )
         self._conn.send(cam_msg)
+
+    def buzzer_on(self):
+        buz_msg = parse_message(
+            0x04, self.CommandType.BUZZER, self._id,
+            (0x64, 0, 0, 0, 0, 0, 0, 0)
+        )
+        self._conn.send(buz_msg)
+
+    def buzzer_off(self):
+        buz_msg = parse_message(
+            0x04, self.CommandType.BUZZER, self._id,
+            (0, 0, 0, 0, 0, 0, 0, 0)
+        )
+        self._conn.send(buz_msg)
