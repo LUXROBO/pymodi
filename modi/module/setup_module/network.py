@@ -7,4 +7,8 @@ from modi.module.setup_module.setup_module import SetupModule
 
 class Network(SetupModule):
     class PropertyType(IntEnum):
-        RESERVED = 0
+        BUTTON = 3
+
+    @property
+    def button_pressed(self):
+        return self._get_property(self.PropertyType.BUTTON)
