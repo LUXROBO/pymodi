@@ -115,7 +115,7 @@ class ExeTask:
                       "'modi.update_module_firmware()'")
                 module.has_user_code = True
             # Turn off pnp if pnp flag is on
-            if user_code_state < 2:
+            if module.module_type != 'Network' and user_code_state < 2:
                 self.__set_module_state(
                     module_id, Module.State.RUN, Module.State.PNP_OFF
                 )
