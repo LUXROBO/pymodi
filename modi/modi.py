@@ -1,10 +1,11 @@
 """Main MODI module."""
 
 import time
+from importlib import import_module as im
 from typing import Optional
 
 from modi._exe_thrd import ExeThrd
-from modi.util.conn_util import is_network_module_connected, is_on_pi
+from modi.util.conn_util import is_network_module_connected
 from modi.util.misc import module_list
 from modi.util.stranger import check_complete
 from modi.util.topology_manager import TopologyManager
@@ -44,18 +45,11 @@ class MODI:
             conn_mode = 'ser' if is_network_module_connected() else 'can'
 
         if conn_mode == 'ser':
-            from modi.task.ser_task import SerTask
-            return SerTask(verbose, port)
+            return im('modi.task.ser_task').SerTask(verbose, port)
         elif conn_mode == 'can':
-            from modi.task.can_task import CanTask
-            return CanTask(verbose)
+            return im('modi.task.can_task').CanTask(verbose)
         elif conn_mode == 'ble':
-            if is_on_pi():
-                from modi.task.ble_task_pi import BleTask
-                return BleTask(verbose=verbose, uuid=uuid)
-            else:
-                from modi.task.ble_task import BleTask
-                return BleTask(verbose=verbose, uuid=uuid)
+            return im('modi.task.ble_task').BleTask(verbose, uuid)
         else:
             raise ValueError(f'Invalid conn mode {conn_mode}')
 
