@@ -23,7 +23,16 @@ class Network(SetupModule):
 
     @property
     def button_pressed(self):
-        return self._get_property(self.PropertyType.BUTTON)
+        return self._get_property(self.PropertyType.BUTTON) == 100
+
+    @property
+    def joystick(self):
+        return {
+            20.0: 'up',
+            30.0: 'down',
+            40.0: 'left',
+            50.0: 'right',
+        }.get(self._get_property(self.PropertyType.BUTTON))
 
     @property
     def dial(self):
@@ -39,4 +48,16 @@ class Network(SetupModule):
 
     @property
     def timer(self):
-        return self._get_property(self.PropertyType.TIMER)
+        return self._get_property(self.PropertyType.TIMER) == 100
+
+    @property
+    def button_clicked(self):
+        return self._get_property(self.PropertyType.BUTTON_CLICK) == 100
+
+    @property
+    def button_double_clicked(self):
+        return self._get_property(self.PropertyType.BUTTON_DOUBLE_CLICK) == 100
+
+    @property
+    def button_toggled(self):
+        return self._get_property(self.PropertyType.BUTTON.TOGGLE) == 100
