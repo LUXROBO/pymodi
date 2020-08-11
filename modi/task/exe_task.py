@@ -179,7 +179,11 @@ class ExeTask:
         module = self.__get_module_by_id(message['s'])
         if not module:
             return
-        module.update_property(property_number, decode_data(message['b']))
+        data = message['b']
+        if module.module_type == 'Network':
+            module.update_property(property_number, unpack_data(data)[0])
+        else:
+            module.update_property(property_number, decode_data(data))
 
     def __set_module_state(self, destination_id: int, module_state: IntEnum,
                            pnp_state: IntEnum) -> None:
