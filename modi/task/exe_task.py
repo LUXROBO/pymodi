@@ -110,12 +110,12 @@ class ExeTask:
             module.is_connected = True
             # Warn if user code is in the module
             if not module.has_user_code and user_code_state % 2 == 1:
-                print(f"Your MODI module {module_id} has user code in it.")
+                print(f"{str(module)} has user code in it.")
                 print("You can reset your MODI modules by calling "
                       "'modi.update_module_firmware()'")
                 module.has_user_code = True
             # Turn off pnp if pnp flag is on
-            if user_code_state < 2:
+            if module.module_type != 'Network' and user_code_state < 2:
                 self.__set_module_state(
                     module_id, Module.State.RUN, Module.State.PNP_OFF
                 )
@@ -144,8 +144,8 @@ class ExeTask:
             )
             new_module.module_type = module_type
             if module_type != 'Network' and not new_module.is_up_to_date:
-                print(f"Your module {module_type} ({module_id}) is not up to"
-                      f" date. Please update the module by calling "
+                print(f"{str(new_module)} is not up to date. "
+                      f"Please update the module by calling "
                       f"modi.update_module_firmware")
 
         elif not self.__get_module_by_id(module_id).is_connected:
@@ -162,8 +162,7 @@ class ExeTask:
                                 Module.State.PNP_OFF)
         module_instance.version = module_version_info
         self._modules.append(module_instance)
-        print(f"{type(module_instance).__name__} ({module_id}) "
-              f"has been connected!")
+        print(f"{str(module_instance)} has been connected!")
         return module_instance
 
     def __update_property(self, message: Dict[str, str]) -> None:

@@ -205,8 +205,6 @@ class STM32FirmwareUpdater:
         )
         bin_path = (
             f"{module_type.lower()}.bin"
-            if module_type != 'Env' else
-            "environment.bin"
         )
 
         bin_path = path.join(root_path, bin_path)

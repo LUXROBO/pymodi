@@ -66,6 +66,9 @@ class Module:
         else:
             return self.order < other.order
 
+    def __str__(self):
+        return f"{self.__class__.__name__} ({self._id})"
+
     @property
     def version(self):
         version_string = ""
