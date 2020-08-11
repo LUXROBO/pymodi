@@ -4,7 +4,7 @@ import time
 from typing import Optional
 
 from modi._exe_thrd import ExeThrd
-from modi.util.conn_util import is_network_module_connected
+from modi.util.conn_util import is_network_module_connected, is_on_pi
 from modi.util.misc import module_list
 from modi.util.stranger import check_complete
 from modi.util.topology_manager import TopologyManager
@@ -50,8 +50,12 @@ class MODI:
             from modi.task.can_task import CanTask
             return CanTask(verbose)
         elif conn_mode == 'ble':
-            from modi.task.ble_task import BleTask
-            return BleTask(verbose=verbose, uuid=uuid)
+            if is_on_pi():
+                from modi.task.ble_task_pi import BleTask
+                return BleTask(verbose=verbose, uuid=uuid)
+            else:
+                from modi.task.ble_task import BleTask
+                return BleTask(verbose=verbose, uuid=uuid)
         else:
             raise ValueError(f'Invalid conn mode {conn_mode}')
 

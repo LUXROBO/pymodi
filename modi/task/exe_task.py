@@ -8,7 +8,6 @@ from modi.module.module import Module, BROADCAST_ID
 from modi.module.setup_module.battery import Battery
 from modi.util.misc import get_module_from_name, get_module_type_from_uuid
 from modi.util.msgutil import unpack_data, decode_data, parse_message
-from modi.util.conn_util import is_network_module_connected
 
 
 class ExeTask:
@@ -22,8 +21,7 @@ class ExeTask:
         self.__set_module_state(
             BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
         )
-        if is_network_module_connected():
-            self.__request_network_uuid()
+        self.__request_network_uuid()
         print('Start initializing connected MODI modules')
 
     def run(self, delay: float):
