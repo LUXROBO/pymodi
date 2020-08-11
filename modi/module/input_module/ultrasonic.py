@@ -10,10 +10,6 @@ class Ultrasonic(InputModule):
     class PropertyType(IntEnum):
         DISTANCE = 2
 
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
-        self._type = "ultrasonic"
-
     @property
     def distance(self) -> float:
         """Returns the distance of te object between 0 and 100

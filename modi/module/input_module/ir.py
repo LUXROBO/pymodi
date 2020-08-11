@@ -10,10 +10,6 @@ class Ir(InputModule):
     class PropertyType(IntEnum):
         PROXIMITY = 2
 
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
-        self._type = "ir"
-
     @property
     def proximity(self) -> float:
         """Returns the proximity value between 0 and 100

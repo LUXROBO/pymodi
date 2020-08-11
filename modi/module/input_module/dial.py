@@ -11,10 +11,6 @@ class Dial(InputModule):
         DEGREE = 2
         TURNSPEED = 3
 
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
-        self._type = "dial"
-
     @property
     def degree(self) -> float:
         """Returns the angle of the dial between 0 and 100
