@@ -21,10 +21,6 @@ class Motor(OutputModule):
         DEGREE = 18
         CHANNEL = 19
 
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
-        self._type = "motor"
-
     def set_motor_channel(self,
                           motor_channel: int, control_mode: int,
                           control_value: int = None) -> None:
