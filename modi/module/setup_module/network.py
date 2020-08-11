@@ -3,6 +3,7 @@
 from enum import IntEnum
 
 from modi.module.setup_module.setup_module import SetupModule
+from modi.util.msgutil import parse_message
 
 
 class Network(SetupModule):
@@ -61,3 +62,10 @@ class Network(SetupModule):
     @property
     def button_toggled(self):
         return self._get_property(self.PropertyType.BUTTON.TOGGLE) == 100
+
+    def take_picture(self):
+        cam_msg = parse_message(
+            0x04, self.CommandType.CAMERA, self._id,
+            (0x64, 0, 0, 0, 0, 0, 0, 0)
+        )
+        self._conn.send(cam_msg)
