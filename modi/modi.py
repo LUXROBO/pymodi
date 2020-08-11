@@ -84,10 +84,8 @@ class MODI:
         return module_list(self._modules)
 
     @property
-    def network(self):
-        for module in self._modules:
-            if module.module_type == 'Network':
-                return module
+    def networks(self) -> module_list:
+        return module_list(self._modules, 'Network')
 
     @property
     def buttons(self) -> module_list:
