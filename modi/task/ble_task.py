@@ -89,10 +89,11 @@ class BleTask(ConnTask):
         await self._bus.disconnect()
 
     def close_conn(self):
-        self.__close_event = True
-        while self._loop.is_running():
-            time.sleep(0.1)
-        self._loop.run_until_complete(self.__close_client())
+        if self._bus:
+            self.__close_event = True
+            while self._loop.is_running():
+                time.sleep(0.1)
+            self._loop.run_until_complete(self.__close_client())
 
     def recv(self) -> Optional[str]:
         if self._recv_q.empty():

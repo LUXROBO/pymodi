@@ -33,7 +33,7 @@ class Display(OutputModule):
         self._set_property(
             self._id,
             self.PropertyType.TEXT,
-            text[:27],  # Only 27 characters can be shown on the display
+            str(text)[:27],  # Only 27 characters can be shown on the display
             self.PropertyDataType.STRING
         )
         self._text = text
