@@ -25,6 +25,7 @@ class MODI:
         self._exe_thrd = ExeThrd(
             self._modules, self._topology_data, self._conn
         )
+        print('Start initializing connected MODI modules')
         self._exe_thrd.start()
 
         self._topology_manager = TopologyManager(self._topology_data,
@@ -63,6 +64,7 @@ class MODI:
         self._conn.close_conn()
 
     def open(self):
+        atexit.register(self.close)
         self._exe_thrd = ExeThrd(
             self._modules, self._topology_data, self._conn
         )
