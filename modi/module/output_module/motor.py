@@ -146,7 +146,12 @@ class Motor(OutputModule):
         :type torque_value: int
         :return: None
         """
-        self.set_motor_channel(0, 0, torque_value)
+        self._set_property(
+            self.id,
+            self.ControlType.TORQUE,
+            (torque_value, self.second_torque),
+        )
+        # self.set_motor_channel(0, 0, torque_value)
         self.update_property(self.PropertyType.FIRST_TORQUE, torque_value)
 
     @property
@@ -167,7 +172,12 @@ class Motor(OutputModule):
         :type torque_value: int
         :return: None
         """
-        self.set_motor_channel(1, 0, torque_value)
+        self._set_property(
+            self.id,
+            self.ControlType.TORQUE,
+            (self.first_torque, torque_value),
+        )
+        # self.set_motor_channel(1, 0, torque_value)
         self.update_property(self.PropertyType.SECOND_TORQUE, torque_value)
 
     @property
@@ -191,8 +201,13 @@ class Motor(OutputModule):
         :type torque_value: Tuple[int, int]
         :return: None
         """
-        self.set_motor_channel(0, 0, torque_value[0])
-        self.set_motor_channel(1, 0, torque_value[1])
+        self._set_property(
+            self.id,
+            self.ControlType.TORQUE,
+            torque_value,
+        )
+        # self.set_motor_channel(0, 0, torque_value[0])
+        # self.set_motor_channel(1, 0, torque_value[1])
         self.update_property(self.PropertyType.FIRST_TORQUE, torque_value[0])
         self.update_property(self.PropertyType.SECOND_TORQUE, torque_value[1])
 
