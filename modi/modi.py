@@ -62,6 +62,13 @@ class MODI:
         self._exe_thrd.close()
         self._conn.close_conn()
 
+    def open(self):
+        self._exe_thrd = ExeThrd(
+            self._modules, self._topology_data, self._conn
+        )
+        self._exe_thrd.start()
+        self._conn.open_conn()
+
     def send(self, message) -> None:
         """Low level method to send json pkt directly to modules
 
