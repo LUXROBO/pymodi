@@ -1,4 +1,5 @@
 """Network module."""
+import time
 
 from enum import IntEnum
 
@@ -9,7 +10,7 @@ from modi.util.msgutil import parse_message
 class Network(SetupModule):
     class PropertyType(IntEnum):
         BUTTON = 3
-        # JOYSTICK = 3 Why TF are these the same
+        JOYSTICK = 3
         DIAL = 4
         LEFT_SLIDER = 5
         RIGHT_SLIDER = 6
@@ -33,7 +34,7 @@ class Network(SetupModule):
             30.0: 'down',
             40.0: 'left',
             50.0: 'right',
-        }.get(self._get_property(self.PropertyType.BUTTON))
+        }.get(self._get_property(self.PropertyType.JOYSTICK))
 
     @property
     def dial(self):
@@ -63,23 +64,17 @@ class Network(SetupModule):
     def button_toggled(self):
         return self._get_property(self.PropertyType.BUTTON.TOGGLE) == 100
 
+    def _set_property(self, command_type, value):
+        self._conn.send(parse_message(
+            0x04, command_type, self._id, (value, 0, 0, 0, 0, 0, 0, 0)
+        ))
+        time.sleep(0.05)
+
     def take_picture(self):
-        cam_msg = parse_message(
-            0x04, self.CommandType.CAMERA, self._id,
-            (0x64, 0, 0, 0, 0, 0, 0, 0)
-        )
-        self._conn.send(cam_msg)
+        self._set_property(self.CommandType.CAMERA, 100)
 
     def buzzer_on(self):
-        buz_msg = parse_message(
-            0x04, self.CommandType.BUZZER, self._id,
-            (0x64, 0, 0, 0, 0, 0, 0, 0)
-        )
-        self._conn.send(buz_msg)
+        self._set_property(self.CommandType.BUZZER, 100)
 
     def buzzer_off(self):
-        buz_msg = parse_message(
-            0x04, self.CommandType.BUZZER, self._id,
-            (0, 0, 0, 0, 0, 0, 0, 0)
-        )
-        self._conn.send(buz_msg)
+        self._set_property(self.CommandType.BUZZER, 0)
