@@ -44,12 +44,8 @@ class TestMotor(unittest.TestCase):
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (0, 0, first_torque_value), 'int'
-            )) in sent_messages)
-        self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (1, 0, second_torque_value), 'int'
+            parse_message(0x04, 16, -1, parse_data(
+                expected_values, 'int'
             )) in sent_messages)
 
     def test_set_first_torque(self):
@@ -64,8 +60,8 @@ class TestMotor(unittest.TestCase):
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (0, 0, first_torque_value), 'int'
+            parse_message(0x04, 16, -1, parse_data(
+                (first_torque_value, 0), 'int'
             )) in sent_messages)
 
     def test_set_second_torque(self):
@@ -80,8 +76,8 @@ class TestMotor(unittest.TestCase):
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (1, 0, second_torque_value), 'int'
+            parse_message(0x04, 16, -1, parse_data(
+                (0, second_torque_value), 'int'
             )) in sent_messages)
 
     def test_get_torque(self):
