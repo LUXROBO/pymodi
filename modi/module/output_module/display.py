@@ -10,6 +10,8 @@ class Display(OutputModule):
         TEXT = 17
         CLEAR = 21
         VARIABLE = 22
+        SET_HORIZONTAL = 25
+        SET_VERTICAL = 26
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
@@ -60,6 +62,20 @@ class Display(OutputModule):
             self.PropertyDataType.DISPLAY_VAR,
         )
         self._text += str(variable)
+
+    def set_horizontal(self, value) -> None:
+        self._set_property(
+            self.id,
+            self.PropertyType.SET_HORIZONTAL, (value, ),
+            self.PropertyDataType.FLOAT,
+        )
+
+    def set_vertical(self, value) -> None:
+        self._set_property(
+            self.id,
+            self.PropertyType.SET_VERTICAL, (value, ),
+            self.PropertyDataType.FLOAT,
+        )
 
     def clear(self) -> None:
         """Clear the screen.
