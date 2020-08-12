@@ -2,7 +2,6 @@ import unittest
 
 from unittest import mock
 
-from serial.serialutil import SerialException
 from modi.task.ser_task import SerTask
 
 
@@ -26,10 +25,6 @@ class TestSerTask(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
         del self.ser_task
-
-    def test_open_conn(self):
-        """Test open_conn method"""
-        self.assertRaises(SerialException, self.ser_task.open_conn)
 
     def test_close_conn(self):
         """Test close_conn method"""
