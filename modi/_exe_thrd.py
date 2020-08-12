@@ -28,4 +28,3 @@ class ExeThrd(th.Thread):
             self.__exe_task.run(delay=0.001)
             if self.__kill_sig:
                 break
-        print("Exe thrd closed")
