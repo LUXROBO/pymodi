@@ -63,17 +63,29 @@ class Display(OutputModule):
         )
         self._text += str(variable)
 
-    def set_horizontal(self, value) -> None:
+    def set_horizontal(self, offset) -> None:
+        """Set the horizontal offset on the screen
+
+        :param offset: offset in pixels
+        :type offset: float
+        :return: None
+        """
         self._set_property(
             self.id,
-            self.PropertyType.SET_HORIZONTAL, (value, ),
+            self.PropertyType.SET_HORIZONTAL, (offset, ),
             self.PropertyDataType.FLOAT,
         )
 
-    def set_vertical(self, value) -> None:
+    def set_vertical(self, offset) -> None:
+        """Set the vertical offset on the screen
+
+        :param offset: offset in pixels
+        :type offset: float
+        :return: None
+        """
         self._set_property(
             self.id,
-            self.PropertyType.SET_VERTICAL, (value, ),
+            self.PropertyType.SET_VERTICAL, (offset, ),
             self.PropertyDataType.FLOAT,
         )
 
