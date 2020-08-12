@@ -5,7 +5,7 @@ from importlib import import_module as im
 from typing import Optional
 
 from modi._exe_thrd import ExeThrd
-from modi.util.conn_util import is_network_module_connected
+from modi.util.conn_util import is_network_module_connected, is_on_pi
 from modi.util.misc import module_list
 from modi.util.stranger import check_complete
 from modi.util.topology_manager import TopologyManager
@@ -42,7 +42,8 @@ class MODI:
     @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
         if not conn_mode:
-            conn_mode = 'ser' if is_network_module_connected() else 'can'
+            is_can = not is_network_module_connected() and is_on_pi()
+            conn_mode = 'can' if is_can else 'ser'
 
         if conn_mode == 'ser':
             return im('modi.task.ser_task').SerTask(verbose, port)
