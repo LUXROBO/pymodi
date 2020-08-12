@@ -53,6 +53,10 @@ class MODI:
         else:
             raise ValueError(f'Invalid conn mode {conn_mode}')
 
+    def __del__(self):
+        print("Closing MODI connection...")
+        self._conn.close_conn()
+
     def send(self, message) -> None:
         """Low level method to send json pkt directly to modules
 

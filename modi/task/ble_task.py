@@ -1,6 +1,7 @@
 import json
 import base64
 import asyncio
+import time
 from typing import Optional
 from queue import Queue
 from threading import Thread
@@ -21,6 +22,7 @@ class BleTask(ConnTask):
         self.__char_uuid = ""
         self._recv_q = Queue()
         self._send_q = Queue()
+        self.__close_event = False
 
     async def _list_modi_devices(self):
         devices = await discover(timeout=2)
@@ -60,6 +62,8 @@ class BleTask(ConnTask):
                 await self._bus.write_gatt_char(
                     self.__char_uuid, self._send_q.get()
                 )
+            if self.__close_event:
+                break
 
     def __recv_handler(self, _, data):
         self._recv_q.put(data)
@@ -81,10 +85,14 @@ class BleTask(ConnTask):
                                       f" not found!")
 
     async def __close_client(self):
-        await self._bus.close()
+        await self._bus.stop_notify(self.__char_uuid)
+        await self._bus.disconnect()
 
     def close_conn(self):
-        pass
+        self.__close_event = True
+        while self._loop.is_running():
+            time.sleep(0.1)
+        self._loop.run_until_complete(self.__close_client())
 
     def recv(self) -> Optional[str]:
         if self._recv_q.empty():
