@@ -1,11 +1,12 @@
 """Main MODI module."""
 
+import atexit
 import time
 from importlib import import_module as im
 from typing import Optional
 
 from modi._exe_thrd import ExeThrd
-from modi.util.conn_util import is_network_module_connected
+from modi.util.conn_util import is_network_module_connected, is_on_pi
 from modi.util.misc import module_list
 from modi.util.stranger import check_complete
 from modi.util.topology_manager import TopologyManager
@@ -24,6 +25,7 @@ class MODI:
         self._exe_thrd = ExeThrd(
             self._modules, self._topology_data, self._conn
         )
+        print('Start initializing connected MODI modules')
         self._exe_thrd.start()
 
         self._topology_manager = TopologyManager(self._topology_data,
@@ -38,11 +40,13 @@ class MODI:
                 break
         check_complete(self)
         print("MODI modules are initialized!")
+        atexit.register(self.close)
 
     @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
         if not conn_mode:
-            conn_mode = 'ser' if is_network_module_connected() else 'can'
+            is_can = not is_network_module_connected() and is_on_pi()
+            conn_mode = 'can' if is_can else 'ser'
 
         if conn_mode == 'ser':
             return im('modi.task.ser_task').SerTask(verbose, port)
@@ -52,6 +56,20 @@ class MODI:
             return im('modi.task.ble_task').BleTask(verbose, uuid)
         else:
             raise ValueError(f'Invalid conn mode {conn_mode}')
+
+    def close(self):
+        atexit.unregister(self.close)
+        print("Closing MODI connection...")
+        self._exe_thrd.close()
+        self._conn.close_conn()
+
+    def open(self):
+        atexit.register(self.close)
+        self._exe_thrd = ExeThrd(
+            self._modules, self._topology_data, self._conn
+        )
+        self._conn.open_conn()
+        self._exe_thrd.start()
 
     def send(self, message) -> None:
         """Low level method to send json pkt directly to modules

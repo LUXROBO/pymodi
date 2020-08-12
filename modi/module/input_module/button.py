@@ -13,10 +13,6 @@ class Button(InputModule):
         PRESSED = 4
         TOGGLED = 5
 
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
-        self._type = "button"
-
     @property
     def clicked(self) -> bool:
         """Returns true when button is clicked

@@ -10,10 +10,11 @@ class Display(OutputModule):
         TEXT = 17
         CLEAR = 21
         VARIABLE = 22
+        SET_HORIZONTAL = 25
+        SET_VERTICAL = 26
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
-        self._type = "display"
         self._text = ""
 
     @property
@@ -34,7 +35,7 @@ class Display(OutputModule):
         self._set_property(
             self._id,
             self.PropertyType.TEXT,
-            text[:27],  # Only 27 characters can be shown on the display
+            str(text)[:27],  # Only 27 characters can be shown on the display
             self.PropertyDataType.STRING
         )
         self._text = text
@@ -61,6 +62,32 @@ class Display(OutputModule):
             self.PropertyDataType.DISPLAY_VAR,
         )
         self._text += str(variable)
+
+    def set_horizontal(self, offset) -> None:
+        """Set the horizontal offset on the screen
+
+        :param offset: offset in pixels
+        :type offset: float
+        :return: None
+        """
+        self._set_property(
+            self.id,
+            self.PropertyType.SET_HORIZONTAL, (offset, ),
+            self.PropertyDataType.FLOAT,
+        )
+
+    def set_vertical(self, offset) -> None:
+        """Set the vertical offset on the screen
+
+        :param offset: offset in pixels
+        :type offset: float
+        :return: None
+        """
+        self._set_property(
+            self.id,
+            self.PropertyType.SET_VERTICAL, (offset, ),
+            self.PropertyDataType.FLOAT,
+        )
 
     def clear(self) -> None:
         """Clear the screen.

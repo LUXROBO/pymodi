@@ -78,7 +78,7 @@ if __name__ == "__main__":
         took = round((fin_time - init_time) / 2, 2)
         print(f"received message... {msg}")
         print(f"Took {took} seconds for message transfer")
-        exit(0)
+        os._exit(0)
 
     if check_option('-u', '--update'):
         init_time = time.time()
@@ -86,7 +86,7 @@ if __name__ == "__main__":
         updater.update_module_firmware()
         fin_time = time.time()
         print(f"Took {fin_time - init_time:.2f} seconds to update")
-        exit(0)
+        os._exit(0)
 
     if check_option('-d', '--debug'):
         is_update = check_option('-u', '--update')

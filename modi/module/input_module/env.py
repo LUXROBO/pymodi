@@ -15,10 +15,6 @@ class Env(InputModule):
         GREEN = 4
         BLUE = 5
 
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
-        self._type = "env"
-
     @property
     def temperature(self) -> float:
         """Returns the value of temperature between 0 and 100

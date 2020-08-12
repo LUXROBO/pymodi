@@ -22,7 +22,6 @@ class ExeTask:
             BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
         )
         self.__request_network_uuid()
-        print('Start initializing connected MODI modules')
 
     def run(self, delay: float):
         """ Run in ExecutorThread

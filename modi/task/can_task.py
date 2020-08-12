@@ -20,9 +20,6 @@ class CanTask(ConnTask):
             raise Exception("can0 device already in use")
         self._instances.add(self)
 
-    def __del__(self):
-        self.close_conn()
-
     #
     # Inherited Methods
     #

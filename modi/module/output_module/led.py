@@ -15,10 +15,6 @@ class Led(OutputModule):
     class CommandType(IntEnum):
         SET_RGB = 16
 
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
-        self._type = "led"
-
     @property
     def rgb(self) -> Tuple[float, float, float]:
         return self.red, self.green, self.blue
