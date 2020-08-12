@@ -14,6 +14,10 @@ class ExeThrd(th.Thread):
         self.__exe_task = ExeTask(
             modules, topology_data, conn_task
         )
+        self.__kill_sig = False
+
+    def close(self):
+        self.__kill_sig = True
 
     def run(self) -> None:
         """ Run executor task
@@ -22,3 +26,6 @@ class ExeThrd(th.Thread):
         """
         while True:
             self.__exe_task.run(delay=0.001)
+            if self.__kill_sig:
+                break
+        print("Exe thrd closed")

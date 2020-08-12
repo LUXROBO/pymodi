@@ -1,5 +1,6 @@
 """Main MODI module."""
 
+import atexit
 import time
 from importlib import import_module as im
 from typing import Optional
@@ -38,6 +39,7 @@ class MODI:
                 break
         check_complete(self)
         print("MODI modules are initialized!")
+        atexit.register(self.close)
 
     @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
@@ -54,8 +56,10 @@ class MODI:
         else:
             raise ValueError(f'Invalid conn mode {conn_mode}')
 
-    def __del__(self):
+    def close(self):
+        atexit.unregister(self.close)
         print("Closing MODI connection...")
+        self._exe_thrd.close()
         self._conn.close_conn()
 
     def send(self, message) -> None:
