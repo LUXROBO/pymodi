@@ -81,10 +81,11 @@ class MODI:
     def modules(self) -> module_list:
         """Module List of connected modules except network module.
         """
-        return module_list(
-            list(filter(lambda module: module.module_type != 'Network',
-                        self._modules))
-        )
+        return module_list(self._modules)
+
+    @property
+    def networks(self) -> module_list:
+        return module_list(self._modules, 'Network')
 
     @property
     def buttons(self) -> module_list:
