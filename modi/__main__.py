@@ -81,7 +81,7 @@ if __name__ == "__main__":
         fin_time = time.time()
         took = fin_time - init_time
         print(f"received message... {msg}")
-        print(f"Took {took:.20f} seconds for message transfer")
+        print(f"Took {(took - 0.08) / 2:.20f} seconds for message transfer")
         os._exit(0)
 
     if check_option('-u', '--update'):
