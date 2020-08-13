@@ -20,6 +20,10 @@ class Network(SetupModule):
     BUZZER = 0x0003
     CAMERA = 0x0101
 
+    def __init__(self, id_, uuid, conn_task):
+        super().__init__(id_, uuid, conn_task)
+        self.__buzzer_flag = True
+
     @property
     def button_pressed(self):
         return self._get_property(Network.BUTTON) == 100
@@ -71,7 +75,11 @@ class Network(SetupModule):
         self._set_property(Network.CAMERA, 100)
 
     def buzzer_on(self):
+        if self.__buzzer_flag:
+            self.buzzer_off()
+            self.__buzzer_flag = False
         self._set_property(Network.BUZZER, 100)
 
     def buzzer_off(self):
         self._set_property(Network.BUZZER, 0)
+        self.__buzzer_flag = False
