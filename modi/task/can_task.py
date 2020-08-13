@@ -60,6 +60,7 @@ class CanTask(ConnTask):
                 print(f'recv: {json_msg}')
             return json_msg
 
+    @ConnTask.wait
     def send(self, pkt: str) -> None:
         """Send json pkt through can
 

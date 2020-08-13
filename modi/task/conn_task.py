@@ -1,3 +1,4 @@
+import time
 from abc import ABC
 from abc import abstractmethod
 from typing import Optional
@@ -38,3 +39,13 @@ class ConnTask(ABC):
     @abstractmethod
     def send(self, pkt: str) -> None:
         pass
+
+    @staticmethod
+    def wait(func):
+        """Wait decorator
+        Make sure this is attached to inherited send method
+        """
+        def decorator(self, pkt: str) -> None:
+            func(self, pkt)
+            time.sleep(0.04)
+        return decorator

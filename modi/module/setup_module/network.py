@@ -1,6 +1,4 @@
 """Network module."""
-import time
-
 from modi.module.setup_module.setup_module import SetupModule
 from modi.util.msgutil import parse_message
 
@@ -65,7 +63,6 @@ class Network(SetupModule):
         self._conn.send(parse_message(
             0x04, command_type, self._id, (value, 0, 0, 0, 0, 0, 0, 0)
         ))
-        time.sleep(0.05)
 
     def take_picture(self):
         self._set_property(Network.CAMERA, 100)

@@ -82,6 +82,7 @@ class SerTask(ConnTask):
             print(f'recv: {json_pkt}')
         return json_pkt
 
+    @ConnTask.wait
     def send(self, pkt: str) -> None:
         """ Send json pkt
 

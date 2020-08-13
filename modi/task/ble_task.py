@@ -103,6 +103,7 @@ class BleTask(ConnTask):
             print(f'recv: {json_pkt}')
         return json_pkt
 
+    @ConnTask.wait
     def send(self, pkt: str) -> None:
         self._send_q.put(self.__compose_ble_msg(pkt))
         if self.verbose:
