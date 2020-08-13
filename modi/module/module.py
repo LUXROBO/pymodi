@@ -110,7 +110,7 @@ class Module:
         """ Get module property value and request
 
         :param property_type: Type of the requested property
-        :type property_type: IntEnum
+        :type property_type: int
         """
 
         # Register property if not exists
@@ -130,7 +130,7 @@ class Module:
         """ Update property value and time
 
         :param property_type: Type of the updated property
-        :type property_type: IntEnum
+        :type property_type: int
         :param property_value: Value to update the property
         :type property_value: float
         """
