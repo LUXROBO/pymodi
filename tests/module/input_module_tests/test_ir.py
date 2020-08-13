@@ -24,7 +24,7 @@ class TestIr(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Ir.PropertyType.PROXIMITY, None, 95, None))
+                          (Ir.PROXIMITY, None, 95, None))
         )
 
 

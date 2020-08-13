@@ -68,7 +68,7 @@ class TestLed(unittest.TestCase):
         _ = self.led.red
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1, (Led.PropertyType.RED, None, 95, None)))
+            parse_message(0x03, 0, -1, (Led.RED, None, 95, None)))
 
     def test_set_green(self):
         """Test set_green method."""
@@ -87,7 +87,7 @@ class TestLed(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Led.PropertyType.GREEN, None, 95, None)))
+                          (Led.GREEN, None, 95, None)))
 
     def test_set_blue(self):
         """Test blue method."""
@@ -106,7 +106,7 @@ class TestLed(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Led.PropertyType.BLUE, None, 95, None)))
+                          (Led.BLUE, None, 95, None)))
 
 
 if __name__ == "__main__":
