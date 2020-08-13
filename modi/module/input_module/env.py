@@ -1,19 +1,16 @@
 """Env module."""
 
-from enum import IntEnum
-
 from modi.module.input_module.input_module import InputModule
 
 
 class Env(InputModule):
 
-    class PropertyType(IntEnum):
-        TEMPERATURE = 6
-        HUMIDITY = 7
-        BRIGHTNESS = 2
-        RED = 3
-        GREEN = 4
-        BLUE = 5
+    TEMPERATURE = 6
+    HUMIDITY = 7
+    BRIGHTNESS = 2
+    RED = 3
+    GREEN = 4
+    BLUE = 5
 
     @property
     def temperature(self) -> float:
@@ -22,7 +19,7 @@ class Env(InputModule):
         :return: Temperature.
         :rtype: float
         """
-        return self._get_property(self.PropertyType.TEMPERATURE)
+        return self._get_property(Env.TEMPERATURE)
 
     @property
     def humidity(self) -> float:
@@ -31,7 +28,7 @@ class Env(InputModule):
         :return: Humidity.
         :rtype: float
         """
-        return self._get_property(self.PropertyType.HUMIDITY)
+        return self._get_property(Env.HUMIDITY)
 
     @property
     def brightness(self) -> float:
@@ -40,7 +37,7 @@ class Env(InputModule):
         :return: Brightness.
         :rtype: float
         """
-        return self._get_property(self.PropertyType.BRIGHTNESS)
+        return self._get_property(Env.BRIGHTNESS)
 
     @property
     def red(self) -> float:
@@ -49,7 +46,7 @@ class Env(InputModule):
         :return: Red component of light.
         :rtype: float
         """
-        return self._get_property(self.PropertyType.RED)
+        return self._get_property(Env.RED)
 
     @property
     def green(self) -> float:
@@ -58,7 +55,7 @@ class Env(InputModule):
         :return: Green component of light.
         :rtype: float
         """
-        return self._get_property(self.PropertyType.GREEN)
+        return self._get_property(Env.GREEN)
 
     @property
     def blue(self) -> float:
@@ -67,4 +64,4 @@ class Env(InputModule):
         :return: Blue component of light.
         :rtype: float
         """
-        return self._get_property(self.PropertyType.BLUE)
+        return self._get_property(Env.BLUE)

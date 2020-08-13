@@ -24,7 +24,7 @@ class TestEnv(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Env.PropertyType.TEMPERATURE, None, 95, None))
+                          (Env.TEMPERATURE, None, 95, None))
         )
 
     def test_get_humidity(self):
@@ -33,7 +33,7 @@ class TestEnv(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Env.PropertyType.HUMIDITY, None, 95, None))
+                          (Env.HUMIDITY, None, 95, None))
         )
 
     def test_get_brightness(self):
@@ -42,7 +42,7 @@ class TestEnv(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Env.PropertyType.BRIGHTNESS, None, 95, None))
+                          (Env.BRIGHTNESS, None, 95, None))
         )
 
     def test_get_red(self):
@@ -51,7 +51,7 @@ class TestEnv(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Env.PropertyType.RED, None, 95, None))
+                          (Env.RED, None, 95, None))
         )
 
     def test_get_green(self):
@@ -60,7 +60,7 @@ class TestEnv(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Env.PropertyType.GREEN, None, 95, None))
+                          (Env.GREEN, None, 95, None))
         )
 
     def test_get_blue(self):
@@ -69,7 +69,7 @@ class TestEnv(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Env.PropertyType.BLUE, None, 95, None))
+                          (Env.BLUE, None, 95, None))
         )
 
 

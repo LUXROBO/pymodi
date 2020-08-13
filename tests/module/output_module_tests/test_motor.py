@@ -36,11 +36,11 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.FIRST_TORQUE,
+            parse_message(0x03, 0, -1, (Motor.FIRST_TORQUE,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.SECOND_TORQUE,
+            parse_message(0x03, 0, -1, (Motor.SECOND_TORQUE,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
@@ -56,7 +56,7 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.FIRST_TORQUE,
+            parse_message(0x03, 0, -1, (Motor.FIRST_TORQUE,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
@@ -72,7 +72,7 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.SECOND_TORQUE,
+            parse_message(0x03, 0, -1, (Motor.SECOND_TORQUE,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
@@ -87,11 +87,11 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.FIRST_TORQUE,
+            parse_message(0x03, 0, -1, (Motor.FIRST_TORQUE,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.SECOND_TORQUE,
+            parse_message(0x03, 0, -1, (Motor.SECOND_TORQUE,
                                         None, 95, None))
             in sent_messages)
 
@@ -102,7 +102,7 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.FIRST_TORQUE,
+            parse_message(0x03, 0, -1, (Motor.FIRST_TORQUE,
                                         None, 95, None))
             in sent_messages)
 
@@ -113,7 +113,7 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.SECOND_TORQUE,
+            parse_message(0x03, 0, -1, (Motor.SECOND_TORQUE,
                                         None, 95, None))
             in sent_messages)
 
@@ -125,11 +125,11 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.FIRST_SPEED,
+            parse_message(0x03, 0, -1, (Motor.FIRST_SPEED,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.SECOND_SPEED,
+            parse_message(0x03, 0, -1, (Motor.SECOND_SPEED,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
@@ -149,7 +149,7 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.FIRST_SPEED,
+            parse_message(0x03, 0, -1, (Motor.FIRST_SPEED,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
@@ -165,7 +165,7 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.SECOND_SPEED,
+            parse_message(0x03, 0, -1, (Motor.SECOND_SPEED,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
@@ -180,11 +180,11 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.FIRST_SPEED,
+            parse_message(0x03, 0, -1, (Motor.FIRST_SPEED,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.SECOND_SPEED,
+            parse_message(0x03, 0, -1, (Motor.SECOND_SPEED,
                                         None, 95, None))
             in sent_messages)
 
@@ -195,7 +195,7 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.FIRST_SPEED,
+            parse_message(0x03, 0, -1, (Motor.FIRST_SPEED,
                                         None, 95, None))
             in sent_messages)
 
@@ -206,7 +206,7 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.SECOND_SPEED,
+            parse_message(0x03, 0, -1, (Motor.SECOND_SPEED,
                                         None, 95, None))
             in sent_messages)
 
@@ -218,11 +218,11 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.FIRST_DEGREE,
+            parse_message(0x03, 0, -1, (Motor.FIRST_DEGREE,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.SECOND_DEGREE,
+            parse_message(0x03, 0, -1, (Motor.SECOND_DEGREE,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
@@ -242,7 +242,7 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.FIRST_DEGREE,
+            parse_message(0x03, 0, -1, (Motor.FIRST_DEGREE,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
@@ -258,7 +258,7 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.SECOND_DEGREE,
+            parse_message(0x03, 0, -1, (Motor.SECOND_DEGREE,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
@@ -273,11 +273,11 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.FIRST_DEGREE,
+            parse_message(0x03, 0, -1, (Motor.FIRST_DEGREE,
                                         None, 95, None))
             in sent_messages)
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.SECOND_DEGREE,
+            parse_message(0x03, 0, -1, (Motor.SECOND_DEGREE,
                                         None, 95, None))
             in sent_messages)
 
@@ -288,7 +288,7 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.FIRST_DEGREE,
+            parse_message(0x03, 0, -1, (Motor.FIRST_DEGREE,
                                         None, 95, None))
             in sent_messages)
 
@@ -299,7 +299,7 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.PropertyType.SECOND_DEGREE,
+            parse_message(0x03, 0, -1, (Motor.SECOND_DEGREE,
                                         None, 95, None))
             in sent_messages)
 

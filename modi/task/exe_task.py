@@ -2,8 +2,6 @@ import json
 import time
 from typing import Callable, Dict, Union
 
-from enum import IntEnum
-
 from modi.module.module import Module, BROADCAST_ID
 from modi.module.setup_module.battery import Battery
 from modi.util.misc import get_module_from_name, get_module_type_from_uuid
@@ -19,7 +17,7 @@ class ExeTask:
         self.__is_battery_connected = False
         # Reboot all modules
         self.__set_module_state(
-            BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
+            BROADCAST_ID, Module.REBOOT, Module.PNP_OFF
         )
         self.__request_network_uuid()
 
@@ -116,7 +114,7 @@ class ExeTask:
             # Turn off pnp if pnp flag is on
             if module.module_type != 'Network' and user_code_state < 2:
                 self.__set_module_state(
-                    module_id, Module.State.RUN, Module.State.PNP_OFF
+                    module_id, Module.RUN, Module.PNP_OFF
                 )
         # Disconnect module with no health message for more than 2 second
         for module in self._modules:
@@ -157,8 +155,8 @@ class ExeTask:
         module_instance = module_template(
             module_id, module_uuid, self._conn
         )
-        self.__set_module_state(module_instance.id, Module.State.RUN,
-                                Module.State.PNP_OFF)
+        self.__set_module_state(module_instance.id, Module.RUN,
+                                Module.PNP_OFF)
         module_instance.version = module_version_info
         self._modules.append(module_instance)
         print(f"{str(module_instance)} has been connected!")
@@ -184,8 +182,8 @@ class ExeTask:
         else:
             module.update_property(property_number, decode_data(data))
 
-    def __set_module_state(self, destination_id: int, module_state: IntEnum,
-                           pnp_state: IntEnum) -> None:
+    def __set_module_state(self, destination_id: int, module_state: int,
+                           pnp_state: int) -> None:
         """ Generate message for set module state and pnp state
 
         :param destination_id: Id to target destination
@@ -193,7 +191,7 @@ class ExeTask:
         :param module_state: State value of the module
         :type module_state: int
         :param pnp_state: Pnp state value
-        :type pnp_state: IntEnum
+        :type pnp_state: int
         :return: None
         """
         self._conn.send(parse_message(0x09, 0, destination_id,

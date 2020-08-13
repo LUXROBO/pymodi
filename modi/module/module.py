@@ -4,8 +4,6 @@ import time
 from typing import Union
 from os import path
 
-from enum import IntEnum
-
 from modi.util.msgutil import parse_message
 
 BROADCAST_ID = 0xFFF
@@ -22,16 +20,15 @@ class Module:
             self.value = value
             self.last_update_time = time.time()
 
-    class State(IntEnum):
-        RUN = 0
-        WARNING = 1
-        FORCED_PAUSE = 2
-        ERROR_STOP = 3
-        UPDATE_FIRMWARE = 4
-        UPDATE_FIRMWARE_READY = 5
-        REBOOT = 6
-        PNP_ON = 1
-        PNP_OFF = 2
+    RUN = 0
+    WARNING = 1
+    FORCED_PAUSE = 2
+    ERROR_STOP = 3
+    UPDATE_FIRMWARE = 4
+    UPDATE_FIRMWARE_READY = 5
+    REBOOT = 6
+    PNP_ON = 1
+    PNP_OFF = 2
 
     def __init__(self, id_, uuid, conn_task):
         self._id = id_
@@ -109,11 +106,11 @@ class Module:
         )
         return latest_version <= self.__version
 
-    def _get_property(self, property_type: IntEnum) -> float:
+    def _get_property(self, property_type: int) -> float:
         """ Get module property value and request
 
         :param property_type: Type of the requested property
-        :type property_type: IntEnum
+        :type property_type: int
         """
 
         # Register property if not exists
@@ -128,12 +125,12 @@ class Module:
 
         return self._properties[property_type].value
 
-    def update_property(self, property_type: IntEnum,
+    def update_property(self, property_type: int,
                         property_value: float) -> None:
         """ Update property value and time
 
         :param property_type: Type of the updated property
-        :type property_type: IntEnum
+        :type property_type: int
         :param property_value: Value to update the property
         :type property_value: float
         """
@@ -143,7 +140,7 @@ class Module:
         self._properties[property_type].last_update_time = time.time()
 
     def __request_property(self, destination_id: int,
-                           property_type: IntEnum) -> None:
+                           property_type: int) -> None:
         """ Generate message for request property
 
         :param destination_id: Id of the destination module
