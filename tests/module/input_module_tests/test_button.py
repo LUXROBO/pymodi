@@ -24,7 +24,7 @@ class TestButton(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Button.PropertyType.CLICKED, None, 95, None)))
+                          (Button.CLICKED, None, 95, None)))
 
     def test_get_double_clicked(self):
         """Test get_double_clicked method."""
@@ -32,7 +32,7 @@ class TestButton(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Button.PropertyType.DOUBLE_CLICKED,
+                          (Button.DOUBLE_CLICKED,
                            None, 95, None)))
 
     def test_get_pressed(self):
@@ -41,7 +41,7 @@ class TestButton(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Button.PropertyType.PRESSED, None, 95, None)))
+                          (Button.PRESSED, None, 95, None)))
 
     def test_get_toggled(self):
         """Test get_toggled method."""
@@ -49,7 +49,7 @@ class TestButton(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Button.PropertyType.TOGGLED, None, 95, None)))
+                          (Button.TOGGLED, None, 95, None)))
 
 
 if __name__ == "__main__":

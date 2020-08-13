@@ -1,17 +1,15 @@
 """Speaker module."""
 
-from enum import IntEnum
 from typing import Tuple
 from modi.module.output_module.output_module import OutputModule
 
 
 class Speaker(OutputModule):
-    class PropertyType(IntEnum):
-        FREQUENCY = 3
-        VOLUME = 2
 
-    class CommandType(IntEnum):
-        SET_TUNE = 16
+    FREQUENCY = 3
+    VOLUME = 2
+
+    SET_TUNE = 16
 
     @property
     def tune(self) -> Tuple[float, float]:
@@ -33,16 +31,16 @@ class Speaker(OutputModule):
             return
         self._set_property(
             self._id,
-            self.CommandType.SET_TUNE,
+            Speaker.SET_TUNE,
             tune_value,
-            self.PropertyDataType.FLOAT,
+            OutputModule.FLOAT,
         )
-        self.update_property(self.PropertyType.FREQUENCY, tune_value[0])
-        self.update_property(self.PropertyType.VOLUME, tune_value[1])
+        self.update_property(Speaker.FREQUENCY, tune_value[0])
+        self.update_property(Speaker.VOLUME, tune_value[1])
 
     @property
     def frequency(self) -> float:
-        return self._get_property(self.PropertyType.FREQUENCY)
+        return self._get_property(Speaker.FREQUENCY)
 
     @frequency.setter
     @OutputModule._validate_property(nb_values=1)
@@ -62,7 +60,7 @@ class Speaker(OutputModule):
         :return: Volume value
         :rtype: float
         """
-        return self._get_property(self.PropertyType.VOLUME)
+        return self._get_property(Speaker.VOLUME)
 
     @volume.setter
     @OutputModule._validate_property(nb_values=1, value_range=(0, 100))

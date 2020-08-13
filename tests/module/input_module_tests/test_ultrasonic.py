@@ -24,7 +24,7 @@ class TestUltrasonic(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(0x03, 0, -1,
-                          (Ultrasonic.PropertyType.DISTANCE, None, 95, None))
+                          (Ultrasonic.DISTANCE, None, 95, None))
         )
 
 

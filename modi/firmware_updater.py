@@ -8,7 +8,6 @@ from os import path
 
 import esptool
 import serial
-from enum import IntEnum
 
 from modi.module.module import Module
 from modi.util.msgutil import unpack_data, decode_message
@@ -18,15 +17,14 @@ from modi.util.conn_util import list_modi_ports, is_on_pi
 class STM32FirmwareUpdater:
     """STM32 Firmware Updater: Updates a firmware of given module"""
 
-    class State(IntEnum):
-        NO_ERROR = 0
-        UPDATE_READY = 1
-        WRITE_FAIL = 2
-        VERIFY_FAIL = 3
-        CRC_ERROR = 4
-        CRC_COMPLETE = 5
-        ERASE_ERROR = 6
-        ERASE_COMPLETE = 7
+    NO_ERROR = 0
+    UPDATE_READY = 1
+    WRITE_FAIL = 2
+    VERIFY_FAIL = 3
+    CRC_ERROR = 4
+    CRC_COMPLETE = 5
+    ERASE_ERROR = 6
+    ERASE_COMPLETE = 7
 
     def __init__(self):
         port = list_modi_ports()[0].device
@@ -107,7 +105,7 @@ class STM32FirmwareUpdater:
         """ Remove firmware of MODI modules (Removes EndFlash)
         """
         firmware_update_message = self.__set_module_state(
-            0xFFF, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
+            0xFFF, Module.UPDATE_FIRMWARE, Module.PNP_OFF
         )
         self.__stream.send(firmware_update_message)
 
@@ -119,7 +117,7 @@ class STM32FirmwareUpdater:
         :return: None
         """
         firmware_update_ready_message = self.__set_module_state(
-            module_id, Module.State.UPDATE_FIRMWARE_READY, Module.State.PNP_OFF
+            module_id, Module.UPDATE_FIRMWARE_READY, Module.PNP_OFF
         )
         self.__stream.send(firmware_update_ready_message)
 
@@ -296,23 +294,23 @@ class STM32FirmwareUpdater:
         else:
             # Reboot all connected modules
             reboot_message = self.__set_module_state(
-                0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
+                0xFFF, Module.REBOOT, Module.PNP_OFF
             )
             self.__stream.send(reboot_message)
             print("Reboot message has been sent to all connected modules")
             self.reset_state()
             self.update_event.set()
 
-    def __set_module_state(self, destination_id: int, module_state: IntEnum,
-                           pnp_state: IntEnum) -> str:
+    def __set_module_state(self, destination_id: int, module_state: int,
+                           pnp_state: int) -> str:
         """ Generate message for set module state and pnp state
 
         :param destination_id: Id of the destination module
         :type destination_id: int
         :param module_state: State of the module
-        :type module_state: IntEnum
+        :type module_state: int
         :param pnp_state: Pnp state of the module
-        :type pnp_state: IntEnum
+        :type pnp_state: int
         :return: Json serialized message
         :rtype: str
         """
@@ -616,19 +614,22 @@ class STM32FirmwareUpdater:
         message_decoded = unpack_data(data, (4, 1))
         stream_state = message_decoded[1]
 
-        if stream_state == self.State.CRC_ERROR:
+        if stream_state == self.CRC_ERROR:
             self.update_response(response=True, is_error_response=True)
-        elif stream_state == self.State.CRC_COMPLETE:
+        elif stream_state == self.CRC_COMPLETE:
             self.update_response(response=True)
-        elif stream_state == self.State.ERASE_ERROR:
+        elif stream_state == self.ERASE_ERROR:
             self.update_response(response=True, is_error_response=True)
-        elif stream_state == self.State.ERASE_COMPLETE:
+        elif stream_state == self.ERASE_COMPLETE:
             self.update_response(response=True)
 
     def __update_warning(self, sid: int, data: str) -> None:
         """Update the warning message
 
-        :param message: Warning message in Dictionary format
+        :param sid: Source id
+        :type sid: int
+        :param data: Data str
+        :type data: str
         :return: None
         """
         module_uuid = unpack_data(data, (6, 1))[0]
@@ -737,14 +738,13 @@ class ESP32FirmwareUpdater(serial.Serial):
                 self._port.write(write_buf)
                 time.sleep(0.01)
 
-    class ESPCommand(IntEnum):
-        DEVICE_READY = 0x2B
-        DEVICE_SYNC = 0x08
-        SPI_ATTACH_REQ = 0xD
-        SPI_FLASH_SET = 0xB
-        ESP_FLASH_BEGIN = 0x02
-        ESP_FLASH_DATA = 0x03
-        ESP_FLASH_END = 0x04
+    DEVICE_READY = 0x2B
+    DEVICE_SYNC = 0x08
+    SPI_ATTACH_REQ = 0xD
+    SPI_FLASH_SET = 0xB
+    ESP_FLASH_BEGIN = 0x02
+    ESP_FLASH_DATA = 0x03
+    ESP_FLASH_END = 0x04
 
     ESP_FLASH_BLOCK = 0x200
     ESP_FLASH_CHUNK = 0x4000
@@ -812,7 +812,7 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     def __device_sync(self):
         print("Syncing the esp device...")
-        sync_pkt = self.__parse_pkt([0x0, self.ESPCommand.DEVICE_SYNC,
+        sync_pkt = self.__parse_pkt([0x0, self.DEVICE_SYNC,
                                      0x24, 0, 0, 0, 0, 0,
                                      0x7, 0x7, 0x12, 0x20] + 32 * [0x55])
         self.__send_pkt(sync_pkt, timeout=10, continuous=True)
@@ -820,7 +820,7 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     def __flash_attach(self):
         print("Attaching flash to esp device..")
-        attach_pkt = self.__parse_pkt([0x0, self.ESPCommand.SPI_ATTACH_REQ,
+        attach_pkt = self.__parse_pkt([0x0, self.SPI_ATTACH_REQ,
                                        0x8] + 13 * [0])
         self.__send_pkt(attach_pkt, timeout=10)
         print("Flash attach Complete")
@@ -830,7 +830,7 @@ class ESP32FirmwareUpdater(serial.Serial):
         param_data = [0] * 32
         fl_id, total_size, block_size, sector_size, page_size, status_mask = \
             0, 2 * 1024 * 1024, 64 * 1024, 4 * 1024, 256, 0xFFFF
-        param_data[1] = self.ESPCommand.SPI_FLASH_SET
+        param_data[1] = self.SPI_FLASH_SET
         param_data[2] = 0x18
         param_data[8:12] = int.to_bytes(fl_id, length=4, byteorder='little')
         param_data[12:16] = int.to_bytes(total_size,
@@ -966,7 +966,7 @@ class ESP32FirmwareUpdater(serial.Serial):
     def __erase_chunk(self, size, offset):
         num_blocks = size // self.ESP_FLASH_BLOCK + 1
         erase_data = [0] * 24
-        erase_data[1] = self.ESPCommand.ESP_FLASH_BEGIN
+        erase_data[1] = self.ESP_FLASH_BEGIN
         erase_data[2] = 0x10
         erase_data[8:12] = int.to_bytes(size, length=4, byteorder='little')
         erase_data[12:16] = int.to_bytes(num_blocks,
@@ -983,7 +983,7 @@ class ESP32FirmwareUpdater(serial.Serial):
         block_data = [0] * (size + 24)
         checksum = self.ESP_CHECKSUM_MAGIC
 
-        block_data[1] = self.ESPCommand.ESP_FLASH_DATA
+        block_data[1] = self.ESP_FLASH_DATA
         block_data[2:4] = int.to_bytes(size + 16, length=2, byteorder='little')
         block_data[8:12] = int.to_bytes(size, length=4, byteorder='little')
         block_data[12:16] = int.to_bytes(seq_block,

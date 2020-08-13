@@ -1,15 +1,12 @@
 """Dial module."""
 
-from enum import IntEnum
-
 from modi.module.input_module.input_module import InputModule
 
 
 class Dial(InputModule):
 
-    class PropertyType(IntEnum):
-        DEGREE = 2
-        TURNSPEED = 3
+    DEGREE = 2
+    TURNSPEED = 3
 
     @property
     def degree(self) -> float:
@@ -18,7 +15,7 @@ class Dial(InputModule):
         :return: The dial's angle.
         :rtype: float
         """
-        return self._get_property(self.PropertyType.DEGREE)
+        return self._get_property(Dial.DEGREE)
 
     @property
     def turnspeed(self) -> float:
@@ -27,4 +24,4 @@ class Dial(InputModule):
         :return: The dial's turn speed.
         :rtype: float
         """
-        return self._get_property(self.PropertyType.TURNSPEED)
+        return self._get_property(Dial.TURNSPEED)
