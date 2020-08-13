@@ -66,18 +66,22 @@ if __name__ == "__main__":
         bundle.print_topology_map(True)
         print(f"Took {took} seconds to initialize")
         time.sleep(1)
-        msg = parse_message(0x03, 0, bundle.modules[0].id, (1, None, 96, None))
-        print(f"sending request message... {msg}")
+        msg1 = parse_message(0x07, 0, bundle.modules[0].id)
+        msg2 = parse_message(0x2A, 0, bundle.modules[0].id)
+        print(f"sending request message... {msg1}")
+        bundle._exe_thrd.close()
         init_time = time.time()
-        bundle.send(msg)
+        bundle.send(msg1)
+        bundle.send(msg2)
         while True:
             msg = bundle.recv()
-            if msg and decode_message(msg)[0] == 0x1F:
+            recv_cmd = decode_message(msg)[0] if msg else None
+            if msg and recv_cmd == 0x07:
                 break
         fin_time = time.time()
-        took = round((fin_time - init_time) / 2, 2)
+        took = fin_time - init_time
         print(f"received message... {msg}")
-        print(f"Took {took} seconds for message transfer")
+        print(f"Took {took:.20f} seconds for message transfer")
         os._exit(0)
 
     if check_option('-u', '--update'):
