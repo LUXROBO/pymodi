@@ -153,10 +153,19 @@ class _DebuggerWindow(th.Thread):
                           f"Connected: {module.is_connected}"])
         text += '\n[Properties]\n'
         for prop in module._properties:
-            text += f"{prop.name}: {module._properties[prop].value} " \
+            text += f"{self.get_prop_name(prop, module)}: " \
+                    f"{module._properties[prop].value} " \
                     f"last updated: " \
                     f"{module._properties[prop].last_update_time}\n"
         self.__spec.configure(text=text)
+
+    @staticmethod
+    def get_prop_name(prop, module):
+        module_props = module.__class__.__dict__
+        for prop_key in module_props:
+            if prop == module_props[prop_key]:
+                return prop_key
+        return prop
 
     def __create_module_button(self, module, window):
         module_button = Button(window,
