@@ -1,5 +1,3 @@
-import time
-
 from typing import Tuple, List, Union
 from modi.module.module import Module
 from modi.util.msgutil import parse_message, parse_data
@@ -78,7 +76,6 @@ class OutputModule(Module):
 
         for message in messages:
             self._conn.send(message)
-        time.sleep(0.04)
 
     @staticmethod
     def _validate_property(nb_values: int, value_range: Tuple = None):
