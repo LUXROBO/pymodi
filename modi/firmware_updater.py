@@ -140,8 +140,8 @@ class STM32FirmwareUpdater:
             if module_id == curr_module_id:
                 return
 
-        print(f"Adding {module_type} ({module_id}) to waiting list.."
-              f"{' ' * 30}")
+        print(f"\rAdding {module_type} ({module_id}) to waiting list..."
+              f"{' ' * 40}")
 
         # Add the module to the waiting list
         module_elem = module_id, module_type
@@ -219,8 +219,8 @@ class STM32FirmwareUpdater:
         bin_end = bin_size - ((bin_size - bin_begin) % page_size)
         delay = 0.0025 if is_on_pi() else 0.001
         for page_begin in range(bin_begin, bin_end + 1, page_size):
-            print(f"{self.__progress_bar(page_begin, bin_end)} "
-                  f"{page_begin * 100 // bin_end}% \r", end='')
+            print(f"\r{self.__progress_bar(page_begin, bin_end)}"
+                  f" {page_begin * 100 // bin_end}%", end='')
             page_end = page_begin + page_size
             curr_page = bin_buffer[page_begin:page_end]
 
@@ -1030,7 +1030,8 @@ class ESP32FirmwareUpdater(serial.Serial):
         for seq, block in enumerate(block_queue):
             if manager:
                 manager.status = self.__progress_bar(curr_seq + seq, total_seq)
-            print(self.__progress_bar(curr_seq + seq, total_seq), end='\r')
+            print(f'\r{self.__progress_bar(curr_seq + seq, total_seq)}',
+                  end='')
             self.__write_flash_block(block, seq)
         return len(block_queue)
 
