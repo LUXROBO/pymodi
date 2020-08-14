@@ -13,7 +13,7 @@ class AIMic:
             if 'wm8960' in d['name']:
                 is_wm_card = True
                 break
-        if is_wm_card:
+        if not is_wm_card:
             raise AIModuleFaultsException(
                 "AI Mic not found! Please contact our CS team.")
         self.RATE = 44100
