@@ -1030,7 +1030,8 @@ class ESP32FirmwareUpdater(serial.Serial):
         for seq, block in enumerate(block_queue):
             if manager:
                 manager.status = self.__progress_bar(curr_seq + seq, total_seq)
-            print(self.__progress_bar(curr_seq + seq, total_seq), end='\r')
+            print(f'\r{self.__progress_bar(curr_seq + seq, total_seq)}',
+                  end='')
             self.__write_flash_block(block, seq)
         return len(block_queue)
 
