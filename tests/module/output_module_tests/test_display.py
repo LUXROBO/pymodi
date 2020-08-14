@@ -23,7 +23,7 @@ class TestDisplay(unittest.TestCase):
         mock_text = "abcd"
         self.display.text = mock_text
         clear_message = parse_message(0x04, 21, -1, (0, 0))
-        text_message = parse_message(0x04, 17, -1, parse_data(mock_text,
+        text_message = parse_message(0x04, 17, -1, parse_data(mock_text + '\0',
                                                               'string'))
         self.assertEqual(
             self.conn.send_list[0],
