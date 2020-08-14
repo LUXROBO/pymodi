@@ -1,132 +1,59 @@
 """Main MODI module."""
 
-import os
-import signal
-import threading as th
+import atexit
 import time
-import traceback
+from importlib import import_module as im
 from typing import Optional, Tuple
 
-from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
+from modi.util.conn_util import is_network_module_connected, is_on_pi, \
+    AIModuleFaultsException, AIModuleNotFoundException
+from modi.util.misc import module_list
+from modi.util.stranger import check_complete
+from modi.util.topology_manager import TopologyManager
+from modi.firmware_updater import STM32FirmwareUpdater, ESP32FirmwareUpdater
 from modi.module.ai_module.ai_camera import AICamera
 from modi.module.ai_module.ai_speaker import AISpeaker
 from modi.module.ai_module.ai_mic import AIMic
-from modi.util.conn_util import is_modi_pi, AIModuleNotFoundException, \
-    AIModuleFaultsException
-from modi.util.misc import module_list
-from modi.util.queues import CommunicationQueue
-from modi.util.stranger import check_complete
-from modi.util.topology_manager import TopologyManager
 
 
 class MODI:
-    # Keeps track of all the connection processes spawned
-    __conn_procs = []
 
-    def __init__(self, conn_mode: str = "",
-                 module_uuid: str = "", test: bool = False,
-                 ai_mode: bool = False, verbose: bool = False,
-                 port: str = None):
-
+    def __init__(self, conn_mode: str = "", verbose: bool = False,
+                 port: str = None, uuid="", ai_mode: bool = True):
         self._modules = list()
         self._ai_modules = list()
         self._topology_data = dict()
 
-        self._recv_q = CommunicationQueue()
-        self._send_q = CommunicationQueue()
-
-        self._conn_proc = None
-        self._exe_thrd = None
-        # If in test run, do not create process and thread
-        if test:
-            return
-
-        self._conn_proc = ConnProc(
-            self._recv_q, self._send_q, conn_mode, module_uuid, verbose, port
-        )
-        try:
-            self._conn_proc.start()
-        except RuntimeError:
-            if os.name == 'nt':
-                print('\nProcess initialization failed!\nMake sure you are '
-                      'using\n    if __name__ == \'__main__\' \n '
-                      'in the main module.')
-            else:
-                traceback.print_exc()
-            exit(1)
-
-        MODI.__conn_procs.append(self._conn_proc.pid)
-
-        self._child_watch = th.Thread(target=self.watch_child_process)
-        self._child_watch.daemon = True
-        self._child_watch.start()
+        self._conn = self.__init_task(conn_mode, verbose, port, uuid)
 
         self._exe_thrd = ExeThrd(
-            self._modules,
-            self._topology_data,
-            self._recv_q,
-            self._send_q,
+            self._modules, self._topology_data, self._conn
         )
+        print('Start initializing connected MODI modules')
         self._exe_thrd.start()
 
         self._topology_manager = TopologyManager(self._topology_data,
                                                  self._modules)
 
-        while not self._topology_manager.is_topology_complete():
-            time.sleep(0.1)
-        check_complete(self)
-        print("MODI modules are initialized!")
+        init_time = time.time()
 
         if ai_mode:
-            if not is_modi_pi():
+            if not is_on_pi():
                 raise AIModuleNotFoundException
             self._init_ai_modules()
             if len(self._ai_modules) > 1:
                 print("MODI AI modules are initialized!")
 
-    def watch_child_process(self) -> None:
-        """Continuously watches if any of the child processes are dead, and
-        if so, terminates all the existing processes.
-
-        :return: None
-        """
-        while self._conn_proc.is_alive():
+        while not self._topology_manager.is_topology_complete():
             time.sleep(0.1)
-        for pid in MODI.__conn_procs:
-            try:
-                os.kill(pid, signal.SIGTERM)
-            except PermissionError:
-                continue
-            except ProcessLookupError:
-                continue
-        os.kill(os.getpid(), signal.SIGTERM)
-
-    def send(self, message) -> None:
-        """Low level method to send json pkt directly to modules
-
-        :param message: Json packet to send
-        :return: None
-        """
-        self._send_q.put(message)
-
-    def recv(self) -> Optional[str]:
-        """Low level method to receive json pkt directly from modules
-
-        :return: Json msg received
-        :rtype: str if msg exists, else None
-        """
-        if self._recv_q.empty():
-            return None
-        return self._recv_q.get()
-
-    def print_topology_map(self, print_id: bool = False) -> None:
-        """Prints out the topology map
-
-        :param print_id: if True, the result includes module id
-        :return: None
-        """
-        self._topology_manager.print_topology_map(print_id)
+            if time.time() - init_time > 5:
+                print("MODI init timeout over. "
+                      "Check your module connection.")
+                break
+        check_complete(self)
+        print("MODI modules are initialized!")
+        atexit.register(self.close)
 
     def _init_ai_modules(self) -> None:
         """Initialize AI Module features
@@ -134,12 +61,11 @@ class MODI:
         :return: None
         """
         try:
-            self._init_ai_camera()
             self._init_ai_mic()
             self._init_ai_speaker()
+            self._init_ai_camera()
         except AIModuleFaultsException as e:
             print(e)
-            pass
 
     def _init_ai_camera(self) -> None:
         """Initialize AI Module's camera
@@ -163,14 +89,68 @@ class MODI:
         """
         self._ai_modules.append(AISpeaker())
 
+    @staticmethod
+    def __init_task(conn_mode, verbose, port, uuid):
+        if not conn_mode:
+            is_can = not is_network_module_connected() and is_on_pi()
+            conn_mode = 'can' if is_can else 'ser'
+
+        if conn_mode == 'ser':
+            return im('modi.task.ser_task').SerTask(verbose, port)
+        elif conn_mode == 'can':
+            return im('modi.task.can_task').CanTask(verbose)
+        elif conn_mode == 'ble':
+            return im('modi.task.ble_task').BleTask(verbose, uuid)
+        else:
+            raise ValueError(f'Invalid conn mode {conn_mode}')
+
+    def close(self):
+        atexit.unregister(self.close)
+        print("Closing MODI connection...")
+        self._exe_thrd.close()
+        self._conn.close_conn()
+
+    def open(self):
+        atexit.register(self.close)
+        self._exe_thrd = ExeThrd(
+            self._modules, self._topology_data, self._conn
+        )
+        self._conn.open_conn()
+        self._exe_thrd.start()
+
+    def send(self, message) -> None:
+        """Low level method to send json pkt directly to modules
+
+        :param message: Json packet to send
+        :return: None
+        """
+        self._conn.send(message)
+
+    def recv(self) -> Optional[str]:
+        """Low level method to receive json pkt directly from modules
+
+        :return: Json msg received
+        :rtype: str if msg exists, else None
+        """
+        return self._conn.recv()
+
+    def print_topology_map(self, print_id: bool = False) -> None:
+        """Prints out the topology map
+
+        :param print_id: if True, the result includes module id
+        :return: None
+        """
+        self._topology_manager.print_topology_map(print_id)
+
     @property
     def modules(self) -> module_list:
         """Module List of connected modules except network module.
         """
-        return module_list(
-            list(filter(lambda module: module.module_type != 'Network',
-                        self._modules))
-        )
+        return module_list(self._modules)
+
+    @property
+    def networks(self) -> module_list:
+        return module_list(self._modules, 'Network')
 
     @property
     def buttons(self) -> module_list:
@@ -263,3 +243,13 @@ class MODI:
         return tuple(
             [ai_module for ai_module in self._ai_modules
              if isinstance(ai_module, AICamera)])
+
+
+def update_module_firmware():
+    updater = STM32FirmwareUpdater()
+    updater.update_module_firmware()
+
+
+def update_network_firmware(stub=True, force=False):
+    updater = ESP32FirmwareUpdater()
+    updater.start_update(stub=stub, force=force)

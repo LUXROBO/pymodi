@@ -1,7 +1,6 @@
 pyserial
-enum34
 python-can
-requests
+bleak
 esptool
 sounddevice
 soundfile

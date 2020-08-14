@@ -1,15 +1,4 @@
-from modi.module.input_module.button import Button
-from modi.module.input_module.dial import Dial
-from modi.module.input_module.env import Env
-from modi.module.input_module.gyro import Gyro
-from modi.module.input_module.ir import Ir
-from modi.module.input_module.mic import Mic
-from modi.module.input_module.ultrasonic import Ultrasonic
-from modi.module.output_module.display import Display
-from modi.module.output_module.led import Led
-from modi.module.output_module.motor import Motor
-from modi.module.output_module.speaker import Speaker
-from modi.module.setup_module.network import Network
+from importlib.util import find_spec
 
 
 def get_module_type_from_uuid(uuid):
@@ -45,21 +34,15 @@ def get_module_from_name(module_type: str):
     :return: Module corresponding to the type
     :rtype: Module
     """
-    module = {
-        "button": Button,
-        "dial": Dial,
-        "display": Display,
-        "env": Env,
-        "gyro": Gyro,
-        "ir": Ir,
-        "led": Led,
-        "mic": Mic,
-        "motor": Motor,
-        "speaker": Speaker,
-        "ultrasonic": Ultrasonic,
-        "Network": Network,
-    }.get(module_type)
-    return module
+    module_type = module_type[0].lower() + module_type[1:]
+    module_name = module_type[0].upper() + module_type[1:]
+    module_module = find_spec(f'modi.module.input_module.{module_type}')
+    if not module_module:
+        module_module = find_spec(f'modi.module.output_module.{module_type}')
+    if not module_module:
+        module_module = find_spec(f'modi.module.setup_module.{module_type}')
+    module_module = module_module.loader.load_module()
+    return getattr(module_module, module_name)
 
 
 class module_list(list):
@@ -109,33 +92,12 @@ class module_list(list):
         return -1
 
 
-def get_type_from_uuid(uuid: int) -> str:
-    """Returns type based on uuid
+class MockConn:
+    def __init__(self):
+        self.send_list = []
 
-    :param uuid: UUID of the required type
-    :type uuid: int
-    :return: Corresponding type
-    :rtype: str
-    """
-    if uuid is None:
-        return 'Network'
+    def send(self, pkt):
+        self.send_list.append(pkt)
 
-    hexadecimal = hex(uuid).lstrip("0x")
-    type_indicator = str(hexadecimal)[:4]
-    module_type = {
-        # Input modules
-        '2000': 'Env',
-        '2010': 'Gyro',
-        '2020': 'Mic',
-        '2030': 'Button',
-        '2040': 'Dial',
-        '2050': 'Ultrasonic',
-        '2060': 'Infrared',
-
-        # Output modules
-        '4000': 'Display',
-        '4010': 'Motor',
-        '4020': 'Led',
-        '4030': 'Speaker',
-    }.get(type_indicator)
-    return module_type
+    def recv(self):
+        return 'Test'

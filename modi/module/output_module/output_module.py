@@ -1,51 +1,46 @@
-import time
-
-from enum import IntEnum
-from typing import Tuple, List
+from typing import Tuple, List, Union
 from modi.module.module import Module
 from modi.util.msgutil import parse_message, parse_data
 
 
 class OutputModule(Module):
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
 
-    class PropertyDataType(IntEnum):
-        INT = 0
-        FLOAT = 1
-        STRING = 2
-        RAW = 3
-        DISPLAY_VAR = 4
+    INT = 0
+    FLOAT = 1
+    STRING = 2
+    RAW = 3
+    DISPLAY_VAR = 4
 
-    def __parse_set_message(self, destination_id: int,
-                            property_type: IntEnum,
+    @staticmethod
+    def __parse_set_message(destination_id: int,
+                            property_type: int,
                             property_values: Tuple,
-                            property_data_type: IntEnum) -> List[str]:
+                            property_data_type: int) -> List[str]:
         """Generate set_property json serialized message
 
         :param destination_id: Id of the destination module
         :type destination_id: int
         :param property_type: Property Type
-        :type property_type: IntEnum
+        :type property_type: int
         :param property_values: Property values
         :type property_values: Tuple
         :param property_data_type: Property Data Type
-        :type property_data_type: IntEnum
+        :type property_data_type: int
         :return: List of json messages
         :rtype: List[str]
         """
         data_list = []
-        if property_data_type == self.PropertyDataType.INT:
+        if property_data_type == OutputModule.INT:
             data_list.append(parse_data(property_values, 'int'))
-        elif property_data_type == self.PropertyDataType.FLOAT:
+        elif property_data_type == OutputModule.FLOAT:
             data_list.append(parse_data(property_values, 'float'))
-        elif property_data_type == self.PropertyDataType.STRING:
+        elif property_data_type == OutputModule.STRING:
             for i in range(0, len(property_values), 8):
                 chunk = str(property_values)[i:i + 8]
                 data_list.append(parse_data(chunk, 'string'))
-        elif property_data_type == self.PropertyDataType.RAW:
+        elif property_data_type == OutputModule.RAW:
             data_list.append(parse_data(property_values, 'raw'))
-        elif property_data_type == self.PropertyDataType.DISPLAY_VAR:
+        elif property_data_type == OutputModule.DISPLAY_VAR:
             data_list.append(parse_data(property_values, 'display_var'))
         else:
             raise RuntimeError("Not supported property data type.")
@@ -58,19 +53,19 @@ class OutputModule(Module):
         return messages
 
     def _set_property(self, destination_id: int,
-                      property_type: IntEnum, property_values: Tuple,
-                      property_data_type: IntEnum
-                      = PropertyDataType.INT) -> None:
+                      property_type: int, property_values: Union[Tuple, str],
+                      property_data_type: int
+                      = 0) -> None:
         """Send the message of set_property command to the module
 
         :param destination_id: Id of the destination module
         :type destination_id: int
         :param property_type: Property Type
-        :type property_type: IntEnum
+        :type property_type: int
         :param property_values: Property Values
         :type property_values: Tuple
         :param property_data_type: Property Data Type
-        :type property_data_type: IntEnum
+        :type property_data_type: int
         :return: None
         """
         messages = self.__parse_set_message(
@@ -80,8 +75,7 @@ class OutputModule(Module):
             property_data_type)
 
         for message in messages:
-            self._msg_send_q.put(message)
-        time.sleep(0.001)
+            self._conn.send(message)
 
     @staticmethod
     def _validate_property(nb_values: int, value_range: Tuple = None):
@@ -104,5 +98,4 @@ class OutputModule(Module):
                 setter(self, value)
 
             return set_property
-
         return check_value

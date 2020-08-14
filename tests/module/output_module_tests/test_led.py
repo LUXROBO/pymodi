@@ -1,18 +1,22 @@
 import unittest
 
 from modi.module.output_module.led import Led
-from queue import Queue
 from modi.util.msgutil import parse_data, parse_message
+from modi.util.misc import MockConn
 
 
 class TestLed(unittest.TestCase):
     """Tests for 'Led' class."""
 
+    @staticmethod
+    def to_true_color(color):
+        return tuple(map(lambda c: c * 100 // 255, color))
+
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.send_q = Queue()
-        self.mock_kwargs = {"id_": -1, "uuid": -1, "msg_send_q": self.send_q}
-        self.led = Led(**self.mock_kwargs)
+        self.conn = MockConn()
+        self.mock_kwargs = -1, -1, self.conn
+        self.led = Led(*self.mock_kwargs)
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -20,19 +24,13 @@ class TestLed(unittest.TestCase):
 
     def test_set_rgb(self):
         """Test set_rgb method with user-defined inputs."""
-        expected_color = (10, 100, 200)
+        expected_color = (10, 20, 255)
         self.led.rgb = expected_color
         set_message = parse_message(0x04, 16, -1, parse_data(
-            expected_color, 'int'))
+            self.to_true_color(expected_color), 'int'))
         sent_messages = []
-        while not self.send_q.empty():
-            sent_messages.append(self.send_q.get_nowait())
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.RED) in sent_messages)
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.GREEN) in sent_messages)
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.BLUE) in sent_messages)
+        while self.conn.send_list:
+            sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(set_message in sent_messages)
 
     def test_on(self):
@@ -40,106 +38,79 @@ class TestLed(unittest.TestCase):
         expected_color = (255, 255, 255)
         self.led.rgb = expected_color
         set_message = parse_message(0x04, 16, -1, parse_data(
-            expected_color, 'int'))
+            self.to_true_color(expected_color), 'int'))
         sent_messages = []
-        while not self.send_q.empty():
-            sent_messages.append(self.send_q.get_nowait())
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.RED) in sent_messages)
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.GREEN) in sent_messages)
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.BLUE) in sent_messages)
+        while self.conn.send_list:
+            sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(set_message in sent_messages)
 
     def test_off(self):
         """Test off method."""
         expected_color = (0, 0, 0)
-        self.led.rgb = expected_color
+        self.led.turn_on()
+        self.led.turn_off()
         set_message = parse_message(0x04, 16, -1, parse_data(
-            expected_color, 'int'))
+            self.to_true_color(expected_color), 'int'))
         sent_messages = []
-        while not self.send_q.empty():
-            sent_messages.append(self.send_q.get_nowait())
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.RED) in sent_messages)
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.GREEN) in sent_messages)
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.BLUE) in sent_messages)
+        while self.conn.send_list:
+            sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(set_message in sent_messages)
 
     def test_set_red(self):
         """Test set_red method."""
         expected_color = (20, 0, 0)
         set_message = parse_message(0x04, 16, -1, parse_data(
-            expected_color, 'int'))
+            self.to_true_color(expected_color), 'int'))
         sent_messages = []
         self.led.red = 20
-        while not self.send_q.empty():
-            sent_messages.append(self.send_q.get_nowait())
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.RED) in sent_messages)
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.GREEN) in sent_messages)
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.BLUE) in sent_messages)
+        while self.conn.send_list:
+            sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(set_message in sent_messages)
 
     def test_get_red(self):
         """Test get_red method with none input."""
         _ = self.led.red
         self.assertEqual(
-            self.send_q.get(),
-            Led.request_property(-1, Led.PropertyType.RED))
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1, (Led.RED, None, 95, None)))
 
     def test_set_green(self):
         """Test set_green method."""
         expected_color = (0, 20, 0)
         set_message = parse_message(0x04, 16, -1, parse_data(
-            expected_color, 'int'))
+            self.to_true_color(expected_color), 'int'))
         sent_messages = []
         self.led.green = 20
-        while not self.send_q.empty():
-            sent_messages.append(self.send_q.get_nowait())
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.RED) in sent_messages)
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.GREEN) in sent_messages)
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.BLUE) in sent_messages)
+        while self.conn.send_list:
+            sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(set_message in sent_messages)
 
     def test_get_green(self):
         """Test set_green method with none input."""
         _ = self.led.green
         self.assertEqual(
-            self.send_q.get(),
-            Led.request_property(-1, Led.PropertyType.GREEN))
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Led.GREEN, None, 95, None)))
 
     def test_set_blue(self):
         """Test blue method."""
         expected_color = (0, 0, 20)
         set_message = parse_message(0x04, 16, -1, parse_data(
-            expected_color, 'int'))
+            self.to_true_color(expected_color), 'int'))
         sent_messages = []
         self.led.blue = 20
-        while not self.send_q.empty():
-            sent_messages.append(self.send_q.get_nowait())
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.RED) in sent_messages)
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.GREEN) in sent_messages)
-        self.assertTrue(Led.request_property(
-            -1, Led.PropertyType.BLUE) in sent_messages)
+        while self.conn.send_list:
+            sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(set_message in sent_messages)
 
     def test_get_blue(self):
         """Test get blue method with none input."""
         _ = self.led.blue
         self.assertEqual(
-            self.send_q.get(),
-            Led.request_property(-1, Led.PropertyType.BLUE))
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Led.BLUE, None, 95, None)))
 
 
 if __name__ == "__main__":

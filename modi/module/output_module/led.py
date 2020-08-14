@@ -1,23 +1,16 @@
 """Led module."""
 
-from enum import IntEnum
 from typing import Tuple
 from modi.module.output_module.output_module import OutputModule
 
 
 class Led(OutputModule):
 
-    class PropertyType(IntEnum):
-        RED = 2
-        GREEN = 3
-        BLUE = 4
+    RED = 2
+    GREEN = 3
+    BLUE = 4
 
-    class CommandType(IntEnum):
-        SET_RGB = 16
-
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
-        self._type = "led"
+    SET_RGB = 16
 
     @property
     def rgb(self) -> Tuple[float, float, float]:
@@ -33,15 +26,17 @@ class Led(OutputModule):
         :type color: Tuple[int, int, int]
         :return: None
         """
-        _, _, _ = self.rgb
+        if color == self.rgb:
+            return
+        real_color = tuple(map(lambda c: c * 100 // 255, color))
         self._set_property(
             self._id,
-            self.CommandType.SET_RGB,
-            color,
+            Led.SET_RGB,
+            real_color,
         )
-        self.update_property(self.PropertyType.RED, color[0])
-        self.update_property(self.PropertyType.GREEN, color[1])
-        self.update_property(self.PropertyType.BLUE, color[2])
+        self.update_property(Led.RED, color[0])
+        self.update_property(Led.GREEN, color[1])
+        self.update_property(Led.BLUE, color[2])
 
     def turn_on(self) -> None:
         """Turn on led at maximum brightness.
@@ -65,7 +60,7 @@ class Led(OutputModule):
         :return: Red component
         :rtype: float
         """
-        return self._get_property(self.PropertyType.RED)
+        return self._get_property(Led.RED)
 
     @red.setter
     @OutputModule._validate_property(nb_values=1, value_range=(0, 255))
@@ -85,7 +80,7 @@ class Led(OutputModule):
         :return: Green component
         :rtype: float
         """
-        return self._get_property(self.PropertyType.GREEN)
+        return self._get_property(Led.GREEN)
 
     @green.setter
     @OutputModule._validate_property(nb_values=1, value_range=(0, 255))
@@ -105,7 +100,7 @@ class Led(OutputModule):
         :return: Blue component
         :rtype: float
         """
-        return self._get_property(self.PropertyType.BLUE)
+        return self._get_property(Led.BLUE)
 
     @blue.setter
     @OutputModule._validate_property(nb_values=1, value_range=(0, 255))

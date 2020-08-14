@@ -1,40 +1,24 @@
 import json
 import time
-import urllib.request as ur
-from queue import Empty
 from typing import Callable, Dict, Union
-from urllib.error import URLError
-
-from enum import IntEnum
 
 from modi.module.module import Module, BROADCAST_ID
-from modi.task.conn_task import ConnTask
+from modi.module.setup_module.battery import Battery
 from modi.util.misc import get_module_from_name, get_module_type_from_uuid
-from modi.util.queues import CommunicationQueue
 from modi.util.msgutil import unpack_data, decode_data, parse_message
 
 
 class ExeTask:
-    """
-    :param queue send_q: Inter-process queue for writing serial
-    message.
-    :param queue recv_q: Inter-process queue for parsing json message.
-    :param list() modules: list() of module instance.
-    """
 
-    def __init__(self, modules, topology_data,
-                 recv_q: CommunicationQueue, send_q: CommunicationQueue):
+    def __init__(self, modules, topology_data, conn_task):
         self._modules = modules
         self._topology_data = topology_data
-        self._recv_q = recv_q
-        self._send_q = send_q
+        self._conn = conn_task
         # Reboot all modules
         self.__set_module_state(
-            BROADCAST_ID, Module.State.REBOOT, Module.State.PNP_OFF
+            BROADCAST_ID, Module.REBOOT, Module.PNP_OFF
         )
-        if ConnTask.is_network_module_connected():
-            self.__request_network_uuid()
-        print('Start initializing connected MODI modules')
+        self.__request_network_uuid()
 
     def run(self, delay: float):
         """ Run in ExecutorThread
@@ -42,16 +26,15 @@ class ExeTask:
         :param delay: time value to wait in seconds
         :type delay: float
         """
-        raw_message = ""
-        try:
-            raw_message = self._recv_q.get_nowait()
-            message = json.loads(raw_message)
-        except Empty:
+        json_pkt = self._conn.recv()
+        if not json_pkt:
             time.sleep(delay)
-        except json.decoder.JSONDecodeError:
-            print('current json message:', raw_message)
         else:
-            self.__command_handler(message["c"])(message)
+            try:
+                json_msg = json.loads(json_pkt)
+                self.__command_handler(json_msg['c'])(json_msg)
+            except json.decoder.JSONDecodeError:
+                print('current json message:', json_pkt)
 
     def __command_handler(self,
                           command: int) -> Callable[[Dict[str, int]], None]:
@@ -90,7 +73,15 @@ class ExeTask:
         for idx, direction in enumerate(('r', 't', 'l', 'b')):
             topology_by_id[direction] = topology_ids[idx] \
                 if topology_ids[idx] != 0xFFFF else None
-
+            # Handle battery module
+            if topology_ids[idx] == 0:
+                if 0 not in self._topology_data:
+                    self._modules.append(Battery(0, -1, None))
+                    battery_topology = {'type': 'Battery', 'r': None,
+                                        't': None, 'l': None, 'b': src_id}
+                    self._topology_data[0] = battery_topology
+                elif src_id not in self._topology_data[0].values():
+                    self._topology_data[0]['l'] = src_id
         # Update topology data for the module
         self._topology_data[src_id] = topology_by_id
 
@@ -115,43 +106,23 @@ class ExeTask:
         if module_id in (module.id for module in self._modules):
             module = self.__get_module_by_id(module_id)
             module.last_updated = curr_time
+            module.is_connected = True
             # Warn if user code is in the module
             if not module.has_user_code and user_code_state % 2 == 1:
-                print(f"Your MODI module {module_id} has user code in it.")
+                print(f"{str(module)} has user code in it.")
                 print("You can reset your MODI modules by calling "
-                      "'update_module_firmware()'")
+                      "'modi.update_module_firmware()'")
                 module.has_user_code = True
             # Turn off pnp if pnp flag is on
-            if user_code_state < 2:
+            if module.module_type != 'Network' and user_code_state < 2:
                 self.__set_module_state(
-                    module_id, Module.State.RUN, Module.State.PNP_OFF
+                    module_id, Module.RUN, Module.PNP_OFF
                 )
         # Disconnect module with no health message for more than 2 second
         for module in self._modules:
             if curr_time - module.last_updated > 2:
                 module.is_connected = False
-
-    @staticmethod
-    def __get_latest_version():
-        version_path = (
-            "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
-        )
-        version_info = None
-        try:
-            for line in ur.urlopen(version_path, timeout=1):
-                version_info = line.decode('utf-8').lstrip('v')
-            version_digits = [int(digit) for digit in version_info.split('.')]
-            """ Version number is formed by concatenating all three version bits
-                e.g. v2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
-            """
-            latest_version = (
-                version_digits[0] << 13
-                | version_digits[1] << 8
-                | version_digits[2]
-            )
-        except URLError:
-            latest_version = None
-        return latest_version
+                module._last_set_message = None
 
     def __update_modules(self, message: Dict[str, Union[str, int]]) -> None:
         """ Update module information
@@ -171,35 +142,26 @@ class ExeTask:
                 module_type, module_id, module_uuid, module_version_info
             )
             new_module.module_type = module_type
-            if module_type != 'Network':
-                new_module.is_up_to_date = self.__check_module_version(
-                    module_version_info
-                )
+            if module_type != 'Network' and not new_module.is_up_to_date:
+                print(f"{str(new_module)} is not up to date. "
+                      f"Please update the module by calling "
+                      f"modi.update_module_firmware")
+
         elif not self.__get_module_by_id(module_id).is_connected:
             # Handle Reconnected modules
             self.__get_module_by_id(module_id).is_connected = True
-
-    def __check_module_version(self, current_version):
-        latest_version = self.__get_latest_version()
-        if latest_version and current_version < latest_version:
-            print("Your MODI module(s) is not up-to-date.")
-            print("You can update your MODI modules by calling "
-                  "'update_module_firmware()'")
-            return False
-        return True
 
     def __add_new_module(self, module_type, module_id,
                          module_uuid, module_version_info):
         module_template = get_module_from_name(module_type)
         module_instance = module_template(
-            module_id, module_uuid, self._send_q
+            module_id, module_uuid, self._conn
         )
-        self.__set_module_state(module_instance.id, Module.State.RUN,
-                                Module.State.PNP_OFF)
+        self.__set_module_state(module_instance.id, Module.RUN,
+                                Module.PNP_OFF)
         module_instance.version = module_version_info
         self._modules.append(module_instance)
-        print(f"{type(module_instance).__name__} ({module_id}) "
-              f"has been connected!")
+        print(f"{str(module_instance)} has been connected!")
         return module_instance
 
     def __update_property(self, message: Dict[str, str]) -> None:
@@ -216,10 +178,14 @@ class ExeTask:
         module = self.__get_module_by_id(message['s'])
         if not module:
             return
-        module.update_property(property_number, decode_data(message['b']))
+        data = message['b']
+        if module.module_type == 'Network':
+            module.update_property(property_number, unpack_data(data)[0])
+        else:
+            module.update_property(property_number, decode_data(data))
 
-    def __set_module_state(self, destination_id: int, module_state: IntEnum,
-                           pnp_state: IntEnum) -> None:
+    def __set_module_state(self, destination_id: int, module_state: int,
+                           pnp_state: int) -> None:
         """ Generate message for set module state and pnp state
 
         :param destination_id: Id to target destination
@@ -227,14 +193,14 @@ class ExeTask:
         :param module_state: State value of the module
         :type module_state: int
         :param pnp_state: Pnp state value
-        :type pnp_state: IntEnum
+        :type pnp_state: int
         :return: None
         """
-        self._send_q.put(parse_message(0x09, 0, destination_id,
-                                       (module_state, pnp_state)))
+        self._conn.send(parse_message(0x09, 0, destination_id,
+                                      (module_state, pnp_state)))
 
     def __request_network_uuid(self):
-        self._send_q.put(
+        self._conn.send(
             parse_message(0x28, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
         )
 
@@ -244,9 +210,9 @@ class ExeTask:
         :return: json serialized topology request message
         :rtype: str
         """
-        self._send_q.put(
+        self._conn.send(
             parse_message(0x07, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0))
         )
-        self._send_q.put(
+        self._conn.send(
             parse_message(0x2A, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0))
         )

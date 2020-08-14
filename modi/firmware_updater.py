@@ -1,40 +1,33 @@
-import io
 import json
 import sys
 import threading as th
 import time
-import urllib.request as ur
-import zipfile
 from base64 import b64encode, b64decode
-from io import BytesIO
-from urllib.error import URLError
-from zipfile import ZipFile
+from io import open
+from os import path
 
 import esptool
-import requests
 import serial
-from enum import IntEnum
 
 from modi.module.module import Module
-from modi.task.conn_task import ConnTask
 from modi.util.msgutil import unpack_data, decode_message
+from modi.util.conn_util import list_modi_ports, is_on_pi
 
 
 class STM32FirmwareUpdater:
     """STM32 Firmware Updater: Updates a firmware of given module"""
 
-    class State(IntEnum):
-        NO_ERROR = 0
-        UPDATE_READY = 1
-        WRITE_FAIL = 2
-        VERIFY_FAIL = 3
-        CRC_ERROR = 4
-        CRC_COMPLETE = 5
-        ERASE_ERROR = 6
-        ERASE_COMPLETE = 7
+    NO_ERROR = 0
+    UPDATE_READY = 1
+    WRITE_FAIL = 2
+    VERIFY_FAIL = 3
+    CRC_ERROR = 4
+    CRC_COMPLETE = 5
+    ERASE_ERROR = 6
+    ERASE_COMPLETE = 7
 
     def __init__(self):
-        port = ConnTask.list_modi_ports()[0].device
+        port = list_modi_ports()[0].device
         self.__ser = serial.Serial(port)
         self.__stream = self.__open_serial(self.__ser)
         next(self.__stream)
@@ -112,7 +105,7 @@ class STM32FirmwareUpdater:
         """ Remove firmware of MODI modules (Removes EndFlash)
         """
         firmware_update_message = self.__set_module_state(
-            0xFFF, Module.State.UPDATE_FIRMWARE, Module.State.PNP_OFF
+            0xFFF, Module.UPDATE_FIRMWARE, Module.PNP_OFF
         )
         self.__stream.send(firmware_update_message)
 
@@ -124,7 +117,7 @@ class STM32FirmwareUpdater:
         :return: None
         """
         firmware_update_ready_message = self.__set_module_state(
-            module_id, Module.State.UPDATE_FIRMWARE_READY, Module.State.PNP_OFF
+            module_id, Module.UPDATE_FIRMWARE_READY, Module.PNP_OFF
         )
         self.__stream.send(firmware_update_ready_message)
 
@@ -206,23 +199,16 @@ class STM32FirmwareUpdater:
 
         # Init path to binary file
         root_path = (
-            'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
+            path.join(path.dirname(__file__), 'firmware', 'stm32')
         )
         bin_path = (
-            f"skeleton/{module_type.lower()}.bin"
-            if module_type != 'Env' else
-            "skeleton/environment.bin"
+            f"{module_type.lower()}.bin"
         )
 
-        try:
-            # Init bytes data from the given binary file of the current module
-            download_response = requests.get(root_path)
-        except URLError:
-            raise URLError("Failed to download firmware. Check your internet")
-        zip_content = zipfile.ZipFile(
-            io.BytesIO(download_response.content), 'r'
-        )
-        bin_buffer = zip_content.read(bin_path)
+        bin_path = path.join(root_path, bin_path)
+
+        with open(bin_path, 'rb') as bin_file:
+            bin_buffer = bin_file.read()
 
         # Init metadata of the bytes loaded
         page_size = 0x800
@@ -231,6 +217,7 @@ class STM32FirmwareUpdater:
         bin_size = sys.getsizeof(bin_buffer)
         bin_begin = 0x9000
         bin_end = bin_size - ((bin_size - bin_begin) % page_size)
+        delay = 0.0025 if is_on_pi() else 0.001
         for page_begin in range(bin_begin, bin_end + 1, page_size):
             print(f"{self.__progress_bar(page_begin, bin_end)} "
                   f"{page_begin * 100 // bin_end}% \r", end='')
@@ -263,7 +250,7 @@ class STM32FirmwareUpdater:
                     bin_data=curr_data,
                     crc_val=checksum
                 )
-                time.sleep(0.001)
+                time.sleep(delay)
 
             # CRC on current page (send CRC request and receive CRC response)
             crc_page_success = self.send_firmware_command(
@@ -274,12 +261,9 @@ class STM32FirmwareUpdater:
                 page_begin -= page_size
 
         # Include MODI firmware version when writing end flash
-        version_path = (
-            "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
-        )
-        version_info = None
-        for line in ur.urlopen(version_path):
-            version_info = line.decode('utf-8').lstrip('v')
+        version_path = path.join(root_path, 'version.txt')
+        with open(version_path) as version_file:
+            version_info = version_file.readline().lstrip('v').rstrip('\n')
         version_digits = [int(digit) for digit in version_info.split('.')]
         """ Version number is formed by concatenating all three version bits
             e.g. 2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
@@ -310,23 +294,23 @@ class STM32FirmwareUpdater:
         else:
             # Reboot all connected modules
             reboot_message = self.__set_module_state(
-                0xFFF, Module.State.REBOOT, Module.State.PNP_OFF
+                0xFFF, Module.REBOOT, Module.PNP_OFF
             )
             self.__stream.send(reboot_message)
             print("Reboot message has been sent to all connected modules")
             self.reset_state()
             self.update_event.set()
 
-    def __set_module_state(self, destination_id: int, module_state: IntEnum,
-                           pnp_state: IntEnum) -> str:
+    def __set_module_state(self, destination_id: int, module_state: int,
+                           pnp_state: int) -> str:
         """ Generate message for set module state and pnp state
 
         :param destination_id: Id of the destination module
         :type destination_id: int
         :param module_state: State of the module
-        :type module_state: IntEnum
+        :type module_state: int
         :param pnp_state: Pnp state of the module
-        :type pnp_state: IntEnum
+        :type pnp_state: int
         :return: Json serialized message
         :rtype: str
         """
@@ -630,19 +614,22 @@ class STM32FirmwareUpdater:
         message_decoded = unpack_data(data, (4, 1))
         stream_state = message_decoded[1]
 
-        if stream_state == self.State.CRC_ERROR:
+        if stream_state == self.CRC_ERROR:
             self.update_response(response=True, is_error_response=True)
-        elif stream_state == self.State.CRC_COMPLETE:
+        elif stream_state == self.CRC_COMPLETE:
             self.update_response(response=True)
-        elif stream_state == self.State.ERASE_ERROR:
+        elif stream_state == self.ERASE_ERROR:
             self.update_response(response=True, is_error_response=True)
-        elif stream_state == self.State.ERASE_COMPLETE:
+        elif stream_state == self.ERASE_COMPLETE:
             self.update_response(response=True)
 
     def __update_warning(self, sid: int, data: str) -> None:
         """Update the warning message
 
-        :param message: Warning message in Dictionary format
+        :param sid: Source id
+        :type sid: int
+        :param data: Data str
+        :type data: str
         :return: None
         """
         module_uuid = unpack_data(data, (6, 1))[0]
@@ -751,29 +738,28 @@ class ESP32FirmwareUpdater(serial.Serial):
                 self._port.write(write_buf)
                 time.sleep(0.01)
 
-    class ESPCommand(IntEnum):
-        DEVICE_READY = 0x2B
-        DEVICE_SYNC = 0x08
-        SPI_ATTACH_REQ = 0xD
-        SPI_FLASH_SET = 0xB
-        ESP_FLASH_BEGIN = 0x02
-        ESP_FLASH_DATA = 0x03
-        ESP_FLASH_END = 0x04
+    DEVICE_READY = 0x2B
+    DEVICE_SYNC = 0x08
+    SPI_ATTACH_REQ = 0xD
+    SPI_FLASH_SET = 0xB
+    ESP_FLASH_BEGIN = 0x02
+    ESP_FLASH_DATA = 0x03
+    ESP_FLASH_END = 0x04
 
     ESP_FLASH_BLOCK = 0x200
     ESP_FLASH_CHUNK = 0x4000
     ESP_CHECKSUM_MAGIC = 0xEF
 
     def __init__(self):
-        modi_ports = ConnTask.list_modi_ports()
+        modi_ports = list_modi_ports()
         if not modi_ports:
             raise serial.SerialException("No MODI port is connected")
         super().__init__(modi_ports[0].device, timeout=0.1, baudrate=921600)
         print(f"Connecting to MODI network module at {modi_ports[0].device}")
 
-        self.__address = [0x1000, 0x8000, 0x10000, 0xD0000]
+        self.__address = [0x1000, 0x8000, 0XD000, 0x10000, 0xD0000]
         self.file_path = ['bootloader.bin', 'partitions.bin',
-                          'modi_ota_factory.bin',
+                          'ota_data_initial.bin', 'modi_ota_factory.bin',
                           'esp32.bin']
         self.id = None
         self.version = None
@@ -791,7 +777,7 @@ class ESP32FirmwareUpdater(serial.Serial):
                     f" Do you still want to proceed? [y/n]: ")
                 if 'y' not in response:
                     return
-
+        print(f"Updating v{self.version} to v{self.__version_to_update}")
         firmware_buffer = self.__compose_binary_firmware()
 
         self.__device_ready()
@@ -826,7 +812,7 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     def __device_sync(self):
         print("Syncing the esp device...")
-        sync_pkt = self.__parse_pkt([0x0, self.ESPCommand.DEVICE_SYNC,
+        sync_pkt = self.__parse_pkt([0x0, self.DEVICE_SYNC,
                                      0x24, 0, 0, 0, 0, 0,
                                      0x7, 0x7, 0x12, 0x20] + 32 * [0x55])
         self.__send_pkt(sync_pkt, timeout=10, continuous=True)
@@ -834,7 +820,7 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     def __flash_attach(self):
         print("Attaching flash to esp device..")
-        attach_pkt = self.__parse_pkt([0x0, self.ESPCommand.SPI_ATTACH_REQ,
+        attach_pkt = self.__parse_pkt([0x0, self.SPI_ATTACH_REQ,
                                        0x8] + 13 * [0])
         self.__send_pkt(attach_pkt, timeout=10)
         print("Flash attach Complete")
@@ -844,7 +830,7 @@ class ESP32FirmwareUpdater(serial.Serial):
         param_data = [0] * 32
         fl_id, total_size, block_size, sector_size, page_size, status_mask = \
             0, 2 * 1024 * 1024, 64 * 1024, 4 * 1024, 256, 0xFFFF
-        param_data[1] = self.ESPCommand.SPI_FLASH_SET
+        param_data[1] = self.SPI_FLASH_SET
         param_data[2] = 0x18
         param_data[8:12] = int.to_bytes(fl_id, length=4, byteorder='little')
         param_data[12:16] = int.to_bytes(total_size,
@@ -955,14 +941,12 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     def __compose_binary_firmware(self):
         binary_firmware = b''
-        esp_path = 'https://download.luxrobo.com/modi-esp32-firmware/esp.zip'
-        ota_path = 'https://download.luxrobo.com/modi-ota-firmware/ota.zip'
+        root_path = path.join(
+            path.dirname(__file__), 'firmware', 'esp32'
+        )
         for i, bin_path in enumerate(self.file_path):
-            # Download files from the modi_download_server
-            if 'ota' in bin_path:
-                bin_data = self.__download_bin_file(ota_path, bin_path)
-            else:
-                bin_data = self.__download_bin_file(esp_path, bin_path)
+            with open(path.join(root_path, bin_path), 'rb') as bin_file:
+                bin_data = bin_file.read()
             binary_firmware += bin_data
             if i < len(self.__address) - 1:
                 binary_firmware += b'\xFF' * (self.__address[i + 1]
@@ -971,22 +955,18 @@ class ESP32FirmwareUpdater(serial.Serial):
         return binary_firmware
 
     @staticmethod
-    def __download_bin_file(root_path, file_path):
-        download_response = requests.get(root_path)
-        with ZipFile(BytesIO(download_response.content), 'r') as zip_content:
-            bin_data = zip_content.read(file_path)
-        return bin_data
-
-    @staticmethod
     def __get_latest_version():
-        ver_info = ur.urlopen(
-            'https://download.luxrobo.com/modi-esp32-firmware/version.txt')
-        return ver_info.read().decode('ascii').lstrip('v')
+        root_path = path.join(
+            path.dirname(__file__), 'firmware', 'esp32'
+        )
+        with open(path.join(root_path, 'version.txt'), 'r') as version_file:
+            version_info = version_file.readline().lstrip('v').rstrip('\n')
+        return version_info
 
     def __erase_chunk(self, size, offset):
         num_blocks = size // self.ESP_FLASH_BLOCK + 1
         erase_data = [0] * 24
-        erase_data[1] = self.ESPCommand.ESP_FLASH_BEGIN
+        erase_data[1] = self.ESP_FLASH_BEGIN
         erase_data[2] = 0x10
         erase_data[8:12] = int.to_bytes(size, length=4, byteorder='little')
         erase_data[12:16] = int.to_bytes(num_blocks,
@@ -1003,7 +983,7 @@ class ESP32FirmwareUpdater(serial.Serial):
         block_data = [0] * (size + 24)
         checksum = self.ESP_CHECKSUM_MAGIC
 
-        block_data[1] = self.ESPCommand.ESP_FLASH_DATA
+        block_data[1] = self.ESP_FLASH_DATA
         block_data[2:4] = int.to_bytes(size + 16, length=2, byteorder='little')
         block_data[8:12] = int.to_bytes(size, length=4, byteorder='little')
         block_data[12:16] = int.to_bytes(seq_block,

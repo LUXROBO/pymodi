@@ -1,21 +1,14 @@
 """Button module."""
 
-from enum import IntEnum
-
 from modi.module.input_module.input_module import InputModule
 
 
 class Button(InputModule):
 
-    class PropertyType(IntEnum):
-        CLICKED = 2
-        DOUBLE_CLICKED = 3
-        PRESSED = 4
-        TOGGLED = 5
-
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
-        self._type = "button"
+    CLICKED = 2
+    DOUBLE_CLICKED = 3
+    PRESSED = 4
+    TOGGLED = 5
 
     @property
     def clicked(self) -> bool:
@@ -24,7 +17,7 @@ class Button(InputModule):
         :return: `True` if clicked or `False`.
         :rtype: bool
         """
-        return self._get_property(self.PropertyType.CLICKED) == 100.
+        return self._get_property(Button.CLICKED) == 100.
 
     @property
     def double_clicked(self) -> bool:
@@ -33,7 +26,7 @@ class Button(InputModule):
         :return: `True` if double clicked or `False`.
         :rtype: bool
         """
-        return self._get_property(self.PropertyType.DOUBLE_CLICKED) == 100.
+        return self._get_property(Button.DOUBLE_CLICKED) == 100.
 
     @property
     def pressed(self) -> bool:
@@ -42,7 +35,7 @@ class Button(InputModule):
         :return: `True` if pressed or `False`.
         :rtype: bool
         """
-        return self._get_property(self.PropertyType.PRESSED) == 100.
+        return self._get_property(Button.PRESSED) == 100.
 
     @property
     def toggled(self) -> bool:
@@ -51,4 +44,4 @@ class Button(InputModule):
         :return: `True` if toggled or `False`.
         :rtype: bool
         """
-        return self._get_property(self.PropertyType.TOGGLED) == 100.
+        return self._get_property(Button.TOGGLED) == 100.

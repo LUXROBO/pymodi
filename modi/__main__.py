@@ -31,15 +31,14 @@ if __name__ == "__main__":
                 "\n-d, --debug: Auto initialize debugging mode" \
                 "\n     Usage: python -m modi --debug -n <nb_modules>" \
                 "\n     options: -u, --update: update the module firmware" \
-                "\n              -n, --nb_moodules: number of modules" \
                 " connected to the network module" \
                 "\n     If you want to use debugger in an interactive shell," \
                 " use: python -im modi -n <nb_modules> -<options>"
 
     try:
-        opts, args = getopt(sys.argv[1:], 'tdn:uhvp',
-                            ["tutorial", "debug", "nb_modules=", "update",
-                             "help", "verbose", "performance"])
+        opts, args = getopt(sys.argv[1:], 'tduhvpg',
+                            ["tutorial", "debug", "update",
+                             "help", "verbose", "performance", "gui"])
     except GetoptError as err:
         print(str(err))
         print(usage)
@@ -67,19 +66,23 @@ if __name__ == "__main__":
         bundle.print_topology_map(True)
         print(f"Took {took} seconds to initialize")
         time.sleep(1)
-        msg = parse_message(0x03, 0, bundle.modules[0].id, (1, None, 96, None))
-        print(f"sending request message... {msg}")
+        msg1 = parse_message(0x07, 0, bundle.modules[0].id)
+        msg2 = parse_message(0x2A, 0, bundle.modules[0].id)
+        print(f"sending request message... {msg1}")
+        bundle._exe_thrd.close()
         init_time = time.time()
-        bundle.send(msg)
+        bundle.send(msg1)
+        bundle.send(msg2)
         while True:
             msg = bundle.recv()
-            if msg and decode_message(msg)[0] == 0x1F:
+            recv_cmd = decode_message(msg)[0] if msg else None
+            if msg and recv_cmd == 0x07:
                 break
         fin_time = time.time()
-        took = round((fin_time - init_time) / 2, 2)
+        took = fin_time - init_time
         print(f"received message... {msg}")
-        print(f"Took {took} seconds for message transfer")
-        exit(0)
+        print(f"Took {(took - 0.08) / 2:.20f} seconds for message transfer")
+        os._exit(0)
 
     if check_option('-u', '--update'):
         init_time = time.time()
@@ -87,23 +90,19 @@ if __name__ == "__main__":
         updater.update_module_firmware()
         fin_time = time.time()
         print(f"Took {fin_time - init_time:.2f} seconds to update")
-        exit(0)
+        os._exit(0)
 
     if check_option('-d', '--debug'):
-        nb_modules = check_option('-n', '--nb_modules')
         is_update = check_option('-u', '--update')
-        nb_modules = int(nb_modules)
-        print(">>> bundle = modi.MODI(" + str(nb_modules) + ")")
+        print(">>> bundle = modi.MODI()")
         init_time = time.time()
-        if nb_modules:
-            bundle = modi.MODI(nb_modules, verbose=check_option('-v',
-                                                                '--verbose'))
+        if check_option('-g', '--gui'):
+            from modi.debugger import Debugger
+            bundle = Debugger()
         else:
             bundle = modi.MODI(verbose=check_option('-v', '--verbose'))
         fin_time = time.time()
-
         print(f'Took {fin_time - init_time:.2f} seconds to finish the job')
-
         print(">>>")
 
         for module in bundle.modules:

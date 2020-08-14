@@ -1,8 +1,8 @@
 import unittest
 
-from queue import Queue
 from modi.module.output_module.display import Display
 from modi.util.msgutil import parse_data, parse_message
+from modi.util.misc import MockConn
 
 
 class TestDisplay(unittest.TestCase):
@@ -10,9 +10,9 @@ class TestDisplay(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.send_q = Queue()
-        self.mock_kwargs = {"id_": -1, "uuid": -1, "msg_send_q": self.send_q}
-        self.display = Display(**self.mock_kwargs)
+        self.conn = MockConn()
+        self.mock_kwargs = [-1, -1, self.conn]
+        self.display = Display(*self.mock_kwargs)
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -23,14 +23,14 @@ class TestDisplay(unittest.TestCase):
         mock_text = "abcd"
         self.display.text = mock_text
         clear_message = parse_message(0x04, 21, -1, (0, 0))
-        text_message = parse_message(0x04, 17, -1, parse_data(mock_text,
+        text_message = parse_message(0x04, 17, -1, parse_data(mock_text + '\0',
                                                               'string'))
         self.assertEqual(
-            self.send_q.get(),
+            self.conn.send_list[0],
             clear_message
         )
         self.assertEqual(
-            self.send_q.get(),
+            self.conn.send_list[1],
             text_message
         )
 
@@ -40,7 +40,7 @@ class TestDisplay(unittest.TestCase):
         mock_position = 5
         self.display.show_variable(mock_variable, mock_position, mock_position)
         self.assertEqual(
-            self.send_q.get(),
+            self.conn.send_list[0],
             parse_message(0x04, 22, -1, parse_data(
                 (mock_variable, mock_position, mock_position), 'display_var'
             ))
@@ -51,7 +51,7 @@ class TestDisplay(unittest.TestCase):
         self.display.clear()
         clear_message = parse_message(0x04, 21, -1, (0, 0))
         self.assertEqual(
-            self.send_q.get(),
+            self.conn.send_list[0],
             clear_message
         )
 
