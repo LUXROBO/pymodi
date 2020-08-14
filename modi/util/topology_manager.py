@@ -11,7 +11,7 @@ class TopologyMap:
         self._modules = modules
         # 2D array that will contain the topology information of the modules.
         # It stores the module id
-        self._tp_map = [[0 for _ in range(2 * self._nb_modules)]
+        self._tp_map = [["" for _ in range(2 * self._nb_modules)]
                         for _ in range(2 * self._nb_modules)]
         self.__module_position = dict()
 
@@ -73,7 +73,7 @@ class TopologyMap:
         if module_id in visited:
             return
         module_data = self._tp_data[module_id]
-        self._tp_map[y][x] = module_id
+        self._tp_map[y][x] = str(module_id)
         self.__module_position[module_id] = (x, y)
         visited.append(module_id)
         up_vector = self.__get_module_orientation(module_data, prev_id, toward)
@@ -93,8 +93,7 @@ class TopologyMap:
         self.__update_map(first_id, self._nb_modules, self._nb_modules,
                           prev_id=-1, toward=(1, 0), visited=visited)
 
-    @staticmethod
-    def __trim_map(raw_map: List):
+    def __trim_map(self, raw_map: List):
         # Trims the matrix to get rid of empty spaces, containing zeros only
         x, y, w, h = -1, -1, 1, 1
 
@@ -109,10 +108,11 @@ class TopologyMap:
         # Iterates through the rows until it finds the first non-zero row.
         # Saves the index to y, and increases h until it finds next all-zero
         # row
+        str_sum = self.__str_sum
         for i in range(len(raw_map)):
-            if sum(raw_map[i]) > 0 and y < 0:
+            if str_sum(raw_map[i]) and y < 0:
                 y = i
-            elif sum(raw_map[i]) > 0 and y >= 0:
+            elif str_sum(raw_map[i]) and y >= 0:
                 h += 1
 
         # Iterates through the columns until it finds the first non-zero column
@@ -120,17 +120,25 @@ class TopologyMap:
         # column.
         for i in range(len(raw_map[0])):
             col = list(map(lambda m: m[i], raw_map))
-            if sum(col) > 0 and x < 0:
+            if str_sum(col) and x < 0:
                 x = i
-            elif sum(col) > 0 and x >= 0:
+            elif str_sum(col) and x >= 0:
                 w += 1
         return x, y, w, h
+
+    @staticmethod
+    def __str_sum(line):
+        result = ""
+        for c in line:
+            result += c
+        return result
 
     def __compose_line(self, module_id, padding, print_id):
         line = ""
         if not module_id:
             line += " " * padding
         else:
+            module_id = int(module_id)
             name = self._tp_data[module_id]['type']
             idx = module_list(self._modules,
                               name.lower()).find(module_id)
@@ -206,11 +214,9 @@ class TopologyManager:
         return True
 
     def is_topology_complete(self):
-        for i, module in enumerate(self._modules):
-            if module.id < 0:
-                self._modules.pop(i)
-                time.sleep(2)
-                return True
+        if 0 in self._tp_data:
+            print("Battery Module detected. Topology may by inaccurate.")
+            time.sleep(2)
         if len(self._tp_data) < 1:
             return False
         try:

@@ -14,7 +14,6 @@ class ExeTask:
         self._modules = modules
         self._topology_data = topology_data
         self._conn = conn_task
-        self.__is_battery_connected = False
         # Reboot all modules
         self.__set_module_state(
             BROADCAST_ID, Module.REBOOT, Module.PNP_OFF
@@ -73,13 +72,16 @@ class ExeTask:
 
         for idx, direction in enumerate(('r', 't', 'l', 'b')):
             topology_by_id[direction] = topology_ids[idx] \
-                if 0 < topology_ids[idx] < 0xFFFF else None
-            if topology_ids[idx] == 0 and not self.__is_battery_connected:
-                print(f"{'#'*58}\nBattery module detected!! "
-                      f"Topology may be incomplete.\n{'#'*58}")
-                self.__is_battery_connected = True
-                self._modules.append(Battery(-1, -1, self._conn))
-
+                if topology_ids[idx] != 0xFFFF else None
+            # Handle battery module
+            if topology_ids[idx] == 0:
+                if 0 not in self._topology_data:
+                    self._modules.append(Battery(0, -1, None))
+                    battery_topology = {'type': 'Battery', 'r': None,
+                                        't': None, 'l': None, 'b': src_id}
+                    self._topology_data[0] = battery_topology
+                elif src_id not in self._topology_data[0].values():
+                    self._topology_data[0]['l'] = src_id
         # Update topology data for the module
         self._topology_data[src_id] = topology_by_id
 
