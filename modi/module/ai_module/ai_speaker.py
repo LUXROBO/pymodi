@@ -8,7 +8,12 @@ from numpy import ndarray
 
 class AISpeaker:
     def __init__(self):
-        if 'wm8960' not in sd.query_devices():
+        is_wm_card = False
+        for d in sd.query_devices():
+            if 'wm8960' in d['name']:
+                is_wm_card = True
+                break
+        if is_wm_card:
             raise AIModuleFaultsException(
                 "AI Mic not found! Please contact our CS team.")
 
