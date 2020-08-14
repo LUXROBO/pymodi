@@ -11,9 +11,6 @@ class Network(SetupModule):
     LEFT_SLIDER = 5
     RIGHT_SLIDER = 6
     TIMER = 7
-    BUTTON_CLICK = 0x0102
-    BUTTON_DOUBLE_CLICK = 0x0103
-    TOGGLE = 0x00104
 
     BUZZER = 0x0003
     CAMERA = 0x0101
@@ -50,18 +47,6 @@ class Network(SetupModule):
     @property
     def timer(self):
         return self._get_property(Network.TIMER) == 100
-
-    @property
-    def button_clicked(self):
-        return self._get_property(Network.BUTTON_CLICK) == 100
-
-    @property
-    def button_double_clicked(self):
-        return self._get_property(Network.BUTTON_DOUBLE_CLICK) == 100
-
-    @property
-    def button_toggled(self):
-        return self._get_property(Network.TOGGLE) == 100
 
     def _set_property(self, command_type, value):
         self._conn.send(parse_message(
