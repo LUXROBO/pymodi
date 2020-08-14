@@ -140,8 +140,8 @@ class STM32FirmwareUpdater:
             if module_id == curr_module_id:
                 return
 
-        print(f"Adding {module_type} ({module_id}) to waiting list.."
-              f"{' ' * 30}")
+        print(f"Adding {module_type} ({module_id}) to waiting list..."
+              f"{' ' * 40}")
 
         # Add the module to the waiting list
         module_elem = module_id, module_type
@@ -284,7 +284,8 @@ class STM32FirmwareUpdater:
         self.send_end_flash_data(module_type, module_id, end_flash_data)
 
         # Firmware update flag down, resetting used flags
-        print(f'\nFirmware update is done for {module_type} ({module_id})')
+        print(f"{self.__progress_bar(1, 1)} 100%")
+        print(f'Firmware update is done for {module_type} ({module_id})')
         self.reset_state(update_in_progress=True)
 
         if self.modules_to_update:
