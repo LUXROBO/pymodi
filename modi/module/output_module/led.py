@@ -28,10 +28,11 @@ class Led(OutputModule):
         """
         if color == self.rgb:
             return
+        real_color = tuple(map(lambda c: c * 100 // 255, color))
         self._set_property(
             self._id,
             Led.SET_RGB,
-            color,
+            real_color,
         )
         self.update_property(Led.RED, color[0])
         self.update_property(Led.GREEN, color[1])
