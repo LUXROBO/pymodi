@@ -18,16 +18,6 @@ class TestMotor(unittest.TestCase):
         """Tear down test fixtures, if any."""
         del self.motor
 
-    def test_set_motor_channel(self):
-        """Test set_motor_channel method"""
-        expected_values = motor_channel, control_mode, control_value = 0, 0, 50
-        self.motor.set_motor_channel(*expected_values)
-        self.assertEqual(
-            self.conn.send_list[0],
-            parse_message(0x04, 19, -1, parse_data(
-                (motor_channel, control_mode, control_value), 'int'))
-        )
-
     def test_set_torque(self):
         """Test set_torque method."""
         expected_values = first_torque_value, second_torque_value = 50, 50

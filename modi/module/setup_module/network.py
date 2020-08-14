@@ -11,9 +11,6 @@ class Network(SetupModule):
     LEFT_SLIDER = 5
     RIGHT_SLIDER = 6
     TIMER = 7
-    BUTTON_CLICK = 0x0102
-    BUTTON_DOUBLE_CLICK = 0x0103
-    TOGGLE = 0x00104
 
     BUZZER = 0x0003
     CAMERA = 0x0101
@@ -24,10 +21,20 @@ class Network(SetupModule):
 
     @property
     def button_pressed(self):
+        """Returns whether MODI Play button is pressed
+
+        :return: True is pressed
+        :rtype: bool
+        """
         return self._get_property(Network.BUTTON) == 100
 
     @property
     def joystick(self):
+        """Returns the direction of the MODI Play joystick
+
+        :return: 'up', 'down', 'left', 'right'
+        :rtype: str
+        """
         return {
             20.0: 'up',
             30.0: 'down',
@@ -37,31 +44,39 @@ class Network(SetupModule):
 
     @property
     def dial(self):
+        """Returns the current degree of MODI Play dial
+
+        :return: Current degree
+        :rtype: int
+        """
         return self._get_property(Network.DIAL)
 
     @property
     def left_slider(self):
+        """Returns the current percentage of MODI Play left slider
+
+        :return: Current percentage
+        :rtype: int
+        """
         return self._get_property(Network.LEFT_SLIDER)
 
     @property
     def right_slider(self):
+        """Returns the current percentage of MODI Play right slider
+
+        :return: Current percentage
+        :rtype: int
+        """
         return self._get_property(Network.RIGHT_SLIDER)
 
     @property
     def timer(self):
+        """Returns if the MODI Play timer ticks
+
+        :return: True if timer is up
+        :rtype: bool
+        """
         return self._get_property(Network.TIMER) == 100
-
-    @property
-    def button_clicked(self):
-        return self._get_property(Network.BUTTON_CLICK) == 100
-
-    @property
-    def button_double_clicked(self):
-        return self._get_property(Network.BUTTON_DOUBLE_CLICK) == 100
-
-    @property
-    def button_toggled(self):
-        return self._get_property(Network.TOGGLE) == 100
 
     def _set_property(self, command_type, value):
         self._conn.send(parse_message(
@@ -69,14 +84,26 @@ class Network(SetupModule):
         ))
 
     def take_picture(self):
+        """Takes a picture on MODI Play
+
+        :return: None
+        """
         self._set_property(Network.CAMERA, 100)
 
     def buzzer_on(self):
+        """Turns on MODI Play buzzer
+
+        :return: None
+        """
         if self.__buzzer_flag:
             self.buzzer_off()
             self.__buzzer_flag = False
         self._set_property(Network.BUZZER, 100)
 
     def buzzer_off(self):
+        """Turns off MODI Play buzzer
+
+        :return: None
+        """
         self._set_property(Network.BUZZER, 0)
         self.__buzzer_flag = False
