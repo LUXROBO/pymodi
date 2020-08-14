@@ -2,3 +2,11 @@ pyserial
 python-can
 bleak
 esptool
+sounddevice
+soundfile
+numpy
+pyUSB
+pillow
+Image
+opencv-python
+ipython

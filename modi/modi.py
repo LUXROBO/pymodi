@@ -3,21 +3,26 @@
 import atexit
 import time
 from importlib import import_module as im
-from typing import Optional
+from typing import Optional, Tuple
 
 from modi._exe_thrd import ExeThrd
-from modi.util.conn_util import is_network_module_connected, is_on_pi
+from modi.util.conn_util import is_network_module_connected, is_on_pi, \
+    AIModuleFaultsException, AIModuleNotFoundException
 from modi.util.misc import module_list
 from modi.util.stranger import check_complete
 from modi.util.topology_manager import TopologyManager
 from modi.firmware_updater import STM32FirmwareUpdater, ESP32FirmwareUpdater
+from modi.module.ai_module.ai_camera import AICamera
+from modi.module.ai_module.ai_speaker import AISpeaker
+from modi.module.ai_module.ai_mic import AIMic
 
 
 class MODI:
 
     def __init__(self, conn_mode: str = "", verbose: bool = False,
-                 port: str = None, uuid=""):
+                 port: str = None, uuid="", ai_mode: bool = True):
         self._modules = list()
+        self._ai_modules = list()
         self._topology_data = dict()
 
         self._conn = self.__init_task(conn_mode, verbose, port, uuid)
@@ -32,6 +37,14 @@ class MODI:
                                                  self._modules)
 
         init_time = time.time()
+
+        if ai_mode:
+            if not is_on_pi():
+                raise AIModuleNotFoundException
+            self._init_ai_modules()
+            if len(self._ai_modules) > 1:
+                print("MODI AI modules are initialized!")
+
         while not self._topology_manager.is_topology_complete():
             time.sleep(0.1)
             if time.time() - init_time > 5:
@@ -41,6 +54,40 @@ class MODI:
         check_complete(self)
         print("MODI modules are initialized!")
         atexit.register(self.close)
+
+    def _init_ai_modules(self) -> None:
+        """Initialize AI Module features
+
+        :return: None
+        """
+        try:
+            self._init_ai_mic()
+            self._init_ai_speaker()
+            self._init_ai_camera()
+        except AIModuleFaultsException as e:
+            print(e)
+
+    def _init_ai_camera(self) -> None:
+        """Initialize AI Module's camera
+
+        :return: None
+        """
+        self._ai_modules.append(AICamera())
+        pass
+
+    def _init_ai_mic(self) -> None:
+        """Initialize AI Module's mic
+
+        :return: None
+        """
+        self._ai_modules.append(AIMic())
+
+    def _init_ai_speaker(self) -> None:
+        """Initialize AI Module's speaker
+
+        :return: None
+        """
+        self._ai_modules.append(AISpeaker())
 
     @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
@@ -170,6 +217,32 @@ class MODI:
         """Module List of connected Ultrasonic modules.
         """
         return module_list(self._modules, "ultrasonic")
+
+    @property
+    def ai_mics(self) -> Tuple[AIMic]:
+        """Tuple of connected :class:'~modi.module.ai_mic.AIMic' modules
+        """
+
+        return tuple([ai_module for ai_module in self._ai_modules
+                      if isinstance(ai_module, AIMic)])
+
+    @property
+    def ai_speakers(self) -> Tuple[AISpeaker]:
+        """Tuple of connected :class:'~modi.module.ai_speaker.AISpeaker'
+        modules
+        """
+
+        return tuple([ai_module for ai_module in self._ai_modules
+                      if isinstance(ai_module, AISpeaker)])
+
+    @property
+    def ai_cameras(self) -> Tuple[AICamera]:
+        """Tuple of connected :class:'~modi.module.ai_camera.AICamera'
+        modules
+        """
+        return tuple(
+            [ai_module for ai_module in self._ai_modules
+             if isinstance(ai_module, AICamera)])
 
 
 def update_module_firmware():
