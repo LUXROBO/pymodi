@@ -74,13 +74,13 @@ class TestSpeaker(unittest.TestCase):
         """Test get_frequency method with none input."""
         _ = self.speaker.frequency
         self.assertEqual(
-            self.conn.send_list[0],
+            self.conn.send_list[1],
             parse_message(0x03, 0, -1, (Speaker.FREQUENCY, None, 95, None)))
 
     def test_set_volume(self):
         """Test set_volume method."""
         expected_volume = 50
-        expected_values = (0, 50)
+        expected_values = (880, 50)
         self.speaker.volume = expected_volume
         sent_messages = []
         while self.conn.send_list:
