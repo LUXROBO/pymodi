@@ -11,6 +11,10 @@ class Speaker(OutputModule):
 
     SET_TUNE = 16
 
+    def __init__(self, id_, uuid, conn_task):
+        super().__init__(id_, uuid, conn_task)
+        self.frequency = 880  # Default frequency of A6
+
     @property
     def tune(self) -> Tuple[float, float]:
         return (
