@@ -10,11 +10,11 @@ def __get_upload_port():
     return devices[-1]
 
 
-def upload_file(filepath: str) -> None:
+def upload_file(local_path: str, remote_path: str) -> None:
     esp_port = __get_upload_port()
     print(f"Found esp device at port {esp_port}")
     pyb = Pyboard(esp_port, rawdelay=1)
     f = Files(pyb)
     print(f.ls())
-    with open(filepath, 'rb') as local_file:
-        f.put('/main.py', local_file.read())
+    with open(local_path, 'rb') as local_file:
+        f.put(remote_path, local_file.read())
