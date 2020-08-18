@@ -2,3 +2,4 @@ pyserial
 python-can
 bleak
 esptool
+adafruit-ampy
