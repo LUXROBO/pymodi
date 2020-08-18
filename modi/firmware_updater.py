@@ -10,6 +10,8 @@ import esptool
 import serial
 
 from modi.module.module import Module
+from modi.task.ser_task import SerTask
+from modi.task.can_task import CanTask
 from modi.util.msgutil import unpack_data, decode_message
 from modi.util.conn_util import list_modi_ports, is_on_pi
 
@@ -27,11 +29,9 @@ class STM32FirmwareUpdater:
     ERASE_COMPLETE = 7
 
     def __init__(self):
-        port = list_modi_ports()[0].device
-        self.__ser = serial.Serial(port)
-        self.__stream = self.__open_serial(self.__ser)
-        next(self.__stream)
-        th.Thread(target=self.__read_serial, daemon=True).start()
+        self.__conn = self.__open_conn()
+        self.__conn.open_conn()
+        th.Thread(target=self.__read_conn, daemon=True).start()
         self.response_flag = False
         self.response_error_flag = False
         self.response_error_count = 0
@@ -48,10 +48,11 @@ class STM32FirmwareUpdater:
         print("Module firmwares have been updated!")
 
     @staticmethod
-    def __open_serial(ser):
-        while True:
-            msg_to_send = yield
-            ser.write(msg_to_send.encode())
+    def __open_conn():
+        if is_on_pi():
+            return CanTask()
+        else:
+            return SerTask()
 
     @staticmethod
     def __get_module_type_from_uuid(uuid: int) -> str:
@@ -107,7 +108,7 @@ class STM32FirmwareUpdater:
         firmware_update_message = self.__set_module_state(
             0xFFF, Module.UPDATE_FIRMWARE, Module.PNP_OFF
         )
-        self.__stream.send(firmware_update_message)
+        self.__conn.send(firmware_update_message)
 
     def check_to_update_firmware(self, module_id: int) -> None:
         """ Check if modules with no firmware are ready to update its firmware
@@ -119,7 +120,7 @@ class STM32FirmwareUpdater:
         firmware_update_ready_message = self.__set_module_state(
             module_id, Module.UPDATE_FIRMWARE_READY, Module.PNP_OFF
         )
-        self.__stream.send(firmware_update_ready_message)
+        self.__conn.send(firmware_update_ready_message)
 
     def add_to_waitlist(self, module_id: int, module_type: str) -> None:
         """Add the module to the waitlist to update
@@ -296,7 +297,7 @@ class STM32FirmwareUpdater:
             reboot_message = self.__set_module_state(
                 0xFFF, Module.REBOOT, Module.PNP_OFF
             )
-            self.__stream.send(reboot_message)
+            self.__conn.send(reboot_message)
             print("Reboot message has been sent to all connected modules")
             self.reset_state()
             self.update_event.set()
@@ -499,7 +500,7 @@ class STM32FirmwareUpdater:
         request_message = self.get_firmware_command(
             module_id, 1, rot_scmd, crc_val, page_addr=dest_addr + page_addr
         )
-        self.__stream.send(request_message)
+        self.__conn.send(request_message)
 
         return self.receive_command_response()
 
@@ -559,7 +560,7 @@ class STM32FirmwareUpdater:
         data_message = self.get_firmware_data(
             module_id, seq_num=seq_num, bin_data=bin_data
         )
-        self.__stream.send(data_message)
+        self.__conn.send(data_message)
 
         # Calculate crc32 checksum twice
         checksum = self.calc_crc64(data=bin_data, checksum=crc_val)
@@ -579,36 +580,26 @@ class STM32FirmwareUpdater:
         rest_bar = 50 - curr_bar
         return f"Updating: [{'=' * curr_bar}>{'.' * rest_bar}]"
 
-    def __read_serial(self):
+    def __read_conn(self):
         while True:
             self.__handle_message()
             time.sleep(0.02)
 
     def __handle_message(self):
-        b = self.__ser.in_waiting
-        msgs = self.__ser.read(b).decode('utf8')
-        msg_list = []
-        json_msg = ""
-        for c in msgs:
-            if c == '}':
-                json_msg += c
-                msg_list.append(json_msg)
-                json_msg = ""
-            else:
-                json_msg += c
-        for msg in msg_list:
-            try:
-                ins, sid, did, data, length = decode_message(msg)
-            except json.JSONDecodeError:
-                continue
+        msg = self.__conn.recv()
+        if not msg:
+            return
+        try:
+            ins, sid, did, data, length = decode_message(msg)
+        except json.JSONDecodeError:
+            return
+        command = {
+            0x0A: self.__update_warning,
+            0x0C: self.__update_firmware_state
+        }.get(ins)
 
-            command = {
-                0x0A: self.__update_warning,
-                0x0C: self.__update_firmware_state
-            }.get(ins)
-
-            if command:
-                command(sid, data)
+        if command:
+            command(sid, data)
 
     def __update_firmware_state(self, sid: int, data: str):
         message_decoded = unpack_data(data, (4, 1))
