@@ -40,7 +40,27 @@ class MODI:
                 break
         check_complete(self)
         print("MODI modules are initialized!")
+
+        user_code_states = self.__wait_user_code_check()
+        if sum(user_code_states):
+            bad_module = self._modules[user_code_states.index(1)]
+            cmd = input(f"{str(bad_module)} has user code in it.\n"
+                        f"Reset the user code? [y/n] ")
+            if 'y' in cmd:
+                self.close()
+                update_module_firmware()
+                time.sleep(1)
+                print("Please restart your program")
+                exit(0)
         atexit.register(self.close)
+
+    def __wait_user_code_check(self):
+        def is_not_checked(module):
+            return module.user_code_status < 0
+
+        while list(filter(is_not_checked, self._modules)):
+            time.sleep(0.1)
+        return [module.user_code_status for module in self._modules]
 
     @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
