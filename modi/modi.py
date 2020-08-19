@@ -41,7 +41,8 @@ class MODI:
         check_complete(self)
         print("MODI modules are initialized!")
 
-        bad_modules = self.__wait_user_code_check()
+        bad_modules = self.__wait_user_code_check() if conn_mode != 'ble' \
+            else []
         if bad_modules:
             cmd = input(f"{[str(module) for module in bad_modules]} "
                         f"has user code in it.\n"
