@@ -1019,7 +1019,7 @@ class ESP32FirmwareUpdater(serial.Serial):
                                                     num_blocks, manager)
         if manager:
             manager.quit()
-        print(self.__progress_bar(1, 1))
+        print(f"\r{self.__progress_bar(1, 1)}")
         print("Firmware Upload Complete")
 
     def __write_chunk(self, chunk, curr_seq, total_seq, manager):
