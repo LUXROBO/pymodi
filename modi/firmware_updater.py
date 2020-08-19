@@ -5,13 +5,12 @@ import time
 from base64 import b64encode, b64decode
 from io import open
 from os import path
+from importlib import import_module as im
 
 import esptool
 import serial
 
 from modi.module.module import Module
-from modi.task.ser_task import SerTask
-from modi.task.can_task import CanTask
 from modi.util.msgutil import unpack_data, decode_message
 from modi.util.conn_util import list_modi_ports, is_on_pi
 
@@ -58,9 +57,9 @@ class STM32FirmwareUpdater:
     @staticmethod
     def __open_conn():
         if is_on_pi():
-            return CanTask()
+            return im('modi.task.can_task').CanTask()
         else:
-            return SerTask()
+            return im('modi.task.ser_task').SerTask()
 
     @staticmethod
     def __get_module_type_from_uuid(uuid: int) -> str:
@@ -233,7 +232,6 @@ class STM32FirmwareUpdater:
                       f" {page_begin * 100 // bin_end}%", end='')
                 page_end = page_begin + page_size
                 curr_page = bin_buffer[page_begin:page_end]
-
                 # Skip current page if empty
                 if not sum(curr_page):
                     continue
@@ -246,7 +244,6 @@ class STM32FirmwareUpdater:
                 if not erase_page_success:
                     page_begin -= page_size
                     continue
-
                 # Copy current page data to the module's memory
                 checksum = 0
                 for curr_ptr in range(0, page_size, 8):
@@ -269,7 +266,7 @@ class STM32FirmwareUpdater:
                 )
                 if not crc_page_success:
                     page_begin -= page_size
-
+        print(f"\r{self.__progress_bar(1, 1)} 100%")
         # Include MODI firmware version when writing end flash
         version_path = path.join(root_path, 'version.txt')
         with open(version_path) as version_file:
@@ -294,7 +291,7 @@ class STM32FirmwareUpdater:
         self.send_end_flash_data(module_type, module_id, end_flash_data)
 
         # Firmware update flag down, resetting used flags
-        print(f'\nFirmware update is done for {module_type} ({module_id})')
+        print(f'Firmware update is done for {module_type} ({module_id})')
         self.reset_state(update_in_progress=True)
 
         if self.modules_to_update:
