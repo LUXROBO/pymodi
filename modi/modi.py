@@ -48,8 +48,14 @@ class MODI:
                         f"Reset the user code? [y/n] ")
             if 'y' in cmd:
                 self.close()
-                reset_module_firmware((module.id for module in bad_modules))
-                time.sleep(1)
+                modules_to_reset = filter(
+                    lambda m: m.is_up_to_date, bad_modules)
+                modules_to_update = filter(
+                    lambda m: not m.is_up_to_date, bad_modules)
+                reset_module_firmware(
+                    tuple(module.id for module in modules_to_reset))
+                update_module_firmware(
+                    tuple(module.id for module in modules_to_update))
                 self.open()
         atexit.register(self.close)
 
@@ -195,13 +201,17 @@ class MODI:
         return module_list(self._modules, "ultrasonic")
 
 
-def update_module_firmware():
-    updater = STM32FirmwareUpdater()
+def update_module_firmware(target_ids=(0xFFF, )):
+    if not target_ids:
+        return
+    updater = STM32FirmwareUpdater(target_ids=target_ids)
     updater.update_module_firmware()
     updater.close()
 
 
 def reset_module_firmware(target_ids=(0xFFF, )):
+    if not target_ids:
+        return
     updater = STM32FirmwareUpdater(is_os_update=False, target_ids=target_ids)
     updater.update_module_firmware()
     updater.close()
