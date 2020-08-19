@@ -309,8 +309,8 @@ class STM32FirmwareUpdater:
 
     @staticmethod
     def __delay(span):
-        init_time = time.time()
-        while time.time() - init_time < span:
+        init_time = time.clock()
+        while time.clock() - init_time < span:
             pass
         return
 
