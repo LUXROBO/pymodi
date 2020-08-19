@@ -114,7 +114,7 @@ class STM32FirmwareUpdater:
         firmware_update_message = self.__set_module_state(
             module_id, Module.UPDATE_FIRMWARE, Module.PNP_OFF
         )
-        self.__conn.send(firmware_update_message)
+        self.__conn.send_nowait(firmware_update_message)
 
     def check_to_update_firmware(self, module_id: int) -> None:
         """ Check if modules with no firmware are ready to update its firmware
@@ -126,7 +126,7 @@ class STM32FirmwareUpdater:
         firmware_update_ready_message = self.__set_module_state(
             module_id, Module.UPDATE_FIRMWARE_READY, Module.PNP_OFF
         )
-        self.__conn.send(firmware_update_ready_message)
+        self.__conn.send_nowait(firmware_update_ready_message)
 
     def add_to_waitlist(self, module_id: int, module_type: str) -> None:
         """Add the module to the waitlist to update
@@ -148,7 +148,7 @@ class STM32FirmwareUpdater:
                 return
 
         print(f"\rAdding {module_type} ({module_id}) to waiting list..."
-              f"{' ' * 40}")
+              f"{' ' * 60}")
 
         # Add the module to the waiting list
         module_elem = module_id, module_type
@@ -197,10 +197,6 @@ class STM32FirmwareUpdater:
         :type module_type: str
         :return: None
         """
-        print(
-            "Start updating the binary firmware "
-            f"for {module_type} ({module_id})"
-        )
         self.update_in_progress = True
         self.modules_updated.append((module_id, module_type))
 
@@ -226,10 +222,10 @@ class STM32FirmwareUpdater:
             bin_size = sys.getsizeof(bin_buffer)
             bin_begin = 0x9000
             bin_end = bin_size - ((bin_size - bin_begin) % page_size)
-            delay = 0.0025 if is_on_pi() else 0.001
             for page_begin in range(bin_begin, bin_end + 1, page_size):
-                print(f"\r{self.__progress_bar(page_begin, bin_end)}"
-                      f" {page_begin * 100 // bin_end}%", end='')
+                print(f"\rUpdating {module_type} ({module_id}) "
+                      f"{self.__progress_bar(page_begin, bin_end)} "
+                      f"{page_begin * 100 // bin_end}%", end='')
                 page_end = page_begin + page_size
                 curr_page = bin_buffer[page_begin:page_end]
                 # Skip current page if empty
@@ -257,7 +253,7 @@ class STM32FirmwareUpdater:
                         bin_data=curr_data,
                         crc_val=checksum
                     )
-                    time.sleep(delay)
+                    self.__delay(0.001)
 
                 # CRC on current page (send CRC request / receive CRC response)
                 crc_page_success = self.send_firmware_command(
@@ -266,7 +262,10 @@ class STM32FirmwareUpdater:
                 )
                 if not crc_page_success:
                     page_begin -= page_size
-        print(f"\r{self.__progress_bar(1, 1)} 100%")
+                time.sleep(0.01)
+
+        print(f"\rUpdating {module_type} ({module_id}) "
+              f"{self.__progress_bar(1, 1)} 100%")
         # Include MODI firmware version when writing end flash
         version_path = path.join(root_path, 'version.txt')
         with open(version_path) as version_file:
@@ -303,10 +302,17 @@ class STM32FirmwareUpdater:
             reboot_message = self.__set_module_state(
                 0xFFF, Module.REBOOT, Module.PNP_OFF
             )
-            self.__conn.send(reboot_message)
+            self.__conn.send_nowait(reboot_message)
             print("Reboot message has been sent to all connected modules")
             self.reset_state()
             self.update_event.set()
+
+    @staticmethod
+    def __delay(span):
+        init_time = time.time()
+        while time.time() - init_time < span:
+            pass
+        return
 
     def __set_module_state(self, destination_id: int, module_state: int,
                            pnp_state: int) -> str:
@@ -506,11 +512,11 @@ class STM32FirmwareUpdater:
         request_message = self.get_firmware_command(
             module_id, 1, rot_scmd, crc_val, page_addr=dest_addr + page_addr
         )
-        self.__conn.send(request_message)
+        self.__conn.send_nowait(request_message)
 
         return self.receive_command_response()
 
-    def receive_command_response(self, response_delay: float = 0.1,
+    def receive_command_response(self, response_delay: float = 0.001,
                                  response_timeout: float = 5,
                                  max_response_error_count: int = 75) -> bool:
         """ Block until receiving a response of the most recent message sent
@@ -565,7 +571,7 @@ class STM32FirmwareUpdater:
         data_message = self.get_firmware_data(
             module_id, seq_num=seq_num, bin_data=bin_data
         )
-        self.__conn.send(data_message)
+        self.__conn.send_nowait(data_message)
 
         # Calculate crc32 checksum twice
         checksum = self.calc_crc64(data=bin_data, checksum=crc_val)
@@ -583,12 +589,12 @@ class STM32FirmwareUpdater:
         """
         curr_bar = 50 * current // total
         rest_bar = 50 - curr_bar
-        return f"Updating: [{'=' * curr_bar}>{'.' * rest_bar}]"
+        return f"[{'=' * curr_bar}>{'.' * rest_bar}]"
 
     def __read_conn(self):
         while True:
             self.__handle_message()
-            time.sleep(0.02)
+            time.sleep(0.001)
             if not self.__running:
                 break
 

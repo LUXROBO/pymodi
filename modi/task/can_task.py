@@ -77,6 +77,22 @@ class CanTask(ConnTask):
         if self.verbose:
             print(f'send: {pkt}')
 
+    def send_nowait(self, pkt: str) -> None:
+        """Send json pkt through can
+
+        :param pkt: Json pkt
+        :type pkt: str
+        :return: None
+        """
+        json_msg = json.loads(pkt)
+        can_msg = self.compose_can_msg(json_msg)
+        try:
+            self._bus.send(can_msg)
+        except can.CanError:
+            print("Can connection is lost, please check your modules")
+        if self.verbose:
+            print(f'send: {pkt}')
+
     #
     # Can helper methods
     #
