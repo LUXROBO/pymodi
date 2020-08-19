@@ -253,7 +253,7 @@ class STM32FirmwareUpdater:
                         bin_data=curr_data,
                         crc_val=checksum
                     )
-                    self.__delay(0.001)
+                    self.__delay(0.002)
 
                 # CRC on current page (send CRC request / receive CRC response)
                 crc_page_success = self.send_firmware_command(
