@@ -1,5 +1,6 @@
 import json
 import time
+from base64 import b64decode
 from typing import Callable, Dict, Union
 
 from modi.module.module import Module, BROADCAST_ID
@@ -50,7 +51,19 @@ class ExeTask:
             0x05: self.__update_modules,
             0x07: self.__update_topology,
             0x1F: self.__update_property,
+            0xA1: self.__update_esp_version,
         }.get(command, lambda _: None)
+
+    def __update_esp_version(self,
+                             message: Dict[str, Union[int, str]]) -> None:
+        network_module = None
+        for module in self._modules:
+            if module.module_type == 'Network':
+                network_module = module
+                break
+        if not network_module:
+            return
+        network_module.esp_version = b64decode(message['b'])[3:].decode()
 
     def __update_topology(self, message: Dict[str, Union[int, str]]) -> None:
         """Update the topology of the connected modules
