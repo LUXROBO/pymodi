@@ -41,14 +41,14 @@ class MODI:
         check_complete(self)
         print("MODI modules are initialized!")
 
-        user_code_states = self.__wait_user_code_check()
-        if sum(user_code_states):
-            bad_module = self._modules[user_code_states.index(1)]
-            cmd = input(f"{str(bad_module)} has user code in it.\n"
+        bad_modules = self.__wait_user_code_check()
+        if bad_modules:
+            cmd = input(f"{[str(module) for module in bad_modules]} "
+                        f"has user code in it.\n"
                         f"Reset the user code? [y/n] ")
             if 'y' in cmd:
                 self.close()
-                update_module_firmware()
+                reset_module_firmware((module.id for module in bad_modules))
                 time.sleep(1)
                 self.open()
         atexit.register(self.close)
@@ -59,7 +59,11 @@ class MODI:
 
         while list(filter(is_not_checked, self._modules)):
             time.sleep(0.1)
-        return [module.user_code_status for module in self._modules]
+        bad_modules = []
+        for module in self._modules:
+            if module.has_user_code:
+                bad_modules.append(module)
+        return bad_modules
 
     @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
@@ -193,6 +197,12 @@ class MODI:
 
 def update_module_firmware():
     updater = STM32FirmwareUpdater()
+    updater.update_module_firmware()
+    updater.close()
+
+
+def reset_module_firmware(target_ids=(0xFFF, )):
+    updater = STM32FirmwareUpdater(is_os_update=False, target_ids=target_ids)
     updater.update_module_firmware()
     updater.close()
 

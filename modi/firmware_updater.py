@@ -28,14 +28,16 @@ class STM32FirmwareUpdater:
     ERASE_ERROR = 6
     ERASE_COMPLETE = 7
 
-    def __init__(self):
+    def __init__(self, is_os_update=True, target_ids=(0xFFF, )):
         self.__conn = self.__open_conn()
         self.__conn.open_conn()
         th.Thread(target=self.__read_conn, daemon=True).start()
+        self.__target_ids = target_ids
         self.response_flag = False
         self.response_error_flag = False
         self.response_error_count = 0
         self.__running = True
+        self.__is_os_update = is_os_update
         self.update_event = th.Event()
         self.update_in_progress = False
         self.modules_to_update = []
@@ -43,7 +45,8 @@ class STM32FirmwareUpdater:
 
     def update_module_firmware(self):
         self.reset_state()
-        self.request_to_update_firmware()
+        for target in self.__target_ids:
+            self.request_to_update_firmware(target)
         self.update_event.wait()
         print("Module firmwares have been updated!")
 
@@ -96,7 +99,6 @@ class STM32FirmwareUpdater:
         :type update_in_progress: bool
         :return: None
         """
-
         self.response_flag = False
         self.response_error_flag = False
         self.response_error_count = 0
@@ -107,11 +109,11 @@ class STM32FirmwareUpdater:
             self.modules_to_update = []
             self.modules_updated = []
 
-    def request_to_update_firmware(self) -> None:
+    def request_to_update_firmware(self, module_id) -> None:
         """ Remove firmware of MODI modules (Removes EndFlash)
         """
         firmware_update_message = self.__set_module_state(
-            0xFFF, Module.UPDATE_FIRMWARE, Module.PNP_OFF
+            module_id, Module.UPDATE_FIRMWARE, Module.PNP_OFF
         )
         self.__conn.send(firmware_update_message)
 
@@ -203,68 +205,70 @@ class STM32FirmwareUpdater:
         self.update_in_progress = True
         self.modules_updated.append((module_id, module_type))
 
-        # Init path to binary file
         root_path = (
             path.join(path.dirname(__file__), 'firmware', 'stm32')
         )
-        bin_path = (
-            f"{module_type.lower()}.bin"
-        )
 
-        bin_path = path.join(root_path, bin_path)
-
-        with open(bin_path, 'rb') as bin_file:
-            bin_buffer = bin_file.read()
-
-        # Init metadata of the bytes loaded
-        page_size = 0x800
-        flash_memory_addr = 0x08000000
-
-        bin_size = sys.getsizeof(bin_buffer)
-        bin_begin = 0x9000
-        bin_end = bin_size - ((bin_size - bin_begin) % page_size)
-        delay = 0.0025 if is_on_pi() else 0.001
-        for page_begin in range(bin_begin, bin_end + 1, page_size):
-            print(f"\r{self.__progress_bar(page_begin, bin_end)}"
-                  f" {page_begin * 100 // bin_end}%", end='')
-            page_end = page_begin + page_size
-            curr_page = bin_buffer[page_begin:page_end]
-
-            # Skip current page if empty
-            if not sum(curr_page):
-                continue
-
-            # Erase page (send erase request and receive its response)
-            erase_page_success = self.send_firmware_command(
-                oper_type="erase", module_id=module_id, crc_val=0,
-                dest_addr=flash_memory_addr, page_addr=page_begin
+        if self.__is_os_update:
+            # Init path to binary file
+            bin_path = (
+                f"{module_type.lower()}.bin"
             )
-            if not erase_page_success:
-                page_begin -= page_size
-                continue
 
-            # Copy current page data to the module's memory
-            checksum = 0
-            for curr_ptr in range(0, page_size, 8):
-                if page_begin + curr_ptr >= bin_size:
-                    break
+            bin_path = path.join(root_path, bin_path)
 
-                curr_data = curr_page[curr_ptr:curr_ptr + 8]
-                checksum = self.send_firmware_data(
-                    module_id,
-                    seq_num=curr_ptr // 8,
-                    bin_data=curr_data,
-                    crc_val=checksum
+            with open(bin_path, 'rb') as bin_file:
+                bin_buffer = bin_file.read()
+
+            # Init metadata of the bytes loaded
+            page_size = 0x800
+            flash_memory_addr = 0x08000000
+
+            bin_size = sys.getsizeof(bin_buffer)
+            bin_begin = 0x9000
+            bin_end = bin_size - ((bin_size - bin_begin) % page_size)
+            delay = 0.0025 if is_on_pi() else 0.001
+            for page_begin in range(bin_begin, bin_end + 1, page_size):
+                print(f"\r{self.__progress_bar(page_begin, bin_end)}"
+                      f" {page_begin * 100 // bin_end}%", end='')
+                page_end = page_begin + page_size
+                curr_page = bin_buffer[page_begin:page_end]
+
+                # Skip current page if empty
+                if not sum(curr_page):
+                    continue
+
+                # Erase page (send erase request and receive its response)
+                erase_page_success = self.send_firmware_command(
+                    oper_type="erase", module_id=module_id, crc_val=0,
+                    dest_addr=flash_memory_addr, page_addr=page_begin
                 )
-                time.sleep(delay)
+                if not erase_page_success:
+                    page_begin -= page_size
+                    continue
 
-            # CRC on current page (send CRC request and receive CRC response)
-            crc_page_success = self.send_firmware_command(
-                oper_type="crc", module_id=module_id, crc_val=checksum,
-                dest_addr=flash_memory_addr, page_addr=page_begin
-            )
-            if not crc_page_success:
-                page_begin -= page_size
+                # Copy current page data to the module's memory
+                checksum = 0
+                for curr_ptr in range(0, page_size, 8):
+                    if page_begin + curr_ptr >= bin_size:
+                        break
+
+                    curr_data = curr_page[curr_ptr:curr_ptr + 8]
+                    checksum = self.send_firmware_data(
+                        module_id,
+                        seq_num=curr_ptr // 8,
+                        bin_data=curr_data,
+                        crc_val=checksum
+                    )
+                    time.sleep(delay)
+
+                # CRC on current page (send CRC request / receive CRC response)
+                crc_page_success = self.send_firmware_command(
+                    oper_type="crc", module_id=module_id, crc_val=checksum,
+                    dest_addr=flash_memory_addr, page_addr=page_begin
+                )
+                if not crc_page_success:
+                    page_begin -= page_size
 
         # Include MODI firmware version when writing end flash
         version_path = path.join(root_path, 'version.txt')
@@ -523,7 +527,6 @@ class STM32FirmwareUpdater:
         :return Boolean flag of the response
         :rtype: bool
         """
-
         # Receive firmware command response
         response_wait_time = 0
         while not self.response_flag:
