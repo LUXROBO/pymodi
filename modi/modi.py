@@ -50,8 +50,7 @@ class MODI:
                 self.close()
                 update_module_firmware()
                 time.sleep(1)
-                print("Please restart your program")
-                exit(0)
+                self.open()
         atexit.register(self.close)
 
     def __wait_user_code_check(self):
@@ -195,6 +194,7 @@ class MODI:
 def update_module_firmware():
     updater = STM32FirmwareUpdater()
     updater.update_module_firmware()
+    updater.close()
 
 
 def update_network_firmware(stub=True, force=False):

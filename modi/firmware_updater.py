@@ -35,7 +35,7 @@ class STM32FirmwareUpdater:
         self.response_flag = False
         self.response_error_flag = False
         self.response_error_count = 0
-
+        self.__running = True
         self.update_event = th.Event()
         self.update_in_progress = False
         self.modules_to_update = []
@@ -46,6 +46,11 @@ class STM32FirmwareUpdater:
         self.request_to_update_firmware()
         self.update_event.wait()
         print("Module firmwares have been updated!")
+
+    def close(self):
+        self.__running = False
+        time.sleep(0.5)
+        self.__conn.close_conn()
 
     @staticmethod
     def __open_conn():
@@ -584,6 +589,8 @@ class STM32FirmwareUpdater:
         while True:
             self.__handle_message()
             time.sleep(0.02)
+            if not self.__running:
+                break
 
     def __handle_message(self):
         msg = self.__conn.recv()
