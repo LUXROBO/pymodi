@@ -6,8 +6,7 @@ from typing import Optional
 from queue import Queue
 from threading import Thread
 
-from bleak import discover
-from bleak import BleakClient
+from bleak import discover, BleakClient, BleakError
 
 from modi.task.conn_task import ConnTask
 from modi.util.conn_util import MODIConnectionError
@@ -40,8 +39,18 @@ class BleTask(ConnTask):
 
     async def __connect(self, address):
         client = BleakClient(address, self._loop)
-        await client.connect()
-        return client
+        print("Connecting...", end='')
+        for i in range(5):
+            try:
+                await client.connect()
+                print("")
+                return client
+            except BleakError:
+                if i % 2 == 0:
+                    print("___", end='')
+                else:
+                    print("...", end='')
+        raise MODIConnectionError()
 
     async def __get_characteristic_uuid(self):
         for service in self._bus.services:
