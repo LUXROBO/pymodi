@@ -70,7 +70,7 @@ if __name__ == "__main__":
         msg2 = parse_message(0x2A, 0, bundle.modules[0].id)
         print(f"sending request message... {msg1}")
         bundle._exe_thrd.close()
-        init_time = time.time()
+        init_time = time.perf_counter()
         bundle.send(msg1)
         bundle.send(msg2)
         while True:
@@ -78,10 +78,10 @@ if __name__ == "__main__":
             recv_cmd = decode_message(msg)[0] if msg else None
             if msg and recv_cmd == 0x07:
                 break
-        fin_time = time.time()
+        fin_time = time.perf_counter()
         took = fin_time - init_time
         print(f"received message... {msg}")
-        print(f"Took {(took - 0.08) / 2:.20f} seconds for message transfer")
+        print(f"Took {took / 2:.20f} seconds for message transfer")
         os._exit(0)
 
     if check_option('-u', '--update'):

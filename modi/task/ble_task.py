@@ -109,6 +109,11 @@ class BleTask(ConnTask):
         if self.verbose:
             print(f'send: {pkt}')
 
+    def send_nowait(self, pkt: str) -> None:
+        self._send_q.put(self.__compose_ble_msg(pkt))
+        if self.verbose:
+            print(f'send: {pkt}')
+
     #
     # Non-Async Methods
     #
