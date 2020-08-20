@@ -19,7 +19,7 @@ class MODI:
     def __init__(self, conn_mode: str = "", verbose: bool = False,
                  port: str = None, uuid=""):
         if conn_mode == 'ble' and 'darwin' in sys.platform:
-            print("BLE Connection not supported on MacOs")
+            print("BLE Connection not supported on macOS")
             exit(0)
         self._modules = list()
         self._topology_data = dict()
