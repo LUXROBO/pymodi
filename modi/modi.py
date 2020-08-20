@@ -107,7 +107,7 @@ class MODI:
         :param message: Json packet to send
         :return: None
         """
-        self._conn.send(message)
+        self._conn.send_nowait(message)
 
     def recv(self) -> Optional[str]:
         """Low level method to receive json pkt directly from modules
