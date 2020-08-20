@@ -24,7 +24,7 @@ class BleTask(ConnTask):
         self.__close_event = False
 
     async def _list_modi_devices(self):
-        devices = await discover(timeout=2)
+        devices = await discover(timeout=1)
         modi_devies = []
         for d in devices:
             if 'MODI' in d.name:
@@ -39,18 +39,8 @@ class BleTask(ConnTask):
 
     async def __connect(self, address):
         client = BleakClient(address, self._loop)
-        print("Connecting...", end='')
-        for i in range(5):
-            try:
-                await client.connect()
-                print("")
-                return client
-            except BleakError:
-                if i % 2 == 0:
-                    print("___", end='')
-                else:
-                    print("...", end='')
-        raise MODIConnectionError()
+        await client.connect(timeout=1)
+        return client
 
     async def __get_characteristic_uuid(self):
         for service in self._bus.services:
