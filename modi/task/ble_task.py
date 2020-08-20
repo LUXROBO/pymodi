@@ -94,8 +94,11 @@ class BleTask(ConnTask):
                                       f" not found!")
 
     async def __close_client(self):
-        await self._bus.stop_notify(self.__char_uuid)
-        await self._bus.disconnect()
+        try:
+            await self._bus.stop_notify(self.__char_uuid)
+            await self._bus.disconnect()
+        except BleakError:
+            pass
 
     def close_conn(self):
         if self._bus:
