@@ -559,7 +559,103 @@
 
             </div>
         </section>
-    
+
+        <!-- section -->
+        <section class="page-section mb-0" id="setup-modules">
+            <div class="container">
+                <!-- About Section Heading-->
+                <h3 class="page-section-heading text-center text-uppercase text-secondary">설정 모듈</h3>
+                <!-- Icon Divider-->
+                <div class="divider-custom">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+
+                <div class="module-section" id="network">
+                    <img class='img-fluid col-md-4 col-lg-4 col-sm-12 module-img' src="assets/img/modules/network.png">
+                    <div class='col-lg-8 col-md-8 col-sm-12'>
+                        <h2 class="module-title">네트워크 모듈</h2>
+                        <ul class="module-desc">
+                            <li class="module-funcs">
+                                <b>button_pressed</b>: MODI Play 의 버튼이 눌렸는지 반환한다.
+                                <ul class="module-detail">
+                                    <li class="module-funcs"><b>반환값</b>: 버튼이 눌렸으면 True 아니면 False</li>
+                                    <li class="module-funcs"><b>사용 예제</b>: network.button_pressed</li>
+                                </ul>
+                            </li>
+                            <br>
+                            <li class="module-funcs">
+                                <b>dial</b>: MODI Play 의 다이얼 값을 반환한다.
+                                <ul class="module-detail">
+                                    <li class="module-funcs"><b>반환값</b>: 0 ~ 100</li>
+                                    <li class="module-funcs"><b>사용 예제</b>: network.dial </li>
+                                </ul>
+                            </li>
+                            <br>
+                            <li class="module-funcs">
+                                <b>joystick</b>: MODI Play 의 조이스틱 방향을 반환한다.
+                                <ul class="module-detail">
+                                    <li class="module-funcs"><b>반환값</b>: 'up', 'down', 'left', 'right', 만약 안 눌렸다면 None</li>
+                                    <li class="module-funcs"><b>사용 예제</b>: network.joystick </li>
+                                </ul>
+                            </li>
+                            <br>
+                            <li class="module-funcs">
+                                <b>left_slider</b>: MODI Play 의 왼쪽 슬라이더 값을 반환한다.
+                                <ul class="module-detail">
+                                    <li class="module-funcs"><b>반환값</b>: 0 ~ 100</li>
+                                    <li class="module-funcs"><b>사용 예제</b>: network.left_slider </li>
+                                </ul>
+                            </li>
+                            <br>
+                            <li class="module-funcs">
+                                <b>right_slider</b>: MODI Play 의 오른쪽 슬라이더 값을 반환한다.
+                                <ul class="module-detail">
+                                    <li class="module-funcs"><b>반환값</b>: 0 ~ 100</li>
+                                    <li class="module-funcs"><b>사용 예제</b>: network.right_slider </li>
+                                </ul>
+                            </li>
+                            <br>
+                            <li class="module-funcs">
+                                <b>timer</b>: MODI Play 의 타이머가 울렸는지 반환
+                                <ul class="module-detail">
+                                    <li class="module-funcs"><b>반환값</b>: 타이머가 울렸으면 True</li>
+                                    <li class="module-funcs"><b>사용 예제</b>: network.timer </li>
+                                </ul>
+                            </li>
+                            <br>
+                            <li class="module-funcs">
+                                <b>buzzer_on()</b>: MODI Play 의 버저를 울리게 한다.
+                                <ul class="module-detail">
+                                    <li class="module-funcs"><b>반환값</b>: None</li>
+                                    <li class="module-funcs"><b>비고</b>만약 작동하지 않는다면 buzzer_off()를 한 후 다시 시도한다.</li>
+                                    <li class="module-funcs"><b>사용 예제</b>: network.buzzer_on() </li>
+                                </ul>
+                            </li>
+                            <br>
+                            <li class="module-funcs">
+                                <b>buzzer_off()</b>: MODI Play 의 버저를 끈다.
+                                <ul class="module-detail">
+                                    <li class="module-funcs"><b>반환값</b>: None</li>
+                                    <li class="module-funcs"><b>사용 예제</b>: network.buzzer_off() </li>
+                                </ul>
+                            </li>
+                            <br>
+                            <li class="module-funcs">
+                                <b>take_picture()</b>: MODI Play 로 사진을 찍는다.
+                                <ul class="module-detail">
+                                    <li class="module-funcs"><b>반환값</b>: None</li>
+                                    <li class="module-funcs"><b>사용 예제</b>: network.take_picture() </li>
+                                </ul>
+                            </li>
+                            <br>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Footer-->
         <footer class="footer text-center">
             <div class="container">
