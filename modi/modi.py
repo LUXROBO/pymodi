@@ -2,6 +2,7 @@
 
 import atexit
 import time
+import sys
 from importlib import import_module as im
 from typing import Optional
 
@@ -17,6 +18,9 @@ class MODI:
 
     def __init__(self, conn_mode: str = "", verbose: bool = False,
                  port: str = None, uuid=""):
+        if conn_mode == 'ble' and 'darwin' in sys.platform:
+            print("BLE Connection not supported on MacOs")
+            exit(0)
         self._modules = list()
         self._topology_data = dict()
 
@@ -107,7 +111,7 @@ class MODI:
         :param message: Json packet to send
         :return: None
         """
-        self._conn.send(message)
+        self._conn.send_nowait(message)
 
     def recv(self) -> Optional[str]:
         """Low level method to receive json pkt directly from modules

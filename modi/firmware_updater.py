@@ -253,7 +253,7 @@ class STM32FirmwareUpdater:
                         bin_data=curr_data,
                         crc_val=checksum
                     )
-                    self.__delay(0.001)
+                    self.__delay(0.002)
 
                 # CRC on current page (send CRC request / receive CRC response)
                 crc_page_success = self.send_firmware_command(
@@ -309,8 +309,8 @@ class STM32FirmwareUpdater:
 
     @staticmethod
     def __delay(span):
-        init_time = time.clock()
-        while time.clock() - init_time < span:
+        init_time = time.perf_counter()
+        while time.perf_counter() - init_time < span:
             pass
         return
 
@@ -1019,7 +1019,7 @@ class ESP32FirmwareUpdater(serial.Serial):
                                                     num_blocks, manager)
         if manager:
             manager.quit()
-        print(self.__progress_bar(1, 1))
+        print(f"\r{self.__progress_bar(1, 1)}")
         print("Firmware Upload Complete")
 
     def __write_chunk(self, chunk, curr_seq, total_seq, manager):

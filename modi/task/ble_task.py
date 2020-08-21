@@ -6,8 +6,7 @@ from typing import Optional
 from queue import Queue
 from threading import Thread
 
-from bleak import discover
-from bleak import BleakClient
+from bleak import discover, BleakClient, BleakError
 
 from modi.task.conn_task import ConnTask
 from modi.util.conn_util import MODIConnectionError
@@ -25,7 +24,7 @@ class BleTask(ConnTask):
         self.__close_event = False
 
     async def _list_modi_devices(self):
-        devices = await discover(timeout=2)
+        devices = await discover(timeout=1)
         modi_devies = []
         for d in devices:
             if 'MODI' in d.name:
@@ -40,7 +39,7 @@ class BleTask(ConnTask):
 
     async def __connect(self, address):
         client = BleakClient(address, self._loop)
-        await client.connect()
+        await client.connect(timeout=1)
         return client
 
     async def __get_characteristic_uuid(self):
@@ -85,8 +84,11 @@ class BleTask(ConnTask):
                                       f" not found!")
 
     async def __close_client(self):
-        await self._bus.stop_notify(self.__char_uuid)
-        await self._bus.disconnect()
+        try:
+            await self._bus.stop_notify(self.__char_uuid)
+            await self._bus.disconnect()
+        except BleakError:
+            pass
 
     def close_conn(self):
         if self._bus:
@@ -105,6 +107,11 @@ class BleTask(ConnTask):
 
     @ConnTask.wait
     def send(self, pkt: str) -> None:
+        self._send_q.put(self.__compose_ble_msg(pkt))
+        if self.verbose:
+            print(f'send: {pkt}')
+
+    def send_nowait(self, pkt: str) -> None:
         self._send_q.put(self.__compose_ble_msg(pkt))
         if self.verbose:
             print(f'send: {pkt}')
