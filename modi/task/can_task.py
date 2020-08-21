@@ -41,6 +41,7 @@ class CanTask(ConnTask):
         :return: None
         """
         os.system("sudo ifconfig can0 down")
+        CanTask._instances.clear()
 
     def recv(self) -> Optional[str]:
         """Read json msg from CAN

@@ -206,11 +206,11 @@ class ExeTask:
         :type pnp_state: int
         :return: None
         """
-        self._conn.send(parse_message(0x09, 0, destination_id,
-                                      (module_state, pnp_state)))
+        self._conn.send_nowait(parse_message(0x09, 0, destination_id,
+                                             (module_state, pnp_state)))
 
     def __request_network_uuid(self):
-        self._conn.send(
+        self._conn.send_nowait(
             parse_message(0x28, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
         )
 
@@ -220,9 +220,9 @@ class ExeTask:
         :return: json serialized topology request message
         :rtype: str
         """
-        self._conn.send(
+        self._conn.send_nowait(
             parse_message(0x07, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0))
         )
-        self._conn.send(
+        self._conn.send_nowait(
             parse_message(0x2A, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0))
         )
