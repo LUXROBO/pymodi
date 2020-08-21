@@ -787,6 +787,7 @@ class ESP32FirmwareUpdater(serial.Serial):
             custom_cmd.append(path.join(root_path, file))
         esptool.main(custom_cmd)
         print("Booting to application...")
+        self.open()
         self.__wait_for_json()
         self.__boot_to_app()
         time.sleep(1)
