@@ -691,7 +691,7 @@ class ESP32FirmwareUpdater(serial.Serial):
 
             if mode == "no_reset_no_sync":
                 return last_error
-            print("MODI Way!!")
+
             print("send network module usb mode")
             self._port.write(b'{"c":43,"s":0,"d":4095,"b":"Kw==","l":1}')
             self.flush_input()
