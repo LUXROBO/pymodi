@@ -88,6 +88,7 @@ class BleTask(ConnTask):
         loop = asyncio.get_event_loop()
         modi_device = loop.run_until_complete(self._list_modi_devices())
         if modi_device:
+            asyncio.set_event_loop(self._loop)
             self._bus = self._loop.run_until_complete(
                 self.__connect(modi_device.address)
             )
