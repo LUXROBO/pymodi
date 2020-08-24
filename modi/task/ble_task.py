@@ -72,7 +72,6 @@ class BleTask(ConnTask):
                 break
 
     def __recv_handler(self, _, data):
-        print(self.__parse_ble_msg(data))
         self._recv_q.put(self.__parse_ble_msg(data))
 
     def open_conn(self):
