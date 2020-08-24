@@ -20,7 +20,6 @@ class BleTask(ConnTask):
     def __init__(self, verbose=False, uuid=None):
         super().__init__(verbose=verbose)
         self._loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(self._loop)
         self.__uuid = uuid
         self._recv_q = Queue()
         self._send_q = Queue()
@@ -37,7 +36,7 @@ class BleTask(ConnTask):
         return True
 
     async def _list_modi_devices(self):
-        devices = await discover(timeout=1, loop=self._loop)
+        devices = await discover(timeout=1)
         modi_devies = []
         for d in devices:
             if 'MODI' in d.name:
@@ -86,7 +85,8 @@ class BleTask(ConnTask):
 
     def open_conn(self):
         print("Initiating bluetooth connection...")
-        modi_device = self._loop.run_until_complete(self._list_modi_devices())
+        loop = asyncio.get_event_loop()
+        modi_device = loop.run_until_complete(self._list_modi_devices())
         if modi_device:
             self._bus = self._loop.run_until_complete(
                 self.__connect(modi_device.address)
