@@ -1,5 +1,6 @@
 import json
 import time
+from base64 import b64decode
 from typing import Callable, Dict, Union
 
 from modi.module.module import Module, BROADCAST_ID
@@ -50,7 +51,19 @@ class ExeTask:
             0x05: self.__update_modules,
             0x07: self.__update_topology,
             0x1F: self.__update_property,
+            0xA1: self.__update_esp_version,
         }.get(command, lambda _: None)
+
+    def __update_esp_version(self,
+                             message: Dict[str, Union[int, str]]) -> None:
+        network_module = None
+        for module in self._modules:
+            if module.module_type == 'Network':
+                network_module = module
+                break
+        if not network_module:
+            return
+        network_module.esp_version = b64decode(message['b'])[3:].decode()
 
     def __update_topology(self, message: Dict[str, Union[int, str]]) -> None:
         """Update the topology of the connected modules
@@ -107,12 +120,9 @@ class ExeTask:
             module = self.__get_module_by_id(module_id)
             module.last_updated = curr_time
             module.is_connected = True
-            # Warn if user code is in the module
-            if not module.has_user_code and user_code_state % 2 == 1:
-                print(f"{str(module)} has user code in it.")
-                print("You can reset your MODI modules by calling "
-                      "'modi.update_module_firmware()'")
-                module.has_user_code = True
+            # Update user code status
+            if module.user_code_status < 0:
+                module.user_code_status = user_code_state % 2
             # Turn off pnp if pnp flag is on
             if module.module_type != 'Network' and user_code_state < 2:
                 self.__set_module_state(
@@ -196,11 +206,11 @@ class ExeTask:
         :type pnp_state: int
         :return: None
         """
-        self._conn.send(parse_message(0x09, 0, destination_id,
-                                      (module_state, pnp_state)))
+        self._conn.send_nowait(parse_message(0x09, 0, destination_id,
+                                             (module_state, pnp_state)))
 
     def __request_network_uuid(self):
-        self._conn.send(
+        self._conn.send_nowait(
             parse_message(0x28, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
         )
 
@@ -210,9 +220,9 @@ class ExeTask:
         :return: json serialized topology request message
         :rtype: str
         """
-        self._conn.send(
+        self._conn.send_nowait(
             parse_message(0x07, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0))
         )
-        self._conn.send(
+        self._conn.send_nowait(
             parse_message(0x2A, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0))
         )

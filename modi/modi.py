@@ -2,6 +2,7 @@
 
 import atexit
 import time
+import sys
 from importlib import import_module as im
 from typing import Optional
 
@@ -17,6 +18,9 @@ class MODI:
 
     def __init__(self, conn_mode: str = "", verbose: bool = False,
                  port: str = None, uuid=""):
+        if conn_mode == 'ble' and 'darwin' in sys.platform:
+            print("BLE Connection not supported on MacOs")
+            exit(0)
         self._modules = list()
         self._topology_data = dict()
 
@@ -40,7 +44,37 @@ class MODI:
                 break
         check_complete(self)
         print("MODI modules are initialized!")
+
+        bad_modules = self.__wait_user_code_check() if conn_mode != 'ble' \
+            else []
+        if bad_modules:
+            cmd = input(f"{[str(module) for module in bad_modules]} "
+                        f"has user code in it.\n"
+                        f"Reset the user code? [y/n] ")
+            if 'y' in cmd:
+                self.close()
+                modules_to_reset = filter(
+                    lambda m: m.is_up_to_date, bad_modules)
+                modules_to_update = filter(
+                    lambda m: not m.is_up_to_date, bad_modules)
+                reset_module_firmware(
+                    tuple(module.id for module in modules_to_reset))
+                update_module_firmware(
+                    tuple(module.id for module in modules_to_update))
+                self.open()
         atexit.register(self.close)
+
+    def __wait_user_code_check(self):
+        def is_not_checked(module):
+            return module.user_code_status < 0
+
+        while list(filter(is_not_checked, self._modules)):
+            time.sleep(0.1)
+        bad_modules = []
+        for module in self._modules:
+            if module.has_user_code:
+                bad_modules.append(module)
+        return bad_modules
 
     @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
@@ -77,7 +111,7 @@ class MODI:
         :param message: Json packet to send
         :return: None
         """
-        self._conn.send(message)
+        self._conn.send_nowait(message)
 
     def recv(self) -> Optional[str]:
         """Low level method to receive json pkt directly from modules
@@ -172,9 +206,20 @@ class MODI:
         return module_list(self._modules, "ultrasonic")
 
 
-def update_module_firmware():
-    updater = STM32FirmwareUpdater()
+def update_module_firmware(target_ids=(0xFFF, )):
+    if not target_ids:
+        return
+    updater = STM32FirmwareUpdater(target_ids=target_ids)
     updater.update_module_firmware()
+    updater.close()
+
+
+def reset_module_firmware(target_ids=(0xFFF, )):
+    if not target_ids:
+        return
+    updater = STM32FirmwareUpdater(is_os_update=False, target_ids=target_ids)
+    updater.update_module_firmware()
+    updater.close()
 
 
 def update_network_firmware(stub=True, force=False):

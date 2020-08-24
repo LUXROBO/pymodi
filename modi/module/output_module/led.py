@@ -71,7 +71,7 @@ class Led(OutputModule):
         :type red: int
         :return: None
         """
-        self.rgb = red, self.green, self.blue
+        self.rgb = red, 0, 0
 
     @property
     def green(self) -> float:
@@ -91,7 +91,7 @@ class Led(OutputModule):
         :type green: int
         :return: None
         """
-        self.rgb = self.red, green, self.blue
+        self.rgb = 0, green, 0
 
     @property
     def blue(self) -> float:
@@ -111,4 +111,4 @@ class Led(OutputModule):
         :type blue: int
         :return: None
         """
-        self.rgb = self.red, self.green, blue
+        self.rgb = 0, 0, blue
