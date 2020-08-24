@@ -50,10 +50,17 @@ class BleTask(ConnTask):
 
     def __run_loop(self):
         asyncio.set_event_loop(self._loop)
-        self._loop.run_until_complete(self.__communicate())
+        tasks = asyncio.gather(self.__send_handler(), self.__watch_notify())
+        self._loop.run_until_complete(tasks)
 
-    async def __communicate(self):
+    async def __watch_notify(self):
         await self._bus.start_notify(self.__char_uuid, self.__recv_handler)
+        while True:
+            await asyncio.sleep(0.001)
+            if self.__close_event:
+                break
+
+    async def __send_handler(self):
         while True:
             if self._send_q.empty():
                 await asyncio.sleep(0.001)
@@ -65,7 +72,8 @@ class BleTask(ConnTask):
                 break
 
     def __recv_handler(self, _, data):
-        self._recv_q.put(data)
+        print(self.__parse_ble_msg(data))
+        self._recv_q.put(self.__parse_ble_msg(data))
 
     def open_conn(self):
         print("Initiating bluetooth connection...")
@@ -100,7 +108,7 @@ class BleTask(ConnTask):
     def recv(self) -> Optional[str]:
         if self._recv_q.empty():
             return None
-        json_pkt = self.__parse_ble_msg(self._recv_q.get())
+        json_pkt = self._recv_q.get()
         if self.verbose:
             print(f'recv: {json_pkt}')
         return json_pkt
@@ -108,6 +116,8 @@ class BleTask(ConnTask):
     @ConnTask.wait
     def send(self, pkt: str) -> None:
         self._send_q.put(self.__compose_ble_msg(pkt))
+        while not self._send_q.empty():
+            time.sleep(0.01)
         if self.verbose:
             print(f'send: {pkt}')
 
