@@ -700,7 +700,7 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.version = None
         self.__version_to_update = None
 
-    def start_update(self, stub=False, force=False):
+    def start_update(self, force=False):
         self.__boot_to_app()
         self.__version_to_update = self.__get_latest_version()
         self.id = self.__get_esp_id()
