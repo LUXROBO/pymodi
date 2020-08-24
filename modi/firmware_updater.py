@@ -7,7 +7,6 @@ from io import open
 from os import path
 from importlib import import_module as im
 
-import esptool
 import serial
 
 from modi.module.module import Module
@@ -674,74 +673,6 @@ def retry(exception_to_catch):
 
 
 class ESP32FirmwareUpdater(serial.Serial):
-    class ESP32(esptool.ESP32ROM):
-        _rts_state = True
-        _dtr_state = True
-
-        def _setDTR(self, state):
-            self._dtr_state = state
-
-        def _setRTS(self, state):
-            self._rts_state = state
-
-        def _connect_attempt(self, mode='default_reset', esp32r0_delay=False):
-            """A single connection attempt, with esp32r0 workaround options"""
-            last_error = None
-
-            if mode == "no_reset_no_sync":
-                return last_error
-
-            print("send network module usb mode")
-            self._port.write(b'{"c":43,"s":0,"d":4095,"b":"Kw==","l":1}')
-            self.flush_input()
-            self._port.flushOutput()
-            time.sleep(0.5)
-
-            for _ in range(5):
-                try:
-                    self.flush_input()
-                    self._port.flushOutput()
-                    self.sync()
-                    return None
-                except esptool.FatalError as e:
-                    if esp32r0_delay:
-                        print('_', end='')
-                    else:
-                        print('.', end='')
-                    sys.stdout.flush()
-                    time.sleep(0.05)
-                    last_error = e
-            return last_error
-
-        def _sendEnIo0(self):
-            json_str = ""
-            if self._rts_state == self._dtr_state:
-                json_str = str('{"en":1,"io0":1}')
-            elif self._rts_state and not self._dtr_state:
-                json_str = str('{"en":1,"io0":0}')
-            else:
-                json_str = str('{"en":0,"io0":1}')
-
-            self._port.write(json_str.encode('utf-8'))
-            print(json_str)
-
-        def write(self, packet):
-            packet = packet.replace(
-                b'\xdb', b'\xdb\xdd').replace(b'\xc0', b'\xdb\xdc')
-            buf = b'\xc0' + packet + b'\xc0'
-
-            step = 64
-            buf_len = len(buf)
-
-            for first in range(0, buf_len, step):
-                last = first + step
-                if last > buf_len:
-                    last = buf_len
-
-                write_buf = buf[first:last]
-                self._port.write(write_buf)
-                time.sleep(0.01)
-
     DEVICE_READY = 0x2B
     DEVICE_SYNC = 0x08
     SPI_ATTACH_REQ = 0xD
@@ -785,14 +716,6 @@ class ESP32FirmwareUpdater(serial.Serial):
         firmware_buffer = self.__compose_binary_firmware()
 
         self.__device_ready()
-        time.sleep(1)
-        if stub:
-            self.close()
-            esp = self.ESP32(self.port, self.baudrate, False)
-            esp.connect()
-            esp.run_stub()
-            esp._port.close()
-            self.open()
         self.__device_sync()
         self.__flash_attach()
         self.__set_flash_param()
@@ -861,6 +784,7 @@ class ESP32FirmwareUpdater(serial.Serial):
     @retry(Exception)
     def __send_pkt(self, pkt, wait=True, timeout=None, continuous=False):
         self.write(pkt)
+        self.reset_input_buffer()
         if wait:
             cmd = bytearray(pkt)[2]
             init_time = time.time()
@@ -876,7 +800,6 @@ class ESP32FirmwareUpdater(serial.Serial):
                     continue
                 recv_cmd = bytearray(recv_pkt)[2]
                 if cmd == recv_cmd:
-                    self.reset_input_buffer()
                     if bytearray(recv_pkt)[1] != 0x01:
                         raise Exception
                     return True
