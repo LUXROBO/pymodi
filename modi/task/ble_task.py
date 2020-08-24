@@ -36,7 +36,7 @@ class BleTask(ConnTask):
         return True
 
     async def _list_modi_devices(self):
-        devices = await discover(timeout=1)
+        devices = await discover(timeout=1, loop=self._loop)
         modi_devies = []
         for d in devices:
             if 'MODI' in d.name:
