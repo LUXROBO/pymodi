@@ -222,6 +222,6 @@ def reset_module_firmware(target_ids=(0xFFF, )):
     updater.close()
 
 
-def update_network_firmware(stub=True, force=False):
+def update_network_firmware(force=False):
     updater = ESP32FirmwareUpdater()
     updater.start_update(force=force)

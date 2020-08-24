@@ -7,7 +7,6 @@ from io import open
 from os import path
 from importlib import import_module as im
 
-import esptool
 import serial
 
 from modi.module.module import Module
@@ -674,74 +673,17 @@ def retry(exception_to_catch):
 
 
 class ESP32FirmwareUpdater(serial.Serial):
-    class ESP32(esptool.ESP32ROM):
+    DEVICE_READY = 0x2B
+    DEVICE_SYNC = 0x08
+    SPI_ATTACH_REQ = 0xD
+    SPI_FLASH_SET = 0xB
+    ESP_FLASH_BEGIN = 0x02
+    ESP_FLASH_DATA = 0x03
+    ESP_FLASH_END = 0x04
 
-        _rts_state = True
-        _dtr_state = True
-
-        def _setDTR(self, state):
-            self._dtr_state = state
-
-        def _setRTS(self, state):
-            self._rts_state = state
-
-        def _connect_attempt(self, mode='default_reset', esp32r0_delay=False):
-            """A single connection attempt, with esp32r0 workaround options"""
-            last_error = None
-
-            if mode == "no_reset_no_sync":
-                return last_error
-            print("MODI Way!!")
-            print("send network module usb mode")
-            self._port.write(b'{"c":43,"s":0,"d":4095,"b":"Kw==","l":1}')
-            self.flush_input()
-            self._port.flushOutput()
-            time.sleep(0.5)
-
-            for _ in range(5):
-                try:
-                    self.flush_input()
-                    self._port.flushOutput()
-                    self.sync()
-                    return None
-                except esptool.FatalError as e:
-                    if esp32r0_delay:
-                        print('_', end='')
-                    else:
-                        print('.', end='')
-                    sys.stdout.flush()
-                    time.sleep(0.05)
-                    last_error = e
-            return last_error
-
-        def _sendEnIo0(self):
-            json_str = ""
-            if self._rts_state == self._dtr_state:
-                json_str = str('{"en":1,"io0":1}')
-            elif self._rts_state and not self._dtr_state:
-                json_str = str('{"en":1,"io0":0}')
-            else:
-                json_str = str('{"en":0,"io0":1}')
-
-            self._port.write(json_str.encode('utf-8'))
-            print(json_str)
-
-        def write(self, packet):
-            packet = packet.replace(
-                b'\xdb', b'\xdb\xdd').replace(b'\xc0', b'\xdb\xdc')
-            buf = b'\xc0' + packet + b'\xc0'
-
-            step = 64
-            buf_len = len(buf)
-
-            for first in range(0, buf_len, step):
-                last = first + step
-                if last > buf_len:
-                    last = buf_len
-
-                write_buf = buf[first:last]
-                self._port.write(write_buf)
-                time.sleep(0.01)
+    ESP_FLASH_BLOCK = 0x200
+    ESP_FLASH_CHUNK = 0x4000
+    ESP_CHECKSUM_MAGIC = 0xEF
 
     def __init__(self):
         modi_ports = list_modi_ports()
@@ -754,10 +696,6 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.file_path = ['bootloader.bin', 'partitions.bin',
                           'ota_data_initial.bin', 'modi_ota_factory.bin',
                           'esp32.bin']
-        esptool.ESP32ROM = self.ESP32
-        esptool.DEFAULT_TIMEOUT = 10
-        esptool.SYNC_TIMEOUT = 1
-
         self.id = None
         self.version = None
         self.__version_to_update = None
@@ -767,7 +705,6 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.__version_to_update = self.__get_latest_version()
         self.id = self.__get_esp_id()
         self.version = self.__get_esp_version()
-        self.close()
         if self.version and self.version == self.__version_to_update:
             if not force:
                 response = input(
@@ -776,23 +713,109 @@ class ESP32FirmwareUpdater(serial.Serial):
                 if 'y' not in response:
                     return
         print(f"Updating v{self.version} to v{self.__version_to_update}")
-        time.sleep(1)
-        custom_cmd = ['--chip', 'esp32', '--port', self.port,
-                      '--baud', '115200', '--no-stub', 'write_flash']
-        root_path = path.join(
-            path.dirname(__file__), 'firmware', 'esp32'
-        )
-        for address, file in zip(self.__address, self.file_path):
-            custom_cmd.append(hex(address).upper())
-            custom_cmd.append(path.join(root_path, file))
-        esptool.main(custom_cmd)
+        firmware_buffer = self.__compose_binary_firmware()
+
+        self.__device_ready()
+        self.__device_sync()
+        self.__flash_attach()
+        self.__set_flash_param()
+        try:
+            from modi.util.jump import JumpManager
+            manager = JumpManager()
+            th.Thread(target=manager.start, daemon=True).start()
+        except ImportError:
+            manager = None
+        self.__write_binary_firmware(firmware_buffer, manager)
         print("Booting to application...")
-        self.open()
         self.__wait_for_json()
         self.__boot_to_app()
         time.sleep(1)
         self.__set_esp_version(self.__version_to_update)
         print("ESP firmware update is complete!!")
+
+    def __device_ready(self):
+        print("Redirecting connection to esp device...")
+        self.write(b'{"c":43,"s":0,"d":4095,"b":"AA==","l":1}')
+
+    def __device_sync(self):
+        print("Syncing the esp device...")
+        sync_pkt = self.__parse_pkt([0x0, self.DEVICE_SYNC,
+                                     0x24, 0, 0, 0, 0, 0,
+                                     0x7, 0x7, 0x12, 0x20] + 32 * [0x55])
+        self.__send_pkt(sync_pkt, timeout=10, continuous=True)
+        print("Sync Complete")
+
+    def __flash_attach(self):
+        print("Attaching flash to esp device..")
+        attach_pkt = self.__parse_pkt([0x0, self.SPI_ATTACH_REQ,
+                                       0x8] + 13 * [0])
+        self.__send_pkt(attach_pkt, timeout=10)
+        print("Flash attach Complete")
+
+    def __set_flash_param(self):
+        print("Setting esp flash parameter...")
+        param_data = [0] * 32
+        fl_id, total_size, block_size, sector_size, page_size, status_mask = \
+            0, 2 * 1024 * 1024, 64 * 1024, 4 * 1024, 256, 0xFFFF
+        param_data[1] = self.SPI_FLASH_SET
+        param_data[2] = 0x18
+        param_data[8:12] = int.to_bytes(fl_id, length=4, byteorder='little')
+        param_data[12:16] = int.to_bytes(total_size,
+                                         length=4, byteorder='little')
+        param_data[16:20] = int.to_bytes(block_size,
+                                         length=4, byteorder='little')
+        param_data[20:24] = int.to_bytes(sector_size,
+                                         length=4, byteorder='little')
+        param_data[24:28] = int.to_bytes(page_size,
+                                         length=4, byteorder='little')
+        param_data[28:32] = int.to_bytes(status_mask,
+                                         length=4, byteorder='little')
+        param_pkt = self.__parse_pkt(param_data)
+        self.__send_pkt(param_pkt, timeout=10)
+        print("Parameter set complete")
+
+    @staticmethod
+    def __parse_pkt(data):
+        pkt = bytes(data)
+        pkt = pkt.replace(b'\xdb', b'\xdb\xdd').replace(b'\xc0', b'\xdb\xdc')
+        pkt = b'\xc0' + pkt + b'\xc0'
+        return pkt
+
+    @retry(Exception)
+    def __send_pkt(self, pkt, wait=True, timeout=None, continuous=False):
+        self.write(pkt)
+        self.reset_input_buffer()
+        if wait:
+            cmd = bytearray(pkt)[2]
+            init_time = time.time()
+            while not timeout or time.time() - init_time < timeout:
+                if continuous:
+                    time.sleep(0.1)
+                else:
+                    time.sleep(0.01)
+                recv_pkt = self.__read_slip()
+                if not recv_pkt:
+                    if continuous:
+                        self.__send_pkt(pkt, wait=False)
+                    continue
+                recv_cmd = bytearray(recv_pkt)[2]
+                if cmd == recv_cmd:
+                    if bytearray(recv_pkt)[1] != 0x01:
+                        raise Exception
+                    return True
+                elif continuous:
+                    self.__send_pkt(pkt, wait=False)
+            print("Sending Again...")
+            raise Exception("Timeout Expired!")
+
+    def __read_slip(self):
+        slip_pkt = b''
+        while slip_pkt != b'\xc0':
+            slip_pkt = self.read()
+            if slip_pkt == b'':
+                return b''
+        slip_pkt += self.read_until(b'\xc0')
+        return slip_pkt
 
     def __read_json(self):
         json_pkt = b''
@@ -843,6 +866,21 @@ class ESP32FirmwareUpdater(serial.Serial):
             self.__boot_to_app()
             self.write(version_msg.encode('utf8'))
 
+    def __compose_binary_firmware(self):
+        binary_firmware = b''
+        root_path = path.join(
+            path.dirname(__file__), 'firmware', 'esp32'
+        )
+        for i, bin_path in enumerate(self.file_path):
+            with open(path.join(root_path, bin_path), 'rb') as bin_file:
+                bin_data = bin_file.read()
+            binary_firmware += bin_data
+            if i < len(self.__address) - 1:
+                binary_firmware += b'\xFF' * (self.__address[i + 1]
+                                              - self.__address[i]
+                                              - len(bin_data))
+        return binary_firmware
+
     @staticmethod
     def __get_latest_version():
         root_path = path.join(
@@ -852,5 +890,84 @@ class ESP32FirmwareUpdater(serial.Serial):
             version_info = version_file.readline().lstrip('v').rstrip('\n')
         return version_info
 
+    def __erase_chunk(self, size, offset):
+        num_blocks = size // self.ESP_FLASH_BLOCK + 1
+        erase_data = [0] * 24
+        erase_data[1] = self.ESP_FLASH_BEGIN
+        erase_data[2] = 0x10
+        erase_data[8:12] = int.to_bytes(size, length=4, byteorder='little')
+        erase_data[12:16] = int.to_bytes(num_blocks,
+                                         length=4, byteorder='little')
+        erase_data[16:20] = int.to_bytes(self.ESP_FLASH_BLOCK,
+                                         length=4, byteorder='little')
+        erase_data[20:24] = int.to_bytes(offset,
+                                         length=4, byteorder='little')
+        erase_pkt = self.__parse_pkt(erase_data)
+        self.__send_pkt(erase_pkt, timeout=10)
+
+    def __write_flash_block(self, data, seq_block):
+        size = len(data)
+        block_data = [0] * (size + 24)
+        checksum = self.ESP_CHECKSUM_MAGIC
+
+        block_data[1] = self.ESP_FLASH_DATA
+        block_data[2:4] = int.to_bytes(size + 16, length=2, byteorder='little')
+        block_data[8:12] = int.to_bytes(size, length=4, byteorder='little')
+        block_data[12:16] = int.to_bytes(seq_block,
+                                         length=4, byteorder='little')
+        for i in range(size):
+            block_data[24 + i] = data[i]
+            checksum ^= (0xFF & data[i])
+        block_data[4:8] = int.to_bytes(checksum, length=4, byteorder='little')
+        block_pkt = self.__parse_pkt(block_data)
+        self.__send_pkt(block_pkt)
+
+    def __write_binary_firmware(self, binary_firmware: bytes, manager):
+        chunk_queue = []
+        num_blocks = len(binary_firmware) // self.ESP_FLASH_BLOCK + 1
+        while binary_firmware:
+            if self.ESP_FLASH_CHUNK < len(binary_firmware):
+                chunk_queue.append(binary_firmware[:self.ESP_FLASH_CHUNK])
+                binary_firmware = binary_firmware[self.ESP_FLASH_CHUNK:]
+            else:
+                chunk_queue.append(binary_firmware[:])
+                binary_firmware = b''
+
+        blocks_downloaded = 0
+        print("Start uploading firmware data...")
+        for seq, chunk in enumerate(chunk_queue):
+            self.__erase_chunk(len(chunk),
+                               self.__address[0] + seq * self.ESP_FLASH_CHUNK)
+            blocks_downloaded += self.__write_chunk(chunk, blocks_downloaded,
+                                                    num_blocks, manager)
+        if manager:
+            manager.quit()
+        print(f"\r{self.__progress_bar(1, 1)}")
+        print("Firmware Upload Complete")
+
+    def __write_chunk(self, chunk, curr_seq, total_seq, manager):
+        block_queue = []
+        while chunk:
+            if self.ESP_FLASH_BLOCK < len(chunk):
+                block_queue.append(chunk[:self.ESP_FLASH_BLOCK])
+                chunk = chunk[self.ESP_FLASH_BLOCK:]
+            else:
+                block_queue.append(chunk[:])
+                chunk = b''
+        for seq, block in enumerate(block_queue):
+            if manager:
+                manager.status = self.__progress_bar(curr_seq + seq, total_seq)
+            print(f'\r{self.__progress_bar(curr_seq + seq, total_seq)}',
+                  end='')
+            self.__write_flash_block(block, seq)
+        return len(block_queue)
+
     def __boot_to_app(self):
         self.write(b'{"c":160,"s":0,"d":174,"b":"AAAAAAAAAA==","l":8}')
+
+    @staticmethod
+    def __progress_bar(current: int, total: int) -> str:
+        curr_bar = 70 * current // total
+        rest_bar = 70 - curr_bar
+        return f"Firmware Upload: [{'=' * curr_bar}>{'.' * rest_bar}] " \
+               f"{100 * current / total:3.2f}%"

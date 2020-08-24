@@ -1,4 +1,3 @@
 pyserial
 python-can
 bleak
-esptool
