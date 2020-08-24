@@ -85,8 +85,7 @@ class BleTask(ConnTask):
 
     def open_conn(self):
         print("Initiating bluetooth connection...")
-        scan_loop = asyncio.new_event_loop()
-        modi_device = scan_loop.run_until_complete(self._list_modi_devices())
+        modi_device = self._loop.run_until_complete(self._list_modi_devices())
         if modi_device:
             self._bus = self._loop.run_until_complete(
                 self.__connect(modi_device.address)
