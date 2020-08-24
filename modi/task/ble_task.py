@@ -19,7 +19,7 @@ class BleTask(ConnTask):
 
     def __init__(self, verbose=False, uuid=None):
         super().__init__(verbose=verbose)
-        self._loop = asyncio.new_event_loop()
+        self._loop = asyncio.get_event_loop()
         self.__uuid = uuid
         self._recv_q = Queue()
         self._send_q = Queue()
@@ -88,9 +88,6 @@ class BleTask(ConnTask):
         loop = asyncio.get_event_loop()
         modi_device = loop.run_until_complete(self._list_modi_devices())
         if modi_device:
-            if sys.platform == 'darwin':
-                from bleak.backends.corebluetooth import discovery
-                discovery.discover = lambda: modi_device
             self._bus = self._loop.run_until_complete(
                 self.__connect(modi_device.address)
             )
