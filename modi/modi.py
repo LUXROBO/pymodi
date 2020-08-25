@@ -2,7 +2,6 @@
 
 import atexit
 import time
-import sys
 from importlib import import_module as im
 from typing import Optional
 
@@ -84,7 +83,7 @@ class MODI:
         elif conn_mode == 'can':
             return im('modi.task.can_task').CanTask(verbose)
         elif conn_mode == 'ble':
-            return im('modi.task.ble_task').BleTask(verbose, uuid)
+            return im('modi.task.ble_task_win').BleTaskWindows(verbose, uuid)
         else:
             raise ValueError(f'Invalid conn mode {conn_mode}')
 
