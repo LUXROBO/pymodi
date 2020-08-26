@@ -4,8 +4,10 @@ from os import path
 from typing import Optional
 
 import clr
+
 from modi.task.conn_task import ConnTask
 from modi.util.conn_util import MODIConnectionError
+from modi.util.misc import ask_modi_device
 
 
 class BleTask(ConnTask):
@@ -18,6 +20,10 @@ class BleTask(ConnTask):
         self.__ble_task = BleTask(verbose=verbose, uuid=uuid)
 
     def open_conn(self):
+        if not self.__ble_task.uuid:
+            devices = self.__ble_task.list_modi_devices()
+            self.__ble_task.uuid = ask_modi_device(devices)
+
         print("Connecting...")
         for i in range(5):
             try:

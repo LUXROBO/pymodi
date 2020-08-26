@@ -9,6 +9,7 @@ from threading import Thread
 import pexpect
 
 from modi.task.conn_task import ConnTask
+from modi.util.misc import ask_modi_device
 
 
 class BleTask(ConnTask):
@@ -27,13 +28,19 @@ class BleTask(ConnTask):
 
     def __find_modi_device(self):
         scanner = pexpect.spawn('sudo hcitool lescan')
-        pattern = 'MODI_' if not self.__uuid else f'MODI_{self.__uuid}'
-        while True:
+        init_time = time.time()
+        devices = []
+        while time.time() - init_time < 1:
             info = scanner.readline()
-            if pattern.encode() in info:
-                break
+            if b'MODI' in info:
+                devices.append(info.decode().split())
         scanner.terminate()
-        return info.decode().split()
+        if not self.__uuid:
+            self.__uuid = ask_modi_device([d[0] for d in devices])
+        for info in devices:
+            if self.__uuid in info[0]:
+                return info
+        raise ValueError('MODI network module does not exist!')
 
     def open_conn(self):
         os.system("sudo hciconfig hci0 down")
