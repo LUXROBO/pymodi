@@ -11,6 +11,7 @@ from bleak.backends.corebluetooth import client as mac_client
 
 from modi.task.conn_task import ConnTask
 from modi.util.conn_util import MODIConnectionError
+from modi.util.misc import ask_modi_device
 
 
 class BleTask(ConnTask):
@@ -41,12 +42,11 @@ class BleTask(ConnTask):
             if 'MODI' in d.name:
                 modi_devies.append(d)
         if not self.__uuid:
-            return modi_devies[0]
-        else:
-            for d in modi_devies:
-                if self.__uuid in d.name:
-                    return d
-            return None
+            self.__uuid = ask_modi_device([d.name for d in modi_devies])
+        for d in modi_devies:
+            if self.__uuid in d.name:
+                return d
+        return None
 
     async def __connect(self, address):
         client = BleakClient(address, self._loop, timeout=1)
