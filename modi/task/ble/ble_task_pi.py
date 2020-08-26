@@ -11,9 +11,10 @@ import pexpect
 from modi.task.conn_task import ConnTask
 
 
-class BleTaskPi(ConnTask):
+class BleTask(ConnTask):
 
     def __init__(self, verbose=False, uuid=None):
+        print("Initiating ble connection...")
         super().__init__(verbose=verbose)
         self._bus = None
         self.__uuid = uuid
@@ -34,14 +35,13 @@ class BleTaskPi(ConnTask):
         scanner.terminate()
         return info.decode().split()
 
-
     def open_conn(self):
         os.system("sudo hciconfig hci0 down")
         os.system("sudo hciconfig hci0 up")
         modi_device = self.__find_modi_device()
         print(f'Connecting to {modi_device[1]}...')
         self._bus = pexpect.spawn('gatttool -I')
-        self._bus.expect('\[LE\]>')
+        self._bus.expect('[LE]>')
         for i in range(5):
             try:
                 self._bus.sendline(f'connect {modi_device[0]}')
@@ -49,7 +49,7 @@ class BleTaskPi(ConnTask):
                 os.system('sudo hcitool lecup --min=6 --max=20')
                 Thread(daemon=True, target=self.__ble_read).start()
                 break
-            except:
+            except Exception:
                 print('...')
 
     def close_conn(self):
@@ -72,7 +72,8 @@ class BleTaskPi(ConnTask):
             except Exception:
                 continue
             msg = self._bus.after.decode().lstrip('value: ').split()
-            json_msg = self.__parse_ble_msg(bytearray([int(b, 16) for b in msg]))
+            json_msg = self.__parse_ble_msg(
+                bytearray([int(b, 16) for b in msg]))
             if self.verbose:
                 print(f"recv: {json_msg}")
             self._recv_q.put(json_msg)
@@ -99,7 +100,8 @@ class BleTaskPi(ConnTask):
     #
     # Ble Helper Methods
     #
-    def __compose_ble_msg(self, json_msg):
+    @staticmethod
+    def __compose_ble_msg(json_msg):
         ble_msg = bytearray(16)
 
         ins = json_msg["c"]
@@ -117,13 +119,14 @@ class BleTaskPi(ConnTask):
         ble_msg[6] = dlc & 0xFF
         ble_msg[7] = dlc >> 8 & 0xFF
 
-        ble_msg[8:8+dlc] = bytearray(base64.b64decode(data))
+        ble_msg[8:8 + dlc] = bytearray(base64.b64decode(data))
         data = ""
         for b in ble_msg:
             data += f'{b:02X}'
         return data
 
-    def __parse_ble_msg(self, ble_msg):
+    @staticmethod
+    def __parse_ble_msg(ble_msg):
         json_msg = dict()
         json_msg["c"] = ble_msg[1] << 8 | ble_msg[0]
         json_msg["s"] = ble_msg[3] << 8 | ble_msg[2]

@@ -2,12 +2,12 @@ import json
 import base64
 import asyncio
 import time
-import sys
 from typing import Optional
 from queue import Queue
 from threading import Thread
 
 from bleak import discover, BleakClient, BleakError
+from bleak.backends.corebluetooth import client as mac_client
 
 from modi.task.conn_task import ConnTask
 from modi.util.conn_util import MODIConnectionError
@@ -19,17 +19,16 @@ class BleTask(ConnTask):
 
     def __init__(self, verbose=False, uuid=None):
         super().__init__(verbose=verbose)
+        print("Initiating ble connection...")
         self._loop = asyncio.get_event_loop()
         self.__uuid = uuid
         self._recv_q = Queue()
         self._send_q = Queue()
         self.__close_event = False
-        if sys.platform == 'darwin':
-            from bleak.backends.corebluetooth import client as mac_client
-            self.__get_service = \
-                mac_client.BleakClientCoreBluetooth.get_services
-            mac_client.BleakClientCoreBluetooth.get_services = \
-                self.mac_get_service
+        self.__get_service = \
+            mac_client.BleakClientCoreBluetooth.get_services
+        mac_client.BleakClientCoreBluetooth.get_services = \
+            self.mac_get_service
 
     @staticmethod
     async def mac_get_service(self):
@@ -52,9 +51,8 @@ class BleTask(ConnTask):
     async def __connect(self, address):
         client = BleakClient(address, self._loop, timeout=1)
         await client.connect(timeout=1)
-        if sys.platform == 'darwin':
-            await asyncio.sleep(1)
-            await self.__get_service(client)
+        await asyncio.sleep(1)
+        await self.__get_service(client)
         return client
 
     def __run_loop(self):

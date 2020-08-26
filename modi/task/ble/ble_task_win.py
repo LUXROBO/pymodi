@@ -8,23 +8,23 @@ from modi.task.conn_task import ConnTask
 from modi.util.conn_util import MODIConnectionError
 
 
-class BleTaskWindows(ConnTask):
+class BleTask(ConnTask):
 
     def __init__(self, verbose=False, uuid=None):
-        clr.AddReference(f'{path.dirname(__file__)}/backend/BleTaskWin')
+        print("Initiating ble connection...")
+        clr.AddReference(f'{path.dirname(__file__)}/BleTaskWin')
         super().__init__(verbose=verbose)
         from BleTaskWin import BleTask
-        self.__ble_task = BleTask(verbose=verbose, uuis=uuid)
+        self.__ble_task = BleTask(verbose=verbose, uuid=uuid)
 
     def open_conn(self):
-        print("Connecting...", end='')
+        print("Connecting...")
         for i in range(5):
             try:
                 self.__ble_task.open_conn()
-                print()
                 return
             except Exception:
-                print("...", end='')
+                print("...")
         raise MODIConnectionError("BLE Connection Failed!")
 
     def close_conn(self):
