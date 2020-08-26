@@ -36,19 +36,23 @@ class BleTask(ConnTask):
                 devices.append(info.decode().split())
         scanner.terminate()
         if not self.__uuid:
-            self.__uuid = ask_modi_device([d[0] for d in devices])
+            self.__uuid = ask_modi_device([d[1] for d in devices])
         for info in devices:
-            if self.__uuid in info[0]:
+            if self.__uuid in info[1]:
                 return info
         raise ValueError('MODI network module does not exist!')
 
+    def __reset(self):
+        os.system('sudo hciconfig hci0 down')
+        os.system('sudo hciconfig hci0 up')
+
     def open_conn(self):
-        os.system("sudo hciconfig hci0 down")
-        os.system("sudo hciconfig hci0 up")
+        self.__reset()
         modi_device = self.__find_modi_device()
         print(f'Connecting to {modi_device[1]}...')
+        self.__reset()
         self._bus = pexpect.spawn('gatttool -I')
-        self._bus.expect('[LE]>')
+        self._bus.expect('LE')
         for i in range(5):
             try:
                 self._bus.sendline(f'connect {modi_device[0]}')
