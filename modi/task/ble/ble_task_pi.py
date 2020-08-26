@@ -37,9 +37,9 @@ class BleTask(ConnTask):
                 devices.append(info)
         scanner.terminate()
         if not self.__uuid:
-            self.__uuid = ask_modi_device([d[1] for d in devices])
+            self.__uuid = ask_modi_device([d[1].upper() for d in devices])
         for info in devices:
-            if self.__uuid in info[1]:
+            if self.__uuid.upper() in info[1].upper():
                 return info
         raise ValueError('MODI network module does not exist!')
 
