@@ -83,7 +83,7 @@ class MODI:
         elif conn_mode == 'can':
             return im('modi.task.can_task').CanTask(verbose)
         elif conn_mode == 'ble':
-            return im('modi.task.ble_task_win').BleTaskWindows(verbose, uuid)
+            return im('modi.task.ble_task_pi').BleTaskPi(verbose, uuid)
         else:
             raise ValueError(f'Invalid conn mode {conn_mode}')
 
