@@ -42,9 +42,10 @@ class BleTask(ConnTask):
             if 'MODI' in d.name:
                 modi_devies.append(d)
         if not self.__uuid:
-            self.__uuid = ask_modi_device([d.name for d in modi_devies])
+            self.__uuid = ask_modi_device(
+                [d.name.upper() for d in modi_devies])
         for d in modi_devies:
-            if self.__uuid in d.name:
+            if self.__uuid in d.name.upper():
                 return d
         return None
 
