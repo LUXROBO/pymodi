@@ -82,7 +82,6 @@ class BleTask(ConnTask):
         self._recv_q.put(self.__parse_ble_msg(data))
 
     def open_conn(self):
-        print("Initiating bluetooth connection...")
         loop = asyncio.get_event_loop()
         modi_device = loop.run_until_complete(self._list_modi_devices())
         if modi_device:
