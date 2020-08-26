@@ -16,6 +16,9 @@ class BleTask(ConnTask):
 
     def __init__(self, verbose=False, uuid=None):
         print("Initiating ble connection...")
+        script = f'{os.path.dirname(__file__)}/change_interval.sh' 
+        os.system(f'chmod 777 {script}')
+        os.system(f'sudo {script}')
         super().__init__(verbose=verbose)
         self._bus = None
         self.__uuid = uuid
@@ -58,7 +61,6 @@ class BleTask(ConnTask):
             try:
                 self._bus.sendline(f'connect {modi_device[0]}')
                 self._bus.expect('Connection successful', timeout=1)
-                os.system('sudo hcitool lecup --min=6 --max=20')
                 Thread(daemon=True, target=self.__ble_read).start()
                 break
             except Exception:
