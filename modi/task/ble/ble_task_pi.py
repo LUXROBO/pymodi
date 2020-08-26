@@ -32,8 +32,9 @@ class BleTask(ConnTask):
         devices = []
         while time.time() - init_time < 1:
             info = scanner.readline()
-            if b'MODI' in info:
-                devices.append(info.decode().split())
+            info = info.decode().split()
+            if 'MODI' in info[1] and info[1] not in (d[1] for d in devices):
+                devices.append(info)
         scanner.terminate()
         if not self.__uuid:
             self.__uuid = ask_modi_device([d[1] for d in devices])
