@@ -10,6 +10,7 @@ from modi._exe_thrd import ExeThrd
 from modi.util.conn_util import is_network_module_connected, is_on_pi
 from modi.util.misc import module_list
 from modi.util.stranger import check_complete
+from modi.util.upython import upload_file
 from modi.util.topology_manager import TopologyManager
 from modi.firmware_updater import STM32FirmwareUpdater, ESP32FirmwareUpdater
 
@@ -75,6 +76,17 @@ class MODI:
             if module.has_user_code:
                 bad_modules.append(module)
         return bad_modules
+
+    @staticmethod
+    def upload_user_code(filepath: str, remote_path: str) -> None:
+        """Upload python user code
+
+        :param filepath: Filepath to python file
+        :type filepath: str
+        :param remote_path: Filepath on esp device
+        :return: None
+        """
+        upload_file(filepath, remote_path)
 
     @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
