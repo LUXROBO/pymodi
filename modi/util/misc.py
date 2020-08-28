@@ -1,5 +1,5 @@
 from importlib.util import find_spec
-from whaaaaat import prompt
+from PyInquirer import prompt
 
 
 def get_module_type_from_uuid(uuid):
