@@ -1,5 +1,4 @@
 from importlib.util import find_spec
-from PyInquirer import prompt
 
 
 def get_module_type_from_uuid(uuid):
@@ -47,15 +46,10 @@ def get_module_from_name(module_type: str):
 
 
 def ask_modi_device(devices):
-    new_uuid = prompt([
-        {
-            'type': 'list',
-            'name': 'device',
-            'message': 'Choose your MODI device',
-            'choices': devices,
-        }
-    ])
-    return new_uuid['device'].lstrip('MODI_')
+    for idx, dev in enumerate(devices):
+        print(f"<{idx}>: {dev}")
+    i = input("Choose your device index (ex: 0) : ")
+    return devices[int(i)].lstrip('MODI_')
 
 
 class module_list(list):
