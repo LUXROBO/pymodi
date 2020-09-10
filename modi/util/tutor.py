@@ -268,49 +268,67 @@ class Tutor:
 
     def run_lesson4(self, bundle, led, button):
         self.clear()
-        self.print_lesson(4, "Your First PyMODI Project")
+        self.print_lesson(4, "Your First PyMODI Project(i.e. Creation)")
 
-        self.print_wrap("Let's make a project that blinks led when button "
-                        "is pressed.")
-        self.print_wrap("In an infinite loop, we want our led to light up "
-                        "when button is pressed, and turn off when not "
-                        "pressed. Complete the following code based on the"
-                        " description.")
+        self.print_wrap(
+            """
+            Let's make a PyMODI project that blinks led when button is pressed.
+            """
+        )
+        self.print_wrap(
+            """
+            In an infinite loop, we want our led to light up when button is
+            pressed, and turn off when not pressed. Complete the following code
+            based on the description.
+            """
+        )
 
         input("\nPress ENTER when you're ready!")
         self.clear()
+
         print(">>> while True:")
         print("...     # Check if button is pressed")
-        self.check_user_input('button.get_pressed():', give_answer=False,
-                              guide="...     if ")
+        self.check_user_input(
+            "button.pressed:", give_answer=False, guide="...     if "
+        )
         print("...         # Set Led color to green")
-        self.check_user_input('led.set_rgb(0, 255, 0)', give_answer=False,
-                              guide="...         ")
-        print("...     elif button.get_double_clicked():")
+        self.check_user_input(
+            "led.rgb = 0, 255, 0", give_answer=False, guide="...         "
+        )
+        print("...     elif button.double_clicked:")
         print("...         break")
         print("...     else:")
-        print("...         # Turn off the led. i.e. set color to (0, 0, 0)")
-        self.check_user_input('led.set_rgb(0, 0, 0)', give_answer=False,
-                              guide="...         ")
+        print("...         # Turn off the led. (i.e. set color to (0, 0, 0))")
+        self.check_user_input(
+            "led.rgb = 0, 0, 0", give_answer=False, guide="...         "
+        )
 
-        self.print_wrap("Congrats!! Now let's see if the code works as we "
-                        "want.\nPress the button to light up the led. Double "
-                        "click the button to break out of the loop")
+        self.print_wrap(
+            """
+            Congrats!! Now let's see if the code works as we want.
+            Press the button to light up the led. Double click the button to
+            break out of the loop
+            """
+        )
 
         while True:
-            if button.get_pressed():
-                led.set_rgb(0, 255, 0)
-            elif button.get_double_clicked():
+            if button.pressed:
+                led.rgb = 0, 255, 0
+            elif button.double_clicked:
                 break
             else:
-                led.set_off()
-            time.sleep(0.02)
+                led.rgb = 0, 0, 0
+            time.sleep(0.01)
+        print()
+        self.print_wrap(
+            """
+            It looks great!
+            Now you know how to use PyMODI to control modules.
 
-        self.print_wrap("\nIt looks great! "
-                        "Now you know how to use PyMODI to control modules."
-                        "\nYou can look up more functions at "
-                        "pymodi.readthedocs.io/en/latest\n"
-                        )
+            You can look up more functions at
+            pymodi.readthedocs.io/en/latest\n
+            """
+        )
 
-        input("\nYou have completed the tutorial.\nPress ENTER to exit")
-        self.bundle._com_proc.terminate()
+        input("\nYou have completed the tutorial. Press ENTER to exit")
+        os._exit(0)
