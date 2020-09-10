@@ -141,37 +141,61 @@ class Tutor:
         self.clear()
         self.print_lesson(2, "Accessing modules")
         self.print_wrap(
-            "In the previous lesson, you created a MODI object. Let's "
-            "figure out how we can access modules connected to it.")
+            """
+            In the previous lesson, you created a MODI object. Let's figure out
+            how we can access modules connected to it.
+            """
+        )
+        print()
         self.print_wrap(
-            '"bundle.modules" is a method to get all the modules connected '
-            'to the device. Type: bundle.modules')
-        self.check_user_input('bundle.modules')
+            """
+            "bundle.modules" is a method to get all the modules connected to
+            the device.
+            Type: bundle.modules
+            """
+        )
+        self.check_user_input("bundle.modules")
         print(self.bundle.modules)
         print()
-        self.print_wrap("\nYou can see two modules connected to the device. "
-                        "You can access each module by the same method we use "
-                        "with an array.")
-        self.print_wrap("\nYou can also access modules by types. "
-                        "Type: bundle.leds")
+
+        self.print_wrap(
+            """
+            You can see two modules connected to the device. You can access
+            each module by the same method we use with an array.
+            """
+        )
+        self.print_wrap(
+            """
+            You can also access modules by types.
+            Type: bundle.leds
+            """
+        )
 
         self.check_user_input('bundle.leds')
         print(self.bundle.leds)
         print()
-        self.print_wrap('\nThere is one led module connected. Make an led '
-                        'variable by accessing the first led module. '
-                        'Type: led = bundle.leds[0]')
+        self.print_wrap(
+            """
+            If you have followed previous instructions correctly, there must be
+            one led module connected to the network module. Now, make an led
+            variable by accessing the first led module.
+            Type: led = bundle.leds[0]
+            """
+        )
 
         self.check_user_input('led = bundle.leds[0]')
         led = self.bundle.leds[0]
         self.led = led
         print()
-        self.print_wrap("Super! You can now do whatever you want with these "
-                        "modules. If you have different modules connected, you"
-                        " can access the modules in a same way, just typing "
-                        "bundle.<module_name>s")
+        self.print_wrap(
+            """
+            Super! You can now do whatever you want with these modules. If you
+            have different modules connected, you can access the modules in a
+            same way, just typing bundle.<module_name>s"
+            """
+        )
 
-        input("\nYou have completed this lesson.\nPress ENTER")
+        input("\nYou have completed this lesson. Press ENTER")
 
     def run_lesson3(self):
         self.clear()
