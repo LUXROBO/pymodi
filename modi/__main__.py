@@ -63,7 +63,8 @@ if __name__ == "__main__":
         print(usage)
         os._exit(2)
 
-    if len(args) > 0 or len(sys.argv) == 1:
+    # Ensure that there is an option but argument
+    if len(sys.argv) == 1 or len(args) > 0:
         print(usage)
         os._exit(2)
 
@@ -78,7 +79,7 @@ if __name__ == "__main__":
         pymodi_tutor.run_introduction()
         os._exit(0)
 
-    # Time message transfer to check performance
+    # Time message transfer to measure its performance
     if check_option('-p', '--performance'):
         print("[PyMODI Performance Test]" + "\n" + "=" * 25)
         init_time = time.time()
@@ -86,7 +87,7 @@ if __name__ == "__main__":
         fin_time = time.time()
         took = (fin_time - init_time) * 100 // 1 / 100
         print("Hard waiting for topology data to be initialized...")
-        time.sleep(0.25*len(bundle.modules))
+        time.sleep(0.5*len(bundle.modules))
         bundle.print_topology_map(True)
         print(f"Took {took} seconds to initialize")
         msg1 = parse_message(0x07, 0, bundle.modules[0].id)
