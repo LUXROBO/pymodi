@@ -48,15 +48,18 @@ if __name__ == "__main__":
         print(usage)
         os._exit(2)
 
+    # Print help page
     if check_option('-h', '--help'):
         print(help_page)
         os._exit(0)
 
+    # Start interactive pymodi tutorial
     if check_option('-t', '--tutorial'):
         modi_tutor = Tutor()
         modi_tutor.start()
         os._exit(0)
 
+    # Time message transfer to check performance
     if check_option('-p', '--performance'):
         print("[PyMODI Performance Test]" + "\n" + "=" * 25)
         init_time = time.time()
@@ -65,7 +68,6 @@ if __name__ == "__main__":
         took = (fin_time - init_time) * 100 // 1 / 100
         bundle.print_topology_map(True)
         print(f"Took {took} seconds to initialize")
-        time.sleep(1)
         msg1 = parse_message(0x07, 0, bundle.modules[0].id)
         msg2 = parse_message(0x2A, 0, bundle.modules[0].id)
         print(f"sending request message... {msg1}")
@@ -81,9 +83,10 @@ if __name__ == "__main__":
         fin_time = time.perf_counter()
         took = fin_time - init_time
         print(f"received message... {msg}")
-        print(f"Took {took / 2:.20f} seconds for message transfer")
+        print(f"Took {took / 2:.10f} seconds for message transfer")
         os._exit(0)
 
+    # Update STM32 modules (every modules but network module)
     if check_option('-u', '--update'):
         init_time = time.time()
         updater = STM32FirmwareUpdater()
@@ -92,8 +95,8 @@ if __name__ == "__main__":
         print(f"Took {fin_time - init_time:.2f} seconds to update")
         os._exit(0)
 
+    # Initialize modules implicitly
     if check_option('-d', '--debug'):
-        is_update = check_option('-u', '--update')
         print(">>> bundle = modi.MODI()")
         init_time = time.time()
         if check_option('-g', '--gui'):
