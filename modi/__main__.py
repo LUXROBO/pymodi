@@ -105,16 +105,26 @@ if __name__ == "__main__":
 
     # Initialize modules implicitly
     if check_option('-d', '--debug'):
+        # TODO: Handle when there are more than one module with the same type
         print(">>> bundle = modi.MODI()")
         init_time = time.time()
-        if check_option('-g', '--gui'):
-            from modi.debugger import Debugger
-            bundle = Debugger()
-        else:
-            bundle = modi.MODI(verbose=check_option('-v', '--verbose'))
+        bundle = modi.MODI(verbose=check_option('-v', '--verbose'))
         fin_time = time.time()
         print(f'Took {fin_time - init_time:.2f} seconds to init MODI modules')
 
+        for module in bundle.modules:
+            module_name = type(module).__name__.lower()
+            print(">>> " + module_name + " = bundle." + module_name + "s[0]")
+            exec(module_name + " = module")
+
+    # Run GUI debugger
+    if check_option('-g', '--gui'):
+        print(">>> bundle = modi.MODI()")
+        init_time = time.time()
+        from modi.debugger import Debugger
+        bundle = Debugger()
+        fin_time = time.time()
+        print(f'Took {fin_time - init_time:.2f} seconds to init MODI modules')
         for module in bundle.modules:
             module_name = type(module).__name__.lower()
             print(">>> " + module_name + " = bundle." + module_name + "s[0]")
