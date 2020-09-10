@@ -140,8 +140,7 @@ class TopologyMap:
         else:
             module_id = int(module_id)
             name = self._tp_data[module_id]['type']
-            idx = module_list(self._modules,
-                              name.lower()).find(module_id)
+            idx = module_list(self._modules, name.lower()).find(module_id)
             if idx < 0:
                 idx = ''
             if print_id:

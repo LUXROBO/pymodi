@@ -3,6 +3,7 @@
 import atexit
 import time
 import sys
+
 from importlib import import_module as im
 from typing import Optional
 
@@ -33,8 +34,9 @@ class MODI:
         print('Start initializing connected MODI modules')
         self._exe_thrd.start()
 
-        self._topology_manager = TopologyManager(self._topology_data,
-                                                 self._modules)
+        self._topology_manager = TopologyManager(
+            self._topology_data, self._modules
+        )
 
         init_time = time.time()
         while not self._topology_manager.is_topology_complete():
@@ -46,8 +48,9 @@ class MODI:
         check_complete(self)
         print("MODI modules are initialized!")
 
-        bad_modules = self.__wait_user_code_check() if conn_mode != 'ble' \
-            else []
+        bad_modules = (
+            self.__wait_user_code_check() if conn_mode != 'ble' else []
+        )
         if bad_modules:
             cmd = input(f"{[str(module) for module in bad_modules]} "
                         f"has user code in it.\n"
@@ -76,8 +79,6 @@ class MODI:
             if module.has_user_code:
                 bad_modules.append(module)
         return bad_modules
-
-
 
     @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
@@ -210,8 +211,6 @@ class MODI:
 
 
 def update_module_firmware(target_ids=(0xFFF, )):
-    if not target_ids:
-        return
     updater = STM32FirmwareUpdater(target_ids=target_ids)
     updater.update_module_firmware()
     updater.close()
