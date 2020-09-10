@@ -9,6 +9,7 @@ import modi
 
 from modi.util.tutor import Tutor
 from modi.firmware_updater import STM32FirmwareUpdater
+from modi.firmware_updater import ESP32FirmwareUpdater
 from modi.util.msgutil import parse_message, decode_message
 
 
@@ -45,7 +46,7 @@ if __name__ == "__main__":
     try:
         # all commands should be defined here in advance
         opts, args = getopt(
-            sys.argv[1:], 'tduhvpgi',
+            sys.argv[1:], 'tduhvpgin',
             [
                 "tutorial",
                 "debug",
@@ -54,7 +55,8 @@ if __name__ == "__main__":
                 "verbose",
                 "performance",
                 "gui",
-                "inspect"
+                "inspect",
+                "network",
             ]
         )
     # exit program if an invalid option has been entered
@@ -113,6 +115,15 @@ if __name__ == "__main__":
         init_time = time.time()
         updater = STM32FirmwareUpdater()
         updater.update_module_firmware()
+        fin_time = time.time()
+        print(f"Took {fin_time - init_time:.2f} seconds to update")
+        os._exit(0)
+
+    # Update ESP32 module (only network module)
+    if check_option('-n', '--network'):
+        init_time = time.time()
+        updater = ESP32FirmwareUpdater()
+        updater.update_firmware()
         fin_time = time.time()
         print(f"Took {fin_time - init_time:.2f} seconds to update")
         os._exit(0)

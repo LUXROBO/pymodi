@@ -693,14 +693,15 @@ class ESP32FirmwareUpdater(serial.Serial):
         print(f"Connecting to MODI network module at {modi_ports[0].device}")
 
         self.__address = [0x1000, 0x8000, 0XD000, 0x10000, 0xD0000]
-        self.file_path = ['bootloader.bin', 'partitions.bin',
-                          'ota_data_initial.bin', 'modi_ota_factory.bin',
-                          'esp32.bin']
+        self.file_path = [
+            'bootloader.bin', 'partitions.bin', 'ota_data_initial.bin',
+            'modi_ota_factory.bin', 'esp32.bin'
+        ]
         self.id = None
         self.version = None
         self.__version_to_update = None
 
-    def start_update(self, force=False):
+    def update_firmware(self, force=False):
         self.__boot_to_app()
         self.__version_to_update = self.__get_latest_version()
         self.id = self.__get_esp_id()
@@ -739,37 +740,44 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     def __device_sync(self):
         print("Syncing the esp device...")
-        sync_pkt = self.__parse_pkt([0x0, self.DEVICE_SYNC,
-                                     0x24, 0, 0, 0, 0, 0,
-                                     0x7, 0x7, 0x12, 0x20] + 32 * [0x55])
+        sync_pkt = self.__parse_pkt([
+            0x0, self.DEVICE_SYNC, 0x24, 0, 0, 0, 0, 0, 0x7, 0x7, 0x12, 0x20
+        ] + 32 * [0x55])
         self.__send_pkt(sync_pkt, timeout=10, continuous=True)
         print("Sync Complete")
 
     def __flash_attach(self):
         print("Attaching flash to esp device..")
-        attach_pkt = self.__parse_pkt([0x0, self.SPI_ATTACH_REQ,
-                                       0x8] + 13 * [0])
+        attach_pkt = self.__parse_pkt([
+            0x0, self.SPI_ATTACH_REQ, 0x8
+        ] + 13 * [0])
         self.__send_pkt(attach_pkt, timeout=10)
         print("Flash attach Complete")
 
     def __set_flash_param(self):
         print("Setting esp flash parameter...")
         param_data = [0] * 32
-        fl_id, total_size, block_size, sector_size, page_size, status_mask = \
+        fl_id, total_size, block_size, sector_size, page_size, status_mask = (
             0, 2 * 1024 * 1024, 64 * 1024, 4 * 1024, 256, 0xFFFF
+        )
         param_data[1] = self.SPI_FLASH_SET
         param_data[2] = 0x18
         param_data[8:12] = int.to_bytes(fl_id, length=4, byteorder='little')
-        param_data[12:16] = int.to_bytes(total_size,
-                                         length=4, byteorder='little')
-        param_data[16:20] = int.to_bytes(block_size,
-                                         length=4, byteorder='little')
-        param_data[20:24] = int.to_bytes(sector_size,
-                                         length=4, byteorder='little')
-        param_data[24:28] = int.to_bytes(page_size,
-                                         length=4, byteorder='little')
-        param_data[28:32] = int.to_bytes(status_mask,
-                                         length=4, byteorder='little')
+        param_data[12:16] = int.to_bytes(
+            total_size, length=4, byteorder='little'
+        )
+        param_data[16:20] = int.to_bytes(
+            block_size, length=4, byteorder='little'
+        )
+        param_data[20:24] = int.to_bytes(
+            sector_size, length=4, byteorder='little'
+        )
+        param_data[24:28] = int.to_bytes(
+            page_size, length=4, byteorder='little'
+        )
+        param_data[28:32] = int.to_bytes(
+            status_mask, length=4, byteorder='little'
+        )
         param_pkt = self.__parse_pkt(param_data)
         self.__send_pkt(param_pkt, timeout=10)
         print("Parameter set complete")
@@ -876,9 +884,9 @@ class ESP32FirmwareUpdater(serial.Serial):
                 bin_data = bin_file.read()
             binary_firmware += bin_data
             if i < len(self.__address) - 1:
-                binary_firmware += b'\xFF' * (self.__address[i + 1]
-                                              - self.__address[i]
-                                              - len(bin_data))
+                binary_firmware += b'\xFF' * (
+                    self.__address[i + 1] - self.__address[i] - len(bin_data)
+                )
         return binary_firmware
 
     @staticmethod
@@ -896,12 +904,15 @@ class ESP32FirmwareUpdater(serial.Serial):
         erase_data[1] = self.ESP_FLASH_BEGIN
         erase_data[2] = 0x10
         erase_data[8:12] = int.to_bytes(size, length=4, byteorder='little')
-        erase_data[12:16] = int.to_bytes(num_blocks,
-                                         length=4, byteorder='little')
-        erase_data[16:20] = int.to_bytes(self.ESP_FLASH_BLOCK,
-                                         length=4, byteorder='little')
-        erase_data[20:24] = int.to_bytes(offset,
-                                         length=4, byteorder='little')
+        erase_data[12:16] = int.to_bytes(
+            num_blocks, length=4, byteorder='little'
+        )
+        erase_data[16:20] = int.to_bytes(
+            self.ESP_FLASH_BLOCK, length=4, byteorder='little'
+        )
+        erase_data[20:24] = int.to_bytes(
+            offset, length=4, byteorder='little'
+        )
         erase_pkt = self.__parse_pkt(erase_data)
         self.__send_pkt(erase_pkt, timeout=10)
 
@@ -913,8 +924,9 @@ class ESP32FirmwareUpdater(serial.Serial):
         block_data[1] = self.ESP_FLASH_DATA
         block_data[2:4] = int.to_bytes(size + 16, length=2, byteorder='little')
         block_data[8:12] = int.to_bytes(size, length=4, byteorder='little')
-        block_data[12:16] = int.to_bytes(seq_block,
-                                         length=4, byteorder='little')
+        block_data[12:16] = int.to_bytes(
+            seq_block, length=4, byteorder='little'
+        )
         for i in range(size):
             block_data[24 + i] = data[i]
             checksum ^= (0xFF & data[i])
@@ -936,12 +948,13 @@ class ESP32FirmwareUpdater(serial.Serial):
         blocks_downloaded = 0
         print("Start uploading firmware data...")
         for seq, chunk in enumerate(chunk_queue):
-            self.__erase_chunk(len(chunk),
-                               self.__address[0] + seq * self.ESP_FLASH_CHUNK)
-            blocks_downloaded += self.__write_chunk(chunk, blocks_downloaded,
-                                                    num_blocks, manager)
-        if manager:
-            manager.quit()
+            self.__erase_chunk(
+                len(chunk), self.__address[0] + seq * self.ESP_FLASH_CHUNK
+            )
+            blocks_downloaded += self.__write_chunk(
+                chunk, blocks_downloaded, num_blocks, manager
+            )
+        if manager: manager.quit()
         print(f"\r{self.__progress_bar(1, 1)}")
         print("Firmware Upload Complete")
 

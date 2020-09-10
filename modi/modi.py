@@ -224,7 +224,7 @@ def reset_module_firmware(target_ids=(0xFFF, )):
 
 def update_network_firmware(force=False):
     updater = ESP32FirmwareUpdater()
-    updater.start_update(force=force)
+    updater.update_firmware(force=force)
 
 
 def upload_user_code(filepath, remote_path):
