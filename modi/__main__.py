@@ -8,6 +8,8 @@ from getopt import getopt, GetoptError
 import modi
 
 from modi.util.tutor import Tutor
+from modi.util.inspector import Inspector
+
 from modi.firmware_updater import STM32FirmwareUpdater
 from modi.firmware_updater import ESP32FirmwareUpdater
 from modi.util.msgutil import parse_message, decode_message
@@ -158,4 +160,6 @@ if __name__ == "__main__":
     # Run inspection mode
     if check_option('-i', '--inspect'):
         print("inspection mode has not been implemented yet!")
+        pymodi_inspector = Inspector()
+        pymodi_inspector.run_inspection()
         os._exit(0)
