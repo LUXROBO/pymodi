@@ -77,16 +77,7 @@ class MODI:
                 bad_modules.append(module)
         return bad_modules
 
-    @staticmethod
-    def upload_user_code(filepath: str, remote_path: str) -> None:
-        """Upload python user code
 
-        :param filepath: Filepath to python file
-        :type filepath: str
-        :param remote_path: Filepath on esp device
-        :return: None
-        """
-        upload_file(filepath, remote_path)
 
     @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
@@ -103,12 +94,6 @@ class MODI:
         else:
             raise ValueError(f'Invalid conn mode {conn_mode}')
 
-    def close(self):
-        atexit.unregister(self.close)
-        print("Closing MODI connection...")
-        self._exe_thrd.close()
-        self._conn.close_conn()
-
     def open(self):
         atexit.register(self.close)
         self._exe_thrd = ExeThrd(
@@ -116,6 +101,12 @@ class MODI:
         )
         self._conn.open_conn()
         self._exe_thrd.start()
+
+    def close(self):
+        atexit.unregister(self.close)
+        print("Closing MODI connection...")
+        self._exe_thrd.close()
+        self._conn.close_conn()
 
     def send(self, message) -> None:
         """Low level method to send json pkt directly to modules
@@ -227,8 +218,6 @@ def update_module_firmware(target_ids=(0xFFF, )):
 
 
 def reset_module_firmware(target_ids=(0xFFF, )):
-    if not target_ids:
-        return
     updater = STM32FirmwareUpdater(is_os_update=False, target_ids=target_ids)
     updater.update_module_firmware()
     updater.close()
@@ -237,3 +226,7 @@ def reset_module_firmware(target_ids=(0xFFF, )):
 def update_network_firmware(force=False):
     updater = ESP32FirmwareUpdater()
     updater.start_update(force=force)
+
+
+def upload_user_code(filepath, remote_path):
+    upload_file(filepath, remote_path)
