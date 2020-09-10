@@ -63,8 +63,8 @@ if __name__ == "__main__":
 
     # Start interactive pymodi tutorial
     if check_option('-t', '--tutorial'):
-        modi_tutor = Tutor()
-        modi_tutor.start()
+        pymodi_tutor = Tutor()
+        pymodi_tutor.run_introduction()
         os._exit(0)
 
     # Time message transfer to check performance
