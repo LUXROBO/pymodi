@@ -205,26 +205,32 @@ class Tutor:
         input("\nYou have completed the tutorial.\nPress ENTER to exit")
         self.bundle._com_proc.terminate()
 
+    # Run pymodi introduction
     def start(self):
-        # Intro
         self.clear()
         print("=" * self.row)
         print(f"= {'Welcome to the PyMODI Tutor':^{self.row - 4}} =")
         print("=" * self.row)
-        self.print_wrap("\nPyMODI is a very powerful tool that can control "
-                        "the MODI modules using python scripts. As long as you"
-                        " learn how to use built-in functions of PyMODI, you "
-                        "can easily control MODI modules. This interactive CUI"
-                        " tutorial will guide you through the "
-                        "marvelous world of PyMODI.")
+        self.print_wrap(
+            """
+            PyMODI is a very powerful tool that can control the MODI modules
+            using python scripts. As long as you learn how to use built-in
+            functions of PyMODI, you can easily control MODI modules. This
+            interactive CUI tutorial will guide you through the world of PyMODI.
+            """.lstrip()
+        )
 
-        print("Tutorial includes:\n"
-              "1. Making MODI\n"
-              "2. Accessing Modules\n"
-              "3. Controlling Modules\n"
-              "4. Your First PyMODI Project")
+        print(
+            """{0}
+            Tutorial{1}includes:{0}
+            1.{1}Making{1}MODI{0}
+            2.{1}Accessing{1}Modules{0}
+            3.{1}Controlling{1}Modules{0}
+            4.{1}Your{1}First{1}PyMODI{1}Project{0}
+            """.replace(" ", "").replace("\n", "").format("\n", " ")
+        )
 
-        lesson_nb = int(input("\nEnter the lesson number and press ENTER: "))
+        lesson_nb = int(input("Enter the lesson number and press ENTER: "))
         self.clear()
 
         if lesson_nb > 1:
@@ -233,17 +239,16 @@ class Tutor:
             input(
                 "Connect buttton and led module to your device and press "
                 "ENTER")
-            self.bundle = modi.MODI(2)
+            self.bundle = modi.MODI()
 
         if lesson_nb > 2:
             self.led = self.bundle.leds[0]
             self.button = self.bundle.buttons[0]
 
-        if lesson_nb <= 1:
-            self.run_lesson1()
-        if lesson_nb <= 2:
-            self.run_lesson2()
-        if lesson_nb <= 3:
-            self.run_lesson3()
-        if lesson_nb <= 4:
-            self.run_lesson4()
+        selected_lesson = {
+            1: self.run_lesson1,
+            2: self.run_lesson2,
+            3: self.run_lesson3,
+            4: self.run_lesson4,
+        }.get(lesson_nb)
+        selected_lesson()
