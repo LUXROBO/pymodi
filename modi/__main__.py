@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import textwrap
 
 from getopt import getopt, GetoptError
 
@@ -19,26 +20,33 @@ def check_option(*options):
 
 
 if __name__ == "__main__":
-    usage = "Usage: python -m modi -<options>" \
-            "\nOptions:\n-t, --tutorial: Interactive Tutorial" \
-            "\n-d, --debug: Auto initialization debugging mode" \
-            "\n-h, --help: Print out help page"
+    usage = textwrap.dedent(
+        """
+        Usage: python -m modi -<options>
+        Options:
+        -t, --tutorial: Interactive Tutorial
+        -d, --debug: Auto initialization debugging mode
+        -h, --help: Print out help page
+        """.rstrip()
+    )
 
-    help_page = "Usage: python -m modi -<options>" \
-                "\n\nOptions:" \
-                "\n-t, --tutorial: Interactive Tutorial" \
-                "\n     Usage: python -m modi --tutorial" \
-                "\n-d, --debug: Auto initialize debugging mode" \
-                "\n     Usage: python -m modi --debug -n <nb_modules>" \
-                "\n     options: -u, --update: update the module firmware" \
-                " connected to the network module" \
-                "\n     If you want to use debugger in an interactive shell," \
-                " use: python -im modi -n <nb_modules> -<options>"
+    help_page = textwrap.dedent(
+        """
+        Usage: python -m modi -<options>
+        Options:
+        -t, --tutorial: Interactive Tutorial
+             Usage: python -m modi --tutorial
+        -d, --debug: Auto initialize debugging mode
+             Usage: python -m modi --debug -n <nb_modules>
+             If you want to use debugger in an interactive shell, use: python -im modi -d
+        """.rstrip()
+    )
 
     try:
-        opts, args = getopt(sys.argv[1:], 'tduhvpg',
-                            ["tutorial", "debug", "update",
-                             "help", "verbose", "performance", "gui"])
+        opts, args = getopt(
+            sys.argv[1:], 'tduhvpg',
+            ["tutorial", "debug", "update", "help", "verbose", "performance", "gui"]
+        )
     except GetoptError as err:
         print(str(err))
         print(usage)
