@@ -132,9 +132,8 @@ class Tutor:
             all the modules connected to your device.
             """
         )
-        input("\nYou have completed this lesson. Press ENTER to continue")
+        input("\nYou have completed this lesson. Press ENTER to continue.")
         self.bundle = bundle
-
         self.run_lesson2()
 
     def run_lesson2(self):
@@ -195,56 +194,82 @@ class Tutor:
             """
         )
 
-        input("\nYou have completed this lesson. Press ENTER")
+        input("\nYou have completed this lesson. Press ENTER to continue.")
+        self.run_lesson3()
 
     def run_lesson3(self):
         self.clear()
         self.print_lesson(3, "Controlling modules")
-        self.print_wrap("Now you know how to access individual modules. \n"
-                        "Let's make an object named \"button\" as well for "
-                        "your button module. You know how to do it.")
+        self.print_wrap(
+            """
+            Now you know how to access individual modules.
+
+            Let's make an object named "button" as well for your button module.
+            You know how to do it.
+            """
+        )
 
         self.check_user_input('button = bundle.buttons[0]', False)
         button = self.bundle.buttons[0]
         self.button = button
         print()
 
-        self.print_wrap("Perfect. With your button module and led module, "
-                        "we can either get data from the module or send "
-                        "command to the module")
+        self.print_wrap(
+            """
+            Perfect. With your button module and led module, we can either get
+            data from the module or send command to the module.
+            """
+        )
 
-        self.print_wrap('get_pressed is a method of a button module which '
-                        'returns whether the button is pressed or note.'
-                        '\nCheck the state of button by typing'
-                        ' button.get_pressed()')
+        self.print_wrap(
+            """
+            pressed is a property method of a button module which returns
+            whether the button is pressed or note.
 
-        self.check_user_input('button.get_pressed()')
+            Check the press state of button by typing button.pressed
+            """
+        )
+
+        self.check_user_input("button.pressed")
         print(button.get_pressed())
         print()
 
-        self.print_wrap("Now see if the same command returns True when "
-                        "pressing the button.")
+        self.print_wrap(
+            """
+            Now, see if the same command returns True when pressing the button.
+            """
+        )
 
-        self.check_user_input('button.get_pressed()')
+        self.check_user_input('button.pressed')
         print(button.get_pressed())
         print()
 
-        self.print_wrap("Good. Now, let's send a command to the led.\n"
-                        "set_rgb() is a method of an led module. Let there be "
-                        "light by typing led.set_rgb(0, 0, 255)")
+        self.print_wrap(
+            """
+            Good. Now, let's send a command to the led.
 
-        response = self.check_user_input('led.set_rgb(0, 0, 255)')
+            led's rgb is a property or setter method of an led module.
+            Let there be light by typing led.rgb = 0, 0, 255
+            """
+        )
+
+        response = self.check_user_input("led.rgb = 0, 0, 255")
         exec(response)
         print()
 
-        self.print_wrap("Perfect! You will see the blue light from the "
-                        "led module.")
+        self.print_wrap(
+            """
+            Perfect! You will see the blue light from the led module.
+            """
+        )
 
-        input("\nYou have completed this lesson.\nPress ENTER")
+        input("\nYou have completed this lesson. Press ENTER to continue.")
+        self.run_lesson4()
 
     def run_lesson4(self, bundle, led, button):
         self.clear()
         self.print_lesson(4, "Your First PyMODI Project")
+
         self.print_wrap("Let's make a project that blinks led when button "
                         "is pressed.")
         self.print_wrap("In an infinite loop, we want our led to light up "
