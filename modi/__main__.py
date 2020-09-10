@@ -102,13 +102,9 @@ if __name__ == "__main__":
         else:
             bundle = modi.MODI(verbose=check_option('-v', '--verbose'))
         fin_time = time.time()
-        print(f'Took {fin_time - init_time:.2f} seconds to finish the job')
+        print(f'Took {fin_time - init_time:.2f} seconds to init MODI modules')
 
         for module in bundle.modules:
             module_name = type(module).__name__.lower()
             print(">>> " + module_name + " = bundle." + module_name + "s[0]")
-            init_time = time.time()
             exec(module_name + " = module")
-            fin_time = time.time()
-            print(f'Took {fin_time - init_time:.2f} seconds '
-                  f'to get {module_name}')
