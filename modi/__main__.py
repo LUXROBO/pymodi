@@ -43,10 +43,21 @@ if __name__ == "__main__":
     )
 
     try:
+        # all commands should be defined here in advance
         opts, args = getopt(
-            sys.argv[1:], 'tduhvpg',
-            ["tutorial", "debug", "update", "help", "verbose", "performance", "gui"]
+            sys.argv[1:], 'tduhvpgi',
+            [
+                "tutorial",
+                "debug",
+                "update",
+                "help",
+                "verbose",
+                "performance",
+                "gui",
+                "inspect"
+            ]
         )
+    # exit program if an invalid option has been entered
     except GetoptError as err:
         print(str(err))
         print(usage)
@@ -131,3 +142,8 @@ if __name__ == "__main__":
             module_name = type(module).__name__.lower()
             print(">>> " + module_name + " = bundle." + module_name + "s[0]")
             exec(module_name + " = module")
+
+    # Run inspection mode
+    if check_option('-i', '--inspect'):
+        print("inspection mode has not been implemented yet!")
+        os._exit(0)
