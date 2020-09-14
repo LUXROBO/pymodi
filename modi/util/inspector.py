@@ -177,8 +177,29 @@ class Inspector:
         )
         input("\nTo inspect next module, press ENTER to continue: ")
 
-    def inspect_speaker(self, speaker):
-        pass
+    def inspect_speaker(self, speaker, i, nb_modules):
+        self.print_wrap(
+            """
+            Speaker module has tune as its property, tune is composed of
+            frequency and volume. Thus inspecting the tune property consists of
+            inspecting frequency and volume properties.
+            """
+        )
+        self.clear()
+
+        self.print_module_page(speaker, i, nb_modules)
+        self.print_wrap(
+            """
+            To inspect tune property, we have set frequency of 880 and volume
+            of 50.
+            """
+        )
+        speaker.tune = 880, 50
+        input(dedent(
+            "\nPress ENTER if you hear a gentle sound from the speaker module!"
+        ))
+        speaker.tune = 880, 0
+        self.clear()
 
     #
     # Main methods are defined below
