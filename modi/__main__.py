@@ -7,6 +7,7 @@ from getopt import getopt, GetoptError
 
 import modi
 
+from modi.debugger import Debugger
 from modi.util.tutor import Tutor
 from modi.util.inspector import Inspector
 
@@ -149,7 +150,6 @@ if __name__ == "__main__":
     if check_option('-g', '--gui'):
         print(">>> bundle = modi.MODI()")
         init_time = time.time()
-        from modi.debugger import Debugger
         bundle = Debugger()
         fin_time = time.time()
         print(f'Took {fin_time - init_time:.2f} seconds to init MODI modules')

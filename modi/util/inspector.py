@@ -1,5 +1,4 @@
 import os
-import time
 
 from textwrap import fill
 from textwrap import dedent
@@ -52,7 +51,7 @@ class Inspector:
             "motor": self.inspect_motor,
             "speaker": self.inspect_speaker,
         }.get(module.module_type)
-        inspect_module(module)
+        inspect_module(module, i, nb_modules)
 
         self.clear()
 
@@ -80,8 +79,48 @@ class Inspector:
     def inspect_display(self, display):
         pass
 
-    def inspect_led(self, led):
-        pass
+    def inspect_led(self, led, i, nb_modules):
+        self.print_wrap(
+            """
+            LED module has red, green and blue as its property. We will inspect
+            these properties each.
+            """
+        )
+        input("\nPress ENTER to continue: ")
+        self.clear()
+
+        self.print_module_page(led, i, nb_modules)
+        self.print_wrap(
+            """
+            To inspect RED, We have set LED's RED to its maximum intensity.
+            """
+        )
+        led.rgb = 255, 0, 0
+        input("\nIf you see strong red from the led module, Press ENTER: ")
+        self.clear()
+
+        self.print_module_page(led, i, nb_modules)
+        self.print_wrap(
+            """
+            To inspect GREEN, We have set LED's GREEN to its maximum intensity.
+            """
+        )
+        led.rgb = 0, 255, 0
+        input("\nIf you see strong green from the led module, Press ENTER: ")
+        self.clear()
+
+        self.print_module_page(led, i, nb_modules)
+        self.print_wrap(
+            """
+            To inspect BLUE, We have set LED's BLUE to its maximum intensity.
+            """
+        )
+        led.rgb = 0, 0, 255
+        input("\nIf you see strong blue from the led module, Press ENTER: ")
+        self.clear()
+
+        self.print_module_page(led, i, nb_modules)
+        input("To inspect next module, press ENTER to continue:")
 
     def inspect_motor(self, motor):
         pass
