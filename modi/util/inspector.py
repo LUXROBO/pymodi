@@ -26,10 +26,11 @@ class Inspector:
 
     def print_module_page(self, module, i, nb_modules):
         print('-' * self.row_len)
-        module_to_inspect = f"| Diagnosing {module.module_type} ({module.id})"
-        progress = f"({i+1} / {nb_modules}) |"
-        s = f"{module_to_inspect:<{self.row_len}}"
-        s = progress.join(s.rsplit(' '*len(progress), 1))
+        module_to_inspect = \
+            f"| {' ' * 5} Diagnosing {module.module_type} ({module.id})"
+        progress_indicator = f"({i + 1} / {nb_modules}) {' ' * 5} |"
+        ls = f"{module_to_inspect:<{self.row_len}}"
+        s = progress_indicator.join(ls.rsplit(' ' * len(progress_indicator), 1))
         print(s)
         print('-' * self.row_len)
 
