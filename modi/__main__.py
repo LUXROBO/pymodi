@@ -42,7 +42,6 @@ if __name__ == "__main__":
              Usage: python -m modi --tutorial
         -d, --debug: Auto initialize debugging mode
              Usage: python -m modi --debug -n <nb_modules>
-             If you want to use debugger in an interactive shell, use: python -im modi -d
         """.rstrip()
     )
 
