@@ -77,8 +77,23 @@ class Inspector:
     def inspect_ultrasound(self, ultrasound):
         pass
 
-    def inspect_display(self, display):
-        pass
+    def inspect_display(self, display, i, nb_modules):
+        self.print_wrap(
+            """
+            Display module has a text field as its property. We wil inspect
+            this property for the module.
+            """
+        )
+        self.clear()
+
+        self.print_module_page(display, i, nb_modules)
+        display.text = "Hello MODI!"
+        input(dedent(
+            """
+            We have set "Hello MODI!" as its text, if you see this press ENTER:
+            """.lstrip().rstrip() + " "
+        ))
+        display.text = ""
 
     def inspect_led(self, led, i, nb_modules):
         self.print_wrap(
