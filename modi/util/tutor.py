@@ -54,7 +54,8 @@ class Tutor:
             PyMODI is a very powerful tool that can control the MODI modules
             using python scripts. As long as you learn how to use built-in
             functions of PyMODI, you can easily control MODI modules. This
-            interactive CUI tutorial will guide you through the world of PyMODI.
+            interactive CUI tutorial will guide you through the world of
+            PyMODI.
             """
         )
 
@@ -78,17 +79,26 @@ class Tutor:
 
         # Skip lesson 1
         if lesson_nb > 1:
+            print("=" * self.row_len)
+            print(f"= {'Preparing the modi object...':^{self.row_len - 4}} =")
+            print("=" * self.row_len)
             import modi
-            print("Preparing the MODI module...")
-            input(
-                "Connect buttton and led module to your device and press ENTER"
+            self.print_wrap(
+                """
+                In order to skip the first lesson, we need to set-up the
+                prerequisites. Thus, connect button and led module to your
+                device.
+                """
             )
+            input("\nif the modules are ready, press ENTER to continue: ")
+            print()
+
             self.bundle = modi.MODI()
 
         # Skip lesson 2
         if lesson_nb > 2:
-            self.led = self.bundle.leds[0]
             self.button = self.bundle.buttons[0]
+            self.led = self.bundle.leds[0]
 
         run_selected_lesson = {
             1: self.run_lesson1,
@@ -206,11 +216,11 @@ class Tutor:
             Now you know how to access individual modules.
 
             Let's make an object named "button" as well for your button module.
-            You know how to do it.
+            You know how to do it (You have the modi object, "bundle").
             """
         )
 
-        self.check_user_input('button = bundle.buttons[0]', False)
+        self.check_user_input("button = bundle.buttons[0]", False)
         button = self.bundle.buttons[0]
         self.button = button
         print()
@@ -222,17 +232,17 @@ class Tutor:
             """
         )
 
+        print()
         self.print_wrap(
             """
-            pressed is a property method of a button module which returns
-            whether the button is pressed or note.
-
-            Check the press state of button by typing button.pressed
+            "pressed" is a property method of a button module which returns
+            whether the button is pressed or not (i.e. press state).
             """
         )
+        print("Check the press state of the button by typing button.pressed")
 
         self.check_user_input("button.pressed")
-        print(button.get_pressed())
+        print(button.pressed)
         print()
 
         self.print_wrap(
@@ -241,18 +251,17 @@ class Tutor:
             """
         )
 
-        self.check_user_input('button.pressed')
-        print(button.get_pressed())
+        self.check_user_input("button.pressed")
+        print(button.pressed)
         print()
 
         self.print_wrap(
             """
-            Good. Now, let's send a command to the led.
-
-            led's rgb is a property or setter method of an led module.
-            Let there be light by typing led.rgb = 0, 0, 255
+            Good. Now let's send a command to the led module. Led's rgb is a
+            property or setter method of an led module.
             """
         )
+        print("Let there be light by typing led.rgb = 0, 0, 255")
 
         response = self.check_user_input("led.rgb = 0, 0, 255")
         exec(response)
