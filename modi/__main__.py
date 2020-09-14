@@ -141,7 +141,7 @@ if __name__ == "__main__":
         print(f'Took {fin_time - init_time:.2f} seconds to init MODI modules')
 
         for module in bundle.modules:
-            module_name = type(module).__name__.lower()
+            module_name = module.module_type.lower()
             print(">>> " + module_name + " = bundle." + module_name + "s[0]")
             exec(module_name + " = module")
 
@@ -154,7 +154,7 @@ if __name__ == "__main__":
         fin_time = time.time()
         print(f'Took {fin_time - init_time:.2f} seconds to init MODI modules')
         for module in bundle.modules:
-            module_name = type(module).__name__.lower()
+            module_name = module.module_type.lower()
             print(">>> " + module_name + " = bundle." + module_name + "s[0]")
             exec(module_name + " = module")
 
