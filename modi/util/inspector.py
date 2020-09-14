@@ -1,4 +1,5 @@
 import os
+import time
 
 from textwrap import fill
 from textwrap import dedent
@@ -120,10 +121,61 @@ class Inspector:
         self.clear()
 
         self.print_module_page(led, i, nb_modules)
-        input("To inspect next module, press ENTER to continue:")
+        input(dedent(
+            f"""
+            It looks like the LED module ({led.id}) is properly functioning!
+            To inspect next module, press ENTER to continue:
+            """
+        ))
 
-    def inspect_motor(self, motor):
-        pass
+    def inspect_motor(self, motor, i, nb_modules):
+        self.print_wrap(
+            """
+            Motor module has degree (i.e. position), speed and torque as its
+            property. We will inspect position property of the module.
+            """
+        )
+        print()
+        self.print_wrap(
+            """
+            Before continuing, we have set motors' initial position to zero
+            (your motor module may have moved a bit), so be clam :)
+            """
+        )
+        input("\nPress ENTER to continue: ")
+        self.clear()
+        motor.degree = 0, 0
+
+        self.print_module_page(motor, i, nb_modules)
+        self.print_wrap(
+            """
+            Firstly, in order to inspect position property, we have rotated 360
+            degree of the first motor.
+            """
+        )
+        motor.first_degree = 100
+        time.sleep(1.5)
+        input("\nIf the first motor has rotated 360 degrees, press ENTER: ")
+        print()
+        self.print_wrap(
+            """
+            Secondly, in order to inspect position property, we have rotated
+            360 degree of the second motor.
+            """
+        )
+        motor.second_degree = 100
+        time.sleep(1.5)
+        input("\nIf the second motor has rotated 360 degrees, press ENTER: ")
+        self.clear()
+
+        self.print_module_page(motor, i, nb_modules)
+        self.print_wrap(
+            f"""
+            It looks like the motor module ({motor.id}) is properly
+            functioning!
+            """
+        )
+        input("\nTo inspect next module, press ENTER to continue: ")
 
     def inspect_speaker(self, speaker):
         pass
@@ -186,7 +238,7 @@ class Inspector:
             It looks like all stm modules have been initialized properly! Let's
             diagnose each module, one by one!
 
-            press ENTER to continue:
+            Press ENTER to continue:
             """.rstrip() + " "
         ))
         self.clear()
