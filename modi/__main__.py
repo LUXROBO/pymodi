@@ -83,7 +83,7 @@ if __name__ == "__main__":
         pymodi_tutor.run_introduction()
         os._exit(0)
 
-    # Time message transfer to measure its performance
+    # Time message transfer between local machine and network module
     if check_option('-p', '--performance'):
         print("[PyMODI Performance Test]" + "\n" + "=" * 25)
         init_time = time.time()
@@ -94,17 +94,18 @@ if __name__ == "__main__":
         time.sleep(0.5*len(bundle.modules))
         bundle.print_topology_map(True)
         print(f"Took {took} seconds to initialize")
-        msg1 = parse_message(0x07, 0, bundle.modules[0].id)
-        msg2 = parse_message(0x2A, 0, bundle.modules[0].id)
-        print(f"sending request message... {msg1}")
+        req_tp_msg = parse_message(0x2A, 0, bundle.networks[0].id)
+        print(f"sending request message... {req_tp_msg}")
         bundle._exe_thrd.close()
         init_time = time.perf_counter()
-        bundle.send(msg1)
-        bundle.send(msg2)
+        bundle.send(req_tp_msg)
+        msg = None
         while True:
             msg = bundle.recv()
-            recv_cmd = decode_message(msg)[0] if msg else None
-            if msg and recv_cmd == 0x07:
+            if not msg:
+                continue
+            recv_cmd = decode_message(msg)[0]
+            if recv_cmd == 0x07:
                 break
         fin_time = time.perf_counter()
         took = fin_time - init_time
