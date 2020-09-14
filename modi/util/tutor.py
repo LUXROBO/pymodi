@@ -209,6 +209,7 @@ class Tutor:
         self.run_lesson3()
 
     def run_lesson3(self):
+        led = self.led
         self.clear()
         self.print_lesson(3, "Controlling modules")
         self.print_wrap(
@@ -276,7 +277,10 @@ class Tutor:
         input("\nYou have completed this lesson. Press ENTER to continue.")
         self.run_lesson4()
 
-    def run_lesson4(self, bundle, led, button):
+    def run_lesson4(self):
+        button = self.button
+        led = self.led
+
         self.clear()
         self.print_lesson(4, "Your First PyMODI Project(i.e. Creation)")
 
@@ -293,7 +297,7 @@ class Tutor:
             """
         )
 
-        input("\nPress ENTER when you're ready!")
+        input("\nPress ENTER when you're ready! ")
         self.clear()
 
         print(">>> while True:")
@@ -312,12 +316,13 @@ class Tutor:
         self.check_user_input(
             "led.rgb = 0, 0, 0", give_answer=False, guide="...         "
         )
+        print()
 
         self.print_wrap(
             """
             Congrats!! Now let's see if the code works as we want.
             Press the button to light up the led. Double click the button to
-            break out of the loop
+            break out of the loop.
             """
         )
 
@@ -332,13 +337,12 @@ class Tutor:
         print()
         self.print_wrap(
             """
-            It looks great!
-            Now you know how to use PyMODI to control modules.
-
-            You can look up more functions at
-            pymodi.readthedocs.io/en/latest\n
+            It looks great! Now you know how to use PyMODI to control modules.
             """
         )
+        print(
+            'You can check more functions at "pymodi.readthedocs.io/en/latest"'
+        )
 
-        input("\nYou have completed the tutorial. Press ENTER to exit")
+        input("You have completed the tutorial. Press ENTER to exit: ")
         os._exit(0)
