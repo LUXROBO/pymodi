@@ -150,27 +150,28 @@ class Tutor:
             """
             "bundle.modules" is a method to get all the modules connected to
             the device.
-            Type: bundle.modules
             """
         )
+        print("\nType: bundle.modules")
         self.check_user_input("bundle.modules")
         print(self.bundle.modules)
         print()
 
         self.print_wrap(
             """
-            You can see two modules connected to the device. You can access
-            each module by the same method we use with an array.
+            You can see two modules connected (excluding the network module) to
+            the machine. You can access each module by the same method we use
+            with an array.
             """
         )
         self.print_wrap(
             """
             You can also access modules by types.
-            Type: bundle.leds
             """
         )
+        print("\nType: bundle.leds")
 
-        self.check_user_input('bundle.leds')
+        self.check_user_input("bundle.leds")
         print(self.bundle.leds)
         print()
         self.print_wrap(
@@ -178,11 +179,11 @@ class Tutor:
             If you have followed previous instructions correctly, there must be
             one led module connected to the network module. Now, make an led
             variable by accessing the first led module.
-            Type: led = bundle.leds[0]
             """
         )
+        print("\nType: led = bundle.leds[0]")
 
-        self.check_user_input('led = bundle.leds[0]')
+        self.check_user_input("led = bundle.leds[0]")
         led = self.bundle.leds[0]
         self.led = led
         print()
@@ -194,7 +195,7 @@ class Tutor:
             """
         )
 
-        input("\nYou have completed this lesson. Press ENTER to continue.")
+        input("\nYou have completed this lesson. Press ENTER to continue: ")
         self.run_lesson3()
 
     def run_lesson3(self):
