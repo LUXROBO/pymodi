@@ -91,7 +91,7 @@ if __name__ == "__main__":
         fin_time = time.time()
         took = (fin_time - init_time) * 100 // 1 / 100
         print("Hard waiting for topology data to be initialized...")
-        time.sleep(0.5*len(bundle.modules))
+        time.sleep(0.5 * len(bundle.modules))
         bundle.print_topology_map(True)
         print(f"Took {took} seconds to initialize")
         req_tp_msg = parse_message(0x2A, 0, bundle.networks[0].id)
