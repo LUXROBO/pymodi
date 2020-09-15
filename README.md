@@ -98,7 +98,7 @@ If you are still not sure how to use PyMODI, you can play an interactive PyMODI 
 ```commandline
 $ python -m modi --tutorial
 ```
-Moreover, we provide some [usage and creation examples](examples), as well as a [descriptive web page](luxrobo.github.io/pymodi).
+Moreover, we provide some [usage and creation examples](examples), as well as a [descriptive web page](https://luxrobo.github.io/pymodi).
 
 Additional Usage
 ----------------
