@@ -1,9 +1,31 @@
 import os
 import time
 
+import threading as th
+
 from textwrap import fill
 from textwrap import dedent
 
+
+class StoppableThread(th.Thread):
+
+    def __init__(self, module, method):
+        super(StoppableThread, self).__init__(daemon=True)
+        self._stop = th.Event()
+        self._module = module
+        self._method = method
+
+    def stop(self):
+        self._stop.set()
+
+    def stopped(self):
+        return self._stop.isSet()
+
+    def run(self):
+        while True:
+            prop = eval(f"self._module.{self._method}")
+            print(f"\rObtained property value: {prop}", end="")
+            time.sleep(0.01)
 
 class Inspector:
     """
@@ -45,7 +67,7 @@ class Inspector:
             "gyro": self.inspect_gyro,
             "ir": self.inspect_ir,
             "mic": self.inspect_mic,
-            "ultrasound": self.inspect_ultrasound,
+            "ultrasonic": self.inspect_ultrasonic,
 
             # inspection method for input modules
             "display": self.inspect_display,
@@ -57,26 +79,39 @@ class Inspector:
 
         self.clear()
 
-    def inspect_button(self, button):
+    def inspect_button(self, button, i, nb_modules):
         pass
 
-    def inspect_dial(self, dial):
+    def inspect_dial(self, dial, i, nb_modules):
         pass
 
-    def inspect_env(self, env):
+    def inspect_env(self, env, i, nb_moudles):
         pass
 
-    def inspect_gyro(self, gyro):
+    def inspect_gyro(self, gyro, i, nb_modules):
         pass
 
-    def inspect_ir(self, ir):
+    def inspect_ir(self, ir, i, nb_modules):
         pass
 
-    def inspect_mic(self, mic):
-        pass
+    def inspect_mic(self, mic, i, nb_modules):
+        input("\nIf the frequency shown seems reasonable, press ENTER: ")
+        input("\nIf the volume shown seems reasonable, press ENTER: ")
 
-    def inspect_ultrasound(self, ultrasound):
-        pass
+    def inspect_ultrasonic(self, ultrasonic, i, nb_modules):
+        self.print_wrap(
+            """
+            Ultrasonic module has distance as its property. To inspect this
+            module, place ultrasonic towards an obstacle (e.g. a wall) to
+            measure the distance.
+            """
+        )
+
+        print("\nIf the value obtained below seems correct, press ENTER: \n")
+        t = StoppableThread(ultrasonic, "distance")
+        t.start()
+        input()
+        t.stop()
 
     def inspect_display(self, display, i, nb_modules):
         self.print_wrap(
