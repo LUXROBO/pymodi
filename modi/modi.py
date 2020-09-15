@@ -2,10 +2,9 @@
 
 import atexit
 import time
-import sys
-
 from importlib import import_module as im
 from typing import Optional
+import sys
 
 from modi._exe_thrd import ExeThrd
 from modi.util.conn_util import is_network_module_connected, is_on_pi
@@ -20,9 +19,6 @@ class MODI:
 
     def __init__(self, conn_mode: str = "", verbose: bool = False,
                  port: str = None, uuid=""):
-        if conn_mode == 'ble' and 'darwin' in sys.platform:
-            print("BLE Connection not supported on macOS")
-            exit(0)
         self._modules = list()
         self._topology_data = dict()
 
@@ -81,6 +77,17 @@ class MODI:
         return bad_modules
 
     @staticmethod
+    def upload_user_code(filepath: str, remote_path: str) -> None:
+        """Upload python user code
+
+        :param filepath: Filepath to python file
+        :type filepath: str
+        :param remote_path: Filepath on esp device
+        :return: None
+        """
+        upload_file(filepath, remote_path)
+
+    @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
         if not conn_mode:
             is_can = not is_network_module_connected() and is_on_pi()
@@ -91,7 +98,12 @@ class MODI:
         elif conn_mode == 'can':
             return im('modi.task.can_task').CanTask(verbose)
         elif conn_mode == 'ble':
-            return im('modi.task.ble_task').BleTask(verbose, uuid)
+            mod_path = {
+                'win32': 'modi.task.ble.ble_task_win',
+                'linux': 'modi.task.ble.ble_task_pi',
+                'darwin': 'modi.task.ble.ble_task_mac',
+            }.get(sys.platform)
+            return im(mod_path).BleTask(verbose, uuid)
         else:
             raise ValueError(f'Invalid conn mode {conn_mode}')
 

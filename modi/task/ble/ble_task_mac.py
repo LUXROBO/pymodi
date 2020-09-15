@@ -7,21 +7,33 @@ from queue import Queue
 from threading import Thread
 
 from bleak import discover, BleakClient, BleakError
+from bleak.backends.corebluetooth import client as mac_client
 
 from modi.task.conn_task import ConnTask
 from modi.util.conn_util import MODIConnectionError
+from modi.util.misc import ask_modi_device
 
 
 class BleTask(ConnTask):
 
+    CHAR_UUID = '00008421-0000-1000-8000-00805f9b34fb'
+
     def __init__(self, verbose=False, uuid=None):
         super().__init__(verbose=verbose)
+        print("Initiating ble connection...")
         self._loop = asyncio.get_event_loop()
         self.__uuid = uuid
-        self.__char_uuid = ""
         self._recv_q = Queue()
         self._send_q = Queue()
         self.__close_event = False
+        self.__get_service = \
+            mac_client.BleakClientCoreBluetooth.get_services
+        mac_client.BleakClientCoreBluetooth.get_services = \
+            self.mac_get_service
+
+    @staticmethod
+    async def mac_get_service(self):
+        return True
 
     async def _list_modi_devices(self):
         devices = await discover(timeout=1)
@@ -30,52 +42,52 @@ class BleTask(ConnTask):
             if 'MODI' in d.name:
                 modi_devies.append(d)
         if not self.__uuid:
-            return modi_devies[0]
-        else:
-            for d in modi_devies:
-                if self.__uuid in d.name:
-                    return d
-            return None
+            self.__uuid = ask_modi_device(
+                [d.name.upper() for d in modi_devies])
+        for d in modi_devies:
+            if self.__uuid in d.name.upper():
+                return d
+        return None
 
     async def __connect(self, address):
-        client = BleakClient(address, self._loop)
+        client = BleakClient(address, self._loop, timeout=1)
         await client.connect(timeout=1)
+        await asyncio.sleep(1)
+        await self.__get_service(client)
         return client
-
-    async def __get_characteristic_uuid(self):
-        for service in self._bus.services:
-            for char in service.characteristics:
-                if 'notify' in char.properties:
-                    return char.uuid
 
     def __run_loop(self):
         asyncio.set_event_loop(self._loop)
-        self._loop.run_until_complete(self.__communicate())
+        tasks = asyncio.gather(self.__send_handler(), self.__watch_notify())
+        self._loop.run_until_complete(tasks)
 
-    async def __communicate(self):
-        await self._bus.start_notify(self.__char_uuid, self.__recv_handler)
+    async def __watch_notify(self):
+        await self._bus.start_notify(self.CHAR_UUID, self.__recv_handler)
+        while True:
+            await asyncio.sleep(0.001)
+            if self.__close_event:
+                break
+
+    async def __send_handler(self):
         while True:
             if self._send_q.empty():
                 await asyncio.sleep(0.001)
             else:
                 await self._bus.write_gatt_char(
-                    self.__char_uuid, self._send_q.get()
+                    self.CHAR_UUID, self._send_q.get()
                 )
             if self.__close_event:
                 break
 
     def __recv_handler(self, _, data):
-        self._recv_q.put(data)
+        self._recv_q.put(self.__parse_ble_msg(data))
 
     def open_conn(self):
-        print("Initiating bluetooth connection...")
-        modi_device = self._loop.run_until_complete(self._list_modi_devices())
+        loop = asyncio.get_event_loop()
+        modi_device = loop.run_until_complete(self._list_modi_devices())
         if modi_device:
             self._bus = self._loop.run_until_complete(
                 self.__connect(modi_device.address)
-            )
-            self.__char_uuid = self._loop.run_until_complete(
-                self.__get_characteristic_uuid()
             )
             Thread(target=self.__run_loop, daemon=True).start()
             print(f"Connected to {modi_device.name}")
@@ -85,7 +97,7 @@ class BleTask(ConnTask):
 
     async def __close_client(self):
         try:
-            await self._bus.stop_notify(self.__char_uuid)
+            await self._bus.stop_notify(self.CHAR_UUID)
             await self._bus.disconnect()
         except BleakError:
             pass
@@ -100,7 +112,7 @@ class BleTask(ConnTask):
     def recv(self) -> Optional[str]:
         if self._recv_q.empty():
             return None
-        json_pkt = self.__parse_ble_msg(self._recv_q.get())
+        json_pkt = self._recv_q.get()
         if self.verbose:
             print(f'recv: {json_pkt}')
         return json_pkt
@@ -108,6 +120,8 @@ class BleTask(ConnTask):
     @ConnTask.wait
     def send(self, pkt: str) -> None:
         self._send_q.put(self.__compose_ble_msg(pkt))
+        while not self._send_q.empty():
+            time.sleep(0.01)
         if self.verbose:
             print(f'send: {pkt}')
 

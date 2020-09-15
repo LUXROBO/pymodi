@@ -46,6 +46,8 @@ class ConnTask(ABC):
         Make sure this is attached to inherited send method
         """
         def decorator(self, pkt: str) -> None:
+            init_time = time.perf_counter()
             func(self, pkt)
-            time.sleep(0.04)
+            while time.perf_counter() - init_time < 0.04:
+                pass
         return decorator

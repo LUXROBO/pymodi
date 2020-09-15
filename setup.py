@@ -35,7 +35,7 @@ setup(
     include_package_data=True,
     keywords=["python", "modi"],
     packages=find_packages(include=['modi', 'modi.util', 'modi.task',
-                                    'modi.module',
+                                    'modi.task.ble', 'modi.module',
                                     'modi.module.setup_module',
                                     'modi.module.input_module',
                                     'modi.module.output_module']),

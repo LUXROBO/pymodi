@@ -1,4 +1,6 @@
 pyserial
 python-can
-bleak
 adafruit-ampy
+pythonnet; sys_platform == 'win32'
+bleak; sys_platform == 'darwin'
+pexpect; sys_platform == 'linux'

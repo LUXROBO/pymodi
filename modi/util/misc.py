@@ -45,6 +45,13 @@ def get_module_from_name(module_type: str):
     return getattr(module_module, module_name)
 
 
+def ask_modi_device(devices):
+    for idx, dev in enumerate(devices):
+        print(f"<{idx}>: {dev}")
+    i = input("Choose your device index (ex: 0) : ")
+    return devices[int(i)].lstrip('MODI_')
+
+
 class module_list(list):
 
     def __init__(self, src, module_type=None):
