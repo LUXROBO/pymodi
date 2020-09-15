@@ -1,7 +1,8 @@
 import unittest
 
-from queue import Queue
 from modi.module.input_module.ir import Ir
+from modi.util.msgutil import parse_message
+from modi.util.misc import MockConn
 
 
 class TestIr(unittest.TestCase):
@@ -9,8 +10,8 @@ class TestIr(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.send_q = Queue()
-        mock_args = (-1, -1, self.send_q)
+        self.conn = MockConn()
+        mock_args = (-1, -1, self.conn)
         self.ir = Ir(*mock_args)
 
     def tearDown(self):
@@ -21,8 +22,10 @@ class TestIr(unittest.TestCase):
         """Test get_proximity method."""
         _ = self.ir.proximity
         self.assertEqual(
-            self.send_q.get(),
-            Ir.request_property(-1, Ir.PropertyType.PROXIMITY))
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Ir.PROXIMITY, None, 95, None))
+        )
 
 
 if __name__ == "__main__":

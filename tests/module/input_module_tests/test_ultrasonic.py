@@ -1,7 +1,8 @@
 import unittest
 
-from queue import Queue
 from modi.module.input_module.ultrasonic import Ultrasonic
+from modi.util.msgutil import parse_message
+from modi.util.misc import MockConn
 
 
 class TestUltrasonic(unittest.TestCase):
@@ -9,8 +10,8 @@ class TestUltrasonic(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.send_q = Queue()
-        mock_args = (-1, -1, self.send_q)
+        self.conn = MockConn()
+        mock_args = (-1, -1, self.conn)
         self.ultrasonic = Ultrasonic(*mock_args)
 
     def tearDown(self):
@@ -21,8 +22,10 @@ class TestUltrasonic(unittest.TestCase):
         """Test get_distance method."""
         _ = self.ultrasonic.distance
         self.assertEqual(
-            self.send_q.get(),
-            Ultrasonic.request_property(-1, Ultrasonic.PropertyType.DISTANCE))
+            self.conn.send_list[0],
+            parse_message(0x03, 0, -1,
+                          (Ultrasonic.DISTANCE, None, 95, None))
+        )
 
 
 if __name__ == '__main__':

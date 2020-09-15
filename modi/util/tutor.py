@@ -2,36 +2,34 @@ import os
 import time
 
 from textwrap import fill
+from textwrap import dedent
 
 
 class Tutor:
+    row_len = 79
 
     def __init__(self):
         self.bundle = None
         self.led = None
         self.button = None
-        self.row = 70
 
     @staticmethod
     def clear():
-        clear_cmd = 'clear'
-        if os.name == 'nt':
-            clear_cmd = 'cls'
+        clear_cmd = 'cls' if os.name == 'nt' else 'clear'
         os.system(clear_cmd)
 
-    def print_wrap(self, msg: str):
-        message = fill(msg, self.row)
+    def print_wrap(self, msg):
+        message = fill(dedent(msg), self.row_len).lstrip()
         print(message)
 
     def print_lesson(self, lesson, title):
-        print('-' * self.row)
+        print('-' * self.row_len)
         topic = f"Lesson {lesson}: {title}"
-        print(f"{topic:^{self.row}}")
-        print('-' * self.row)
+        print(f"{topic:^{self.row_len}}")
+        print('-' * self.row_len)
 
     @staticmethod
-    def check_response(answer: str, give_answer: bool = True,
-                       guide: str = ">>> "):
+    def check_user_input(answer, give_answer=True, guide=">>> "):
         response = input(guide)
         nb_wrong = 1
         while response != answer:
@@ -45,205 +43,307 @@ class Tutor:
             nb_wrong += 1
         return response
 
+    def run_introduction(self):
+        self.clear()
+        print("=" * self.row_len)
+        print(f"= {'Welcome to the PyMODI Tutor':^{self.row_len - 4}} =")
+        print("=" * self.row_len)
+
+        self.print_wrap(
+            """
+            PyMODI is a very powerful tool that can control the MODI modules
+            using python scripts. As long as you learn how to use built-in
+            functions of PyMODI, you can easily control MODI modules. This
+            interactive CUI tutorial will guide you through the world of
+            PyMODI.
+            """
+        )
+
+        selection = dedent(
+            """
+            Tutorial includes:
+            1. Making MODI
+            2. Accessing Modules
+            3. Controlling Modules
+            4. Your First PyMODI Project
+            """
+        )
+        print(selection)
+
+        lesson_nb = int(input("Enter the lesson number and press ENTER: "))
+        self.clear()
+
+        if not (0 < lesson_nb < 5):
+            print("ERROR: lesson_nb must be one of 1, 2, 3 or 4")
+            os._exit(0)
+
+        # Skip lesson 1
+        if lesson_nb > 1:
+            print("=" * self.row_len)
+            print(f"= {'Preparing the modi object...':^{self.row_len - 4}} =")
+            print("=" * self.row_len)
+            import modi
+            self.print_wrap(
+                """
+                In order to skip the first lesson, we need to set-up the
+                prerequisites. Thus, connect button and led module to your
+                device.
+                """
+            )
+            input("\nif the modules are ready, press ENTER to continue: ")
+            print()
+
+            self.bundle = modi.MODI()
+
+        # Skip lesson 2
+        if lesson_nb > 2:
+            self.button = self.bundle.buttons[0]
+            self.led = self.bundle.leds[0]
+
+        run_selected_lesson = {
+            1: self.run_lesson1,
+            2: self.run_lesson2,
+            3: self.run_lesson3,
+            4: self.run_lesson4,
+        }.get(lesson_nb)
+        run_selected_lesson()
+
     def run_lesson1(self):
         self.print_lesson(1, "Making MODI")
-        self.print_wrap('First, you should import modi. Type import modi')
+        self.print_wrap('First, you should import modi. Type "import modi"')
 
-        self.check_response('import modi')
+        self.check_user_input('import modi')
         import modi
-        self.print_wrap("Great! Now you can use all the features of modi\n")
-        self.print_wrap("To control the modules, make a MODI object that "
-                        "contains all the connected modules. Once you create "
-                        "it, it will automatically find all the modules "
-                        "connected. When creating the MODI object, you should "
-                        "specify the number of modules currently connected to"
-                        " the network module.\n")
+        print("\nGreat! Now you can use all the features of MODI!\n")
+
+        self.print_wrap(
+            """
+            To control the modules, make a MODI object that contains all the
+            connected modules. Once you create it, it will automatically find
+            all the modules connected to the network module.
+            """
+        )
         input("\nPress ENTER")
         self.clear()
-        self.print_wrap("\nNow, prepare real MODI modules. Connect a network "
-                        "module to your device. Then, connect a Button module "
-                        "and an Led module.\nSince you have 2 module connected"
-                        " to the network module, make a MODI object by typing "
-                        "bundle = modi.MODI(2)")
 
-        self.check_response('bundle = modi.MODI(2)')
-        bundle = modi.MODI(2)
-        print()
-        self.print_wrap('Great! The "bundle" is your MODI object. With it, '
-                        'you can control all the modules connected to your '
-                        'device.')
-        input("\nYou have completed this lesson.\nPress ENTER")
+        self.print_wrap(
+            """
+            Now, prepare real MODI modules. Connect a network module to your
+            computing device. Then, connect a Button module and an Led module.
+            Make a MODI bundle object by typing bundle = modi.MODI()
+            """
+        )
+        self.check_user_input('bundle = modi.MODI()')
+        bundle = modi.MODI()
+
+        self.print_wrap(
+            """
+            Great! The "bundle" is your MODI object. With it, you can control
+            all the modules connected to your device.
+            """
+        )
+        input("\nYou have completed this lesson. Press ENTER to continue.")
         self.bundle = bundle
+        self.run_lesson2()
 
     def run_lesson2(self):
-        # Lesson 2
         self.clear()
         self.print_lesson(2, "Accessing modules")
         self.print_wrap(
-            "In the previous lesson, you created a MODI object. Let's "
-            "figure out how we can access modules connected to it.")
+            """
+            In the previous lesson, you created a MODI object. Let's figure out
+            how we can access modules connected to it.
+            """
+        )
+        print()
         self.print_wrap(
-            '"bundle.modules" is a method to get all the modules connected '
-            'to the device. Type: bundle.modules')
-        self.check_response('bundle.modules')
+            """
+            "bundle.modules" is a method to get all the modules connected to
+            the device.
+            """
+        )
+        print("\nType: bundle.modules")
+        self.check_user_input("bundle.modules")
         print(self.bundle.modules)
         print()
-        self.print_wrap("\nYou can see two modules connected to the device. "
-                        "You can access each module by the same method we use "
-                        "with an array.")
-        self.print_wrap("\nYou can also access modules by types. "
-                        "Type: bundle.leds")
 
-        self.check_response('bundle.leds')
+        self.print_wrap(
+            """
+            You can see two modules connected (excluding the network module) to
+            the machine. You can access each module by the same method we use
+            with an array.
+            """
+        )
+        self.print_wrap(
+            """
+            You can also access modules by types.
+            """
+        )
+        print("\nType: bundle.leds")
+
+        self.check_user_input("bundle.leds")
         print(self.bundle.leds)
         print()
-        self.print_wrap('\nThere is one led module connected. Make an led '
-                        'variable by accessing the first led module. '
-                        'Type: led = bundle.leds[0]')
+        self.print_wrap(
+            """
+            If you have followed previous instructions correctly, there must be
+            one led module connected to the network module. Now, make an led
+            variable by accessing the first led module.
+            """
+        )
+        print("\nType: led = bundle.leds[0]")
 
-        self.check_response('led = bundle.leds[0]')
+        self.check_user_input("led = bundle.leds[0]")
         led = self.bundle.leds[0]
         self.led = led
         print()
-        self.print_wrap("Super! You can now do whatever you want with these "
-                        "modules. If you have different modules connected, you"
-                        " can access the modules in a same way, just typing "
-                        "bundle.<module_name>s")
+        self.print_wrap(
+            """
+            Super! You can now do whatever you want with these modules. If you
+            have different modules connected, you can access the modules in a
+            same way, just typing bundle.<module_name>s"
+            """
+        )
 
-        input("\nYou have completed this lesson.\nPress ENTER")
+        input("\nYou have completed this lesson. Press ENTER to continue: ")
+        self.run_lesson3()
 
     def run_lesson3(self):
+        led = self.led
+        led.rgb = 0, 0, 0
         self.clear()
         self.print_lesson(3, "Controlling modules")
-        self.print_wrap("Now you know how to access individual modules. \n"
-                        "Let's make an object named \"button\" as well for "
-                        "your button module. You know how to do it.")
+        self.print_wrap(
+            """
+            Now you know how to access individual modules.
 
-        self.check_response('button = bundle.buttons[0]', False)
+            Let's make an object named "button" as well for your button module.
+            You know how to do it (You have the modi object, "bundle").
+            """
+        )
+
+        self.check_user_input("button = bundle.buttons[0]", False)
         button = self.bundle.buttons[0]
         self.button = button
         print()
 
-        self.print_wrap("Perfect. With your button module and led module, "
-                        "we can either get data from the module or send "
-                        "command to the module")
+        self.print_wrap(
+            """
+            Perfect. With your button module and led module, we can either get
+            data from the module or send command to the module.
+            """
+        )
 
-        self.print_wrap('get_pressed is a method of a button module which '
-                        'returns whether the button is pressed or note.'
-                        '\nCheck the state of button by typing'
-                        ' button.get_pressed()')
+        print()
+        self.print_wrap(
+            """
+            "pressed" is a property method of a button module which returns
+            whether the button is pressed or not (i.e. press state).
+            """
+        )
+        print("Check the press state of the button by typing button.pressed")
 
-        self.check_response('button.get_pressed()')
-        print(button.get_pressed())
+        self.check_user_input("button.pressed")
+        print(button.pressed)
         print()
 
-        self.print_wrap("Now see if the same command returns True when "
-                        "pressing the button.")
+        self.print_wrap(
+            """
+            Now, see if the same command returns True when pressing the button.
+            """
+        )
 
-        self.check_response('button.get_pressed()')
-        print(button.get_pressed())
+        self.check_user_input("button.pressed")
+        print(button.pressed)
         print()
 
-        self.print_wrap("Good. Now, let's send a command to the led.\n"
-                        "set_rgb() is a method of an led module. Let there be "
-                        "light by typing led.set_rgb(0, 0, 255)")
+        self.print_wrap(
+            """
+            Good. Now let's send a command to the led module. Led's rgb is a
+            property or setter method of an led module.
+            """
+        )
+        print("Let there be light by typing led.rgb = 0, 0, 255")
 
-        response = self.check_response('led.set_rgb(0, 0, 255)')
+        response = self.check_user_input("led.rgb = 0, 0, 255")
         exec(response)
         print()
 
-        self.print_wrap("Perfect! You will see the blue light from the "
-                        "led module.")
+        self.print_wrap(
+            """
+            Perfect! You will see the blue light from the led module.
+            """
+        )
 
-        input("\nYou have completed this lesson.\nPress ENTER")
+        input("\nYou have completed this lesson. Press ENTER to continue.")
+        self.run_lesson4()
 
-    def run_lesson4(self, bundle, led, button):
+    def run_lesson4(self):
+        button = self.button
+        led = self.led
+
         self.clear()
-        self.print_lesson(4, "Your First PyMODI Project")
-        self.print_wrap("Let's make a project that blinks led when button "
-                        "is pressed.")
-        self.print_wrap("In an infinite loop, we want our led to light up "
-                        "when button is pressed, and turn off when not "
-                        "pressed. Complete the following code based on the"
-                        " description.")
+        self.print_lesson(4, "Your First PyMODI Project(i.e. Creation)")
 
-        input("\nPress ENTER when you're ready!")
+        self.print_wrap(
+            """
+            Let's make a PyMODI project that blinks led when button is pressed.
+            """
+        )
+        self.print_wrap(
+            """
+            In an infinite loop, we want our led to light up when button is
+            pressed, and turn off when not pressed. Complete the following code
+            based on the description.
+            """
+        )
+
+        input("\nPress ENTER when you're ready! ")
         self.clear()
+
         print(">>> while True:")
         print("...     # Check if button is pressed")
-        self.check_response('button.get_pressed():', give_answer=False,
-                            guide="...     if ")
+        self.check_user_input(
+            "button.pressed:", give_answer=False, guide="...     if "
+        )
         print("...         # Set Led color to green")
-        self.check_response('led.set_rgb(0, 255, 0)', give_answer=False,
-                            guide="...         ")
-        print("...     elif button.get_double_clicked():")
+        self.check_user_input(
+            "led.rgb = 0, 255, 0", give_answer=False, guide="...         "
+        )
+        print("...     elif button.double_clicked:")
         print("...         break")
         print("...     else:")
-        print("...         # Turn off the led. i.e. set color to (0, 0, 0)")
-        self.check_response('led.set_rgb(0, 0, 0)', give_answer=False,
-                            guide="...         ")
+        print("...         # Turn off the led. (i.e. set color to (0, 0, 0))")
+        self.check_user_input(
+            "led.rgb = 0, 0, 0", give_answer=False, guide="...         "
+        )
+        print()
 
-        self.print_wrap("Congrats!! Now let's see if the code works as we "
-                        "want.\nPress the button to light up the led. Double "
-                        "click the button to break out of the loop")
+        self.print_wrap(
+            """
+            Congrats!! Now let's see if the code works as we want.
+            Press the button to light up the led. Double click the button to
+            break out of the loop.
+            """
+        )
 
         while True:
-            if button.get_pressed():
-                led.set_rgb(0, 255, 0)
-            elif button.get_double_clicked():
+            if button.pressed:
+                led.rgb = 0, 255, 0
+            elif button.double_clicked:
                 break
             else:
-                led.set_off()
-            time.sleep(0.02)
+                led.rgb = 0, 0, 0
+            time.sleep(0.01)
+        print()
+        self.print_wrap(
+            """
+            It looks great! Now you know how to use PyMODI to control modules.
+            """
+        )
+        print(
+            'You can check more functions at "pymodi.readthedocs.io/en/latest"'
+        )
 
-        self.print_wrap("\nIt looks great! "
-                        "Now you know how to use PyMODI to control modules."
-                        "\nYou can look up more functions at "
-                        "pymodi.readthedocs.io/en/latest\n"
-                        )
-
-        input("\nYou have completed the tutorial.\nPress ENTER to exit")
-        self.bundle._com_proc.terminate()
-
-    def start(self):
-        # Intro
-        self.clear()
-        print("=" * self.row)
-        print(f"= {'Welcome to the PyMODI Tutor':^{self.row - 4}} =")
-        print("=" * self.row)
-        self.print_wrap("\nPyMODI is a very powerful tool that can control "
-                        "the MODI modules using python scripts. As long as you"
-                        " learn how to use built-in functions of PyMODI, you "
-                        "can easily control MODI modules. This interactive CUI"
-                        " tutorial will guide you through the "
-                        "marvelous world of PyMODI.")
-
-        print("Tutorial includes:\n"
-              "1. Making MODI\n"
-              "2. Accessing Modules\n"
-              "3. Controlling Modules\n"
-              "4. Your First PyMODI Project")
-
-        lesson_nb = int(input("\nEnter the lesson number and press ENTER: "))
-        self.clear()
-
-        if lesson_nb > 1:
-            import modi
-            print("Preparing the MODI module...")
-            input(
-                "Connect buttton and led module to your device and press "
-                "ENTER")
-            self.bundle = modi.MODI(2)
-
-        if lesson_nb > 2:
-            self.led = self.bundle.leds[0]
-            self.button = self.bundle.buttons[0]
-
-        if lesson_nb <= 1:
-            self.run_lesson1()
-        if lesson_nb <= 2:
-            self.run_lesson2()
-        if lesson_nb <= 3:
-            self.run_lesson3()
-        if lesson_nb <= 4:
-            self.run_lesson4()
+        input("You have completed the tutorial. Press ENTER to exit: ")
+        os._exit(0)

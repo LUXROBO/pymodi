@@ -1,44 +1,18 @@
+from typing import Optional
 
-import os
-import time
-import queue
 import serial
-import traceback
-
 from serial.serialutil import SerialException
-
 from modi.task.conn_task import ConnTask
+from modi.util.conn_util import list_modi_ports
 
 
 class SerTask(ConnTask):
 
-    def __init__(self, ser_recv_q, ser_send_q, verbose, port=None):
-        print("Run Ser Task.")
-        super().__init__(ser_recv_q, ser_send_q)
-        self._ser_recv_q = ser_recv_q
-        self._ser_send_q = ser_send_q
-        self.__verbose = verbose
-        self.__ser = None
-        self.__json_buffer = ""
+    def __init__(self, verbose=False, port=None):
+        print("Initiating serial connection...")
+        super().__init__(verbose)
         self.__port = port
-        if self.__verbose:
-            print('PyMODI log...\n==================================')
-
-    @property
-    def get_serial(self) -> serial.Serial:
-        """Getter method for the serial
-
-        :return: __ser
-        """
-        return self.__ser
-
-    def set_serial(self, ser: serial.Serial) -> None:
-        """Manually sets the __ser
-
-        :param ser: Serial to set the __ser
-        :return: None
-        """
-        self.__ser = ser
+        self.__json_buffer = b''
 
     #
     # Inherited Methods
@@ -48,10 +22,9 @@ class SerTask(ConnTask):
 
         :return: None
         """
-
-        modi_ports = self._list_modi_ports()
+        modi_ports = list_modi_ports()
         if not modi_ports:
-            raise SerialException("No MODI network module is connected.")
+            raise SerialException("No MODI network module is available")
 
         if self.__port:
             if self.__port not in map(lambda info: info.device, modi_ports):
@@ -59,113 +32,75 @@ class SerTask(ConnTask):
                                       f"to a MODI network module.")
             else:
                 try:
-                    self.__init_serial(self.__port)
-                    self.__ser.open()
+                    self._bus = self.__init_serial(self.__port)
+                    self._bus.open()
                     return
                 except SerialException:
                     raise SerialException(f"{self.__port} is not available.")
 
         for modi_port in modi_ports:
-            self.__init_serial(modi_port.device)
+            self._bus = self.__init_serial(modi_port.device)
             try:
-                self.__ser.open()
+                self._bus.open()
                 return
             except SerialException:
                 continue
         raise SerialException("No MODI port is available now")
 
-    def __init_serial(self, port):
-        self.__ser = serial.Serial(exclusive=True)
-        self.__ser.baudrate = 921600
-        self.__ser.port = port
-        self.__ser.timeout = 1
+    @staticmethod
+    def __init_serial(port):
+        ser = serial.Serial(exclusive=True)
+        ser.baudrate = 921600
+        ser.port = port
+        ser.write_timeout = 0
+        return ser
 
-    def _close_conn(self) -> None:
+    def close_conn(self) -> None:
         """ Close serial port
 
         :return: None
         """
+        self._bus.close()
 
-        self.__ser.close()
-
-    def _recv_data(self) -> None:
+    def recv(self) -> Optional[str]:
         """ Read serial message and put message to serial read queue
 
+        :return: str
+        """
+        self.__json_buffer += self._bus.read_all()
+        idx = self.__json_buffer.find(b'{')
+        if idx < 0:
+            self.__json_buffer = b''
+            return None
+        self.__json_buffer = self.__json_buffer[idx:]
+        idx = self.__json_buffer.find(b'}')
+        if idx < 0:
+            return None
+        json_pkt = self.__json_buffer[:idx + 1].decode('utf8')
+        self.__json_buffer = self.__json_buffer[idx + 1:]
+        if self.verbose:
+            print(f'recv: {json_pkt}')
+        return json_pkt
+
+    @ConnTask.wait
+    def send(self, pkt: str) -> None:
+        """ Send json pkt
+
+        :param pkt: Json pkt to send
+        :type pkt: str
         :return: None
         """
+        self._bus.write(pkt.encode('utf8'))
+        if self.verbose:
+            print(f'send: {pkt}')
 
-        serial_buffer = self.__ser.in_waiting
-        if serial_buffer:
-            # Flush the serial buffer and concatenate it to json buffer
-            self.__json_buffer += self.__ser.read(
-                serial_buffer
-            ).decode("utf8")
+    def send_nowait(self, pkt: str) -> None:
+        """ Send json pkt
 
-            # Once json buffer is obtained, we parse and send json message
-            self.__parse_serial()
-        else:
-            time.sleep(0.01)
-
-    def _send_data(self) -> None:
-        """ Write serial message in serial write queue
-
+        :param pkt: Json pkt to send
+        :type pkt: str
         :return: None
         """
-        try:
-            message_to_send = self._ser_send_q.get_nowait().encode()
-        except queue.Empty:
-            time.sleep(0.01)
-        else:
-            self.__ser.write(message_to_send)
-            if self.__verbose:
-                print(f'send: {message_to_send.decode("utf8")}')
-
-    def run_recv_data(self, delay: float) -> None:
-        """Read data through serial port
-
-        :param delay: time value to wait in seconds
-        :type delay: float
-        :return: None
-        """
-        while True:
-            try:
-                self._recv_data()
-            except SerialException:
-                print("\nMODI connection is lost!!!")
-                traceback.print_exc()
-                os._exit(1)
-
-    def run_send_data(self, delay: float) -> None:
-        """Write data through serial port
-
-        :param delay: time value to wait in seconds
-        :type delay: float
-        :return: None
-        """
-        while True:
-            try:
-                self._send_data()
-            except SerialException:
-                print("\nMODI connection is lost!!!")
-                traceback.print_exc()
-                os._exit(1)
-
-    #
-    # Helper method
-    #
-    def __parse_serial(self) -> None:
-        """Update the json buffer
-
-        :return: None
-        """
-        # While there is a valid json in the json buffer
-        while "{" in self.__json_buffer and "}" in self.__json_buffer:
-            split_index = self.__json_buffer.find("}") + 1
-
-            # Parse json message and send it
-            json_msg = self.__json_buffer[:split_index]
-            self._ser_recv_q.put(json_msg)
-            if self.__verbose:
-                print(f'recv: {json_msg}')
-            # Update json buffer, remove the json message sent
-            self.__json_buffer = self.__json_buffer[split_index:]
+        self._bus.write(pkt.encode('utf8'))
+        if self.verbose:
+            print(f'send: {pkt}')

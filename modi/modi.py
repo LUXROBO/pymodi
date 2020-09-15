@@ -1,144 +1,129 @@
 """Main MODI module."""
 
-import os
+import atexit
 import time
-import signal
-import traceback
+import sys
 
-import threading as th
-import multiprocessing as mp
+from importlib import import_module as im
+from typing import Optional
 
-from typing import Tuple
-
-from modi._conn_proc import ConnProc
 from modi._exe_thrd import ExeThrd
-
-from modi.util.topology_manager import TopologyManager
-from modi.util.firmware_updater import FirmwareUpdater
-from modi.util.stranger import check_complete
+from modi.util.conn_util import is_network_module_connected, is_on_pi
 from modi.util.misc import module_list
-from modi.util.queues import CommunicationQueue
+from modi.util.stranger import check_complete
+from modi.util.upython import upload_file
+from modi.util.topology_manager import TopologyManager
+from modi.firmware_updater import STM32FirmwareUpdater, ESP32FirmwareUpdater
 
 
 class MODI:
-    """
-    Example:
-    >>> import modi
-    >>> bundle = modi.MODI()
-    """
 
-    # Keeps track of all the connection processes spawned
-    __conn_procs = []
-
-    def __init__(self, nb_modules: int = None, conn_mode: str = "serial",
-                 module_uuid: str = "", test: bool = False,
-                 verbose: bool = False, port: str = None):
+    def __init__(self, conn_mode: str = "", verbose: bool = False,
+                 port: str = None, uuid=""):
+        if conn_mode == 'ble' and 'darwin' in sys.platform:
+            print("BLE Connection not supported on macOS")
+            exit(0)
         self._modules = list()
-        self._module_ids = dict()
         self._topology_data = dict()
 
-        self.__lazy = not nb_modules
-
-        self._recv_q = CommunicationQueue()
-        self._send_q = CommunicationQueue()
-
-        self._conn_proc = None
-        self._exe_thrd = None
-
-        # Init flag used to notify initialization of MODI modules
-        module_init_flag = th.Event()
-
-        # If in test run, do not create process and thread
-        if test:
-            return
-
-        init_flag = mp.Event()
-
-        self._conn_proc = ConnProc(
-            self._recv_q, self._send_q, conn_mode, module_uuid, verbose,
-            init_flag, port
-        )
-        self._conn_proc.daemon = True
-        try:
-            self._conn_proc.start()
-        except RuntimeError:
-            if os.name == 'nt':
-                print('\nProcess initialization failed!\nMake sure you are '
-                      'using\n    if __name__ == \'__main__\' \n '
-                      'in the main module.')
-            else:
-                traceback.print_exc()
-            exit(1)
-
-        MODI.__conn_procs.append(self._conn_proc.pid)
-
-        self._child_watch = th.Thread(target=self.watch_child_process)
-        self._child_watch.daemon = True
-        self._child_watch.start()
-
-        if nb_modules:
-            init_flag.wait()
-
-        self._firmware_updater = FirmwareUpdater(self._send_q)
-
-        init_flag = th.Event()
+        self._conn = self.__init_task(conn_mode, verbose, port, uuid)
 
         self._exe_thrd = ExeThrd(
-            self._modules,
-            self._module_ids,
-            self._topology_data,
-            self._recv_q,
-            self._send_q,
-            module_init_flag,
-            nb_modules,
-            self._firmware_updater,
-            init_flag
+            self._modules, self._topology_data, self._conn
         )
-        self._exe_thrd.daemon = True
+        print('Start initializing connected MODI modules')
         self._exe_thrd.start()
-        if nb_modules:
-            init_flag.wait()
 
-        self._topology_manager = TopologyManager(self._topology_data,
-                                                 self._modules)
-        if nb_modules:
-            module_init_flag.wait()
-            if not module_init_flag.is_set():
-                raise Exception("Modules are not initialized properly!")
-                exit(1)
-            print("MODI modules are initialized!")
-            check_complete(self)
+        self._topology_manager = TopologyManager(
+            self._topology_data, self._modules
+        )
 
-        while not self._topology_manager.is_topology_complete(self._exe_thrd):
+        init_time = time.time()
+        while not self._topology_manager.is_topology_complete():
             time.sleep(0.1)
+            if time.time() - init_time > 5:
+                print("MODI init timeout over. "
+                      "Check your module connection.")
+                break
+        check_complete(self)
+        print("MODI modules are initialized!")
 
-    def update_module_firmware(self) -> None:
-        """Updates firmware of connected modules"""
-        print("Request to update firmware of connected MODI modules.")
-        self._firmware_updater.reset_state()
-        self._firmware_updater.request_to_update_firmware()
-        self._firmware_updater.update_event.wait()
-        print("Module firmwares have been updated!")
+        bad_modules = (
+            self.__wait_user_code_check() if conn_mode != 'ble' else []
+        )
+        if bad_modules:
+            cmd = input(f"{[str(module) for module in bad_modules]} "
+                        f"has user code in it.\n"
+                        f"Reset the user code? [y/n] ")
+            if 'y' in cmd:
+                self.close()
+                modules_to_reset = filter(
+                    lambda m: m.is_up_to_date, bad_modules)
+                modules_to_update = filter(
+                    lambda m: not m.is_up_to_date, bad_modules)
+                reset_module_firmware(
+                    tuple(module.id for module in modules_to_reset))
+                update_module_firmware(
+                    tuple(module.id for module in modules_to_update))
+                self.open()
+        atexit.register(self.close)
 
-    def watch_child_process(self) -> None:
-        while self._conn_proc.is_alive():
+    def __wait_user_code_check(self):
+        def is_not_checked(module):
+            return module.user_code_status < 0
+
+        while list(filter(is_not_checked, self._modules)):
             time.sleep(0.1)
-        for pid in MODI.__conn_procs:
-            try:
-                os.kill(pid, signal.SIGTERM)
-            except PermissionError:
-                continue
-            except ProcessLookupError:
-                continue
-        os.kill(os.getpid(), signal.SIGTERM)
+        bad_modules = []
+        for module in self._modules:
+            if module.has_user_code:
+                bad_modules.append(module)
+        return bad_modules
 
-    def send(self, message):
-        self._send_q.put(message)
+    @staticmethod
+    def __init_task(conn_mode, verbose, port, uuid):
+        if not conn_mode:
+            is_can = not is_network_module_connected() and is_on_pi()
+            conn_mode = 'can' if is_can else 'ser'
 
-    def recv(self):
-        if self._recv_q.empty():
-            return None
-        return self._recv_q.get()
+        if conn_mode == 'ser':
+            return im('modi.task.ser_task').SerTask(verbose, port)
+        elif conn_mode == 'can':
+            return im('modi.task.can_task').CanTask(verbose)
+        elif conn_mode == 'ble':
+            return im('modi.task.ble_task').BleTask(verbose, uuid)
+        else:
+            raise ValueError(f'Invalid conn mode {conn_mode}')
+
+    def open(self):
+        atexit.register(self.close)
+        self._exe_thrd = ExeThrd(
+            self._modules, self._topology_data, self._conn
+        )
+        self._conn.open_conn()
+        self._exe_thrd.start()
+
+    def close(self):
+        atexit.unregister(self.close)
+        print("Closing MODI connection...")
+        self._exe_thrd.close()
+        self._conn.close_conn()
+
+    def send(self, message) -> None:
+        """Low level method to send json pkt directly to modules
+
+        :param message: Json packet to send
+        :return: None
+        """
+        self._conn.send_nowait(message)
+
+    def recv(self) -> Optional[str]:
+        """Low level method to receive json pkt directly from modules
+
+        :return: Json msg received
+        :rtype: str if msg exists, else None
+        """
+        return self._conn.recv()
 
     def print_topology_map(self, print_id: bool = False) -> None:
         """Prints out the topology map
@@ -149,76 +134,98 @@ class MODI:
         self._topology_manager.print_topology_map(print_id)
 
     @property
-    def modules(self) -> Tuple:
-        """Tuple of connected modules except network module.
-        Example:
-        >>> bundle = modi.MODI()
-        >>> modules = bundle.modules
+    def modules(self) -> module_list:
+        """Module List of connected modules except network module.
         """
-        return tuple(self._modules)
+        return module_list(self._modules)
+
+    @property
+    def networks(self) -> module_list:
+        return module_list(self._modules, 'Network')
 
     @property
     def buttons(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.button.Button` modules.
+        """Module List of connected Button modules.
         """
-        return module_list(self._modules, 'button', self.__lazy)
+        return module_list(self._modules, 'button')
 
     @property
     def dials(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.dial.Dial` modules.
+        """Module List of connected Dial modules.
         """
-        return module_list(self._modules, "dial", self.__lazy)
+        return module_list(self._modules, "dial")
 
     @property
     def displays(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.display.Display` modules.
+        """Module List of connected Display modules.
         """
-        return module_list(self._modules, "display", self.__lazy)
+        return module_list(self._modules, "display")
 
     @property
     def envs(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.env.Env` modules.
+        """Module List of connected Env modules.
         """
-        return module_list(self._modules, "env", self.__lazy)
+        return module_list(self._modules, "env")
 
     @property
     def gyros(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.gyro.Gyro` modules.
+        """Module List of connected Gyro modules.
         """
-        return module_list(self._modules, "gyro", self.__lazy)
+        return module_list(self._modules, "gyro")
 
     @property
     def irs(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.ir.Ir` modules.
+        """Module List of connected Ir modules.
         """
-        return module_list(self._modules, "ir", self.__lazy)
+        return module_list(self._modules, "ir")
 
     @property
     def leds(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.led.Led` modules.
+        """Module List of connected Led modules.
         """
-        return module_list(self._modules, "led", self.__lazy)
+        return module_list(self._modules, "led")
 
     @property
     def mics(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.mic.Mic` modules.
+        """Module List of connected Mic modules.
         """
-        return module_list(self._modules, "mic", self.__lazy)
+        return module_list(self._modules, "mic")
 
     @property
     def motors(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.motor.Motor` modules.
+        """Module List of connected Motor modules.
         """
-        return module_list(self._modules, "motor", self.__lazy)
+        return module_list(self._modules, "motor")
 
     @property
     def speakers(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.speaker.Speaker` modules.
+        """Module List of connected Speaker modules.
         """
-        return module_list(self._modules, "speaker", self.__lazy)
+        return module_list(self._modules, "speaker")
 
     @property
     def ultrasonics(self) -> module_list:
-        """Tuple of connected :class:`~modi.module.ultrasonic.Ultrasonic` modules.
+        """Module List of connected Ultrasonic modules.
         """
-        return module_list(self._modules, "ultrasonic", self.__lazy)
+        return module_list(self._modules, "ultrasonic")
+
+
+def update_module_firmware(target_ids=(0xFFF, )):
+    updater = STM32FirmwareUpdater(target_ids=target_ids)
+    updater.update_module_firmware()
+    updater.close()
+
+
+def reset_module_firmware(target_ids=(0xFFF, )):
+    updater = STM32FirmwareUpdater(is_os_update=False, target_ids=target_ids)
+    updater.update_module_firmware()
+    updater.close()
+
+
+def update_network_firmware(force=False):
+    updater = ESP32FirmwareUpdater()
+    updater.update_firmware(force=force)
+
+
+def upload_user_code(filepath, remote_path):
+    upload_file(filepath, remote_path)

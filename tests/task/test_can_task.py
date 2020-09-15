@@ -1,8 +1,8 @@
+import json
 import unittest
 
 from queue import Queue
 from modi.task.can_task import CanTask
-from modi.task.conn_task import ConnTask
 from modi.util.msgutil import parse_message
 
 
@@ -11,7 +11,8 @@ class MockCan:
         self.recv_buffer = Queue()
 
     def recv(self, timeout):
-        return "Can Message"
+        json_pkt = parse_message(0x03, 0, 1)
+        return CanTask.compose_can_msg(json.loads(json_pkt))
 
     def send(self, item):
         self.recv_buffer.put(item)
@@ -22,37 +23,25 @@ class TestCanTask(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-        self.send_q, self.recv_q = Queue(), Queue()
-        self.mock_kwargs = {"can_recv_q": self.recv_q,
-                            "can_send_q": self.send_q,
-                            "verbose": False}
-        self.can_task = CanTask(**self.mock_kwargs)
-        self.can_task.can0 = MockCan()
+        self.can_task = CanTask()
+        self.can_task._bus = MockCan()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
         del self.can_task
+        CanTask._instances.clear()
 
-    def test_open_conn(self):
-        """Test open_conn method"""
-        if not ConnTask.is_on_pi():
-            print("Aborting test on non-pi environment..")
-            return
-        else:
-            self.can_task.open_conn()
-
-    def test_recv_data(self):
+    def test_recv(self):
         """Test _recv_data method"""
-        self.assertEqual(
-            self.can_task._recv_data(), "Can Message"
-        )
+        self.assertEqual(self.can_task.recv(), parse_message(0x03, 0, 1))
 
-    def test_send_data(self):
+    def test_send(self):
         """Test _send_data method"""
-        self.can_task._send_data(parse_message(0x04, 2, 2, (20, 40)))
-        data = self.can_task.can0.recv_buffer.get().data
-        self.assertEqual(data[0], 20)
-        self.assertEqual(data[1], 40)
+        json_pkt = parse_message(0x03, 0, 1)
+        self.can_task.send(json_pkt)
+        self.assertEqual(self.can_task.bus.recv_buffer.get().data,
+                         CanTask.compose_can_msg(json.loads(json_pkt)).data
+                         )
 
 
 if __name__ == "__main__":

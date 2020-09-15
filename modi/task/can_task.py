@@ -1,68 +1,27 @@
-import os
-import can
-import time
 import json
-import queue
-import base64
+import os
+from base64 import b64decode, b64encode
+from typing import Dict, Tuple, Optional
 
-from typing import Dict, Tuple
+import can
 
 from modi.task.conn_task import ConnTask
+from modi.util.conn_util import MODIConnectionError
 
 
 class CanTask(ConnTask):
 
-    def __init__(self, can_recv_q, can_send_q, verbose, port=None):
-        print("Run Can Task.")
-        self._can_recv_q = can_recv_q
-        self._can_send_q = can_send_q
+    _instances = set()
 
-        self.__can0 = None
-        self.__verbose = verbose
-        if self.__verbose:
-            print('PyMODI log...\n==================================')
-
-    def __del__(self):
-        self._close_conn()
-
-    @property
-    def can0(self):
-        return self.__can0
-
-    @can0.setter
-    def can0(self, can_port):
-        self.__can0 = can_port
-
-    def __can_recv(self) -> None:
-        """Reads data through CAN and put it on recv_q
-
-        :return: None
-        """
-        can_msg = self._recv_data()
-        if not can_msg:
-            time.sleep(0.01)
-        else:
-            json_msg = self.__parse_can_msg(can_msg)
-            self._can_recv_q.put(json_msg)
-            if self.__verbose:
-                print(f'recv: {json_msg}')
-
-    def __can_send(self) -> None:
-        """Write data through CAN
-
-        :return: None
-        """
-        try:
-            message_to_send = self._can_send_q.get_nowait().encode()
-        except queue.Empty:
-            time.sleep(0.01)
-        else:
-            self._send_data(message_to_send)
-            if self.__verbose:
-                print(f'send: {message_to_send.decode("utf8")}')
+    def __init__(self, verbose=False):
+        super().__init__(verbose)
+        print("Initiating can connection...")
+        if CanTask._instances:
+            raise Exception("can0 device already in use")
+        self._instances.add(self)
 
     #
-    # Can Methods
+    # Inherited Methods
     #
     def open_conn(self) -> None:
         """Open connection through CAN
@@ -72,67 +31,68 @@ class CanTask(ConnTask):
         os.system("sudo ip link set can0 type can bitrate 1000000")
         os.system("sudo ifconfig can0 up")
 
-        self.__can0 = can.interface.Bus(
+        self._bus = can.interface.Bus(
             channel="can0", bustype="socketcan_ctypes"
         )
 
-    def _close_conn(self) -> None:
+    def close_conn(self) -> None:
         """Close connection through CAN
 
         :return: None
         """
         os.system("sudo ifconfig can0 down")
+        CanTask._instances.clear()
 
-    def _recv_data(self, timeout: float = 0.01) -> can.Message:
-        """Read data from CAN and returns CAN message
+    def recv(self) -> Optional[str]:
+        """Read json msg from CAN
 
-        :param timeout: timeout value
-        :type timeout: float, optional
-        :raises: ValueError: CAN is not initialized or message is not received
-        :return: CAN message received
-        :rtype: can.Message
+        :return: json pkt
+        :rtype: str
         """
-        if self.__can0 is None:
-            raise ValueError("Can is not initialized")
+        if self._bus is None:
+            raise MODIConnectionError("Can is not initialized")
 
-        can_msg = self.__can0.recv(timeout=timeout)
-        return can_msg
+        can_msg = self._bus.recv(timeout=0.01)
+        if not can_msg:
+            return None
+        else:
+            json_msg = self.__parse_can_msg(can_msg)
+            if self.verbose:
+                print(f'recv: {json_msg}')
+            return json_msg
 
-    def _send_data(self, str_msg: str) -> None:
-        """ Given parsed binary string message in json format,
-            convert and send the message as CAN format
+    @ConnTask.wait
+    def send(self, pkt: str) -> None:
+        """Send json pkt through can
 
-        :param str_msg: json serialized string message
-        :type str_msg: str
+        :param pkt: Json pkt
+        :type pkt: str
         :return: None
         """
-
-        json_msg = json.loads(str_msg)
-        can_msg = self.__compose_can_msg(json_msg)
+        json_msg = json.loads(pkt)
+        can_msg = self.compose_can_msg(json_msg)
         try:
-            self.__can0.send(can_msg)
+            self._bus.send(can_msg)
         except can.CanError:
             print("Can connection is lost, please check your modules")
+        if self.verbose:
+            print(f'send: {pkt}')
 
-    def run_recv_data(self, delay: float) -> None:
-        """Read the data and wait a given time
+    def send_nowait(self, pkt: str) -> None:
+        """Send json pkt through can
 
-        :param delay: time value to wait in seconds
-        :type delay: float
+        :param pkt: Json pkt
+        :type pkt: str
         :return: None
         """
-        while True:
-            self.__can_recv()
-
-    def run_send_data(self, delay: float) -> None:
-        """Write the data and wait a given time
-
-        :param delay: time value to wait in seconds
-        :type delay: float
-        :return: None
-        """
-        while True:
-            self.__can_send()
+        json_msg = json.loads(pkt)
+        can_msg = self.compose_can_msg(json_msg)
+        try:
+            self._bus.send(can_msg)
+        except can.CanError:
+            print("Can connection is lost, please check your modules")
+        if self.verbose:
+            print(f'send: {pkt}')
 
     #
     # Can helper methods
@@ -155,7 +115,7 @@ class CanTask(ConnTask):
 
         json_msg = dict()
         json_msg["c"], json_msg["s"], json_msg["d"] = c, s, d
-        json_msg["b"] = base64.b64encode(can_data).decode("utf-8")
+        json_msg["b"] = b64encode(can_data).decode("utf-8")
         json_msg["l"] = can_dlc
         return json.dumps(json_msg, separators=(",", ":"))
 
@@ -178,7 +138,7 @@ class CanTask(ConnTask):
         return ins, sid, did
 
     @staticmethod
-    def __compose_can_msg(json_msg: Dict[str, str]) -> can.Message:
+    def compose_can_msg(json_msg: Dict[str, str]) -> can.Message:
         """Returns CAN message from a dictionary format message
 
         :param json_msg: Dictionary format json message
@@ -192,7 +152,7 @@ class CanTask(ConnTask):
         can_id = int(ins + sid + did, 2)
 
         data = json_msg["b"]
-        data_decoded = base64.b64decode(data)
+        data_decoded = b64decode(data)
         data_decoded_in_bytes = bytearray(data_decoded)
 
         can_msg = can.Message(

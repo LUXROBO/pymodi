@@ -1,33 +1,26 @@
 """Motor module."""
 
-from enum import IntEnum
 from typing import Tuple
 from modi.module.output_module.output_module import OutputModule
 
 
 class Motor(OutputModule):
 
-    class PropertyType(IntEnum):
-        FIRST_TORQUE = 2
-        SECOND_TORQUE = 10
-        FIRST_SPEED = 3
-        SECOND_SPEED = 11
-        FIRST_DEGREE = 4
-        SECOND_DEGREE = 12
+    FIRST_TORQUE = 2
+    SECOND_TORQUE = 10
+    FIRST_SPEED = 3
+    SECOND_SPEED = 11
+    FIRST_DEGREE = 4
+    SECOND_DEGREE = 12
 
-    class ControlType(IntEnum):
-        TORQUE = 16
-        SPEED = 17
-        DEGREE = 18
-        CHANNEL = 19
+    TORQUE = 16
+    SPEED = 17
+    DEGREE = 18
+    CHANNEL = 19
 
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
-        self._type = "motor"
-
-    def set_motor_channel(self,
-                          motor_channel: int, control_mode: int,
-                          control_value: int = None) -> None:
+    def __set_motor_channel(self,
+                            motor_channel: int, control_mode: int,
+                            control_value: int = None) -> None:
         """Select te motor channel for control
         Mode: 0:Torque 1:Speed 2:Angle (Torque is not implemented yet)
 
@@ -42,7 +35,7 @@ class Motor(OutputModule):
         """
         self._set_property(
             self._id,
-            self.ControlType.CHANNEL,
+            Motor.CHANNEL,
             (
                 motor_channel,
                 control_mode,
@@ -57,7 +50,7 @@ class Motor(OutputModule):
         :return: first degree value
         :rtype: float
         """
-        return self._get_property(self.PropertyType.FIRST_DEGREE)
+        return self._get_property(Motor.FIRST_DEGREE)
 
     @first_degree.setter
     @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
@@ -69,7 +62,8 @@ class Motor(OutputModule):
         :return: None
         """
         _ = self.first_degree
-        self.set_motor_channel(0, 2, degree_value)
+        self.__set_motor_channel(0, 2, degree_value)
+        self.update_property(Motor.FIRST_DEGREE, degree_value)
 
     @property
     def second_degree(self) -> float:
@@ -78,7 +72,7 @@ class Motor(OutputModule):
         :return: second degree value
         :rtype: float
         """
-        return self._get_property(self.PropertyType.SECOND_DEGREE)
+        return self._get_property(Motor.SECOND_DEGREE)
 
     @second_degree.setter
     @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
@@ -90,7 +84,8 @@ class Motor(OutputModule):
         :return: None
         """
         _ = self.second_degree
-        self.set_motor_channel(1, 2, degree_value)
+        self.__set_motor_channel(1, 2, degree_value)
+        self.update_property(Motor.SECOND_DEGREE, degree_value)
 
     @property
     def first_speed(self) -> float:
@@ -99,7 +94,7 @@ class Motor(OutputModule):
         :return: first speed value
         :rtype: float
         """
-        return self._get_property(self.PropertyType.FIRST_SPEED)
+        return self._get_property(Motor.FIRST_SPEED)
 
     @first_speed.setter
     @OutputModule._validate_property(nb_values=1, value_range=(-100, 100))
@@ -110,7 +105,8 @@ class Motor(OutputModule):
         :return: None
         """
         _ = self.first_speed
-        self.set_motor_channel(0, 1, speed_value)
+        self.__set_motor_channel(0, 1, speed_value)
+        self.update_property(Motor.FIRST_SPEED, speed_value)
 
     @property
     def second_speed(self) -> float:
@@ -119,7 +115,7 @@ class Motor(OutputModule):
         :return: second speed value
         :rtype: float
         """
-        return self._get_property(self.PropertyType.SECOND_SPEED)
+        return self._get_property(Motor.SECOND_SPEED)
 
     @second_speed.setter
     @OutputModule._validate_property(nb_values=1, value_range=(-100, 100))
@@ -130,7 +126,8 @@ class Motor(OutputModule):
         :return: None
         """
         _ = self.second_speed
-        self.set_motor_channel(1, 1, speed_value)
+        self.__set_motor_channel(1, 1, speed_value)
+        self.update_property(Motor.SECOND_SPEED, speed_value)
 
     @property
     def first_torque(self) -> float:
@@ -139,7 +136,7 @@ class Motor(OutputModule):
         :return: first torque value
         :rtype: float
         """
-        return self._get_property(self.PropertyType.FIRST_TORQUE)
+        return self._get_property(Motor.FIRST_TORQUE)
 
     @first_torque.setter
     @OutputModule._validate_property(nb_values=1, value_range=(-100, 100))
@@ -151,7 +148,13 @@ class Motor(OutputModule):
         :return: None
         """
         _ = self.first_torque
-        self.set_motor_channel(0, 0, torque_value)
+        self._set_property(
+            self.id,
+            Motor.TORQUE,
+            (torque_value, self.second_torque),
+        )
+        # self.set_motor_channel(0, 0, torque_value)
+        self.update_property(Motor.FIRST_TORQUE, torque_value)
 
     @property
     def second_torque(self) -> float:
@@ -160,7 +163,7 @@ class Motor(OutputModule):
         :return: second torque value
         :rtype: float
         """
-        return self._get_property(self.PropertyType.SECOND_TORQUE)
+        return self._get_property(Motor.SECOND_TORQUE)
 
     @second_torque.setter
     @OutputModule._validate_property(nb_values=1, value_range=(-100, 100))
@@ -172,7 +175,13 @@ class Motor(OutputModule):
         :return: None
         """
         _ = self.second_torque
-        self.set_motor_channel(1, 0, torque_value)
+        self._set_property(
+            self.id,
+            Motor.TORQUE,
+            (self.first_torque, torque_value),
+        )
+        # self.set_motor_channel(1, 0, torque_value)
+        self.update_property(Motor.SECOND_TORQUE, torque_value)
 
     @property
     def torque(self) -> Tuple[float, float]:
@@ -182,8 +191,8 @@ class Motor(OutputModule):
         :rtype: Tuple[float, float]
         """
         return (
-            self._get_property(self.PropertyType.FIRST_TORQUE),
-            self._get_property(self.PropertyType.SECOND_TORQUE),
+            self._get_property(Motor.FIRST_TORQUE),
+            self._get_property(Motor.SECOND_TORQUE),
         )
 
     @torque.setter
@@ -195,9 +204,16 @@ class Motor(OutputModule):
         :type torque_value: Tuple[int, int]
         :return: None
         """
-        _, _ = self.torque
-        self.set_motor_channel(0, 0, torque_value[0])
-        self.set_motor_channel(1, 0, torque_value[1])
+        _ = self.torque
+        self._set_property(
+            self.id,
+            Motor.TORQUE,
+            torque_value,
+        )
+        # self.set_motor_channel(0, 0, torque_value[0])
+        # self.set_motor_channel(1, 0, torque_value[1])
+        self.update_property(Motor.FIRST_TORQUE, torque_value[0])
+        self.update_property(Motor.SECOND_TORQUE, torque_value[1])
 
     @property
     def speed(self):
@@ -206,8 +222,8 @@ class Motor(OutputModule):
         :return: Tuple[float, float]
         """
         return (
-            self._get_property(self.PropertyType.FIRST_SPEED),
-            self._get_property(self.PropertyType.SECOND_SPEED),
+            self._get_property(Motor.FIRST_SPEED),
+            self._get_property(Motor.SECOND_SPEED),
         )
 
     @speed.setter
@@ -219,9 +235,11 @@ class Motor(OutputModule):
         :type speed_value: Tuple[int, int]
         :return: None
         """
-        _, _ = self.speed
-        self.set_motor_channel(0, 1, speed_value[0])
-        self.set_motor_channel(1, 1, speed_value[1])
+        _ = self.speed
+        self.__set_motor_channel(0, 1, speed_value[0])
+        self.__set_motor_channel(1, 1, speed_value[1])
+        self.update_property(Motor.FIRST_SPEED, speed_value[0])
+        self.update_property(Motor.SECOND_SPEED, speed_value[1])
 
     @property
     def degree(self) -> Tuple[float, float]:
@@ -231,8 +249,8 @@ class Motor(OutputModule):
         :rtype: float
         """
         return (
-            self._get_property(self.PropertyType.FIRST_DEGREE),
-            self._get_property(self.PropertyType.SECOND_DEGREE),
+            self._get_property(Motor.FIRST_DEGREE),
+            self._get_property(Motor.SECOND_DEGREE),
         )
 
     @degree.setter
@@ -244,6 +262,8 @@ class Motor(OutputModule):
         :type degree_value: Tuple[int, int]
         :return: None
         """
-        _, _ = self.degree
-        self.set_motor_channel(0, 2, degree_value[0])
-        self.set_motor_channel(1, 2, degree_value[1])
+        _ = self.degree
+        self.__set_motor_channel(0, 2, degree_value[0])
+        self.__set_motor_channel(1, 2, degree_value[1])
+        self.update_property(Motor.FIRST_DEGREE, degree_value[0])
+        self.update_property(Motor.SECOND_DEGREE, degree_value[1])

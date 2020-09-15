@@ -1,13 +1,12 @@
 import json
 import struct
-
 from base64 import b64encode, b64decode
 from typing import Tuple
 
 
 def parse_message(command: int, source: int, destination: int,
-                  byte_data: Tuple = (None, None, None, None,
-                                      None, None, None, None)):
+                  byte_data: Tuple =
+                  (None, None, None, None, None, None, None, None)):
     message = dict()
     message['c'] = command
     message['s'] = source
@@ -17,6 +16,16 @@ def parse_message(command: int, source: int, destination: int,
     return json.dumps(message, separators=(",", ":"))
 
 
+def __extract_length(begin: int, src: Tuple) -> int:
+    length = 1
+    for i in range(begin + 1, len(src)):
+        if not src[i]:
+            length += 1
+        else:
+            break
+    return length
+
+
 def __encode_bytes(byte_data: Tuple):
     idx = 0
     data = bytearray(len(byte_data))
@@ -24,22 +33,15 @@ def __encode_bytes(byte_data: Tuple):
         if not byte_data[idx]:
             idx += 1
         elif byte_data[idx] > 256:
-            length = 1
-            for i in range(idx + 1, len(byte_data)):
-                if not byte_data[i]:
-                    length += 1
-                else:
-                    break
-            data[idx: idx + length] = int.to_bytes(byte_data[idx],
-                                                   byteorder='little',
-                                                   length=length,
-                                                   signed=True)
+            length = __extract_length(idx, byte_data)
+            data[idx: idx + length] = int.to_bytes(
+                byte_data[idx], byteorder='little', length=length, signed=True
+            )
             idx += length
         elif byte_data[idx] < 0:
-            data[idx: idx + 4] = int.to_bytes(int(byte_data[idx]),
-                                              byteorder='little',
-                                              length=4,
-                                              signed=True)
+            data[idx: idx + 4] = int.to_bytes(
+                int(byte_data[idx]), byteorder='little', length=4, signed=True
+            )
             idx += 4
         elif byte_data[idx] < 256:
             data[idx] = int(byte_data[idx])
@@ -62,8 +64,7 @@ def unpack_data(data: str, structure: Tuple = (1, 1, 1, 1, 1, 1, 1, 1)):
     idx = 0
     result = []
     for size in structure:
-        result.append(int.from_bytes(data[idx:idx + size],
-                                     byteorder='little'))
+        result.append(int.from_bytes(data[idx:idx + size], byteorder='little'))
         idx += size
     return result
 
@@ -75,8 +76,9 @@ def parse_data(values, data_type: str) -> Tuple:
             if value >= 0:
                 data += int.to_bytes(int(value), byteorder='little', length=2)
             else:
-                data += int.to_bytes(int(value), byteorder='little',
-                                     length=4, signed=True)
+                data += int.to_bytes(
+                    int(value), byteorder='little', length=4, signed=True
+                )
     elif data_type == 'float':
         for value in values:
             data += struct.pack("f", float(value))

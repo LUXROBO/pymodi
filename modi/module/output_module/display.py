@@ -1,19 +1,18 @@
 """Display module."""
 
-from enum import IntEnum
-
 from modi.module.output_module.output_module import OutputModule
 
 
 class Display(OutputModule):
-    class PropertyType(IntEnum):
-        TEXT = 17
-        CLEAR = 21
-        VARIABLE = 22
+
+    TEXT = 17
+    CLEAR = 21
+    VARIABLE = 22
+    SET_HORIZONTAL = 25
+    SET_VERTICAL = 26
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
-        self._type = "display"
         self._text = ""
 
     @property
@@ -33,9 +32,9 @@ class Display(OutputModule):
         self.clear()
         self._set_property(
             self._id,
-            self.PropertyType.TEXT,
-            text[:27],  # Only 27 characters can be shown on the display
-            self.PropertyDataType.STRING
+            Display.TEXT,
+            str(text)[:27] + '\0',  # 27 characters can be shown on the display
+            OutputModule.STRING
         )
         self._text = text
 
@@ -56,11 +55,37 @@ class Display(OutputModule):
         """
         self._set_property(
             self._id,
-            self.PropertyType.VARIABLE,
+            Display.VARIABLE,
             (variable, position_x, position_y),
-            self.PropertyDataType.DISPLAY_VAR,
+            OutputModule.DISPLAY_VAR,
         )
         self._text += str(variable)
+
+    def set_horizontal(self, offset) -> None:
+        """Set the horizontal offset on the screen
+
+        :param offset: offset in pixels
+        :type offset: float
+        :return: None
+        """
+        self._set_property(
+            self.id,
+            Display.SET_HORIZONTAL, (offset, ),
+            OutputModule.FLOAT,
+        )
+
+    def set_vertical(self, offset) -> None:
+        """Set the vertical offset on the screen
+
+        :param offset: offset in pixels
+        :type offset: float
+        :return: None
+        """
+        self._set_property(
+            self.id,
+            Display.SET_VERTICAL, (offset, ),
+            OutputModule.FLOAT,
+        )
 
     def clear(self) -> None:
         """Clear the screen.
@@ -70,8 +95,8 @@ class Display(OutputModule):
         """
         self._set_property(
             self._id,
-            self.PropertyType.CLEAR,
-            bytes(2),
-            self.PropertyDataType.RAW
+            Display.CLEAR,
+            (0, 0),
+            OutputModule.RAW
         )
         self._text = ""

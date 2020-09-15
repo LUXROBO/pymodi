@@ -1,13 +1,15 @@
 import time
-
 from typing import Tuple
 
-from modi.module.module import Module
+from modi.module.output_module.display import Display
+from modi.module.output_module.led import Led
+from modi.module.output_module.speaker import Speaker
+from modi.module.input_module.dial import Dial
 
 
 def update_screen(pos: Tuple[int, int],
                   vel: Tuple[int, int], bar: int,
-                  display: Module) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+                  display: Display) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     """Update the screen of the display module after moving the ball
 
     :param pos: Position of the ball
@@ -30,8 +32,8 @@ def update_screen(pos: Tuple[int, int],
     return pos, vel
 
 
-def initialize(display: Module, led: Module, speaker: Module,
-               dial: Module) -> int:
+def initialize(display: Display, led: Led, speaker: Speaker,
+               dial: Dial) -> int:
     """Initialize the movment of the ball
 
     :param display: Display module
@@ -62,20 +64,37 @@ def initialize(display: Module, led: Module, speaker: Module,
     return score
 
 
+def __check_modules(bundle):
+    module_names = [type(module).__name__ for module in bundle.modules]
+    expected_names = ["Button", "Dial", "Led", "Speaker", "Display"]
+    if len(module_names) != len(expected_names):
+        return False
+    else:
+        for name in expected_names:
+            if name not in module_names:
+                return False
+    return True
+
+
+def __check_next(button, display):
+    while True:
+        if button.double_clicked:
+            display.clear()
+            return False
+        elif button.clicked:
+            display.text = "PONG!!"
+            return True
+        time.sleep(0.02)
+
+
 def check_complete(bundle):
     """Check the connected modules and initialize
 
     :param bundle: MODI object
     :return: None
     """
-    module_names = [type(module).__name__ for module in bundle.modules]
-    expected_names = ["Button", "Dial", "Led", "Speaker", "Display"]
-    if len(module_names) != len(expected_names):
+    if not __check_modules(bundle):
         return
-    else:
-        for name in expected_names:
-            if name not in module_names:
-                return
 
     display = bundle.displays[0]
     button = bundle.buttons[0]
@@ -84,25 +103,15 @@ def check_complete(bundle):
     speaker = bundle.speakers[0]
 
     _ = button.pressed
-    time.sleep(0.1)
+    time.sleep(1)
     if not button.pressed:
         return
     cmd = input("You have found an easter egg!\nContinue??(y/n)")
     if cmd.lower() != 'y':
         return
     display.text = "Press Button"
-    running = True
-    while running:
-        while True:
-            if button.double_clicked:
-                running = False
-                display.clear()
-                break
-            elif button.clicked:
-                display.text = "PONG!!"
-                break
-            time.sleep(0.02)
-        if not running:
+    while True:
+        if not __check_next(button, display):
             break
         time.sleep(1)
         point = initialize(display, led, speaker, dial)
