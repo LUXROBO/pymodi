@@ -56,7 +56,7 @@ If you want to contribute to pymodi, be sure to review the contribution guidelin
 
 Quickstart
 ----------
-Install the latest PyMODI if you haven\'t installed it yet:
+Install the latest PyMODI if you haven't installed it yet:
 ```commandline
 pip install -U pymodi --user
 ```
@@ -79,7 +79,7 @@ List connected LED modules and pick the first one:
 bundle.leds # List.
 bundle.leds[0] # Pick.
 ```
-Let\'s blink the LED\'s light 5 times:
+Let's blink the LED's light 5 times:
 ```python
 import time
 
@@ -99,6 +99,68 @@ If you are still not sure how to use PyMODI, you can play an interactive PyMODI 
 $ python -m modi --tutorial
 ```
 Moreover, we provide some [usage and creation examples](examples), as well as a [descriptive web page](https://luxrobo.github.io/pymodi).
+
+Usage
+-----
+Import modi package and create MODI instance (we call it "bundle", a bundle of MODI modules).
+```python
+# Import modi package
+import modi
+
+# Create MODI instance, make sure that you have connected your network module to your machine
+bundle = modi.MODI()
+```
+
+However, when creating the bundle, you can specify how you would like to establish the connection between your machine and the network module.
+```python
+# 1. Serial connection (via USB), it's the default connection method
+bundle = modi.MODI(conn_mode="ser")
+
+# 2. BLE (Bluetooth Low Energy) connection, it's wireless! But it can be slow :(
+bundle = modi.MODI(conn_mode="ble")
+
+# 3. CAN connection (via CAN shield, not recommended to use it directly)
+bundle = modi.MODI(conn_modue="can")
+```
+
+Once you created the MODI object, attach MODI modules to the network module. MODI will print what modules are connected, once they are recognized.
+
+```python
+# Create module objects given that you have attached modules below to the network module
+button = bundle.buttons[0]
+speaker = bundle.speakers[0]
+```
+
+To visualize how modules are connected, you can use our topology function.
+```python
+# Print topology map without indicating module id
+bundle.print_topology_map()
+
+# Print topology map with module id printed
+bundle.print_topology_map(print_id=True)
+```
+
+Now you are ready to implement a MODI creation using PyMODI! The code below shows a simple creation using a button and a speaker module.
+
+```python
+import time
+
+volume = 0
+while True:
+    speaker.tune = 880, volume
+    if button.clicked:
+        volume = 100 if (volume + 10) > 100 else volume + 10
+        time.sleep(0.1)
+    else:
+        volume = 0 if (volume - 0.5) < 0 else volume - 1
+
+    if button.double_clicked:
+        break
+
+    print(volume)
+```
+
+When implementing MODI creation with PyMODI, check [what module methods are available](https://pymodi.readthedocs.io/en/master/).
 
 Additional Usage
 ----------------
