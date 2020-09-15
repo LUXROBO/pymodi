@@ -210,6 +210,7 @@ class Tutor:
 
     def run_lesson3(self):
         led = self.led
+        led.rgb = 0, 0, 0
         self.clear()
         self.print_lesson(3, "Controlling modules")
         self.print_wrap(

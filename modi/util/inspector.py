@@ -53,7 +53,9 @@ class Inspector:
             f"| {' ' * 5} Diagnosing {module.module_type} ({module.id})"
         progress_indicator = f"({i + 1} / {nb_modules}) {' ' * 5} |"
         ls = f"{module_to_inspect:<{self.row_len}}"
-        s = progress_indicator.join(ls.rsplit(' ' * len(progress_indicator), 1))
+        s = progress_indicator.join(
+            ls.rsplit(' ' * len(progress_indicator), 1)
+        )
         print(s)
         print('-' * self.row_len)
 

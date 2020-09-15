@@ -7,7 +7,6 @@ from modi.modi import (
     reset_module_firmware,
     upload_user_code,
 )
-from modi.modi import reset_module_firmware
 
 __all__ = [
     "MODI",
