@@ -16,7 +16,7 @@ class BleTask(ConnTask):
 
     def __init__(self, verbose=False, uuid=None):
         print("Initiating ble connection...")
-        script = f'{os.path.dirname(__file__)}/change_interval.sh' 
+        script = f'{os.path.dirname(__file__)}/change_interval.sh'
         os.system(f'chmod 777 {script}')
         os.system(f'sudo {script}')
         super().__init__(verbose=verbose)
@@ -57,7 +57,7 @@ class BleTask(ConnTask):
         self.__reset()
         self._bus = pexpect.spawn('gatttool -I')
         self._bus.expect('LE')
-        for i in range(5):
+        for _ in range(5):
             try:
                 self._bus.sendline(f'connect {modi_device[0]}')
                 self._bus.expect('Connection successful', timeout=1)
