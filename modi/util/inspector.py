@@ -24,8 +24,9 @@ class StoppableThread(th.Thread):
     def run(self):
         while True:
             prop = eval(f"self._module.{self._method}")
-            print(f"\rObtained property value: {prop}", end="")
-            time.sleep(0.01)
+            print(f"\rObtained property value: {prop} ", end="")
+            time.sleep(0.1)
+
 
 class Inspector:
     """
@@ -92,7 +93,19 @@ class Inspector:
         pass
 
     def inspect_ir(self, ir, i, nb_modules):
-        pass
+        self.print_wrap(
+            """
+            Ir module has proximity as its property.
+            """
+        )
+        self.clear()
+
+        self.print_module_page(ir, i, nb_modules)
+        print("If the proximity shown below seems correct, press ENTER: \n")
+        t = StoppableThread(ir, "proximity")
+        t.start()
+        input()
+        t.stop()
 
     def inspect_mic(self, mic, i, nb_modules):
         self.print_wrap(
