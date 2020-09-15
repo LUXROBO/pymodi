@@ -79,7 +79,7 @@ History
 0.9.0 (2020-07-07)
 ------------------
 -   Implement Module Firmware Updater
--   Implement wireless connection via SPP
+-   Implement bluetooth connection via SPP
 -   Implement MODI Priority Queue to increase response speed
 -   Implement PyMODI tutor for teaching new-comers
 -   Support multi MODI network modules given appropriate COM ports
@@ -87,3 +87,14 @@ History
 -   Refactor motor module to use set_motor_channel internally
 -   Update property values when setting properties
 -   Add usage/creation example to the repository
+-   Bug fixes
+
+1.0.0 (2020-09-15)
+------------------
+-   Implement Network Firmware Updater
+-   Implement BLE connection (excluding macOS support)
+-   Implement MODI Play support via network module
+-   Refactor module getter/setter interface
+-   Enhance topology manager to work with battery module
+-   Add functionality to reset existing user code on the modules
+-   Bug fixes
