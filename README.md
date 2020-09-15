@@ -24,7 +24,6 @@ Features
 PyMODI supports a control of modular electronics, MODI developed by [LUXROBO](https://modi.luxrobo.com/en)
 * Easy control of modules through serial connection on Windows, Linux, and macOS
 * Direct CAN communication to MODI modules on raspberry pi and other platforms
-* Support on Python version >= 3.6
 * Utilities of firmware update and low-level debugging of the modules
 
 UML Diagram
@@ -101,8 +100,8 @@ $ python -m modi --tutorial
 ```
 Moreover, we provide some [usage and creation examples](examples), as well as a [descriptive web page](luxrobo.github.io/pymodi).
 
-Advanced Usage
---------------
+Additional Usage
+----------------
 To update MODI modules (all modules but the network module),
 ```commandline
 $ python -m modi --update_module
