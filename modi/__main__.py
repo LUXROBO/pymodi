@@ -1,13 +1,18 @@
 import os
 import sys
 import time
+import textwrap
 
 from getopt import getopt, GetoptError
 
 import modi
 
+from modi.debugger import Debugger
 from modi.util.tutor import Tutor
+from modi.util.inspector import Inspector
+
 from modi.firmware_updater import STM32FirmwareUpdater
+from modi.firmware_updater import ESP32FirmwareUpdater
 from modi.util.msgutil import parse_message, decode_message
 
 
@@ -19,71 +24,96 @@ def check_option(*options):
 
 
 if __name__ == "__main__":
-    usage = "Usage: python -m modi -<options>" \
-            "\nOptions:\n-t, --tutorial: Interactive Tutorial" \
-            "\n-d, --debug: Auto initialization debugging mode" \
-            "\n-h, --help: Print out help page"
+    usage = textwrap.dedent(
+        """
+        Usage: python -m modi -<options>
+        Options:
+        -t, --tutorial: Interactive Tutorial
+        -d, --debug: Auto initialization debugging mode
+        -h, --help: Print out help page
+        """.rstrip()
+    )
 
-    help_page = "Usage: python -m modi -<options>" \
-                "\n\nOptions:" \
-                "\n-t, --tutorial: Interactive Tutorial" \
-                "\n     Usage: python -m modi --tutorial" \
-                "\n-d, --debug: Auto initialize debugging mode" \
-                "\n     Usage: python -m modi --debug -n <nb_modules>" \
-                "\n     options: -u, --update: update the module firmware" \
-                " connected to the network module" \
-                "\n     If you want to use debugger in an interactive shell," \
-                " use: python -im modi -n <nb_modules> -<options>"
+    help_page = textwrap.dedent(
+        """
+        Usage: python -m modi -<options>
+        Options:
+        -t, --tutorial: Interactive Tutorial
+             Usage: python -m modi --tutorial
+        -d, --debug: Auto initialize debugging mode
+             Usage: python -m modi --debug -n <nb_modules>
+        """.rstrip()
+    )
 
     try:
-        opts, args = getopt(sys.argv[1:], 'tduhvpg',
-                            ["tutorial", "debug", "update",
-                             "help", "verbose", "performance", "gui"])
+        # all commands should be defined here in advance
+        opts, args = getopt(
+            sys.argv[1:], 'tduhvpgin',
+            [
+                "tutorial",
+                "debug",
+                "update",
+                "help",
+                "verbose",
+                "performance",
+                "gui",
+                "inspect",
+                "network",
+            ]
+        )
+    # exit program if an invalid option has been entered
     except GetoptError as err:
         print(str(err))
         print(usage)
         os._exit(2)
 
-    if len(args) > 0 or len(sys.argv) == 1:
+    # Ensure that there is an option but argument
+    if len(sys.argv) == 1 or len(args) > 0:
         print(usage)
         os._exit(2)
 
+    # Print help page
     if check_option('-h', '--help'):
         print(help_page)
         os._exit(0)
 
+    # Start interactive pymodi tutorial
     if check_option('-t', '--tutorial'):
-        modi_tutor = Tutor()
-        modi_tutor.start()
+        pymodi_tutor = Tutor()
+        pymodi_tutor.run_introduction()
         os._exit(0)
 
+    # Time message transfer between local machine and network module
     if check_option('-p', '--performance'):
         print("[PyMODI Performance Test]" + "\n" + "=" * 25)
         init_time = time.time()
         bundle = modi.MODI()
         fin_time = time.time()
         took = (fin_time - init_time) * 100 // 1 / 100
+        print("Hard waiting for topology data to be initialized...")
+        time.sleep(0.5 * len(bundle.modules))
         bundle.print_topology_map(True)
         print(f"Took {took} seconds to initialize")
-        time.sleep(1)
-        msg1 = parse_message(0x07, 0, bundle.modules[0].id)
-        msg2 = parse_message(0x2A, 0, bundle.modules[0].id)
-        print(f"sending request message... {msg1}")
+        req_tp_msg = parse_message(0x2A, 0, bundle.networks[0].id)
+        print(f"sending request message... {req_tp_msg}")
         bundle._exe_thrd.close()
         init_time = time.perf_counter()
-        bundle.send(msg1)
-        bundle.send(msg2)
+        bundle.send(req_tp_msg)
+        msg = None
         while True:
             msg = bundle.recv()
-            recv_cmd = decode_message(msg)[0] if msg else None
-            if msg and recv_cmd == 0x07:
+            if not msg:
+                continue
+            recv_cmd = decode_message(msg)[0]
+            if recv_cmd == 0x07:
                 break
         fin_time = time.perf_counter()
         took = fin_time - init_time
         print(f"received message... {msg}")
-        print(f"Took {took / 2:.20f} seconds for message transfer")
+        print(f"Took {took / 2:.10f} seconds for message transfer")
         os._exit(0)
 
+    # Update STM32 modules (every modules but network module)
     if check_option('-u', '--update'):
         init_time = time.time()
         updater = STM32FirmwareUpdater()
@@ -92,25 +122,44 @@ if __name__ == "__main__":
         print(f"Took {fin_time - init_time:.2f} seconds to update")
         os._exit(0)
 
+    # Update ESP32 module (only network module)
+    if check_option('-n', '--network'):
+        init_time = time.time()
+        updater = ESP32FirmwareUpdater()
+        updater.update_firmware()
+        fin_time = time.time()
+        print(f"Took {fin_time - init_time:.2f} seconds to update")
+        os._exit(0)
+
+    # Initialize modules implicitly
     if check_option('-d', '--debug'):
-        is_update = check_option('-u', '--update')
+        # TODO: Handle when there are more than one module with the same type
         print(">>> bundle = modi.MODI()")
         init_time = time.time()
-        if check_option('-g', '--gui'):
-            from modi.debugger import Debugger
-            bundle = Debugger()
-        else:
-            bundle = modi.MODI(verbose=check_option('-v', '--verbose'))
+        bundle = modi.MODI(verbose=check_option('-v', '--verbose'))
         fin_time = time.time()
-        print(f'Took {fin_time - init_time:.2f} seconds to finish the job')
-        print(">>>")
+        print(f'Took {fin_time - init_time:.2f} seconds to init MODI modules')
 
         for module in bundle.modules:
-            module_name = type(module).__name__.lower()
+            module_name = module.module_type.lower()
             print(">>> " + module_name + " = bundle." + module_name + "s[0]")
-            init_time = time.time()
             exec(module_name + " = module")
-            fin_time = time.time()
-            print(f'Took {fin_time - init_time:.2f} seconds '
-                  f'to get {module_name}')
-        print(">>>")
+
+    # Run GUI debugger
+    if check_option('-g', '--gui'):
+        print(">>> bundle = modi.MODI()")
+        init_time = time.time()
+        bundle = Debugger()
+        fin_time = time.time()
+        print(f'Took {fin_time - init_time:.2f} seconds to init MODI modules')
+        for module in bundle.modules:
+            module_name = module.module_type.lower()
+            print(">>> " + module_name + " = bundle." + module_name + "s[0]")
+            exec(module_name + " = module")
+
+    # Run inspection mode
+    if check_option('-i', '--inspect'):
+        print("inspection mode has not been implemented yet!")
+        pymodi_inspector = Inspector()
+        pymodi_inspector.run_inspection()
+        os._exit(0)

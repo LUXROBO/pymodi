@@ -30,8 +30,9 @@ class MODI:
         print('Start initializing connected MODI modules')
         self._exe_thrd.start()
 
-        self._topology_manager = TopologyManager(self._topology_data,
-                                                 self._modules)
+        self._topology_manager = TopologyManager(
+            self._topology_data, self._modules
+        )
 
         init_time = time.time()
         while not self._topology_manager.is_topology_complete():
@@ -43,8 +44,9 @@ class MODI:
         check_complete(self)
         print("MODI modules are initialized!")
 
-        bad_modules = self.__wait_user_code_check() if conn_mode != 'ble' \
-            else []
+        bad_modules = (
+            self.__wait_user_code_check() if conn_mode != 'ble' else []
+        )
         if bad_modules:
             cmd = input(f"{[str(module) for module in bad_modules]} "
                         f"has user code in it.\n"
@@ -105,12 +107,6 @@ class MODI:
         else:
             raise ValueError(f'Invalid conn mode {conn_mode}')
 
-    def close(self):
-        atexit.unregister(self.close)
-        print("Closing MODI connection...")
-        self._exe_thrd.close()
-        self._conn.close_conn()
-
     def open(self):
         atexit.register(self.close)
         self._exe_thrd = ExeThrd(
@@ -118,6 +114,12 @@ class MODI:
         )
         self._conn.open_conn()
         self._exe_thrd.start()
+
+    def close(self):
+        atexit.unregister(self.close)
+        print("Closing MODI connection...")
+        self._exe_thrd.close()
+        self._conn.close_conn()
 
     def send(self, message) -> None:
         """Low level method to send json pkt directly to modules
@@ -221,16 +223,12 @@ class MODI:
 
 
 def update_module_firmware(target_ids=(0xFFF, )):
-    if not target_ids:
-        return
     updater = STM32FirmwareUpdater(target_ids=target_ids)
     updater.update_module_firmware()
     updater.close()
 
 
 def reset_module_firmware(target_ids=(0xFFF, )):
-    if not target_ids:
-        return
     updater = STM32FirmwareUpdater(is_os_update=False, target_ids=target_ids)
     updater.update_module_firmware()
     updater.close()
@@ -238,4 +236,8 @@ def reset_module_firmware(target_ids=(0xFFF, )):
 
 def update_network_firmware(force=False):
     updater = ESP32FirmwareUpdater()
-    updater.start_update(force=force)
+    updater.update_firmware(force=force)
+
+
+def upload_user_code(filepath, remote_path):
+    upload_file(filepath, remote_path)
