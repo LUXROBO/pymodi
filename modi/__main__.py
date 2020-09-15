@@ -48,17 +48,17 @@ if __name__ == "__main__":
     try:
         # all commands should be defined here in advance
         opts, args = getopt(
-            sys.argv[1:], 'tduhvpgin',
+            sys.argv[1:], 'tdmhvpgin',
             [
                 "tutorial",
                 "debug",
-                "update",
+                "update_module",
                 "help",
                 "verbose",
                 "performance",
                 "gui",
                 "inspect",
-                "network",
+                "update_network_module",
             ]
         )
     # exit program if an invalid option has been entered
@@ -114,7 +114,7 @@ if __name__ == "__main__":
         os._exit(0)
 
     # Update STM32 modules (every modules but network module)
-    if check_option('-u', '--update'):
+    if check_option('-m', '--update_module'):
         init_time = time.time()
         updater = STM32FirmwareUpdater()
         updater.update_module_firmware()
@@ -123,7 +123,7 @@ if __name__ == "__main__":
         os._exit(0)
 
     # Update ESP32 module (only network module)
-    if check_option('-n', '--network'):
+    if check_option('-n', '--update_network_module'):
         init_time = time.time()
         updater = ESP32FirmwareUpdater()
         updater.update_firmware()
