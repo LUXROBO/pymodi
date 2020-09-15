@@ -95,8 +95,29 @@ class Inspector:
         pass
 
     def inspect_mic(self, mic, i, nb_modules):
-        input("\nIf the frequency shown seems reasonable, press ENTER: ")
-        input("\nIf the volume shown seems reasonable, press ENTER: ")
+        self.print_wrap(
+            """
+            Mic module has frequency and volume as its property. We will
+            inspect each of these properties.
+            """
+        )
+        self.clear()
+
+        self.print_module_page(mic, i, nb_modules)
+        print("If the frequency shown below seems correct, press ENTER: \n")
+        t = StoppableThread(mic, "frequency")
+        t.start()
+        input()
+        t.stop()
+        self.clear()
+
+        self.print_module_page(mic, i, nb_modules)
+        print("If the volume shown below seems correct, press ENTER: \n")
+        t = StoppableThread(mic, "volume")
+        t.start()
+        input()
+        t.stop()
+        self.clear()
 
     def inspect_ultrasonic(self, ultrasonic, i, nb_modules):
         self.print_wrap(
