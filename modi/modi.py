@@ -2,6 +2,8 @@
 
 import atexit
 import time
+import sys
+
 from importlib import import_module as im
 from typing import Optional
 
@@ -18,6 +20,9 @@ class MODI:
 
     def __init__(self, conn_mode: str = "", verbose: bool = False,
                  port: str = None, uuid=""):
+        if conn_mode == 'ble' and 'darwin' in sys.platform:
+            print("BLE Connection not supported on macOS")
+            exit(0)
         self._modules = list()
         self._topology_data = dict()
 
@@ -29,8 +34,9 @@ class MODI:
         print('Start initializing connected MODI modules')
         self._exe_thrd.start()
 
-        self._topology_manager = TopologyManager(self._topology_data,
-                                                 self._modules)
+        self._topology_manager = TopologyManager(
+            self._topology_data, self._modules
+        )
 
         init_time = time.time()
         while not self._topology_manager.is_topology_complete():
@@ -41,18 +47,38 @@ class MODI:
                 break
         check_complete(self)
         print("MODI modules are initialized!")
+
+        bad_modules = (
+            self.__wait_user_code_check() if conn_mode != 'ble' else []
+        )
+        if bad_modules:
+            cmd = input(f"{[str(module) for module in bad_modules]} "
+                        f"has user code in it.\n"
+                        f"Reset the user code? [y/n] ")
+            if 'y' in cmd:
+                self.close()
+                modules_to_reset = filter(
+                    lambda m: m.is_up_to_date, bad_modules)
+                modules_to_update = filter(
+                    lambda m: not m.is_up_to_date, bad_modules)
+                reset_module_firmware(
+                    tuple(module.id for module in modules_to_reset))
+                update_module_firmware(
+                    tuple(module.id for module in modules_to_update))
+                self.open()
         atexit.register(self.close)
 
-    @staticmethod
-    def upload_user_code(filepath: str, remote_path: str) -> None:
-        """Upload python user code
+    def __wait_user_code_check(self):
+        def is_not_checked(module):
+            return module.user_code_status < 0
 
-        :param filepath: Filepath to python file
-        :type filepath: str
-        :param remote_path: Filepath on esp device
-        :return: None
-        """
-        upload_file(filepath, remote_path)
+        while list(filter(is_not_checked, self._modules)):
+            time.sleep(0.1)
+        bad_modules = []
+        for module in self._modules:
+            if module.has_user_code:
+                bad_modules.append(module)
+        return bad_modules
 
     @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
@@ -69,12 +95,6 @@ class MODI:
         else:
             raise ValueError(f'Invalid conn mode {conn_mode}')
 
-    def close(self):
-        atexit.unregister(self.close)
-        print("Closing MODI connection...")
-        self._exe_thrd.close()
-        self._conn.close_conn()
-
     def open(self):
         atexit.register(self.close)
         self._exe_thrd = ExeThrd(
@@ -83,13 +103,19 @@ class MODI:
         self._conn.open_conn()
         self._exe_thrd.start()
 
+    def close(self):
+        atexit.unregister(self.close)
+        print("Closing MODI connection...")
+        self._exe_thrd.close()
+        self._conn.close_conn()
+
     def send(self, message) -> None:
         """Low level method to send json pkt directly to modules
 
         :param message: Json packet to send
         :return: None
         """
-        self._conn.send(message)
+        self._conn.send_nowait(message)
 
     def recv(self) -> Optional[str]:
         """Low level method to receive json pkt directly from modules
@@ -184,11 +210,22 @@ class MODI:
         return module_list(self._modules, "ultrasonic")
 
 
-def update_module_firmware():
-    updater = STM32FirmwareUpdater()
+def update_module_firmware(target_ids=(0xFFF, )):
+    updater = STM32FirmwareUpdater(target_ids=target_ids)
     updater.update_module_firmware()
+    updater.close()
 
 
-def update_network_firmware(stub=True, force=False):
+def reset_module_firmware(target_ids=(0xFFF, )):
+    updater = STM32FirmwareUpdater(is_os_update=False, target_ids=target_ids)
+    updater.update_module_firmware()
+    updater.close()
+
+
+def update_network_firmware(force=False):
     updater = ESP32FirmwareUpdater()
-    updater.start_update(stub=stub, force=force)
+    updater.update_firmware(force=force)
+
+
+def upload_user_code(filepath, remote_path):
+    upload_file(filepath, remote_path)

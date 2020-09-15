@@ -93,3 +93,14 @@ class SerTask(ConnTask):
         self._bus.write(pkt.encode('utf8'))
         if self.verbose:
             print(f'send: {pkt}')
+
+    def send_nowait(self, pkt: str) -> None:
+        """ Send json pkt
+
+        :param pkt: Json pkt to send
+        :type pkt: str
+        :return: None
+        """
+        self._bus.write(pkt.encode('utf8'))
+        if self.verbose:
+            print(f'send: {pkt}')

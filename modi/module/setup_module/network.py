@@ -1,4 +1,6 @@
 """Network module."""
+import time
+
 from modi.module.setup_module.setup_module import SetupModule
 from modi.util.msgutil import parse_message
 
@@ -18,6 +20,20 @@ class Network(SetupModule):
     def __init__(self, id_, uuid, conn_task):
         super().__init__(id_, uuid, conn_task)
         self.__buzzer_flag = True
+        self.__esp_version = None
+
+    @property
+    def esp_version(self):
+        if self.__esp_version:
+            return self.__esp_version
+        self._conn.send('{"c":160,"s":25,"d":4095,"b":"AAAAAAAAAA==","l":8}')
+        while not self.__esp_version:
+            time.sleep(0.01)
+        return self.__esp_version
+
+    @esp_version.setter
+    def esp_version(self, version):
+        self.__esp_version = version
 
     @property
     def button_pressed(self):

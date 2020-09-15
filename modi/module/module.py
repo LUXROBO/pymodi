@@ -43,7 +43,7 @@ class Module:
         self.battery = 100
         self.position = (0, 0)
         self.__version = None
-        self.has_user_code = False
+        self.user_code_status = -1  # 1 if user code and 0 if not
 
     def __gt__(self, other):
         if self.order == other.order:
@@ -65,6 +65,10 @@ class Module:
 
     def __str__(self):
         return f"{self.__class__.__name__} ({self._id})"
+
+    @property
+    def has_user_code(self):
+        return self.user_code_status == 1
 
     @property
     def version(self):

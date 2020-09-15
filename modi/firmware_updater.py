@@ -5,13 +5,11 @@ import time
 from base64 import b64encode, b64decode
 from io import open
 from os import path
+from importlib import import_module as im
 
-import esptool
 import serial
 
 from modi.module.module import Module
-from modi.task.ser_task import SerTask
-from modi.task.can_task import CanTask
 from modi.util.msgutil import unpack_data, decode_message
 from modi.util.conn_util import list_modi_ports, is_on_pi
 
@@ -28,14 +26,16 @@ class STM32FirmwareUpdater:
     ERASE_ERROR = 6
     ERASE_COMPLETE = 7
 
-    def __init__(self):
+    def __init__(self, is_os_update=True, target_ids=(0xFFF, )):
         self.__conn = self.__open_conn()
         self.__conn.open_conn()
         th.Thread(target=self.__read_conn, daemon=True).start()
+        self.__target_ids = target_ids
         self.response_flag = False
         self.response_error_flag = False
         self.response_error_count = 0
-
+        self.__running = True
+        self.__is_os_update = is_os_update
         self.update_event = th.Event()
         self.update_in_progress = False
         self.modules_to_update = []
@@ -43,16 +43,22 @@ class STM32FirmwareUpdater:
 
     def update_module_firmware(self):
         self.reset_state()
-        self.request_to_update_firmware()
+        for target in self.__target_ids:
+            self.request_to_update_firmware(target)
         self.update_event.wait()
         print("Module firmwares have been updated!")
+
+    def close(self):
+        self.__running = False
+        time.sleep(0.5)
+        self.__conn.close_conn()
 
     @staticmethod
     def __open_conn():
         if is_on_pi():
-            return CanTask()
+            return im('modi.task.can_task').CanTask()
         else:
-            return SerTask()
+            return im('modi.task.ser_task').SerTask()
 
     @staticmethod
     def __get_module_type_from_uuid(uuid: int) -> str:
@@ -91,7 +97,6 @@ class STM32FirmwareUpdater:
         :type update_in_progress: bool
         :return: None
         """
-
         self.response_flag = False
         self.response_error_flag = False
         self.response_error_count = 0
@@ -102,13 +107,13 @@ class STM32FirmwareUpdater:
             self.modules_to_update = []
             self.modules_updated = []
 
-    def request_to_update_firmware(self) -> None:
+    def request_to_update_firmware(self, module_id) -> None:
         """ Remove firmware of MODI modules (Removes EndFlash)
         """
         firmware_update_message = self.__set_module_state(
-            0xFFF, Module.UPDATE_FIRMWARE, Module.PNP_OFF
+            module_id, Module.UPDATE_FIRMWARE, Module.PNP_OFF
         )
-        self.__conn.send(firmware_update_message)
+        self.__conn.send_nowait(firmware_update_message)
 
     def check_to_update_firmware(self, module_id: int) -> None:
         """ Check if modules with no firmware are ready to update its firmware
@@ -120,7 +125,7 @@ class STM32FirmwareUpdater:
         firmware_update_ready_message = self.__set_module_state(
             module_id, Module.UPDATE_FIRMWARE_READY, Module.PNP_OFF
         )
-        self.__conn.send(firmware_update_ready_message)
+        self.__conn.send_nowait(firmware_update_ready_message)
 
     def add_to_waitlist(self, module_id: int, module_type: str) -> None:
         """Add the module to the waitlist to update
@@ -142,7 +147,7 @@ class STM32FirmwareUpdater:
                 return
 
         print(f"\rAdding {module_type} ({module_id}) to waiting list..."
-              f"{' ' * 40}")
+              f"{' ' * 60}")
 
         # Add the module to the waiting list
         module_elem = module_id, module_type
@@ -191,76 +196,75 @@ class STM32FirmwareUpdater:
         :type module_type: str
         :return: None
         """
-        print(
-            "Start updating the binary firmware "
-            f"for {module_type} ({module_id})"
-        )
         self.update_in_progress = True
         self.modules_updated.append((module_id, module_type))
 
-        # Init path to binary file
         root_path = (
             path.join(path.dirname(__file__), 'firmware', 'stm32')
         )
-        bin_path = (
-            f"{module_type.lower()}.bin"
-        )
 
-        bin_path = path.join(root_path, bin_path)
-
-        with open(bin_path, 'rb') as bin_file:
-            bin_buffer = bin_file.read()
-
-        # Init metadata of the bytes loaded
-        page_size = 0x800
-        flash_memory_addr = 0x08000000
-
-        bin_size = sys.getsizeof(bin_buffer)
-        bin_begin = 0x9000
-        bin_end = bin_size - ((bin_size - bin_begin) % page_size)
-        delay = 0.0025 if is_on_pi() else 0.001
-        for page_begin in range(bin_begin, bin_end + 1, page_size):
-            print(f"\r{self.__progress_bar(page_begin, bin_end)}"
-                  f" {page_begin * 100 // bin_end}%", end='')
-            page_end = page_begin + page_size
-            curr_page = bin_buffer[page_begin:page_end]
-
-            # Skip current page if empty
-            if not sum(curr_page):
-                continue
-
-            # Erase page (send erase request and receive its response)
-            erase_page_success = self.send_firmware_command(
-                oper_type="erase", module_id=module_id, crc_val=0,
-                dest_addr=flash_memory_addr, page_addr=page_begin
+        if self.__is_os_update:
+            # Init path to binary file
+            bin_path = (
+                f"{module_type.lower()}.bin"
             )
-            if not erase_page_success:
-                page_begin -= page_size
-                continue
 
-            # Copy current page data to the module's memory
-            checksum = 0
-            for curr_ptr in range(0, page_size, 8):
-                if page_begin + curr_ptr >= bin_size:
-                    break
+            bin_path = path.join(root_path, bin_path)
 
-                curr_data = curr_page[curr_ptr:curr_ptr + 8]
-                checksum = self.send_firmware_data(
-                    module_id,
-                    seq_num=curr_ptr // 8,
-                    bin_data=curr_data,
-                    crc_val=checksum
+            with open(bin_path, 'rb') as bin_file:
+                bin_buffer = bin_file.read()
+
+            # Init metadata of the bytes loaded
+            page_size = 0x800
+            flash_memory_addr = 0x08000000
+
+            bin_size = sys.getsizeof(bin_buffer)
+            bin_begin = 0x9000
+            bin_end = bin_size - ((bin_size - bin_begin) % page_size)
+            for page_begin in range(bin_begin, bin_end + 1, page_size):
+                print(f"\rUpdating {module_type} ({module_id}) "
+                      f"{self.__progress_bar(page_begin, bin_end)} "
+                      f"{page_begin * 100 // bin_end}%", end='')
+                page_end = page_begin + page_size
+                curr_page = bin_buffer[page_begin:page_end]
+                # Skip current page if empty
+                if not sum(curr_page):
+                    continue
+
+                # Erase page (send erase request and receive its response)
+                erase_page_success = self.send_firmware_command(
+                    oper_type="erase", module_id=module_id, crc_val=0,
+                    dest_addr=flash_memory_addr, page_addr=page_begin
                 )
-                time.sleep(delay)
+                if not erase_page_success:
+                    page_begin -= page_size
+                    continue
+                # Copy current page data to the module's memory
+                checksum = 0
+                for curr_ptr in range(0, page_size, 8):
+                    if page_begin + curr_ptr >= bin_size:
+                        break
 
-            # CRC on current page (send CRC request and receive CRC response)
-            crc_page_success = self.send_firmware_command(
-                oper_type="crc", module_id=module_id, crc_val=checksum,
-                dest_addr=flash_memory_addr, page_addr=page_begin
-            )
-            if not crc_page_success:
-                page_begin -= page_size
+                    curr_data = curr_page[curr_ptr:curr_ptr + 8]
+                    checksum = self.send_firmware_data(
+                        module_id,
+                        seq_num=curr_ptr // 8,
+                        bin_data=curr_data,
+                        crc_val=checksum
+                    )
+                    self.__delay(0.002)
 
+                # CRC on current page (send CRC request / receive CRC response)
+                crc_page_success = self.send_firmware_command(
+                    oper_type="crc", module_id=module_id, crc_val=checksum,
+                    dest_addr=flash_memory_addr, page_addr=page_begin
+                )
+                if not crc_page_success:
+                    page_begin -= page_size
+                time.sleep(0.01)
+
+        print(f"\rUpdating {module_type} ({module_id}) "
+              f"{self.__progress_bar(1, 1)} 100%")
         # Include MODI firmware version when writing end flash
         version_path = path.join(root_path, 'version.txt')
         with open(version_path) as version_file:
@@ -285,7 +289,7 @@ class STM32FirmwareUpdater:
         self.send_end_flash_data(module_type, module_id, end_flash_data)
 
         # Firmware update flag down, resetting used flags
-        print(f'\nFirmware update is done for {module_type} ({module_id})')
+        print(f'Firmware update is done for {module_type} ({module_id})')
         self.reset_state(update_in_progress=True)
 
         if self.modules_to_update:
@@ -297,10 +301,17 @@ class STM32FirmwareUpdater:
             reboot_message = self.__set_module_state(
                 0xFFF, Module.REBOOT, Module.PNP_OFF
             )
-            self.__conn.send(reboot_message)
+            self.__conn.send_nowait(reboot_message)
             print("Reboot message has been sent to all connected modules")
             self.reset_state()
             self.update_event.set()
+
+    @staticmethod
+    def __delay(span):
+        init_time = time.perf_counter()
+        while time.perf_counter() - init_time < span:
+            pass
+        return
 
     def __set_module_state(self, destination_id: int, module_state: int,
                            pnp_state: int) -> str:
@@ -500,11 +511,11 @@ class STM32FirmwareUpdater:
         request_message = self.get_firmware_command(
             module_id, 1, rot_scmd, crc_val, page_addr=dest_addr + page_addr
         )
-        self.__conn.send(request_message)
+        self.__conn.send_nowait(request_message)
 
         return self.receive_command_response()
 
-    def receive_command_response(self, response_delay: float = 0.1,
+    def receive_command_response(self, response_delay: float = 0.001,
                                  response_timeout: float = 5,
                                  max_response_error_count: int = 75) -> bool:
         """ Block until receiving a response of the most recent message sent
@@ -518,7 +529,6 @@ class STM32FirmwareUpdater:
         :return Boolean flag of the response
         :rtype: bool
         """
-
         # Receive firmware command response
         response_wait_time = 0
         while not self.response_flag:
@@ -560,7 +570,7 @@ class STM32FirmwareUpdater:
         data_message = self.get_firmware_data(
             module_id, seq_num=seq_num, bin_data=bin_data
         )
-        self.__conn.send(data_message)
+        self.__conn.send_nowait(data_message)
 
         # Calculate crc32 checksum twice
         checksum = self.calc_crc64(data=bin_data, checksum=crc_val)
@@ -578,12 +588,14 @@ class STM32FirmwareUpdater:
         """
         curr_bar = 50 * current // total
         rest_bar = 50 - curr_bar
-        return f"Updating: [{'=' * curr_bar}>{'.' * rest_bar}]"
+        return f"[{'=' * curr_bar}>{'.' * rest_bar}]"
 
     def __read_conn(self):
         while True:
             self.__handle_message()
-            time.sleep(0.02)
+            time.sleep(0.001)
+            if not self.__running:
+                break
 
     def __handle_message(self):
         msg = self.__conn.recv()
@@ -661,74 +673,6 @@ def retry(exception_to_catch):
 
 
 class ESP32FirmwareUpdater(serial.Serial):
-    class ESP32(esptool.ESP32ROM):
-        _rts_state = True
-        _dtr_state = True
-
-        def _setDTR(self, state):
-            self._dtr_state = state
-
-        def _setRTS(self, state):
-            self._rts_state = state
-
-        def _connect_attempt(self, mode='default_reset', esp32r0_delay=False):
-            """A single connection attempt, with esp32r0 workaround options"""
-            last_error = None
-
-            if mode == "no_reset_no_sync":
-                return last_error
-
-            print("send network module usb mode")
-            self._port.write(b'{"c":43,"s":0,"d":4095,"b":"Kw==","l":1}')
-            self.flush_input()
-            self._port.flushOutput()
-            time.sleep(0.5)
-
-            for _ in range(5):
-                try:
-                    self.flush_input()
-                    self._port.flushOutput()
-                    self.sync()
-                    return None
-                except esptool.FatalError as e:
-                    if esp32r0_delay:
-                        print('_', end='')
-                    else:
-                        print('.', end='')
-                    sys.stdout.flush()
-                    time.sleep(0.05)
-                    last_error = e
-            return last_error
-
-        def _sendEnIo0(self):
-            json_str = ""
-            if self._rts_state == self._dtr_state:
-                json_str = str('{"en":1,"io0":1}')
-            elif self._rts_state and not self._dtr_state:
-                json_str = str('{"en":1,"io0":0}')
-            else:
-                json_str = str('{"en":0,"io0":1}')
-
-            self._port.write(json_str.encode('utf-8'))
-            print(json_str)
-
-        def write(self, packet):
-            packet = packet.replace(
-                b'\xdb', b'\xdb\xdd').replace(b'\xc0', b'\xdb\xdc')
-            buf = b'\xc0' + packet + b'\xc0'
-
-            step = 64
-            buf_len = len(buf)
-
-            for first in range(0, buf_len, step):
-                last = first + step
-                if last > buf_len:
-                    last = buf_len
-
-                write_buf = buf[first:last]
-                self._port.write(write_buf)
-                time.sleep(0.01)
-
     DEVICE_READY = 0x2B
     DEVICE_SYNC = 0x08
     SPI_ATTACH_REQ = 0xD
@@ -749,14 +693,15 @@ class ESP32FirmwareUpdater(serial.Serial):
         print(f"Connecting to MODI network module at {modi_ports[0].device}")
 
         self.__address = [0x1000, 0x8000, 0XD000, 0x10000, 0xD0000]
-        self.file_path = ['bootloader.bin', 'partitions.bin',
-                          'ota_data_initial.bin', 'modi_ota_factory.bin',
-                          'esp32.bin']
+        self.file_path = [
+            'bootloader.bin', 'partitions.bin', 'ota_data_initial.bin',
+            'modi_ota_factory.bin', 'esp32.bin'
+        ]
         self.id = None
         self.version = None
         self.__version_to_update = None
 
-    def start_update(self, stub=False, force=False):
+    def update_firmware(self, force=False):
         self.__boot_to_app()
         self.__version_to_update = self.__get_latest_version()
         self.id = self.__get_esp_id()
@@ -772,14 +717,6 @@ class ESP32FirmwareUpdater(serial.Serial):
         firmware_buffer = self.__compose_binary_firmware()
 
         self.__device_ready()
-        time.sleep(1)
-        if stub:
-            self.close()
-            esp = self.ESP32(self.port, self.baudrate, False)
-            esp.connect()
-            esp.run_stub()
-            esp._port.close()
-            self.open()
         self.__device_sync()
         self.__flash_attach()
         self.__set_flash_param()
@@ -803,37 +740,44 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     def __device_sync(self):
         print("Syncing the esp device...")
-        sync_pkt = self.__parse_pkt([0x0, self.DEVICE_SYNC,
-                                     0x24, 0, 0, 0, 0, 0,
-                                     0x7, 0x7, 0x12, 0x20] + 32 * [0x55])
+        sync_pkt = self.__parse_pkt([
+            0x0, self.DEVICE_SYNC, 0x24, 0, 0, 0, 0, 0, 0x7, 0x7, 0x12, 0x20
+        ] + 32 * [0x55])
         self.__send_pkt(sync_pkt, timeout=10, continuous=True)
         print("Sync Complete")
 
     def __flash_attach(self):
         print("Attaching flash to esp device..")
-        attach_pkt = self.__parse_pkt([0x0, self.SPI_ATTACH_REQ,
-                                       0x8] + 13 * [0])
+        attach_pkt = self.__parse_pkt([
+            0x0, self.SPI_ATTACH_REQ, 0x8
+        ] + 13 * [0])
         self.__send_pkt(attach_pkt, timeout=10)
         print("Flash attach Complete")
 
     def __set_flash_param(self):
         print("Setting esp flash parameter...")
         param_data = [0] * 32
-        fl_id, total_size, block_size, sector_size, page_size, status_mask = \
+        fl_id, total_size, block_size, sector_size, page_size, status_mask = (
             0, 2 * 1024 * 1024, 64 * 1024, 4 * 1024, 256, 0xFFFF
+        )
         param_data[1] = self.SPI_FLASH_SET
         param_data[2] = 0x18
         param_data[8:12] = int.to_bytes(fl_id, length=4, byteorder='little')
-        param_data[12:16] = int.to_bytes(total_size,
-                                         length=4, byteorder='little')
-        param_data[16:20] = int.to_bytes(block_size,
-                                         length=4, byteorder='little')
-        param_data[20:24] = int.to_bytes(sector_size,
-                                         length=4, byteorder='little')
-        param_data[24:28] = int.to_bytes(page_size,
-                                         length=4, byteorder='little')
-        param_data[28:32] = int.to_bytes(status_mask,
-                                         length=4, byteorder='little')
+        param_data[12:16] = int.to_bytes(
+            total_size, length=4, byteorder='little'
+        )
+        param_data[16:20] = int.to_bytes(
+            block_size, length=4, byteorder='little'
+        )
+        param_data[20:24] = int.to_bytes(
+            sector_size, length=4, byteorder='little'
+        )
+        param_data[24:28] = int.to_bytes(
+            page_size, length=4, byteorder='little'
+        )
+        param_data[28:32] = int.to_bytes(
+            status_mask, length=4, byteorder='little'
+        )
         param_pkt = self.__parse_pkt(param_data)
         self.__send_pkt(param_pkt, timeout=10)
         print("Parameter set complete")
@@ -848,6 +792,7 @@ class ESP32FirmwareUpdater(serial.Serial):
     @retry(Exception)
     def __send_pkt(self, pkt, wait=True, timeout=None, continuous=False):
         self.write(pkt)
+        self.reset_input_buffer()
         if wait:
             cmd = bytearray(pkt)[2]
             init_time = time.time()
@@ -863,7 +808,6 @@ class ESP32FirmwareUpdater(serial.Serial):
                     continue
                 recv_cmd = bytearray(recv_pkt)[2]
                 if cmd == recv_cmd:
-                    self.reset_input_buffer()
                     if bytearray(recv_pkt)[1] != 0x01:
                         raise Exception
                     return True
@@ -940,9 +884,9 @@ class ESP32FirmwareUpdater(serial.Serial):
                 bin_data = bin_file.read()
             binary_firmware += bin_data
             if i < len(self.__address) - 1:
-                binary_firmware += b'\xFF' * (self.__address[i + 1]
-                                              - self.__address[i]
-                                              - len(bin_data))
+                binary_firmware += b'\xFF' * (
+                    self.__address[i + 1] - self.__address[i] - len(bin_data)
+                )
         return binary_firmware
 
     @staticmethod
@@ -960,12 +904,15 @@ class ESP32FirmwareUpdater(serial.Serial):
         erase_data[1] = self.ESP_FLASH_BEGIN
         erase_data[2] = 0x10
         erase_data[8:12] = int.to_bytes(size, length=4, byteorder='little')
-        erase_data[12:16] = int.to_bytes(num_blocks,
-                                         length=4, byteorder='little')
-        erase_data[16:20] = int.to_bytes(self.ESP_FLASH_BLOCK,
-                                         length=4, byteorder='little')
-        erase_data[20:24] = int.to_bytes(offset,
-                                         length=4, byteorder='little')
+        erase_data[12:16] = int.to_bytes(
+            num_blocks, length=4, byteorder='little'
+        )
+        erase_data[16:20] = int.to_bytes(
+            self.ESP_FLASH_BLOCK, length=4, byteorder='little'
+        )
+        erase_data[20:24] = int.to_bytes(
+            offset, length=4, byteorder='little'
+        )
         erase_pkt = self.__parse_pkt(erase_data)
         self.__send_pkt(erase_pkt, timeout=10)
 
@@ -977,8 +924,9 @@ class ESP32FirmwareUpdater(serial.Serial):
         block_data[1] = self.ESP_FLASH_DATA
         block_data[2:4] = int.to_bytes(size + 16, length=2, byteorder='little')
         block_data[8:12] = int.to_bytes(size, length=4, byteorder='little')
-        block_data[12:16] = int.to_bytes(seq_block,
-                                         length=4, byteorder='little')
+        block_data[12:16] = int.to_bytes(
+            seq_block, length=4, byteorder='little'
+        )
         for i in range(size):
             block_data[24 + i] = data[i]
             checksum ^= (0xFF & data[i])
@@ -1000,13 +948,15 @@ class ESP32FirmwareUpdater(serial.Serial):
         blocks_downloaded = 0
         print("Start uploading firmware data...")
         for seq, chunk in enumerate(chunk_queue):
-            self.__erase_chunk(len(chunk),
-                               self.__address[0] + seq * self.ESP_FLASH_CHUNK)
-            blocks_downloaded += self.__write_chunk(chunk, blocks_downloaded,
-                                                    num_blocks, manager)
+            self.__erase_chunk(
+                len(chunk), self.__address[0] + seq * self.ESP_FLASH_CHUNK
+            )
+            blocks_downloaded += self.__write_chunk(
+                chunk, blocks_downloaded, num_blocks, manager
+            )
         if manager:
             manager.quit()
-        print(self.__progress_bar(1, 1))
+        print(f"\r{self.__progress_bar(1, 1)}")
         print("Firmware Upload Complete")
 
     def __write_chunk(self, chunk, curr_seq, total_seq, manager):
