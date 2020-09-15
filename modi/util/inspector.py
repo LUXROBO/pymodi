@@ -81,16 +81,76 @@ class Inspector:
         self.clear()
 
     def inspect_button(self, button, i, nb_modules):
-        pass
+        self.print_wrap(
+            """
+            Button module has cliked, double_clicked, pressed, toggled as its
+            property.
+            """
+        )
+        input("\nIf you are ready to inspect this module, Press ENTER: ")
+        self.clear()
+
+        self.print_module_page(button, i, nb_modules)
+        print("If the click state shown below seems correct, press ENTER: \n")
+        t = StoppableThread(button, "clicked")
+        t.start()
+        input()
+        t.stop()
+        self.clear()
+
+        self.print_module_page(button, i, nb_modules)
+        print("If the double click state shown below seems correct, "
+              "press ENTER: \n")
+        t = StoppableThread(button, "double_clicked")
+        t.start()
+        input()
+        t.stop()
+        self.clear()
+
+        self.print_module_page(button, i, nb_modules)
+        print("If the press state shown below seems correct, press ENTER: \n")
+        t = StoppableThread(button, "pressed")
+        t.start()
+        input()
+        t.stop()
+        self.clear()
+
+        self.print_module_page(button, i, nb_modules)
+        print("If the toggle state shown below seems correct, press ENTER: \n")
+        t = StoppableThread(button, "toggled")
+        t.start()
+        input()
+        t.stop()
+        self.clear()
 
     def inspect_dial(self, dial, i, nb_modules):
-        pass
+        self.print_wrap(
+            """
+            Dial module has degree and turnspeed as its property.
+            """
+        )
+        input("\nIf you are ready to inspect this module, Press ENTER: ")
+        self.clear()
+
+        self.print_module_page(dial, i, nb_modules)
+        print("If the degree shown below seems correct, press ENTER: \n")
+        t = StoppableThread(dial, "degree")
+        t.start()
+        input()
+        t.stop()
+
+        self.print_module_page(dial, i, nb_modules)
+        print("If the turnspeed shown below seems correct, press ENTER: \n")
+        t = StoppableThread(dial, "turnspeed")
+        t.start()
+        input()
+        t.stop()
 
     def inspect_env(self, env, i, nb_moudles):
-        pass
+        raise NotImplementedError
 
     def inspect_gyro(self, gyro, i, nb_modules):
-        pass
+        raise NotImplementedError
 
     def inspect_ir(self, ir, i, nb_modules):
         self.print_wrap(
@@ -98,6 +158,7 @@ class Inspector:
             Ir module has proximity as its property.
             """
         )
+        input("\nIf you are ready to inspect this module, Press ENTER: ")
         self.clear()
 
         self.print_module_page(ir, i, nb_modules)
@@ -114,6 +175,7 @@ class Inspector:
             inspect each of these properties.
             """
         )
+        input("\nIf you are ready to inspect this module, Press ENTER: ")
         self.clear()
 
         self.print_module_page(mic, i, nb_modules)
@@ -154,6 +216,7 @@ class Inspector:
             this property for the module.
             """
         )
+        input("\nIf you are ready to inspect this module, Press ENTER: ")
         self.clear()
 
         self.print_module_page(display, i, nb_modules)
