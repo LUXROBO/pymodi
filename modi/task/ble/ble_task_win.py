@@ -25,7 +25,7 @@ class BleTask(ConnTask):
             self.__ble_task.uuid = ask_modi_device(devices)
 
         print("Connecting...")
-        for i in range(5):
+        for _ in range(5):
             try:
                 self.__ble_task.open_conn()
                 return
