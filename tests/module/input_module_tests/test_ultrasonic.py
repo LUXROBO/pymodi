@@ -23,8 +23,15 @@ class TestUltrasonic(unittest.TestCase):
         _ = self.ultrasonic.distance
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Ultrasonic.DISTANCE, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (
+                    Ultrasonic.DISTANCE,
+                    None,
+                    self.ultrasonic.prop_samp_freq,
+                    None
+                )
+            )
         )
 
 

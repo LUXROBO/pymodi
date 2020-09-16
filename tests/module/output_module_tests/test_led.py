@@ -26,8 +26,10 @@ class TestLed(unittest.TestCase):
         """Test set_rgb method with user-defined inputs."""
         expected_color = (10, 20, 255)
         self.led.rgb = expected_color
-        set_message = parse_message(0x04, 16, -1, parse_data(
-            self.to_true_color(expected_color), 'int'))
+        set_message = parse_message(
+            0x04, 16, -1,
+            parse_data(self.to_true_color(expected_color), 'int')
+        )
         sent_messages = []
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
@@ -37,8 +39,10 @@ class TestLed(unittest.TestCase):
         """Test on method."""
         expected_color = (255, 255, 255)
         self.led.rgb = expected_color
-        set_message = parse_message(0x04, 16, -1, parse_data(
-            self.to_true_color(expected_color), 'int'))
+        set_message = parse_message(
+            0x04, 16, -1,
+            parse_data(self.to_true_color(expected_color), 'int')
+        )
         sent_messages = []
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
@@ -49,8 +53,10 @@ class TestLed(unittest.TestCase):
         expected_color = (0, 0, 0)
         self.led.turn_on()
         self.led.turn_off()
-        set_message = parse_message(0x04, 16, -1, parse_data(
-            self.to_true_color(expected_color), 'int'))
+        set_message = parse_message(
+            0x04, 16, -1,
+            parse_data(self.to_true_color(expected_color), 'int')
+        )
         sent_messages = []
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
@@ -59,8 +65,10 @@ class TestLed(unittest.TestCase):
     def test_set_red(self):
         """Test set_red method."""
         expected_color = (20, 0, 0)
-        set_message = parse_message(0x04, 16, -1, parse_data(
-            self.to_true_color(expected_color), 'int'))
+        set_message = parse_message(
+            0x04, 16, -1,
+            parse_data(self.to_true_color(expected_color), 'int')
+        )
         sent_messages = []
         self.led.red = 20
         while self.conn.send_list:
@@ -72,13 +80,18 @@ class TestLed(unittest.TestCase):
         _ = self.led.red
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1, (Led.RED, None, 95, None)))
+            parse_message(
+                0x03, 0, -1, (Led.RED, None, self.led.prop_samp_freq, None)
+            )
+        )
 
     def test_set_green(self):
         """Test set_green method."""
         expected_color = (0, 20, 0)
-        set_message = parse_message(0x04, 16, -1, parse_data(
-            self.to_true_color(expected_color), 'int'))
+        set_message = parse_message(
+            0x04, 16, -1,
+            parse_data(self.to_true_color(expected_color), 'int')
+        )
         sent_messages = []
         self.led.green = 20
         while self.conn.send_list:
@@ -90,14 +103,19 @@ class TestLed(unittest.TestCase):
         _ = self.led.green
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Led.GREEN, None, 95, None)))
+            parse_message(
+                0x03, 0, -1,
+                (Led.GREEN, None, self.led.prop_samp_freq, None)
+            )
+        )
 
     def test_set_blue(self):
         """Test blue method."""
         expected_color = (0, 0, 20)
-        set_message = parse_message(0x04, 16, -1, parse_data(
-            self.to_true_color(expected_color), 'int'))
+        set_message = parse_message(
+            0x04, 16, -1,
+            parse_data(self.to_true_color(expected_color), 'int')
+        )
         sent_messages = []
         self.led.blue = 20
         while self.conn.send_list:
@@ -109,8 +127,11 @@ class TestLed(unittest.TestCase):
         _ = self.led.blue
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Led.BLUE, None, 95, None)))
+            parse_message(
+                0x03, 0, -1,
+                (Led.BLUE, None, self.led.prop_samp_freq, None)
+            )
+        )
 
 
 if __name__ == "__main__":

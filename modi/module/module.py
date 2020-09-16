@@ -38,6 +38,9 @@ class Module:
         self.module_type = str()
         self._properties = dict()
 
+        # sampling_rate = (100 - property_sampling_frequency) * 11, in ms
+        self.prop_samp_freq = 91
+
         self.is_connected = True
         self.last_updated = time.time()
         self.battery = 100
@@ -154,5 +157,8 @@ class Module:
         :return: None
         """
         self._properties[property_type].last_update_time = time.time()
-        self._conn.send(parse_message(0x03, 0, destination_id,
-                                      (property_type, None, 95, None)))
+        req_prop_msg = parse_message(
+            0x03, 0, destination_id,
+            (property_type, None, self.prop_samp_freq, None)
+        )
+        self._conn.send(req_prop_msg)

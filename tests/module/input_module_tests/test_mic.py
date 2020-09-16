@@ -24,8 +24,10 @@ class TestMic(unittest.TestCase):
         _ = self.mic.volume
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Mic.VOLUME, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Mic.VOLUME, None, self.mic.prop_samp_freq, None)
+            )
         )
 
     def test_get_frequency(self):
@@ -33,8 +35,10 @@ class TestMic(unittest.TestCase):
         _ = self.mic.frequency
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Mic.FREQUENCY, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Mic.FREQUENCY, None, self.mic.prop_samp_freq, None)
+            )
         )
 
 

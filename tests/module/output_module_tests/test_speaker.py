@@ -28,15 +28,22 @@ class TestSpeaker(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Speaker.FREQUENCY, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Speaker.VOLUME, None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Speaker.FREQUENCY, None, self.speaker.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
             parse_message(
-                0x04, 16, -1, parse_data(
-                    expected_values, 'float')) in sent_messages)
+                0x03, 0, -1,
+                (Speaker.VOLUME, None, self.speaker.prop_samp_freq, None)
+            ) in sent_messages
+        )
+        self.assertTrue(
+            parse_message(
+                0x04, 16, -1, parse_data(expected_values, 'float')
+            ) in sent_messages
+        )
 
     def test_get_tune(self):
         """Test get_tune method with none input."""
@@ -45,11 +52,16 @@ class TestSpeaker(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Speaker.FREQUENCY, None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Speaker.FREQUENCY, None, self.speaker.prop_samp_freq, None)
+            ) in sent_messages)
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Speaker.VOLUME, None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Speaker.VOLUME, None, self.speaker.prop_samp_freq, None)
+            ) in sent_messages
+        )
 
     def test_set_frequency(self):
         """Test set_frequency method."""
@@ -60,22 +72,35 @@ class TestSpeaker(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Speaker.FREQUENCY, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Speaker.VOLUME, None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Speaker.FREQUENCY, None, self.speaker.prop_samp_freq, None)
+            )
+            in sent_messages
+        )
         self.assertTrue(
             parse_message(
-                0x04, 16, -1, parse_data(
-                    expected_values, 'float')) in sent_messages)
+                0x03, 0, -1,
+                (Speaker.VOLUME, None, self.speaker.prop_samp_freq, None)
+            ) in sent_messages
+        )
+        self.assertTrue(
+            parse_message(
+                0x04, 16, -1,
+                parse_data(expected_values, 'float')
+            ) in sent_messages
+        )
 
     def test_get_frequency(self):
         """Test get_frequency method with none input."""
         _ = self.speaker.frequency
         self.assertEqual(
             self.conn.send_list[1],
-            parse_message(0x03, 0, -1, (Speaker.FREQUENCY, None, 95, None)))
+            parse_message(
+                0x03, 0, -1,
+                (Speaker.FREQUENCY, None, self.speaker.prop_samp_freq, None)
+            )
+        )
 
     def test_set_volume(self):
         """Test set_volume method."""
@@ -86,22 +111,34 @@ class TestSpeaker(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Speaker.FREQUENCY, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Speaker.VOLUME, None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Speaker.FREQUENCY, None, self.speaker.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
             parse_message(
-                0x04, 16, -1, parse_data(
-                    expected_values, 'float')) in sent_messages)
+                0x03, 0, -1,
+                (Speaker.VOLUME, None, self.speaker.prop_samp_freq, None)
+            ) in sent_messages
+        )
+        self.assertTrue(
+            parse_message(
+                0x04, 16, -1,
+                parse_data(expected_values, 'float')
+            ) in sent_messages
+        )
 
     def test_get_volume(self):
         """Test get_volume method with none input."""
         _ = self.speaker.volume
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1, (Speaker.VOLUME, None, 95, None)))
+            parse_message(
+                0x03, 0, -1,
+                (Speaker.VOLUME, None, self.speaker.prop_samp_freq, None)
+            )
+        )
 
     def test_set_off(self):
         """Test set_off method"""
@@ -112,15 +149,23 @@ class TestSpeaker(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Speaker.FREQUENCY, None, 95, None))
-            in sent_messages)
-        self.assertTrue(
-            parse_message(0x03, 0, -1, (Speaker.VOLUME, None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Speaker.FREQUENCY, None, self.speaker.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
             parse_message(
-                0x04, 16, -1, parse_data(
-                    expected_values, 'float')) in sent_messages)
+                0x03, 0, -1,
+                (Speaker.VOLUME, None, self.speaker.prop_samp_freq, None)
+            ) in sent_messages
+        )
+        self.assertTrue(
+            parse_message(
+                0x04, 16, -1,
+                parse_data(expected_values, 'float')
+            ) in sent_messages
+        )
 
 
 if __name__ == "__main__":
