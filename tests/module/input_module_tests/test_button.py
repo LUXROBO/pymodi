@@ -23,7 +23,11 @@ class TestButton(unittest.TestCase):
         _ = self.button.clicked
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1, (Button.CLICKED, None, 95, None)))
+            parse_message(
+                0x03, 0, -1,
+                (Button.CLICKED, None, self.button.prop_samp_freq, None)
+            )
+        )
 
     def test_get_double_clicked(self):
         """Test get_double_clicked method."""
@@ -31,7 +35,8 @@ class TestButton(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(
-                0x03, 0, -1, (Button.DOUBLE_CLICKED, None, 95, None)
+                0x03, 0, -1,
+                (Button.DOUBLE_CLICKED, None, self.button.prop_samp_freq, None)
             )
         )
 
@@ -40,7 +45,10 @@ class TestButton(unittest.TestCase):
         _ = self.button.pressed
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1, (Button.PRESSED, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Button.PRESSED, None, self.button.prop_samp_freq, None)
+            )
         )
 
     def test_get_toggled(self):
@@ -48,7 +56,10 @@ class TestButton(unittest.TestCase):
         _ = self.button.toggled
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1, (Button.TOGGLED, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Button.TOGGLED, None, self.button.prop_samp_freq, None)
+            )
         )
 
 

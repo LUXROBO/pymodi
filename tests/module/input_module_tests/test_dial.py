@@ -23,8 +23,10 @@ class TestDial(unittest.TestCase):
         _ = self.dial.degree
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Dial.DEGREE, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Dial.DEGREE, None, self.dial.prop_samp_freq, None)
+            )
         )
 
     def test_get_turnspeed(self):
@@ -32,8 +34,10 @@ class TestDial(unittest.TestCase):
         _ = self.dial.turnspeed
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Dial.TURNSPEED, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Dial.TURNSPEED, None, self.dial.prop_samp_freq, None)
+            )
         )
 
 

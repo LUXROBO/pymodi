@@ -23,8 +23,10 @@ class TestEnv(unittest.TestCase):
         _ = self.env.temperature
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Env.TEMPERATURE, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Env.TEMPERATURE, None, self.env.prop_samp_freq, None)
+            )
         )
 
     def test_get_humidity(self):
@@ -32,8 +34,10 @@ class TestEnv(unittest.TestCase):
         _ = self.env.humidity
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Env.HUMIDITY, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Env.HUMIDITY, None, self.env.prop_samp_freq, None)
+            )
         )
 
     def test_get_brightness(self):
@@ -41,8 +45,10 @@ class TestEnv(unittest.TestCase):
         _ = self.env.brightness
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Env.BRIGHTNESS, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Env.BRIGHTNESS, None, self.env.prop_samp_freq, None)
+            )
         )
 
     def test_get_red(self):
@@ -50,8 +56,10 @@ class TestEnv(unittest.TestCase):
         _ = self.env.red
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Env.RED, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Env.RED, None, self.env.prop_samp_freq, None)
+            )
         )
 
     def test_get_green(self):
@@ -59,8 +67,10 @@ class TestEnv(unittest.TestCase):
         _ = self.env.green
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Env.GREEN, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Env.GREEN, None, self.env.prop_samp_freq, None)
+            )
         )
 
     def test_get_blue(self):
@@ -68,8 +78,10 @@ class TestEnv(unittest.TestCase):
         _ = self.env.blue
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Env.BLUE, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Env.BLUE, None, self.env.prop_samp_freq, None)
+            )
         )
 
 

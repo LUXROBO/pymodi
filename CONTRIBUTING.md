@@ -113,9 +113,9 @@ git will automatically run the tests when you push your changes.
 
 Tips
 ----
-To run a subset of tests:
+To run the tests:
 ```commandline
-$ python -m unittest tests.test_modi
+$ python -m unittest discover
 ```
 To automatically intialize the MODI object in an interactive shell:
 ```commandline

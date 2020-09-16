@@ -26,17 +26,23 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.FIRST_TORQUE,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.FIRST_TORQUE, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.SECOND_TORQUE,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.SECOND_TORQUE, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
-            parse_message(0x04, 16, -1, parse_data(
-                expected_values, 'int'
-            )) in sent_messages)
+            parse_message(
+                0x04, 16, -1,
+                parse_data(expected_values, 'int')
+            ) in sent_messages
+        )
 
     def test_set_first_torque(self):
         """Test set_first_torque method."""
@@ -46,13 +52,17 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.FIRST_TORQUE,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.FIRST_TORQUE, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
-            parse_message(0x04, 16, -1, parse_data(
-                (first_torque_value, 0), 'int'
-            )) in sent_messages)
+            parse_message(
+                0x04, 16, -1,
+                parse_data((first_torque_value, 0), 'int')
+            ) in sent_messages
+        )
 
     def test_set_second_torque(self):
         """Test set_second_torque method."""
@@ -62,13 +72,17 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.SECOND_TORQUE,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.SECOND_TORQUE, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
-            parse_message(0x04, 16, -1, parse_data(
-                (0, second_torque_value), 'int'
-            )) in sent_messages)
+            parse_message(
+                0x04, 16, -1,
+                parse_data((0, second_torque_value), 'int')
+            ) in sent_messages
+        )
 
     def test_get_torque(self):
         """Test set_torque method with none input."""
@@ -77,13 +91,17 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.FIRST_TORQUE,
-                                        None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Motor.FIRST_TORQUE, None, self.motor.prop_samp_freq, None)
+            )
             in sent_messages)
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.SECOND_TORQUE,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.SECOND_TORQUE, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
 
     def test_get_first_torque(self):
         """Test get_first_torque method"""
@@ -92,9 +110,11 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.FIRST_TORQUE,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.FIRST_TORQUE, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
 
     def test_get_second_torque(self):
         """Test get_second_torque method"""
@@ -103,9 +123,11 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.SECOND_TORQUE,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.SECOND_TORQUE, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
 
     def test_set_speed(self):
         """Test set_speed method."""
@@ -115,21 +137,29 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.FIRST_SPEED,
-                                        None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Motor.FIRST_SPEED, None, self.motor.prop_samp_freq, None)
+            )
             in sent_messages)
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.SECOND_SPEED,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.SECOND_SPEED, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (0, 1, first_speed_value), 'int'
-            )) in sent_messages)
+            parse_message(
+                0x04, 19, -1,
+                parse_data((0, 1, first_speed_value), 'int')
+            ) in sent_messages
+        )
         self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (1, 1, second_speed_value), 'int'
-            )) in sent_messages)
+            parse_message(
+                0x04, 19, -1,
+                parse_data((1, 1, second_speed_value), 'int')
+            ) in sent_messages
+        )
 
     def test_set_first_speed(self):
         """Test set_first_speed method."""
@@ -139,13 +169,17 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.FIRST_SPEED,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.FIRST_SPEED, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (0, 1, first_speed_value), 'int'
-            )) in sent_messages)
+            parse_message(
+                0x04, 19, -1,
+                parse_data((0, 1, first_speed_value), 'int')
+            ) in sent_messages
+        )
 
     def test_set_second_speed(self):
         """Test set_second_speed method."""
@@ -155,13 +189,16 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.SECOND_SPEED,
-                                        None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Motor.SECOND_SPEED, None, self.motor.prop_samp_freq, None)
+            )
             in sent_messages)
         self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (1, 1, second_speed_value), 'int'
-            )) in sent_messages)
+            parse_message(
+                0x04, 19, -1, parse_data((1, 1, second_speed_value), 'int')
+            ) in sent_messages
+        )
 
     def test_get_speed(self):
         """Test get_speed method with none input."""
@@ -170,13 +207,17 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.FIRST_SPEED,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.FIRST_SPEED, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.SECOND_SPEED,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.SECOND_SPEED, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
 
     def test_get_first_speed(self):
         """Test get_first_speed method"""
@@ -185,9 +226,11 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.FIRST_SPEED,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.FIRST_SPEED, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
 
     def test_get_second_speed(self):
         """Test get_second_speed method"""
@@ -196,9 +239,11 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.SECOND_SPEED,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.SECOND_SPEED, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
 
     def test_set_degree(self):
         """Test set_degree method."""
@@ -208,21 +253,29 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.FIRST_DEGREE,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.FIRST_DEGREE, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.SECOND_DEGREE,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.SECOND_DEGREE, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (0, 2, first_degree_value), 'int'
-            )) in sent_messages)
+            parse_message(
+                0x04, 19, -1,
+                parse_data((0, 2, first_degree_value), 'int')
+            ) in sent_messages
+        )
         self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (1, 2, second_degree_value), 'int'
-            )) in sent_messages)
+            parse_message(
+                0x04, 19, -1,
+                parse_data((1, 2, second_degree_value), 'int')
+            ) in sent_messages
+        )
 
     def test_set_first_degree(self):
         """Test set_first_degree method."""
@@ -232,13 +285,17 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.FIRST_DEGREE,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.FIRST_DEGREE, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (0, 2, first_degree_value), 'int'
-            )) in sent_messages)
+            parse_message(
+                0x04, 19, -1,
+                parse_data((0, 2, first_degree_value), 'int')
+            ) in sent_messages
+        )
 
     def test_set_second_degree(self):
         """Test set_second_degree method."""
@@ -248,13 +305,17 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.SECOND_DEGREE,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.SECOND_DEGREE, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
         self.assertTrue(
-            parse_message(0x04, 19, -1, parse_data(
-                (1, 2, second_degree_value), 'int'
-            )) in sent_messages)
+            parse_message(
+                0x04, 19, -1,
+                parse_data((1, 2, second_degree_value), 'int')
+            ) in sent_messages
+        )
 
     def test_get_degree(self):
         """Test get_degree method with none input."""
@@ -263,12 +324,16 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.FIRST_DEGREE,
-                                        None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Motor.FIRST_DEGREE, None, self.motor.prop_samp_freq, None)
+            )
             in sent_messages)
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.SECOND_DEGREE,
-                                        None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Motor.SECOND_DEGREE, None, self.motor.prop_samp_freq, None)
+            )
             in sent_messages)
 
     def test_get_first_degree(self):
@@ -278,8 +343,10 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.FIRST_DEGREE,
-                                        None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Motor.FIRST_DEGREE, None, self.motor.prop_samp_freq, None)
+            )
             in sent_messages)
 
     def test_get_second_degree(self):
@@ -289,9 +356,11 @@ class TestMotor(unittest.TestCase):
         while self.conn.send_list:
             sent_messages.append(self.conn.send_list.pop())
         self.assertTrue(
-            parse_message(0x03, 0, -1, (Motor.SECOND_DEGREE,
-                                        None, 95, None))
-            in sent_messages)
+            parse_message(
+                0x03, 0, -1,
+                (Motor.SECOND_DEGREE, None, self.motor.prop_samp_freq, None)
+            ) in sent_messages
+        )
 
 
 if __name__ == "__main__":

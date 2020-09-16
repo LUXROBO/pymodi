@@ -23,8 +23,9 @@ class TestGyro(unittest.TestCase):
         _ = self.gyro.roll
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Gyro.ROLL, None, 95, None))
+            parse_message(
+                0x03, 0, -1, (Gyro.ROLL, None, self.gyro.prop_samp_freq, None)
+            )
         )
 
     def test_get_pitch(self):
@@ -32,8 +33,9 @@ class TestGyro(unittest.TestCase):
         _ = self.gyro.pitch
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Gyro.PITCH, None, 95, None))
+            parse_message(
+                0x03, 0, -1, (Gyro.PITCH, None, self.gyro.prop_samp_freq, None)
+            )
         )
 
     def test_get_yaw(self):
@@ -41,8 +43,9 @@ class TestGyro(unittest.TestCase):
         _ = self.gyro.yaw
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Gyro.YAW, None, 95, None))
+            parse_message(
+                0x03, 0, -1, (Gyro.YAW, None, self.gyro.prop_samp_freq, None)
+            )
         )
 
     def test_get_angular_vel_x(self):
@@ -50,8 +53,10 @@ class TestGyro(unittest.TestCase):
         _ = self.gyro.angular_vel_x
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Gyro.ANGULAR_VEL_X, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Gyro.ANGULAR_VEL_X, None, self.gyro.prop_samp_freq, None)
+            )
         )
 
     def test_get_angular_vel_y(self):
@@ -59,8 +64,10 @@ class TestGyro(unittest.TestCase):
         _ = self.gyro.angular_vel_y
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Gyro.ANGULAR_VEL_Y, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Gyro.ANGULAR_VEL_Y, None, self.gyro.prop_samp_freq, None)
+            )
         )
 
     def test_get_angular_vel_z(self):
@@ -68,8 +75,10 @@ class TestGyro(unittest.TestCase):
         _ = self.gyro.angular_vel_z
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Gyro.ANGULAR_VEL_Z, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Gyro.ANGULAR_VEL_Z, None, self.gyro.prop_samp_freq, None)
+            )
         )
 
     def test_get_acceleration_x(self):
@@ -77,8 +86,10 @@ class TestGyro(unittest.TestCase):
         _ = self.gyro.acceleration_x
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Gyro.ACCELERATION_X, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Gyro.ACCELERATION_X, None, self.gyro.prop_samp_freq, None)
+            )
         )
 
     def test_get_acceleration_y(self):
@@ -86,8 +97,10 @@ class TestGyro(unittest.TestCase):
         _ = self.gyro.acceleration_y
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Gyro.ACCELERATION_Y, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Gyro.ACCELERATION_Y, None, self.gyro.prop_samp_freq, None)
+            )
         )
 
     def test_get_acceleration_z(self):
@@ -95,8 +108,10 @@ class TestGyro(unittest.TestCase):
         _ = self.gyro.acceleration_z
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Gyro.ACCELERATION_Z, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Gyro.ACCELERATION_Z, None, self.gyro.prop_samp_freq, None)
+            )
         )
 
     def test_get_vibration(self):
@@ -104,8 +119,10 @@ class TestGyro(unittest.TestCase):
         _ = self.gyro.vibration
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Gyro.VIBRATION, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Gyro.VIBRATION, None, self.gyro.prop_samp_freq, None)
+            )
         )
 
 

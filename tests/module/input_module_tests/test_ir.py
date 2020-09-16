@@ -23,8 +23,10 @@ class TestIr(unittest.TestCase):
         _ = self.ir.proximity
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(0x03, 0, -1,
-                          (Ir.PROXIMITY, None, 95, None))
+            parse_message(
+                0x03, 0, -1,
+                (Ir.PROXIMITY, None, self.ir.prop_samp_freq, None)
+            )
         )
 
 
