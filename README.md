@@ -17,7 +17,15 @@ Description
 ===========
 Python API for controlling MODI.
 -   Free software: MIT license
--   Documentation: <https://pymodi.readthedocs.io>.
+-   API Documentation: <https://pymodi.readthedocs.io>.
+
+Promotion Video
+---------------
+<div align="center">
+    <a href="https://www.youtube.com/watch?v=7ciGw8V-8sM">
+        <img src="https://img.youtube.com/vi/7ciGw8V-8sM/0.jpg" style="width:100%;">
+    </a>
+</div>
 
 Features
 --------
