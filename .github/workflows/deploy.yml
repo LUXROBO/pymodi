@@ -1,5 +1,3 @@
-# This workflows will upload a Python Package using Twine when a release is created
-# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
 
 name: Deployment (PyPI)
 
@@ -21,25 +19,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install setuptools wheel twine bumpversion
-    - name: update-history-from-release-note
-      run: |
-        git config --local user.email ${{ secrets.GH_MAIL }}
-        git config --local user.name ${{ secrets.GH_USER }}
-        REPO="LUXROBO/pymodi"
-        IMPORT="import sys; from json import loads as l;"
-        READ="response = l(sys.stdin.read()); body = response['body'];"
-        PRINT="[print(line) for line in body.splitlines() if line and line[0].isdigit()]"
-        CONTENT=$(curl --silent https://api.github.com/repos/$REPO/releases/latest | python -c "$IMPORT $READ $PRINT")
-        NEW_VERSION=$(git describe --tags | cut -d - -f 1 | cut -c2-)
-        TODAY=$(python -c "from datetime import date; print(str(date.today()))")
-        HISTORY_FILE="HISTORY.md"
-        echo "" >> $HISTORY_FILE
-        echo "$NEW_VERSION ($TODAY)" >> $HISTORY_FILE
-        echo "--" >> $HISTORY_FILE
-        echo -e "$CONTENT" >> $HISTORY_FILE
-        git add .
-        git commit -m "Release $NEW_VERSION"
-        git push
     - name: checkout-release-branch
       run: |
         git config --local user.email ${{ secrets.GH_MAIL }}
@@ -55,6 +34,19 @@ jobs:
         echo "::set-output name=new_branch::$BRANCH_NAME"
         echo "::set-output name=version::$NEW_VERSION"
         git checkout -b $BRANCH_NAME
+        REPO="LUXROBO/pymodi"
+        IMPORT="import sys; from json import loads as l;"
+        READ="response = l(sys.stdin.read()); body = response['body'];"
+        PRINT="[print(line) for line in body.splitlines() if line and line[0].isdigit()]"
+        CONTENT=$(curl --silent https://api.github.com/repos/$REPO/releases/latest | python -c "$IMPORT $READ $PRINT")
+        TODAY=$(python -c "from datetime import date; print(str(date.today()))")
+        HISTORY_FILE="HISTORY.md"
+        echo "$NEW_VERSION ($TODAY)" >> $HISTORY_FILE
+        echo "--" >> $HISTORY_FILE
+        echo -e "$CONTENT" >> $HISTORY_FILE
+        echo "" >> $HISTORY_FILE
+        git add .
+        git commit -m "Release $NEW_VERSION"
         git push --set-upstream origin $BRANCH_NAME
       id: checkout_branch
     - name: create-pr-to-master
