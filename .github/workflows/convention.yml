@@ -1,7 +1,7 @@
 
 name: Convention Test (Flake8)
 
-on: [ "push", "pull_request" ]
+on: pull_request
 
 jobs:
   # Runs convention test

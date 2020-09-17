@@ -1,7 +1,5 @@
-# This workflows will upload a Python Package using Twine when a release is created
-# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
 
-name: Deployment (PyPI)
+name: Release
 
 on:
   release:
@@ -13,15 +11,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python
+    - name: set-up-python
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
-    - name: Install dependencies
+    - name: install-dependencies
       run: |
         python -m pip install --upgrade pip
         pip install setuptools wheel twine bumpversion
-    - name: Checkout release branch
+    - name: checkout-release-branch
       run: |
         git config --local user.email ${{ secrets.GH_MAIL }}
         git config --local user.name ${{ secrets.GH_USER }}
@@ -36,29 +34,42 @@ jobs:
         echo "::set-output name=new_branch::$BRANCH_NAME"
         echo "::set-output name=version::$NEW_VERSION"
         git checkout -b $BRANCH_NAME
+        REPO="LUXROBO/pymodi"
+        IMPORT="import sys; from json import loads as l;"
+        READ="response = l(sys.stdin.read()); body = response['body'];"
+        PRINT="[print(line) for line in body.splitlines() if line and line[0].isdigit()]"
+        CONTENT=$(curl --silent https://api.github.com/repos/$REPO/releases/latest | python -c "$IMPORT $READ $PRINT")
+        TODAY=$(python -c "from datetime import date; print(str(date.today()))")
+        HISTORY_FILE="HISTORY.md"
+        echo "$NEW_VERSION ($TODAY)" >> $HISTORY_FILE
+        echo "--" >> $HISTORY_FILE
+        echo -e "$CONTENT" >> $HISTORY_FILE
+        echo "" >> $HISTORY_FILE
+        git add .
+        git commit -m "Release $NEW_VERSION"
         git push --set-upstream origin $BRANCH_NAME
       id: checkout_branch
-    - name: Create a pull request to master branch
+    - name: create-pr-to-master
       uses: repo-sync/pull-request@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         source_branch: ${{ steps.checkout_branch.outputs.new_branch }}
-        pr_title: "Merge new release"
-    - name: Create a pull request to master branch
+        pr_title: "Merge new release to master branch"
+    - name: create-pr-to-develop
       uses: repo-sync/pull-request@master
       with:
         destination_branch: "develop"
         github_token: ${{ secrets.GITHUB_TOKEN }}
         source_branch: ${{ steps.checkout_branch.outputs.new_branch }}
-        pr_title: "Merge new release"
-    - name: Build and publish
+        pr_title: "Merge new release to develop branch"
+    - name: build-and-publish-to-pypi
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         python setup.py sdist bdist_wheel
         twine upload --skip-existing dist/*
-    - name: Send email
+    - name: send-release-email
       uses: dawidd6/action-send-mail@v2.2.0
       with:
         server_address: smtp-mail.outlook.com
@@ -69,16 +80,11 @@ jobs:
         body: file://HISTORY.md
         to: tech@luxrobo.com
         from: PyMODI
-    - name: Microsoft Teams Notification
+    - name: notify-ms-teams-channel
       uses: jdcargile/ms-teams-notification@v1.2
       with:
-        # GitHub Token
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        # Microsoft Teams Webhook URI
         ms-teams-webhook-uri: ${{ secrets.TEAMS_WEBHOOK }}
-        # Message to be sent to Microsoft Teams channel
         notification-summary: PyMODI ${{ steps.checkout_branch.outputs.version }} is released!
-        # Color of notification header line
         notification-color: 17a2b8
-        # Timezone (ex. America/Denver)
         timezone: Korea/Seoul
