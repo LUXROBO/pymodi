@@ -43,14 +43,14 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         source_branch: ${{ steps.checkout_branch.outputs.new_branch }}
-        pr_title: "Merge new release"
-    - name: Create a pull request to master branch
+        pr_title: "Merge new release to master branch"
+    - name: Create a pull request to develop branch
       uses: repo-sync/pull-request@master
       with:
         destination_branch: "develop"
         github_token: ${{ secrets.GITHUB_TOKEN }}
         source_branch: ${{ steps.checkout_branch.outputs.new_branch }}
-        pr_title: "Merge new release"
+        pr_title: "Merge new release to develop branch"
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
@@ -72,13 +72,8 @@ jobs:
     - name: Microsoft Teams Notification
       uses: jdcargile/ms-teams-notification@v1.2
       with:
-        # GitHub Token
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        # Microsoft Teams Webhook URI
         ms-teams-webhook-uri: ${{ secrets.TEAMS_WEBHOOK }}
-        # Message to be sent to Microsoft Teams channel
         notification-summary: PyMODI ${{ steps.checkout_branch.outputs.version }} is released!
-        # Color of notification header line
         notification-color: 17a2b8
-        # Timezone (ex. America/Denver)
         timezone: Korea/Seoul
