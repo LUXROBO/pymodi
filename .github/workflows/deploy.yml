@@ -23,6 +23,8 @@ jobs:
         pip install setuptools wheel twine bumpversion
     - name: update-history-from-release-note
       run: |
+        git config --local user.email ${{ secrets.GH_MAIL }}
+        git config --local user.name ${{ secrets.GH_USER }}
         REPO="LUXROBO/pymodi"
         IMPORT="import sys; from json import loads as l;"
         READ="response = l(sys.stdin.read()); body = response['body'];"
