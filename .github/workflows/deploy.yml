@@ -21,6 +21,23 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install setuptools wheel twine bumpversion
+    - name: update-history-from-release-note
+      run: |
+        REPO="LUXROBO/pymodi"
+        IMPORT="import sys; from json import loads as l;"
+        READ="response = l(sys.stdin.read()); body = response['body'];"
+        PRINT="[print(line) for line in body.splitlines() if line and line[0].isdigit()]"
+        CONTENT=$(curl --silent https://api.github.com/repos/$REPO/releases/latest | python -c "$IMPORT $READ $PRINT")
+        NEW_VERSION=$(git describe --tags | cut -d - -f 1 | cut -c2-)
+        TODAY=$(python -c "from datetime import date; print(str(date.today()))")
+        HISTORY_FILE="HISTORY.md"
+        echo "" >> $HISTORY_FILE
+        echo "$NEW_VERSION ($TODAY)" >> $HISTORY_FILE
+        echo "--" >> $HISTORY_FILE
+        echo -e "$CONTENT" >> $HISTORY_FILE
+        git add .
+        git commit -m "Release $NEW_VERSION"
+        git push
     - name: checkout-release-branch
       run: |
         git config --local user.email ${{ secrets.GH_MAIL }}
