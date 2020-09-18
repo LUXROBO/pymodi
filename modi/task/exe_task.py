@@ -115,6 +115,7 @@ class ExeTask:
         _, _, _, battery_state, user_code_state \
             = unpack_data(message['b'], (1, 1, 1, 1, 1))
         curr_time = time.time()
+
         # Checking starts only when module is registered
         if module_id in (module.id for module in self._modules):
             module = self.__get_module_by_id(module_id)
@@ -131,6 +132,9 @@ class ExeTask:
         # Disconnect module with no health message for more than 2 second
         for module in self._modules:
             if curr_time - module.last_updated > 2:
+                print(
+                    f"{module.module_type} ({module_id}) has been disconnected"
+                )
                 module.is_connected = False
                 module._last_set_message = None
 
