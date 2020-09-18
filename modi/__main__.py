@@ -8,6 +8,7 @@ from getopt import getopt, GetoptError
 import modi
 
 from modi.debugger import Debugger
+from modi.util.usage import Usage
 from modi.util.tutor import Tutor
 from modi.util.inspector import Inspector
 
@@ -48,7 +49,7 @@ if __name__ == "__main__":
     try:
         # all commands should be defined here in advance
         opts, args = getopt(
-            sys.argv[1:], 'tdmhvpgin',
+            sys.argv[1:], 'tdmhvpginu',
             [
                 "tutorial",
                 "debug",
@@ -59,6 +60,7 @@ if __name__ == "__main__":
                 "gui",
                 "inspect",
                 "update_network_module",
+                "usage",
             ]
         )
     # exit program if an invalid option has been entered
@@ -159,7 +161,12 @@ if __name__ == "__main__":
 
     # Run inspection mode
     if check_option('-i', '--inspect'):
-        print("inspection mode has not been implemented yet!")
         pymodi_inspector = Inspector()
         pymodi_inspector.run_inspection()
+        os._exit(0)
+
+    # Show each module usage
+    if check_option('-u', '--usage'):
+        usage = Usage()
+        usage.run_usage_manual()
         os._exit(0)
