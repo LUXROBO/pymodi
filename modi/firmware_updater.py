@@ -87,7 +87,7 @@ class STM32FirmwareUpdater:
             '4020': 'Led',
             '4030': 'Speaker',
         }.get(type_indicator)
-        return 'Network' if module_type is None else module_type
+        return 'network' if module_type is None else module_type
 
     def reset_state(self, update_in_progress: bool = False) -> None:
         """ Reset firmware updater's state
@@ -645,8 +645,8 @@ class STM32FirmwareUpdater:
         module_id = sid
         module_type = self.__get_module_type_from_uuid(module_uuid)
 
-        # No need to update Network module's STM firmware
-        if module_type == 'Network':
+        # No need to update network module's STM firmware
+        if module_type == 'network':
             return
 
         if warning_type == 1:

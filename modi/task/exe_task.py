@@ -58,7 +58,7 @@ class ExeTask:
                              message: Dict[str, Union[int, str]]) -> None:
         network_module = None
         for module in self._modules:
-            if module.module_type == 'Network':
+            if module.module_type == 'network':
                 network_module = module
                 break
         if not network_module:
@@ -124,7 +124,7 @@ class ExeTask:
             if module.user_code_status < 0:
                 module.user_code_status = user_code_state % 2
             # Turn off pnp if pnp flag is on
-            if module.module_type != 'Network' and user_code_state < 2:
+            if module.module_type != 'network' and user_code_state < 2:
                 self.__set_module_state(
                     module_id, Module.RUN, Module.PNP_OFF
                 )
@@ -152,7 +152,7 @@ class ExeTask:
                 module_type, module_id, module_uuid, module_version_info
             )
             new_module.module_type = module_type
-            if module_type != 'Network' and not new_module.is_up_to_date:
+            if module_type != 'network' and not new_module.is_up_to_date:
                 print(f"{str(new_module)} is not up to date. "
                       f"Please update the module by calling "
                       f"modi.update_module_firmware")
@@ -189,7 +189,7 @@ class ExeTask:
         if not module:
             return
         data = message['b']
-        if module.module_type == 'Network':
+        if module.module_type == 'network':
             module.update_property(property_number, unpack_data(data)[0])
         else:
             module.update_property(property_number, decode_data(data))

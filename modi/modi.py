@@ -153,7 +153,7 @@ class MODI:
 
     @property
     def networks(self) -> module_list:
-        return module_list(self._modules, 'Network')
+        return module_list(self._modules, 'network')
 
     @property
     def buttons(self) -> module_list:

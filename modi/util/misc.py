@@ -3,7 +3,7 @@ from importlib.util import find_spec
 
 def get_module_type_from_uuid(uuid):
     if uuid is None:
-        return 'Network'
+        return 'network'
 
     hexadecimal = hex(uuid).lstrip("0x")
     type_indicator = str(hexadecimal)[:4]
@@ -23,7 +23,7 @@ def get_module_type_from_uuid(uuid):
         '4020': 'led',
         '4030': 'speaker',
     }.get(type_indicator)
-    return 'Network' if module_type is None else module_type
+    return 'network' if module_type is None else module_type
 
 
 def get_module_from_name(module_type: str):

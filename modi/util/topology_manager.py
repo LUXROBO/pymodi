@@ -180,7 +180,7 @@ class TopologyMap:
     @property
     def network_id(self):
         for mid in self._tp_data:
-            if self._tp_data[mid]['type'] == 'Network':
+            if self._tp_data[mid]['type'] == 'network':
                 return mid
         return list(self._tp_data.keys())[0]
 

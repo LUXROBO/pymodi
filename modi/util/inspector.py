@@ -391,7 +391,7 @@ class Inspector:
         self.bundle = modi.MODI()
 
         stm32_modules = \
-            [m for m in self.bundle.modules if m.module_type != "Network"]
+            [m for m in self.bundle.modules if m.module_type != "network"]
         nb_modules_detected = len(stm32_modules)
         if nb_modules != nb_modules_detected:
             self.print_wrap(

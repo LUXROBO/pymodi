@@ -113,7 +113,7 @@ class _DebuggerWindow(th.Thread):
             return False
         if self.__curr_module \
                 and str(self.__curr_module.id) not in line \
-                and self.__curr_module.module_type != 'Network':
+                and self.__curr_module.module_type != 'network':
             return False
         if self.__curr_cmd and f'"c":{self.__curr_cmd},' not in line:
             return False
