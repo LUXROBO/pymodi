@@ -54,13 +54,17 @@ class MODI:
             if 'y' in cmd:
                 self.close()
                 modules_to_reset = filter(
-                    lambda m: m.is_up_to_date, bad_modules)
+                    lambda m: m.is_up_to_date, bad_modules
+                )
                 modules_to_update = filter(
-                    lambda m: not m.is_up_to_date, bad_modules)
+                    lambda m: not m.is_up_to_date, bad_modules
+                )
                 reset_module_firmware(
-                    tuple(module.id for module in modules_to_reset))
+                    tuple(module.id for module in modules_to_reset)
+                )
                 update_module_firmware(
-                    tuple(module.id for module in modules_to_update))
+                    tuple(module.id for module in modules_to_update)
+                )
                 self.open()
         atexit.register(self.close)
 
