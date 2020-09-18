@@ -102,9 +102,14 @@ for _ in range(5):
     led.rgb = 0, 0, 0
     time.sleep(0.5)
 ```
+
 If you are still not sure how to use PyMODI, you can play an interactive PyMODI tutorial by running a command of
 ```commandline
 $ python -m modi --tutorial
+```
+As well as an interactive usage examples:
+```commandline
+$ python -m modi --usage
 ```
 Moreover, we provide some [usage and creation examples](examples), as well as a [descriptive web page](https://luxrobo.github.io/pymodi).
 
