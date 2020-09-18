@@ -3,98 +3,97 @@ History
 
 0.1.0 (2018-06-28)
 ------------------
--   First release on in-house GitLab
+1. Release initial version of the package on in-house GitLab
 
 0.1.1 (2018-07-20)
 ------------------
--   Requirements fix
--   Packages\' include path fix
+1. Fix requirements
+2. Fix include path
 
 0.1.2 (2018-07-23)
 ------------------
--   Python 3.4 support
+1. Python 3.4 support
 
 0.2.0 (2018-07-25)
 ------------------
--   Speaker module support
--   Display module support
+1. Implement Speaker module
+2. Implement Display module
 
 0.2.1 (2018-07-27)
 ------------------
--   Add speaker module\'s tune() and off() methods
--   Remove duplicated codes
+1. Implement speaker module's tune() and off() methods
+2. Remove duplicated codes
 
 0.3.0 (2018-07-28)
 ------------------
--   Support python 2.7
--   Speed up the performance
+1. Support python 2.7
+2. Speed up the performance
 
 0.3.1 (2018-07-28)
 ------------------
--   Requirements fix
+1. Fix requirements
 
 0.4.0 (2018-08-20)
 ------------------
--   Performance improvement
--   The first documentation complete
+1. Improve performance
+2. Complete first documentation
 
 0.5.0 (2018-08-22)
 ------------------
--   Change the project name to pyMODI
+1. Change the project name to pyMODI
 
 0.5.1 (2018-11-07)
 ------------------
--   Fix \#26 (No MODI network module connected) issue
+1. Fix "No MODI network module connected" issue
 
 0.5.2 (2019-10-11)
 ------------------
--   Can control a pair of motors of the motor module by torque(),
-    speed(), angle()
+1. Can control a pair of motors of the motor module by torque(), speed(),
+   angle()
 
 0.6.0 (2019-10-18)
 ------------------
--   Performance improvement
--   Bug fixes
+1. Improve performance
 
 0.7.0 (2020-01-23)
 ------------------
--   Implement individual motor control
--   Implement set variable method in display
--   Implement test cases for each modi modules
--   Implement multiprocessing version of pymodi
--   Bug fixes
+1. Implement individual motor control
+2. Implement set variable method in display
+3. Implement test cases for each modi modules
+4. Implement multiprocessing version of pymodi
+5. Bug fixes
 
 0.7.1 (2020-02-07)
 ------------------
--   Refactor file structures
--   Bug fixes
+1. Refactor file structures
+2. Bug fixes
 
 0.8.0 (2020-05-07)
 ------------------
--   Implement Can Message Handler
--   Implement Topology Manager
--   Improve connection reliability by separating communication functions
--   Bug fixes
+1. Implement Can Message Handler
+2. Implement Topology Manager
+3. Improve connection reliability by separating communication functions
+4. Bug fixes
 
 0.9.0 (2020-07-07)
 ------------------
--   Implement Module Firmware Updater
--   Implement bluetooth connection via SPP
--   Implement MODI Priority Queue to increase response speed
--   Implement PyMODI tutor for teaching new-comers
--   Support multi MODI network modules given appropriate COM ports
--   Refactor getter/setter for each MODI module
--   Refactor motor module to use set_motor_channel internally
--   Update property values when setting properties
--   Add usage/creation example to the repository
--   Bug fixes
+1. Implement Module Firmware Updater
+2. Implement bluetooth connection via SPP
+3. Implement MODI Priority Queue to increase response speed
+4. Implement PyMODI tutor for teaching new-comers
+5. Support multi MODI network modules given appropriate COM ports
+6. Refactor getter/setter for each MODI module
+7. Refactor motor module to use set_motor_channel internally
+8. Update property values when setting properties
+9. Add usage/creation example to the repository
+10. Bug fixes
 
 1.0.0 (2020-09-15)
 ------------------
--   Implement Network Firmware Updater
--   Implement BLE connection (excluding macOS support)
--   Implement MODI Play support via network module
--   Refactor module getter/setter interface
--   Enhance topology manager to work with battery module
--   Add functionality to reset existing user code on the modules
--   Bug fixes
+1. Implement Network Firmware Updater
+2. Implement BLE connection (excluding macOS support)
+3. Implement MODI Play support via network module
+4. Refactor module getter/setter interface
+5. Enhance topology manager to work with battery module
+6. Add functionality to reset existing user code on the modules
+7. Bug fixes
