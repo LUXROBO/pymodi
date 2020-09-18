@@ -1,5 +1,4 @@
 import os
-import time
 
 from textwrap import fill
 from textwrap import dedent
@@ -148,19 +147,19 @@ class Usage:
             import modi
 
             bundle = modi.MODI()
-            gyro = bundle.gyros[0]
+            gyro = gy = bundle.gyros[0]
 
             while True:
-                print(f"Gyro ({gyro.id}) roll: {gyro.roll}")
-                print(f"Gyro ({gyro.id}) pitch: {gyro.pitch}")
-                print(f"Gyro ({gyro.id}) yaw: {gyro.yaw}")
-                print(f"Gyro ({gyro.id}) angular_vel_x: {gyro.angular_vel_x}")
-                print(f"Gyro ({gyro.id}) angular_vel_y: {gyro.angular_vel_y}")
-                print(f"Gyro ({gyro.id}) angular_vel_z: {gyro.angular_vel_z}")
-                print(f"Gyro ({gyro.id}) acceleration_x: {gyro.acceleration_x}")
-                print(f"Gyro ({gyro.id}) acceleration_y: {gyro.acceleration_y}")
-                print(f"Gyro ({gyro.id}) acceleration_z: {gyro.acceleration_z}")
-                print(f"Gyro ({gyro.id}) vibration: {gyro.vibration}")
+                print(f"Gyro ({gy.id}) roll: {gy.roll}")
+                print(f"Gyro ({gy.id}) pitch: {gy.pitch}")
+                print(f"Gyro ({gy.id}) yaw: {gy.yaw}")
+                print(f"Gyro ({gy.id}) angular_vel_x: {gy.angular_vel_x}")
+                print(f"Gyro ({gy.id}) angular_vel_y: {gy.angular_vel_y}")
+                print(f"Gyro ({gy.id}) angular_vel_z: {gy.angular_vel_z}")
+                print(f"Gyro ({gy.id}) acceleration_x: {gy.acceleration_x}")
+                print(f"Gyro ({gy.id}) acceleration_y: {gy.acceleration_y}")
+                print(f"Gyro ({gy.id}) acceleration_z: {gy.acceleration_z}")
+                print(f"Gyro ({gy.id}) vibration: {gy.vibration}")
             """
         ))
         input("Press ENTER to exit: ")
@@ -206,10 +205,10 @@ class Usage:
             import modi
 
             bundle = modi.MODI()
-            ultrasonic = bundle.ultrasonics[0]
+            ultrasonic = us = bundle.ultrasonics[0]
 
             while True:
-                print(f"Ultrasonic ({ultrasonic.id}) distance: {ultrasonic.distance}")
+                print(f"Ultrasonic ({us.id}) distance: {us.distance}")
             """
         ))
         input("Press ENTER to exit: ")
