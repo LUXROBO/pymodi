@@ -1,7 +1,7 @@
 
 name: Coverage (Coveralls)
 
-on: pull_request
+on: [push, pull_request]
 
 jobs:
   # Runs coverage and upload it
