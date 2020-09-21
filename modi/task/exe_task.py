@@ -131,7 +131,8 @@ class ExeTask:
                 )
         # Disconnect module with no health message for more than 2 second
         for module in self._modules:
-            if curr_time - module.last_updated > 2:
+            if module.module_type != 'network' and \
+                    curr_time - module.last_updated > 2:
                 print(
                     f"{module.module_type} ({module_id}) has been disconnected"
                 )
