@@ -21,11 +21,7 @@ Python API for controlling MODI.
 
 Promotion Video
 ---------------
-<div align="center">
-    <a href="https://www.youtube.com/watch?v=7ciGw8V-8sM">
-        <img src="https://img.youtube.com/vi/7ciGw8V-8sM/0.jpg">
-    </a>
-</div>
+[![pymodi](https://github.com/LUXROBO/pymodi/blob/master/docs/_static/video/pymodi-intro.gif)](https://www.youtube.com/watch?v=7ciGw8V-8sM)
 
 Features
 --------
