@@ -3,7 +3,6 @@
 </p>
 
 --------
-
 [![image](https://img.shields.io/pypi/pyversions/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
 [![image](https://img.shields.io/pypi/v/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
 [![Documentation Status](https://readthedocs.org/projects/pymodi/badge/?version=master)](https://pymodi.readthedocs.io/en/master/?badge=master)
@@ -69,7 +68,11 @@ You can also install PyMODI at develop branch (contains latest changes but it ca
 ```commandline
 pip install git+https://github.com/LUXROBO/pymodi.git@develop --user --upgrade
 ```
-Import **modi** package and create **MODI** instance:
+Perhaps, you can install a stable copy of PyMODI at a specific revision, by referring a tag with:
+```commandline
+pip install git+https://github.com/LUXROBO/pymodi.git@v1.0.0 --user --upgrade
+```
+Import modi package and create MODI instance:
 ```python
 import modi
 bundle = modi.MODI()
