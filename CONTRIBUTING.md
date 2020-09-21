@@ -61,6 +61,10 @@ Please read the following to get ready for the contribution!!
     ```commandline
     $ python setup.py develop
     ```
+   Or, in the rootdir, use this command instead:
+   ```commandline
+   $ python -m pip install -e .
+   ```
 4. Setup the git hooks to facilitate contribution:
     ```commandline
     $ git config --local core.hooksPath .githooks
