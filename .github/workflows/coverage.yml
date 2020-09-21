@@ -26,7 +26,7 @@ jobs:
         pip install -r requirements.txt
     - name: Run coverage
       env:
-        COVERALLS_REPO_TOKEN: qwWtAcClZM9uduEHYvmoPGhtwhElXGTbU
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
       run: |
         coverage run --source=modi.module setup.py test
         coveralls
