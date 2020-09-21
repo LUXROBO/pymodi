@@ -3,3 +3,4 @@ flake8
 black
 tox
 coverage
+pre-commit

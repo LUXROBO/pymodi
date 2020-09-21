@@ -67,7 +67,7 @@ Please read the following to get ready for the contribution!!
    ```
 4. Setup the git hooks to facilitate contribution:
     ```commandline
-    $ git config --local core.hooksPath .githooks
+    $  pre-commit install
     ```
 5. Do NOT manipulate master branch or develop branch directly. Create a new branch for local development.
 
