@@ -45,7 +45,7 @@ Build Status
 System Support
 --------------
 | System | 3.6 | 3.7 | 3.8 |
-| :---: | :---: | :---: | :--: |
+| :---: | :---: | :---: | :---: |
 | Linux | [![Unit Test (Ubuntu)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Ubuntu)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (Ubuntu)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Ubuntu)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (Ubuntu)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Ubuntu)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) |
 | Mac OS | [![Unit Test (macOS)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(macOS)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (macOS)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(macOS)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (macOS)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(macOS)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) |
 | Windows | [![Unit Test (Windows)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Windows)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (Windows)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Windows)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (Windows)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Windows)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) |
