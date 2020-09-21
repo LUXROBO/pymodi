@@ -14,7 +14,8 @@ class BleTask(ConnTask):
 
     def __init__(self, verbose=False, uuid=None):
         print("Initiating ble connection...")
-        clr.AddReference(f'{path.dirname(__file__)}/BleTaskWin')
+        reference_path = path.join(path.dirname(__file__), "BleTaskWin")
+        clr.AddReference(reference_path)
         super().__init__(verbose=verbose)
         from BleTaskWin import BleTask
         self.__ble_task = BleTask(verbose=verbose, uuid=uuid)
