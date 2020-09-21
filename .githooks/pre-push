@@ -1,4 +1,4 @@
-#!/bin/sh; C:/Program Files/Git/bin/sh.exe
+#!/usr/bin/env bash
 
 CURRENT_BRANCH=$(git symbolic-ref HEAD)
 

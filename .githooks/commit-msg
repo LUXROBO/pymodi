@@ -1,4 +1,4 @@
-#!/bin/sh; C:/Program Files/Git/bin/sh.exe
+#!/usr/bin/env bash
 
 INPUT_FILE=$1
 MSG=$(head -n1 $INPUT_FILE)
