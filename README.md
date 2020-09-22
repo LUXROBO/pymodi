@@ -4,13 +4,15 @@
 
 --------
 [![image](https://img.shields.io/pypi/pyversions/pymodi.svg?style=flat-square)](https://pypi.python.org/pypi/pymodi)
-[![PyPI](https://img.shields.io/pypi/v/pymodi?style=flat-square)](https://pypi.python.org/pypi/pymodi)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/LUXROBO/pymodi?style=flat-square)](https://pypi.python.org/pypi/pymodi)
 [![Read the Docs (version)](https://img.shields.io/readthedocs/pymodi/master?style=flat-square)](https://pymodi.readthedocs.io/en/master/?badge=master)
 [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Build%20Status/master?style=flat-square)](https://github.com/LUXROBO/pymodi/actions)
 [![Coveralls github branch](https://img.shields.io/coveralls/github/LUXROBO/pymodi/master?style=flat-square)](https://coveralls.io/github/LUXROBO/pymodi)
 [![LGTM Grade](https://img.shields.io/lgtm/grade/python/github/LUXROBO/pymodi?style=flat-square)](https://lgtm.com/projects/g/LUXROBO/pymodi/context:python)
 [![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/LUXROBO/pymodi?style=flat-square)](https://codeclimate.com/github/LUXROBO/pymodi/maintainability)
 [![GitHub](https://img.shields.io/github/license/LUXROBO/pymodi?style=flat-square&color=blue)](https://github.com/LUXROBO/pymodi/blob/master/LICENSE)
+[![Lines of code](https://img.shields.io/tokei/lines/github/LUXROBO/pymodi?style=flat-square)](https://github.com/LUXROBO/pymodi/tree/master/modi)
+[![GitHub contributors](https://img.shields.io/github/contributors/LUXROBO/pymodi?style=flat-square)](https://github.com/LUXROBO/pymodi/graphs/contributors)
 
 Description
 ===========
@@ -55,7 +57,7 @@ We appreciate all contributions. If you are planning to report bugs, please do s
 
 If you want to contribute to pymodi, be sure to review the contribution guidelines. This project adheres to pymodi's code of conduct. By participating, you are expected to uphold this code.
 
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg?style=flat-square)](CODE_OF_CONDUCT.md)
 
 Quickstart
 ----------
