@@ -221,23 +221,3 @@ class MODI:
         """
         return module_list(self._modules, "ultrasonic")
 
-
-def update_module_firmware(target_ids=(0xFFF, )):
-    updater = STM32FirmwareUpdater(target_ids=target_ids)
-    updater.update_module_firmware()
-    updater.close()
-
-
-def reset_module_firmware(target_ids=(0xFFF, )):
-    updater = STM32FirmwareUpdater(is_os_update=False, target_ids=target_ids)
-    updater.update_module_firmware()
-    updater.close()
-
-
-def update_network_firmware(force=False):
-    updater = ESP32FirmwareUpdater()
-    updater.update_firmware(force=force)
-
-
-def upload_user_code(filepath, remote_path):
-    upload_file(filepath, remote_path)
