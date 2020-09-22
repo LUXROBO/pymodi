@@ -9,6 +9,7 @@ include about.py
 include requirements.txt
 
 recursive-include modi/firmware *
+recursive-include modi/task/ble *
 
 recursive-include tests *
 recursive-exclude * __pycache__
