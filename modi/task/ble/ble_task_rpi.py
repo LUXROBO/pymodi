@@ -3,10 +3,10 @@ import os
 import json
 import queue
 import base64
-from typing import Optional
-
-from threading import Thread
 import pexpect
+
+from typing import Optional
+from threading import Thread
 
 from modi.task.conn_task import ConnTask
 from modi.util.misc import ask_modi_device
