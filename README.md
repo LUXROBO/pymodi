@@ -12,7 +12,6 @@
 [![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/LUXROBO/pymodi?style=flat-square)](https://codeclimate.com/github/LUXROBO/pymodi/maintainability)
 [![GitHub](https://img.shields.io/github/license/LUXROBO/pymodi?style=flat-square&color=blue)](https://github.com/LUXROBO/pymodi/blob/master/LICENSE)
 [![Lines of code](https://img.shields.io/tokei/lines/github/LUXROBO/pymodi?style=flat-square)](https://github.com/LUXROBO/pymodi/tree/master/modi)
-[![GitHub contributors](https://img.shields.io/github/contributors/LUXROBO/pymodi?style=flat-square)](https://github.com/LUXROBO/pymodi/graphs/contributors)
 
 Description
 ===========
