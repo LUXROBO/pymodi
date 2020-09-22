@@ -16,7 +16,7 @@ class BleTask(ConnTask):
 
     def __init__(self, verbose=False, uuid=None):
         print("Initiating ble connection...")
-        script = f'{os.path.dirname(__file__)}/change_interval.sh'
+        script = os.path.join(os.path.dirname(__file__), 'change_interval.sh')
         os.system(f'chmod 777 {script}')
         os.system(f'sudo {script}')
         super().__init__(verbose=verbose)
