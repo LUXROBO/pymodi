@@ -3,6 +3,8 @@
 </p>
 
 --------
+<div align="center">
+
 [![image](https://img.shields.io/pypi/pyversions/pymodi.svg?style=flat-square)](https://pypi.python.org/pypi/pymodi)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/LUXROBO/pymodi?style=flat-square)](https://pypi.python.org/pypi/pymodi)
 [![Read the Docs (version)](https://img.shields.io/readthedocs/pymodi/master?style=flat-square)](https://pymodi.readthedocs.io/en/master/?badge=master)
@@ -11,6 +13,8 @@
 [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/LUXROBO/pymodi/master?style=flat-square)](https://www.codefactor.io/repository/github/luxrobo/pymodi/overview/master)
 [![GitHub](https://img.shields.io/github/license/LUXROBO/pymodi?style=flat-square&color=blue)](https://github.com/LUXROBO/pymodi/blob/master/LICENSE)
 [![Lines of code](https://img.shields.io/tokei/lines/github/LUXROBO/pymodi?style=flat-square)](https://github.com/LUXROBO/pymodi/tree/master/modi)
+
+</div>
 
 Description
 ===========
