@@ -37,7 +37,7 @@ Build Status
 ------------
 |master|develop|
 |:---:|:---:|
-| [![Build Status](https://github.com/LUXROBO/pymodi/workflows/Build%20Status/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Build Status](https://github.com/LUXROBO/pymodi/workflows/Build%20Status/badge.svg?branch=develop)](https://github.com/LUXROBO/pymodi/actions) |
+| [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Unit%20Test%20(Ubuntu)?label=master&branch=master&style=flat-square)](https://github.com/LUXROBO/pymodi/actions) | [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Unit%20Test%20(Ubuntu)?label=develop&branch=develop&style=flat-square)](https://github.com/LUXROBO/pymodi/actions)
 
 System Support
 --------------
