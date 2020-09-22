@@ -74,8 +74,8 @@ jobs:
       with:
         server_address: smtp-mail.outlook.com
         server_port: 587
-        username: ${{secrets.MAIL_USERNAME}}
-        password: ${{secrets.MAIL_PASSWORD}}
+        username: ${{ secrets.MAIL_USERNAME }}
+        password: ${{ secrets.MAIL_PASSWORD }}
         subject: PyMODI ${{ steps.checkout_branch.outputs.version }} is released!!
         body: file://HISTORY.md
         to: tech@luxrobo.com
