@@ -14,7 +14,7 @@
 
 Description
 ===========
-> Python API for controlling MODI.
+> Python API for controlling modular electronics, MODI.
 
 Promotion Video
 ---------------
