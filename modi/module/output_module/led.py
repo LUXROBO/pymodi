@@ -14,7 +14,9 @@ class Led(OutputModule):
 
     @property
     def rgb(self) -> Tuple[float, float, float]:
-        return self.red, self.green, self.blue
+        relative_color = self.red, self.green, self.blue
+        absolute_color = tuple(map(lambda rc: rc * 255 // 100, relative_color))
+        return absolute_color
 
     @rgb.setter
     @OutputModule._validate_property(nb_values=3, value_range=(0, 255))
@@ -28,15 +30,15 @@ class Led(OutputModule):
         """
         if color == self.rgb:
             return
-        real_color = tuple(map(lambda c: c * 100 // 255, color))
+        relative_color = tuple(map(lambda c: c * 100 // 255, color))
         self._set_property(
             self._id,
             Led.SET_RGB,
-            real_color,
+            relative_color,
         )
-        self.update_property(Led.RED, color[0])
-        self.update_property(Led.GREEN, color[1])
-        self.update_property(Led.BLUE, color[2])
+        self.update_property(Led.RED, relative_color[0])
+        self.update_property(Led.GREEN, relative_color[1])
+        self.update_property(Led.BLUE, relative_color[2])
 
     def turn_on(self) -> None:
         """Turn on led at maximum brightness.
@@ -60,7 +62,7 @@ class Led(OutputModule):
         :return: Red component
         :rtype: float
         """
-        return self._get_property(Led.RED)
+        return self._get_property(Led.RED) * 255 // 100
 
     @red.setter
     @OutputModule._validate_property(nb_values=1, value_range=(0, 255))
@@ -80,7 +82,7 @@ class Led(OutputModule):
         :return: Green component
         :rtype: float
         """
-        return self._get_property(Led.GREEN)
+        return self._get_property(Led.GREEN) * 255 // 100
 
     @green.setter
     @OutputModule._validate_property(nb_values=1, value_range=(0, 255))
@@ -100,7 +102,7 @@ class Led(OutputModule):
         :return: Blue component
         :rtype: float
         """
-        return self._get_property(Led.BLUE)
+        return self._get_property(Led.BLUE) * 255 // 100
 
     @blue.setter
     @OutputModule._validate_property(nb_values=1, value_range=(0, 255))
