@@ -25,10 +25,10 @@ Promotion Video
 
 Features
 --------
-PyMODI supports a control of modular electronics, MODI developed by [LUXROBO](https://modi.luxrobo.com/en)
-* Easy control of modules through serial connection on Windows, Linux, and macOS
+PyMODI supports a control of modular electronics, [MODI](https://modi.luxrobo.com/en)
+* Easy control of modules through different types of connections on Windows, Linux, and macOS
 * Direct CAN communication to MODI modules on raspberry pi and other platforms
-* Utilities of firmware update and low-level debugging of the modules
+* Utilities of MODI firmware update and low-level debugging of the modules
 
 UML Diagram
 -----------
