@@ -3,14 +3,14 @@
 </p>
 
 --------
-[![image](https://img.shields.io/pypi/pyversions/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
-[![image](https://img.shields.io/pypi/v/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
-[![Documentation Status](https://readthedocs.org/projects/pymodi/badge/?version=master)](https://pymodi.readthedocs.io/en/master/?badge=master)
-[![Build Status](https://github.com/LUXROBO/pymodi/workflows/Build%20Status/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions)
-![Coveralls github branch](https://img.shields.io/coveralls/github/LUXROBO/pymodi/master?style=flat-square)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/LUXROBO/pymodi.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LUXROBO/pymodi/context:python)
-[![Maintainability](https://api.codeclimate.com/v1/badges/5a62f1585d723099e337/maintainability)](https://codeclimate.com/github/LUXROBO/pymodi/maintainability)
-[![License](https://img.shields.io/pypi/l/pymodi.svg?color=blue)](https://github.com/LUXROBO/pymodi/blob/master/LICENSE)
+[![image](https://img.shields.io/pypi/pyversions/pymodi.svg?style=flat-square)](https://pypi.python.org/pypi/pymodi)
+[![PyPI](https://img.shields.io/pypi/v/pymodi?style=flat-square)](https://pypi.python.org/pypi/pymodi)
+[![Read the Docs (version)](https://img.shields.io/readthedocs/pymodi/master?style=flat-square)](https://pymodi.readthedocs.io/en/master/?badge=master)
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Build%20Status/master?style=flat-square)](https://github.com/LUXROBO/pymodi/actions)
+[![Coveralls github branch](https://img.shields.io/coveralls/github/LUXROBO/pymodi/master?style=flat-square)](https://coveralls.io/github/LUXROBO/pymodi)
+[![LGTM Grade](https://img.shields.io/lgtm/grade/python/github/LUXROBO/pymodi?style=flat-square)](https://lgtm.com/projects/g/LUXROBO/pymodi/context:python)
+[![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/LUXROBO/pymodi?style=flat-square)](https://codeclimate.com/github/LUXROBO/pymodi/maintainability)
+[![GitHub](https://img.shields.io/github/license/LUXROBO/pymodi?style=flat-square&color=blue)](https://github.com/LUXROBO/pymodi/blob/master/LICENSE)
 
 Description
 ===========
