@@ -207,3 +207,7 @@ To see what other commands are available,
 ```commandline
 $ python -m modi --help
 ```
+
+Sponsors
+--------
+[![ministry of smes and startups](docs/_static/img/smes_startups.png)](https://www.mss.go.kr/site/eng/main.do)
