@@ -82,27 +82,31 @@ class TopologyManager:
             """
             if module_id in visited:
                 return
-            module_data = self._tp_data[module_id]
+
+            module_tp_data = self._tp_data[module_id]
             self._tp_map[y][x] = str(module_id)
             self.__module_position[module_id] = (x, y)
             visited.append(module_id)
             up_vector = self.__get_module_orientation(
-                module_data, prev_id, toward
+                module_tp_data, prev_id, toward
             )
+
             for d in ['t', 'b', 'l', 'r']:
-                if module_data.get(d) is not None:
-                    toward = self.__get_rotated_direction(d, up_vector)
-                    self.__update_map(
-                        module_data.get(d), x + toward[0],
-                        y + toward[1], module_id, toward, visited
-                    )
+                if not module_tp_data.get(d):
+                    continue
+                # which direction should we move toward? one of 't,b,l,r'
+                toward = self.__get_rotated_direction(d, up_vector)
+                self.__update_map(
+                    module_tp_data.get(d), x + toward[0], y + toward[1],
+                    module_id, toward, visited
+                )
 
         def __construct_map(self) -> None:
             """Construct the topology map
 
             :return: None
             """
-            first_id = self.get_network_id()
+            first_id = self.__get_network_id()
             visited = []
             self.__update_map(
                 first_id, self._nb_modules, self._nb_modules,
@@ -161,14 +165,18 @@ class TopologyManager:
                 line += " " * padding
             else:
                 module_id = int(module_id)
-                name = self._tp_data[module_id]['type']
-                idx = module_list(self._modules, name.lower()).find(module_id)
-                if idx < 0:
-                    idx = ''
+                module_type = self._tp_data[module_id]['type']
+                module_idx = module_list(
+                    self._modules, module_type.lower()
+                ).find(module_id)
+                if module_idx < 0:
+                    module_idx = ''
+
+                el = f"{module_type + str(module_idx) + f' ({module_id})':^17}"
                 if print_id:
-                    line += f"{name + str(idx) + f' ({module_id})':^17}"
+                    line += el
                 else:
-                    line += f"{name + str(idx):^10}"
+                    line += f"{module_type + str(module_idx):^10}"
             return line
 
         def print_map(self, print_id: bool = False) -> None:
@@ -193,7 +201,7 @@ class TopologyManager:
                     line += self.__compose_line(curr_elem, padding, print_id)
                 print(line)
 
-        def get_network_id(self):
+        def __get_network_id(self):
             for mid in self._tp_data:
                 if self._tp_data[mid]['type'] == 'network':
                     return mid
@@ -201,7 +209,7 @@ class TopologyManager:
 
         def update_module_data(self, modules):
             # This mainly updates module's position data, for sorting modules
-            network_position = self.__module_position[self.get_network_id()]
+            network_position = self.__module_position[self.__get_network_id()]
             for module in modules:
                 module_position = self.__module_position[module.id]
                 module.position = (
@@ -214,21 +222,12 @@ class TopologyManager:
         self._nb_modules = len(self._tp_data)
         self._modules = modules
 
-    def __update_module_position(self):
-        self._nb_modules = len(self._tp_data)
-        tp_map = self.TopologyMap(
-            self._tp_data, self._nb_modules, self._modules
-        )
-        tp_map.update_module_data(self._modules)
-
-    def __is_type_complete(self):
-        # return true if type of all modules are initialized
-        for module in self._tp_data:
-            if not self._tp_data[module]['type']:
-                return False
-        return True
-
     def is_topology_complete(self):
+        """
+        This method is called in the MODI object initialization, and will
+        continue to run until all topology data are formed properly.
+        """
+
         # If no entry exists in the dictionary
         if not self._tp_data:
             return False
@@ -238,7 +237,6 @@ class TopologyManager:
             print("Battery Module detected. Topology may by inaccurate.")
             time.sleep(2)
 
-        print(self._tp_data)
         try:
             self.__update_module_position()
         except KeyError:
@@ -254,3 +252,17 @@ class TopologyManager:
             self._tp_data, self._nb_modules, self._modules
         )
         tp_map.print_map(print_id)
+
+    def __update_module_position(self):
+        self._nb_modules = len(self._tp_data)
+        tp_map = self.TopologyMap(
+            self._tp_data, self._nb_modules, self._modules
+        )
+        tp_map.update_module_data(self._modules)
+
+    def __is_type_complete(self):
+        # return true if type of all modules are initialized
+        for module in self._tp_data:
+            if not self._tp_data[module]['type']:
+                return False
+        return True
