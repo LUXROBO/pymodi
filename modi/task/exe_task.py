@@ -161,6 +161,9 @@ class ExeTask:
                 print(f"{str(new_module)} is not up to date. "
                       f"Please update the module by calling "
                       f"modi.update_module_firmware")
+            if self._topology_data.get(module_id):
+                self._topology_data[module_id]["type"] = module_type
+                print("possible?")
 
         elif not self.__get_module_by_id(module_id).is_connected:
             # Handle Reconnected modules
