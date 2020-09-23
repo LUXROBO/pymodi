@@ -17,6 +17,8 @@ class TopologyMap:
         ]
         self.__module_position = dict()
 
+        self.__construct_map()
+
     @staticmethod
     def __get_module_orientation(mod_data: Dict[str, int], prev_id: int,
                                  toward: Tuple[int, int]) -> Tuple[int, int]:
@@ -85,7 +87,7 @@ class TopologyMap:
                 self.__update_map(module_data.get(d), x + toward[0],
                                   y + toward[1], module_id, toward, visited)
 
-    def construct_map(self) -> None:
+    def __construct_map(self) -> None:
         """Construct the topology map
 
         :return: None
@@ -111,7 +113,7 @@ class TopologyMap:
 
         # Iterates through the rows until it finds the first non-zero row.
         # Saves the index to y, and increases h until it finds next all-zero
-        # row
+        # row.
         str_sum = self.__str_sum
         for i in range(len(raw_map)):
             if str_sum(raw_map[i]) and y < 0:
@@ -206,7 +208,6 @@ class TopologyManager:
     def __update_module_position(self):
         self._nb_modules = len(self._tp_data)
         tp_map = TopologyMap(self._tp_data, self._nb_modules, self._modules)
-        tp_map.construct_map()
         tp_map.update_module_data(self._modules)
 
     def __is_type_complete(self):
@@ -239,5 +240,4 @@ class TopologyManager:
     def print_topology_map(self, print_id: bool = False) -> None:
         self._nb_modules = len(self._tp_data)
         tp_map = TopologyMap(self._tp_data, self._nb_modules, self._modules)
-        tp_map.construct_map()
         tp_map.print_map(print_id)
