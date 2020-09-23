@@ -90,7 +90,7 @@ class TopologyMap:
 
         :return: None
         """
-        first_id = self.network_id
+        first_id = self.get_network_id()
         visited = []
         self.__update_map(
             first_id, self._nb_modules, self._nb_modules,
@@ -181,15 +181,14 @@ class TopologyMap:
                 line += self.__compose_line(curr_elem, padding, print_id)
             print(line)
 
-    @property
-    def network_id(self):
+    def get_network_id(self):
         for mid in self._tp_data:
             if self._tp_data[mid]['type'] == 'network':
                 return mid
         return list(self._tp_data.keys())[0]
 
     def update_module_data(self, modules):
-        network_position = self.__module_position[self.network_id]
+        network_position = self.__module_position[self.get_network_id()]
         for module in modules:
             module_position = self.__module_position[module.id]
 
@@ -227,6 +226,7 @@ class TopologyManager:
             print("Battery Module detected. Topology may by inaccurate.")
             time.sleep(2)
 
+        print(self._tp_data)
         try:
             self.__update_module_position()
         except KeyError:
