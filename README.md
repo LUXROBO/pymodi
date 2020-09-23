@@ -208,6 +208,6 @@ To see what other commands are available,
 $ python -m modi --help
 ```
 
-Sponsors
---------
-[![ministry of smes and startups](docs/_static/img/smes_startups.png)](https://www.mss.go.kr/site/eng/main.do)
+Sponsored by
+------------
+[![ministry of smes and startups](https://gtihub.com/LUXROBO/pymodi/blob/master/docs/_static/img/smes_startups.png?raw=true)](https://www.mss.go.kr/site/eng/main.do)
