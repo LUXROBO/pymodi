@@ -15,6 +15,7 @@ class ExeTask:
         self._modules = modules
         self._topology_data = topology_data
         self._conn = conn_task
+
         # Reboot all modules
         self.__set_module_state(
             BROADCAST_ID, Module.REBOOT, Module.PNP_OFF
@@ -57,8 +58,9 @@ class ExeTask:
             0xA1: self.__update_esp_version,
         }.get(command, lambda _: None)
 
-    def __update_esp_version(self,
-                             message: Dict[str, Union[int, str]]) -> None:
+    def __update_esp_version(
+        self, message: Dict[str, Union[int, str]]
+    ) -> None:
         network_module = None
         for module in self._modules:
             if module.module_type == 'network':
@@ -93,11 +95,14 @@ class ExeTask:
             if topology_ids[idx] == 0:
                 if 0 not in self._topology_data:
                     self._modules.append(Battery(0, -1, None))
-                    battery_topology = {'type': 'Battery', 'r': None,
-                                        't': None, 'l': None, 'b': src_id}
+                    battery_topology = {
+                        'type': 'Battery',
+                        'r': None, 't': None, 'l': None, 'b': src_id
+                    }
                     self._topology_data[0] = battery_topology
                 elif src_id not in self._topology_data[0].values():
                     self._topology_data[0]['l'] = src_id
+
         # Update topology data for the module
         self._topology_data[src_id] = topology_by_id
 
@@ -163,9 +168,6 @@ class ExeTask:
                 print(f"{str(new_module)} is not up to date. "
                       f"Please update the module by calling "
                       f"modi.update_module_firmware")
-            if self._topology_data.get(module_id):
-                self._topology_data[module_id]["type"] = module_type
-                print("possible?")
 
         elif not self.__get_module_by_id(module_id).is_connected:
             # Handle Reconnected modules
