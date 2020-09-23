@@ -28,10 +28,10 @@ class BleTask(ConnTask):
         self.__close_event = False
         self.__get_service = \
             mac_client.BleakClientCoreBluetooth.get_services
-        mac_client.BleakClientCoreBluetooth.get_services = \
-            self.mac_get_service
+        mac_client.BleakClientCoreBluetooth.get_services = self.mac_get_service
 
     @staticmethod
+    # The 'self' parameter of this function is necessary
     async def mac_get_service(self):
         return True
 
