@@ -10,7 +10,7 @@ from modi._exe_thrd import ExeThrd
 from modi.util.conn_util import is_network_module_connected, is_on_pi
 from modi.util.misc import module_list
 from modi.util.stranger import check_complete
-#from modi.util.upython import upload_file
+# from modi.util.upython import upload_file
 from modi.util.topology_manager import TopologyManager
 from modi.firmware_updater import STM32FirmwareUpdater, ESP32FirmwareUpdater
 
@@ -80,8 +80,8 @@ class MODI:
                 bad_modules.append(module)
         return bad_modules
 
-    #@staticmethod
-    #def upload_user_code(filepath: str, remote_path: str) -> None:
+    # @staticmethod
+    # def upload_user_code(filepath: str, remote_path: str) -> None:
     #    """Upload python user code
     #
     #    :param filepath: Filepath to python file
@@ -243,5 +243,5 @@ def update_network_firmware(force=False):
     updater.update_firmware(force=force)
 
 
-#def upload_user_code(filepath, remote_path):
+# def upload_user_code(filepath, remote_path):
 #    upload_file(filepath, remote_path)

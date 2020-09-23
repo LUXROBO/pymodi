@@ -242,8 +242,8 @@ class TopologyManager:
         except KeyError:
             return False
         return (
-            len(self._modules) == len(self._tp_data) and
-            self.__is_type_complete()
+            len(self._modules) == len(self._tp_data)
+            and self.__is_type_complete()
         )
 
     def print_topology_map(self, print_id: bool = False) -> None:
