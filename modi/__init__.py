@@ -5,7 +5,7 @@ from modi.modi import (
     update_module_firmware,
     update_network_firmware,
     reset_module_firmware,
-    upload_user_code,
+    #upload_user_code,
 )
 
 __all__ = [
@@ -13,7 +13,7 @@ __all__ = [
     "update_module_firmware",
     "update_network_firmware",
     "reset_module_firmware",
-    "upload_user_code",
+    #"upload_user_code",
 ]
 
 __version__ = about.__version__

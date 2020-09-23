@@ -80,16 +80,16 @@ class MODI:
                 bad_modules.append(module)
         return bad_modules
 
-    @staticmethod
-    def upload_user_code(filepath: str, remote_path: str) -> None:
-        """Upload python user code
-
-        :param filepath: Filepath to python file
-        :type filepath: str
-        :param remote_path: Filepath on esp device
-        :return: None
-        """
-        upload_file(filepath, remote_path)
+    #@staticmethod
+    #def upload_user_code(filepath: str, remote_path: str) -> None:
+    #    """Upload python user code
+    #
+    #    :param filepath: Filepath to python file
+    #    :type filepath: str
+    #    :param remote_path: Filepath on esp device
+    #    :return: None
+    #    """
+    #    upload_file(filepath, remote_path)
 
     @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
