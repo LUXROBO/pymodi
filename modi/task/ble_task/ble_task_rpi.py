@@ -15,7 +15,7 @@ from modi.util.misc import ask_modi_device
 class BleTask(ConnTask):
 
     def __init__(self, verbose=False, uuid=None):
-        print("Initiating ble connection...")
+        print("Initiating ble_task connection...")
         script = os.path.join(os.path.dirname(__file__), 'change_interval.sh')
         os.system(f'chmod 777 {script}')
         os.system(f'sudo {script}')

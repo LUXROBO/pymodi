@@ -103,9 +103,9 @@ class MODI:
             return im('modi.task.can_task').CanTask(verbose)
         elif conn_mode == 'ble':
             mod_path = {
-                'win32': 'modi.task.ble.ble_task_win',
-                'linux': 'modi.task.ble.ble_task_rpi',
-                'darwin': 'modi.task.ble.ble_task_mac',
+                'win32': 'modi.task.ble_task.ble_task_win',
+                'linux': 'modi.task.ble_task.ble_task_rpi',
+                'darwin': 'modi.task.ble_task.ble_task_mac',
             }.get(sys.platform)
             return im(mod_path).BleTask(verbose, uuid)
         else:

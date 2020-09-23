@@ -20,7 +20,7 @@ class BleTask(ConnTask):
 
     def __init__(self, verbose=False, uuid=None):
         super().__init__(verbose=verbose)
-        print("Initiating ble connection...")
+        print("Initiating ble_task connection...")
         self._loop = asyncio.get_event_loop()
         self.__uuid = uuid
         self._recv_q = Queue()
