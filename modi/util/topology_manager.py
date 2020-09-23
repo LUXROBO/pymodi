@@ -11,8 +11,10 @@ class TopologyMap:
         self._modules = modules
         # 2D array that will contain the topology information of the modules.
         # It stores the module id
-        self._tp_map = [["" for _ in range(2 * self._nb_modules)]
-                        for _ in range(2 * self._nb_modules)]
+        self._tp_map = [
+            ["" for _ in range(2 * self._nb_modules)]
+            for _ in range(2 * self._nb_modules)
+        ]
         self.__module_position = dict()
 
     @staticmethod
@@ -90,8 +92,10 @@ class TopologyMap:
         """
         first_id = self.network_id
         visited = []
-        self.__update_map(first_id, self._nb_modules, self._nb_modules,
-                          prev_id=-1, toward=(1, 0), visited=visited)
+        self.__update_map(
+            first_id, self._nb_modules, self._nb_modules,
+            prev_id=-1, toward=(1, 0), visited=visited
+        )
 
     def __trim_map(self, raw_map: List):
         # Trims the matrix to get rid of empty spaces, containing zeros only
@@ -206,31 +210,33 @@ class TopologyManager:
         tp_map.construct_map()
         tp_map.update_module_data(self._modules)
 
-    def is_type_complete(self):
+    def __is_type_complete(self):
+        # return true if type of all modules are initialized
         for module in self._tp_data:
             if not self._tp_data[module]['type']:
                 return False
         return True
 
     def is_topology_complete(self):
+        # If no entry exists in the dictionary
+        if not self._tp_data:
+            return False
+
+        # Battery module id is defined to be 0
         if 0 in self._tp_data:
             print("Battery Module detected. Topology may by inaccurate.")
             time.sleep(2)
-        if len(self._tp_data) < 1:
-            return False
+
         try:
             self.__update_module_position()
         except KeyError:
             return False
-        return len(self._modules) == len(self._tp_data) \
-            and self.is_type_complete()
+        return (
+            len(self._modules) == len(self._tp_data) and
+            self.__is_type_complete()
+        )
 
     def print_topology_map(self, print_id: bool = False) -> None:
-        """ Print the topology map
-
-        :param print_id: If True, the result includes module ids
-        :return: None
-        """
         self._nb_modules = len(self._tp_data)
         tp_map = TopologyMap(self._tp_data, self._nb_modules, self._modules)
         tp_map.construct_map()
