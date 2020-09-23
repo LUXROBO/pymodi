@@ -137,13 +137,20 @@ class ExeTask:
                 self.__set_module_state(
                     module_id, Module.RUN, Module.PNP_OFF
                 )
+            # Reset disconnection alert status
+            if module.has_printed:
+                module.has_printed = False
+
         # Disconnect module with no health message for more than 2 second
         for module in self._modules:
             if module.module_type != 'network' and \
                     curr_time - module.last_updated > 2:
-                #print(
-                #    f"{module.module_type} ({module_id}) has been disconnected"
-                #)
+                if not module.has_printed:
+                    print(
+                        f"{module.module_type} ({module_id}) "
+                        f"has been disconnected!!"
+                    )
+                    module.has_printed = True
                 module.is_connected = False
                 module._last_set_message = None
 
