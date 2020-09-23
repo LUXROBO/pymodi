@@ -19,7 +19,10 @@ class ExeTask:
         self.__set_module_state(
             BROADCAST_ID, Module.REBOOT, Module.PNP_OFF
         )
+
+        # Request data required to initialize MODI
         self.__request_network_uuid()
+        self.__request_topology()
 
     def run(self, delay: float):
         """ Run in ExecutorThread
@@ -146,13 +149,12 @@ class ExeTask:
         :return: None
         """
         module_id = message['s']
-        module_uuid, module_version_info = \
-            unpack_data(message['b'], (6, 2))
+        module_uuid, module_version_info = unpack_data(message['b'], (6, 2))
 
         # Handle new modules
         if module_id not in (module.id for module in self._modules):
             module_type = get_module_type_from_uuid(module_uuid)
-            self.request_topology(module_id)
+            self.__request_topology(module_id)
             new_module = self.__add_new_module(
                 module_type, module_id, module_uuid, module_version_info
             )
@@ -189,6 +191,7 @@ class ExeTask:
         :type message: Dictionary
         :return: None
         """
+
         # Do not update reserved property
         property_number = message["d"]
         if property_number == 0 or property_number == 1:
@@ -214,15 +217,16 @@ class ExeTask:
         :type pnp_state: int
         :return: None
         """
-        self._conn.send_nowait(parse_message(0x09, 0, destination_id,
-                                             (module_state, pnp_state)))
+        self._conn.send_nowait(
+            parse_message(0x09, 0, destination_id, (module_state, pnp_state))
+        )
 
     def __request_network_uuid(self):
         self._conn.send_nowait(
             parse_message(0x28, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
         )
 
-    def request_topology(self, module_id: int = BROADCAST_ID) -> None:
+    def __request_topology(self, module_id: int = BROADCAST_ID) -> None:
         """Request module topology
 
         :return: json serialized topology request message
