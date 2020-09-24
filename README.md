@@ -213,9 +213,9 @@ To check the performance of PyMODI on your machine,
 $ python -m modi --performance
 ```
 
-To automatically initialize MODI modules (set `i` flag to enable REPL mode),
+To automatically initialize MODI modules, useful for debugging (set `i` flag to enable REPL mode),
 ```commandline
-$ python -im modi -d
+$ python -im modi --debug
 ```
 
 To see what other commands are available,
