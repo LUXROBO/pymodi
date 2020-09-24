@@ -63,16 +63,16 @@ Quickstart
 ----------
 We highly recommend you to use Anaconda to manage PyMODI package distribution. With Anaconda, you can use an isolated virtual environment for PyMODI. Once you install [Anaconda](https://docs.anaconda.com/anaconda/install/), follow their instruction to properly install their software, then:
 ```commandline
-# install new python environment for PyMODI package, choose python version >= 3.6
+# Install new python environment for PyMODI package, choose python version >= 3.6
 conda create --name pymodi python=3.6
 
-# make sure that your python's version is compatible with PyMODI
+# Make sure that your python's version is compatible with PyMODI
 python --version
 
-# after you properly install the python environment, activate it
+# After you properly install the python environment, activate it
 conda activate pymodi
 
-# once finished running pymodi, deactivate the environment
+# Once finished running pymodi, deactivate the environment
 conda deactivate
 ```
 
