@@ -61,18 +61,33 @@ If you want to contribute to pymodi, be sure to review the contribution guidelin
 
 Quickstart
 ----------
+We highly recommend you to use Anaconda to manage PyMODI package distribution. With Anaconda, you can use an isolated virtual environment for PyMODI. Once you install [Anaconda](https://docs.anaconda.com/anaconda/install/), follow their instruction to properly install their software, then:
+```commandline
+# install new python environment for PyMODI package, choose python version >= 3.6
+conda create --name pymodi python=3.6
+
+# make sure that your python's version is compatible with PyMODI
+python --version
+
+# after you properly install the python environment, activate it
+conda activate pymodi
+
+# once finished running pymodi, deactivate the environment
+conda deactivate
+```
+
 Install the latest PyMODI if you haven't installed it yet:
 ```commandline
-pip install -U pymodi --user
+python -m pip install -U pymodi --user
 ```
 
 You can also install PyMODI at develop branch (contains latest changes but it can be unstable) with:
 ```commandline
-pip install git+https://github.com/LUXROBO/pymodi.git@develop --user --upgrade
+python -m pip install git+https://github.com/LUXROBO/pymodi.git@develop --user --upgrade
 ```
 Perhaps, you can install a stable copy of PyMODI at a specific revision, by referring a tag with:
 ```commandline
-pip install git+https://github.com/LUXROBO/pymodi.git@v1.0.0 --user --upgrade
+python -m pip install git+https://github.com/LUXROBO/pymodi.git@v1.0.0 --user --upgrade
 ```
 Import modi package and create MODI instance:
 ```python
