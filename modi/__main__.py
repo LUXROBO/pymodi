@@ -130,7 +130,7 @@ if __name__ == "__main__":
         updater = ESP32FirmwareUpdater()
         updater.update_firmware()
         fin_time = time.time()
-        print(f"Took {fin_time - init_time:.2f} seconds to update")
+        print(f"Took {fin_time - init_time:.2f} seconds to update :)")
         os._exit(0)
 
     # Initialize modules implicitly
