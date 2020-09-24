@@ -130,11 +130,11 @@ However, when creating the bundle, you can specify how you would like to establi
 # 1. Serial connection (via USB), it's the default connection method
 bundle = modi.MODI(conn_mode="ser")
 
-# 2. BLE (Bluetooth Low Energy) connection, it's wireless! But it can be slow :(
-bundle = modi.MODI(conn_mode="ble")
-
-# 3. CAN connection (via CAN shield, not recommended to use it directly)
+# 2. CAN connection (via CAN shield, not recommended to use it directly)
 bundle = modi.MODI(conn_modue="can")
+
+# 3. BLE (Bluetooth Low Energy) connection, it's wireless! But it can be slow :(
+bundle = modi.MODI(conn_mode="ble", uuid="YOUR_NETWORK_MODULE_UUID")
 ```
 
 Once you created the MODI object, attach MODI modules to the network module. MODI will print what modules are connected, once they are recognized.
