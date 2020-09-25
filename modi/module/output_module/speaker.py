@@ -40,7 +40,8 @@ class Speaker(OutputModule):
 
     def __init__(self, id_, uuid, conn_task):
         super().__init__(id_, uuid, conn_task)
-        self.frequency = 880  # Default frequency of A6
+        # Default frequency of MODI Speaker
+        self.frequency = 1318
 
     @property
     def tune(self) -> Tuple[float, float]:
