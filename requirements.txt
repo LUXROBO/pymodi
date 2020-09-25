@@ -1,5 +1,5 @@
 pyserial
 python-can
-bleak; sys_platform == 'win32'
-bleak; sys_platform == 'darwin'
+bleak==0.7.1; sys_platform == 'win32'
+bleak==0.7.1; sys_platform == 'darwin'
 pexpect; sys_platform == 'linux'
