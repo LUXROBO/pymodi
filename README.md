@@ -120,7 +120,7 @@ print(bundle.modules)
 # List connected leds
 print(bundle.leds)
 
-# Create an LED object by picking the first led object from the bundle
+# Pick the first led object from the bundle
 led = bundle.leds[0]
 ```
 
