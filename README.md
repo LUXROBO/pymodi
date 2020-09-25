@@ -59,9 +59,11 @@ If you want to contribute to pymodi, be sure to review the contribution guidelin
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg?style=flat-square)](CODE_OF_CONDUCT.md)
 
-Quickstart
-----------
-We highly recommend you to use Anaconda to manage PyMODI package distribution. With Anaconda, you can use an isolated virtual environment for PyMODI. Once you install [Anaconda](https://docs.anaconda.com/anaconda/install/), follow their instruction to properly install their software, then:
+Installation
+------------
+> When installing PyMODI package, we highly recommend you to use Anaconda to manage the distribution. With Anaconda, you can use an isolated virtual environment for PyMODI.
+
+[Optional] Once you install [Anaconda](https://docs.anaconda.com/anaconda/install/), then:
 ```commandline
 # Install new python environment for PyMODI package, choose python version >= 3.6
 conda create --name pymodi python=3.6
@@ -71,9 +73,6 @@ python --version
 
 # After you properly install the python environment, activate it
 conda activate pymodi
-
-# Once finished running pymodi, deactivate the environment
-conda deactivate
 ```
 
 Install the latest PyMODI if you haven't installed it yet:
@@ -81,66 +80,27 @@ Install the latest PyMODI if you haven't installed it yet:
 python -m pip install -U pymodi --user
 ```
 
-You can also install PyMODI at develop branch (contains latest changes but it can be unstable) with:
+You can also install PyMODI at develop branch (containing latest changes but it can be unstable) with:
 ```commandline
 python -m pip install git+https://github.com/LUXROBO/pymodi.git@develop --user --upgrade
 ```
-Perhaps, you can install a stable copy of PyMODI at a specific revision, by referring a tag with:
+Alternatively, you can install a stable copy of PyMODI at a tag (representing a previous release) with:
 ```commandline
 python -m pip install git+https://github.com/LUXROBO/pymodi.git@v1.0.0 --user --upgrade
 ```
-Import modi package and create MODI instance:
-```python
-import modi
-bundle = modi.MODI()
-```
-List connected modules:
-```python
-bundle.modules
-```
-List connected LED modules and pick the first one:
-```python
-bundle.leds # List.
-bundle.leds[0] # Pick.
-```
-Let's blink the LED's light 5 times:
-```python
-import time
-
-led = bundle.leds[0]
-
-for _ in range(5):
-    # turn on for 0.5 second
-    led.rgb = 255, 255, 255
-    time.sleep(0.5)
-
-    # turn off for 0.5 second
-    led.rgb = 0, 0, 0
-    time.sleep(0.5)
-```
-
-If you are still not sure how to use PyMODI, you can play an interactive PyMODI tutorial by running a command of
-```commandline
-$ python -m modi --tutorial
-```
-As well as an interactive usage examples:
-```commandline
-$ python -m modi --usage
-```
-Moreover, we provide some [usage and creation examples](examples), as well as a [descriptive web page](https://luxrobo.github.io/pymodi).
 
 Usage
 -----
-Import modi package and create MODI instance (we call it "bundle", a bundle of MODI modules).
+Import modi package and create MODI object (we call it "bundle", a bundle of MODI modules).
 ```python
 # Import modi package
 import modi
 
-# Create MODI instance, make sure that you have connected your network module to your machine
+# Create MODI object, make sure that you have connected your network module to your machine with other modules attached to it
 bundle = modi.MODI()
 ```
 
-However, when creating the bundle, you can specify how you would like to establish the connection between your machine and the network module.
+You can optionally specify how you would like to establish the connection between your machine and the network module.
 ```python
 # 1. Serial connection (via USB), it's the default connection method
 bundle = modi.MODI(conn_mode="ser")
@@ -152,15 +112,19 @@ bundle = modi.MODI(conn_modue="can")
 bundle = modi.MODI(conn_mode="ble", uuid="YOUR_NETWORK_MODULE_UUID")
 ```
 
-Once you created the MODI object, attach MODI modules to the network module. MODI will print what modules are connected, once they are recognized.
-
+List and create connected modules' object.
 ```python
-# Create module objects given that you have attached modules below to the network module
-button = bundle.buttons[0]
-speaker = bundle.speakers[0]
+# List connected modules
+print(bundle.modules)
+
+# List connected leds
+print(bundle.leds)
+
+# Create an LED object by picking the first led object from the bundle
+led = bundle.leds[0]
 ```
 
-To visualize how modules are connected, you can use our topology function.
+Visualize how modules are connected.
 ```python
 # Print topology map without indicating module id
 bundle.print_topology_map()
@@ -169,27 +133,30 @@ bundle.print_topology_map()
 bundle.print_topology_map(print_id=True)
 ```
 
-Now you are ready to implement a MODI creation using PyMODI! The code below shows a simple creation using a button and a speaker module.
-
+Let's blink the LED 5 times.
 ```python
 import time
 
-volume = 0
-while True:
-    speaker.tune = 880, volume
-    if button.clicked:
-        volume = 100 if (volume + 10) > 100 else volume + 10
-        time.sleep(0.1)
-    else:
-        volume = 0 if (volume - 0.5) < 0 else volume - 1
+for _ in range(5):
+    # turn on for 0.5 second
+    led.rgb = 255, 255, 255
+    time.sleep(0.5)
 
-    if button.double_clicked:
-        break
-
-    print(volume)
+    # turn off for 0.5 second
+    led.rgb = 0, 0, 0
+    time.sleep(0.5)
 ```
 
-When implementing MODI creation with PyMODI, check [what module methods are available](https://pymodi.readthedocs.io/en/master/).
+If you are still not sure how to use PyMODI, you can play PyMODI tutorial over REPL:
+```commandline
+$ python -m modi --tutorial
+```
+As well as an interactive usage examples:
+```commandline
+$ python -m modi --usage
+```
+
+Moreover, we provide [api documentation](https://pymodi.readthedocs.io/en/master/), [usage and creation examples](examples), and a [descriptive web page](https://luxrobo.github.io/pymodi).
 
 Additional Usage
 ----------------
