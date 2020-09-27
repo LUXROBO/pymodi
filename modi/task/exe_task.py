@@ -179,6 +179,8 @@ class ExeTask:
         elif not self.__get_module_by_id(module_id).is_connected:
             # Handle Reconnected modules
             self.__get_module_by_id(module_id).is_connected = True
+            module_type = get_module_type_from_uuid(module_uuid)
+            print(f"{module_type} ({module_id}) has been reconnected!!")
 
     def __add_new_module(self, module_type, module_id,
                          module_uuid, module_version_info):
