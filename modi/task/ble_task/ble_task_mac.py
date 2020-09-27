@@ -32,8 +32,8 @@ class BleTask(ConnTask):
 
     @staticmethod
     # The 'self' parameter of this function is necessary
-    async def mac_get_service(self):
-        return True
+    async def mac_get_service(client):
+        return None
 
     async def _list_modi_devices(self):
         devices = await discover(timeout=1)
@@ -50,7 +50,7 @@ class BleTask(ConnTask):
         return None
 
     async def __connect(self, address):
-        client = BleakClient(address, self._loop, timeout=1)
+        client = BleakClient(address, timeout=1)
         await client.connect(timeout=1)
         await asyncio.sleep(1)
         await self.__get_service(client)
@@ -161,5 +161,4 @@ class BleTask(ConnTask):
         ble_msg[7] = dlc >> 8 & 0xFF
 
         ble_msg[8:8 + dlc] = bytearray(base64.b64decode(data))
-
         return ble_msg
