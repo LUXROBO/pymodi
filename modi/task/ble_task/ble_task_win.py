@@ -39,7 +39,7 @@ class BleTask(ConnTask):
             return None
 
     async def __connect(self, address):
-        client = BleakClient(address, self._loop)
+        client = BleakClient(address, timeout=3)
         await client.connect(timeout=1)
         return client
 
