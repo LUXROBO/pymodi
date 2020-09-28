@@ -98,7 +98,10 @@ Import modi package and create MODI object (we call it "bundle", a bundle of MOD
 # Import modi package
 import modi
 
-# Create MODI object, make sure that you have connected your network module to your machine with other modules attached to it
+"""
+Create MODI object, make sure that you have connected your network module
+to your machine while other modules are attached to the network module
+"""
 bundle = modi.MODI()
 ```
 
