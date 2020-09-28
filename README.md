@@ -26,10 +26,12 @@ Promotion Video
 
 Features
 --------
-PyMODI supports a control of modular electronics, [MODI](https://modi.luxrobo.com/en)
-* Easy control of modules through different types of connections on Windows, Linux, and macOS
-* Direct CAN communication to MODI modules on raspberry pi and other platforms
-* Utilities of MODI firmware update and low-level debugging of the modules
+PyMODI provides a control of modular electronics, [MODI](https://modi.luxrobo.com/en)
+* Platform agnostic control of modules through serial connection
+* Explicit CAN communication to MODI modules via magnetic connector
+* Utilities of wireless connection with BLE (Bluetooth Low Engery)
+* Update of MODI firmware consisting of both ESP32 and STM32 modules
+* Direct manipulation of MODI network module using [MODI Play](https://play.google.com/store/apps/details?id=com.luxrobo.modiplay&hl=en_US)
 
 UML Diagram
 -----------
