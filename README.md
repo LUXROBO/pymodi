@@ -167,12 +167,12 @@ Additional Usage
 ----------------
 To update MODI modules (all modules but the network module),
 ```commandline
-$ python -m modi --update_module
+$ python -m modi --update
 ```
 
 To update MODI network module (the network module must be connected on serial),
 ```commandline
-$ python -m modi --update_network_module
+$ python -m modi --update_network
 ```
 
 To diagnose MODI modules (helpful to find existing malfunctioning modules),
@@ -180,14 +180,19 @@ To diagnose MODI modules (helpful to find existing malfunctioning modules),
 $ python -m modi --inspect
 ```
 
+To debug MODI modules with PyMODI debugger,
+```commandline
+$ python -m modi --debug
+```
+
 To check the performance of PyMODI on your machine,
 ```commandline
 $ python -m modi --performance
 ```
 
-To automatically initialize MODI modules, useful for debugging (set `i` flag to enable REPL mode),
+To initialize MODI modules implicitly (set `i` flag to enable REPL mode),
 ```commandline
-$ python -im modi --debug
+$ python -im modi --initialize
 ```
 
 To see what other commands are available,

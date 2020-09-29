@@ -1,14 +1,17 @@
 import sys
+import modi
+import time
+
 from _tkinter import TclError
 from io import StringIO
 from tkinter import Tk, Canvas, Button, Entry, Label
 from tkinter import END, WORD, INSERT, NW
 from tkinter.scrolledtext import ScrolledText
+if sys.platform == 'darwin':
+    from tkmacosx import Button
 
-import modi
 from modi.modi import MODI
 from modi.util.msgutil import parse_message
-import time
 
 
 class Debugger(MODI):
@@ -26,6 +29,7 @@ class Debugger(MODI):
         debugger.run()
 
 
+# TODO: Apply MVC pattern here
 class _DebuggerWindow:
     def __init__(self, bundle: MODI, buffer: StringIO):
         self._buffer = buffer
@@ -41,7 +45,7 @@ class _DebuggerWindow:
         self.__sid, self.__did, self.__cmd, self.__data = \
             None, None, None, None
 
-    def run(self) -> None:
+    def run(self):
         width, height = 910, 750
         window = Tk()
         window.title(f"GUI Debugger for PyMODI (v{modi.__version__})")
@@ -81,25 +85,30 @@ class _DebuggerWindow:
         send_button.place(x=830, y=5)
 
         # TODO: Remove this __query related functions
-        #Label(window, text='command query: ').place(x=420, y=30)
-        #self.__query = Entry(window)
-        #self.__query.place(x=525, y=32, width=25)
-        #Button(window, text="Select", command=self.__change_query).place(
-        #    x=555, y=30
-        #)
+        Label(window, text="Filter by Command: ").place(x=420, y=35)
+        self.__query = Entry(window)
+        self.__query.place(x=545, y=33, width=35)
+        Button(window, text="Filter", command=self.__change_query).place(
+            x=580, y=32
+        )
 
-        # log box (where MODI messages are shown)
+        # log box (where MODI json messages are shown)
         self.__log = ScrolledText(window, wrap=WORD, font=('Helvetica', 12))
-        self.__log.place(x=420, y=40, width=480, height=700)
+        self.__log.place(x=420, y=60, width=480, height=700)
 
-        self.__spec = Label(window, text=f"Running PyMODI v{modi.__version__}",
-                            bg='white', anchor=NW, justify='left',
-                            font=('Helvetica', 10))
+        # spec box (where module information are shown)
+        self.__spec = Label(
+            window,
+            text=f"Running PyMODI (v{modi.__version__})",
+            bg='white', anchor=NW, justify='left', font=('Helvetica', 15)
+        )
         self.__spec.place(x=10, y=350, width=400, height=390)
 
+        # generate module button in the canvas
         for module in self.bundle.modules:
             self.__create_module_button(module, window)
 
+        # run mainloop
         while True:
             try:
                 window.update()
@@ -121,7 +130,7 @@ class _DebuggerWindow:
             self.__input_box.delete(0, END)
             self.__input_box.insert(0, msg)
         except Exception as e:
-            print("An Expcetion in TKinter callback has been raised:", e)
+            print("An exception in Tkinter callback has been raised:", e)
             self.__input_box.delete(0, END)
             self.__input_box.insert(0, "Invalid Arguments")
 
@@ -159,18 +168,23 @@ class _DebuggerWindow:
         self.bundle.send(self.__input_box.get())
 
     def __change_spec(self, module):
-        text = '\n'.join([f"Module Type: {module.module_type}",
-                          f"Id: {module.id}",
-                          f"UUID: {module.uuid}",
-                          f"Version: {module.version}",
-                          f"User Code: {module.has_user_code}",
-                          f"Connected: {module.is_connected}"])
-        text += '\n[Properties]\n'
+        text = '\n'.join([
+            f"Module Type: {module.module_type.upper()}",
+            f"ID: {module.id}",
+            f"UUID: {module.uuid}",
+            f"STM32 Version: {module.version}",
+            f"Contains User Code: {module.has_user_code}",
+            f"Connected: {module.is_connected}"
+        ])
+        text += "\n[Properties]\n"
+        # TODO: Fix code below to properly retrieve module properties
         for prop in module._properties:
-            text += f"{self.get_prop_name(prop, module)}: " \
-                    f"{module._properties[prop].value} " \
-                    f"last updated: " \
-                    f"{module._properties[prop].last_update_time}\n"
+            text += (
+                f"{self.get_prop_name(prop, module)}: "
+                f"{module._properties[prop].value} "
+                f"last updated: "
+                f"{module._properties[prop].last_update_time}\n"
+            )
         self.__spec.configure(text=text)
 
     @staticmethod
@@ -182,20 +196,29 @@ class _DebuggerWindow:
         return prop
 
     def __create_module_button(self, module, window):
-        module_button = Button(window,
-                               text=f"{module.module_type}\n({module.id})")
+        module_button = Button(
+            window,
+            text=f"{module.module_type}\n({module.id})"
+        )
+
         module_type = str(module.__class__)
         if 'output' in module_type:
-            color = '#fb973f'
+            color = "orange"
         elif 'input' in module_type:
-            color = '#9672f9'
+            color = "purple"
         else:
-            color = '#f3c029'
-        module_button.configure(bg=color,
-                                command=lambda: self.__change_module(module))
-        module_button.place(x=170 + 60 * module.position[0],
-                            y=180 - 40 * module.position[1],
-                            width=60, height=40)
+            color = "yellow"
+        module_button.configure(
+            bg=color,
+            command=lambda: self.__change_module(module)
+        )
+        # TODO: Update button position as the module changes its position
+        module_button.place(
+            x=170 + 60 * module.position[0],
+            y=180 - 40 * module.position[1],
+            width=60, height=40,
+        )
+        # module button list
         self._modules.append(module_button)
 
     def __change_module(self, module):

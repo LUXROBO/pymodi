@@ -49,17 +49,17 @@ if __name__ == "__main__":
     try:
         # all commands should be defined here in advance
         opts, args = getopt(
-            sys.argv[1:], 'tdmhvpginu',
+            sys.argv[1:], "tamhvpdinu",
             [
                 "tutorial",
-                "debug",
-                "update_module",
+                "initialize",
+                "update",
                 "help",
                 "verbose",
                 "performance",
-                "gui",
+                "debug",
                 "inspect",
-                "update_network_module",
+                "update_network",
                 "usage",
             ]
         )
@@ -116,7 +116,7 @@ if __name__ == "__main__":
         os._exit(0)
 
     # Update STM32 modules (every modules but network module)
-    if check_option('-m', '--update_module'):
+    if check_option('-m', '--update'):
         init_time = time.time()
         updater = STM32FirmwareUpdater()
         updater.update_module_firmware()
@@ -125,7 +125,7 @@ if __name__ == "__main__":
         os._exit(0)
 
     # Update ESP32 module (only network module)
-    if check_option('-n', '--update_network_module'):
+    if check_option('-n', '--update_network'):
         init_time = time.time()
         updater = ESP32FirmwareUpdater()
         updater.update_firmware()
@@ -134,7 +134,7 @@ if __name__ == "__main__":
         os._exit(0)
 
     # Initialize modules implicitly
-    if check_option('-d', '--debug'):
+    if check_option('-a', '--initialize'):
         # TODO: Handle when there are more than one module with the same type
         print(">>> bundle = modi.MODI()")
         init_time = time.time()
@@ -148,16 +148,16 @@ if __name__ == "__main__":
             exec(module_name + " = module")
 
     # Run GUI debugger
-    if check_option('-g', '--gui'):
+    if check_option('-d', '--debug'):
         print(">>> bundle = modi.MODI()")
         init_time = time.time()
         bundle = Debugger()
         fin_time = time.time()
         print(f'Took {fin_time - init_time:.2f} seconds to init MODI modules')
-        for module in bundle.modules:
-            module_name = module.module_type.lower()
-            print(">>> " + module_name + " = bundle." + module_name + "s[0]")
-            exec(module_name + " = module")
+        #for module in bundle.modules:
+        #    module_name = module.module_type.lower()
+        #    print(">>> " + module_name + " = bundle." + module_name + "s[0]")
+        #    exec(module_name + " = module")
 
     # Run inspection mode
     if check_option('-i', '--inspect'):
