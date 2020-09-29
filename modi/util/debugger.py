@@ -18,12 +18,11 @@ class Debugger(MODI):
         sys.stdout = self._buffer
         super().__init__(verbose=True, *args, **kwargs)
         debugger = _DebuggerWindow(self, self._buffer)
-        debugger.start()
+        debugger.run()
 
 
-class _DebuggerWindow(th.Thread):
+class _DebuggerWindow:
     def __init__(self, bundle: MODI, buffer: StringIO):
-        super().__init__(daemon=True)
         self._buffer = buffer
         self.bundle = bundle
         self.__input_box = None
@@ -92,7 +91,7 @@ class _DebuggerWindow(th.Thread):
                             font=('Helvetica', 10))
         self.__spec.place(x=10, y=350, width=400, height=390)
 
-        for module in self.bundle._modules:
+        for module in self.bundle.modules:
             self.__create_module_button(module, window)
 
         while True:
@@ -115,7 +114,8 @@ class _DebuggerWindow(th.Thread):
             msg = parse_message(cmd, sid, did, data)
             self.__input_box.delete(0, END)
             self.__input_box.insert(0, msg)
-        except Exception:
+        except Exception as e:
+            print("An Expcetion in TKinter callback has been raised:", e)
             self.__input_box.delete(0, END)
             self.__input_box.insert(0, "Invalid Arguments")
 
