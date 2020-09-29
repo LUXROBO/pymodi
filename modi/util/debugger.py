@@ -1,5 +1,4 @@
 import sys
-import threading as th
 from _tkinter import TclError
 from io import StringIO
 from tkinter import Tk, Canvas, Button, Entry, Label
@@ -13,6 +12,12 @@ import time
 
 
 class Debugger(MODI):
+    """
+    Implementation of GUI Debugger for PyMODI,
+    run this debugger with command of:
+    > python -m modi -g
+    """
+
     def __init__(self, *args, **kwargs):
         self._buffer = StringIO()
         sys.stdout = self._buffer
@@ -75,6 +80,7 @@ class _DebuggerWindow:
         send_button = Button(window, text="Send", command=self.send)
         send_button.place(x=830, y=5)
 
+        # TODO: Remove this __query related functions
         #Label(window, text='command query: ').place(x=420, y=30)
         #self.__query = Entry(window)
         #self.__query.place(x=525, y=32, width=25)
