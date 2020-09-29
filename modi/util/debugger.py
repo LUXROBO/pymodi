@@ -17,7 +17,8 @@ class Debugger(MODI):
         self._buffer = StringIO()
         sys.stdout = self._buffer
         super().__init__(verbose=True, *args, **kwargs)
-        _DebuggerWindow(self, self._buffer).start()
+        debugger = _DebuggerWindow(self, self._buffer)
+        debugger.start()
 
 
 class _DebuggerWindow(th.Thread):
@@ -37,47 +38,56 @@ class _DebuggerWindow(th.Thread):
             None, None, None, None
 
     def run(self) -> None:
-        width, height = 900, 750
+        width, height = 910, 750
         window = Tk()
-        window.title(f"PyMODI v{modi.__version__}")
+        window.title(f"GUI Debugger for PyMODI (v{modi.__version__})")
         window.geometry(f"{width}x{height}")
         window.resizable(False, False)
         canvas = Canvas(window, width=width, height=height)
-        canvas.create_rectangle(10, 60, 400, 340, outline='black')
+        canvas.create_rectangle(10, 40, 410, 340, outline='black')
         canvas.pack()
 
+        # cmd (ins) field
         Label(window, text='c:').place(x=10, y=5)
         self.__cmd = Entry(window)
         self.__cmd.place(x=25, y=5, width=40)
 
-        Label(window, text='s:').place(x=80, y=5)
+        # sid field
+        Label(window, text='s:').place(x=70, y=5)
         self.__sid = Entry(window)
-        self.__sid.place(x=95, y=5, width=40)
-        Label(window, text='d:').place(x=150, y=5)
+        self.__sid.place(x=85, y=5, width=40)
+
+        # did field
+        Label(window, text='d:').place(x=130, y=5)
         self.__did = Entry(window)
-        self.__did.place(x=165, y=5, width=40)
-        Label(window, text='b:').place(x=220, y=5)
+        self.__did.place(x=145, y=5, width=40)
+
+        # data field
+        Label(window, text='b:').place(x=190, y=5)
         self.__data = Entry(window)
-        self.__data.place(x=235, y=5, width=500)
-        Button(window, text="Generate", command=self.__parse).place(x=750, y=5)
+        self.__data.place(x=205, y=5, width=250)
+        generate_button = Button(window, text="Generate", command=self.__parse)
+        generate_button.place(x=455, y=5)
 
+        # send field
+        Label(window, text='msg:').place(x=545, y=5)
         self.__input_box = Entry(window)
-        self.__input_box.place(x=10, y=30, width=340)
-
+        self.__input_box.place(x=580, y=5, width=250)
         send_button = Button(window, text="Send", command=self.send)
-        send_button.place(x=360, y=30)
+        send_button.place(x=830, y=5)
 
-        Label(window, text='command query: ').place(x=420, y=30)
-        self.__query = Entry(window)
-        self.__query.place(x=525, y=32, width=25)
-        Button(window, text="Select", command=self.__change_query).place(
-            x=555, y=30
-        )
+        #Label(window, text='command query: ').place(x=420, y=30)
+        #self.__query = Entry(window)
+        #self.__query.place(x=525, y=32, width=25)
+        #Button(window, text="Select", command=self.__change_query).place(
+        #    x=555, y=30
+        #)
 
+        # log box (where MODI messages are shown)
         self.__log = ScrolledText(window, wrap=WORD, font=('Helvetica', 12))
-        self.__log.place(x=420, y=60, width=470, height=680)
+        self.__log.place(x=420, y=40, width=480, height=700)
 
-        self.__spec = Label(window, text=f"PyMODI v{modi.__version__}",
+        self.__spec = Label(window, text=f"Running PyMODI v{modi.__version__}",
                             bg='white', anchor=NW, justify='left',
                             font=('Helvetica', 10))
         self.__spec.place(x=10, y=350, width=400, height=390)
@@ -97,6 +107,7 @@ class _DebuggerWindow(th.Thread):
 
     def __parse(self):
         try:
+            # TODO: ensure each field is in a valid form
             cmd = eval(self.__cmd.get())
             sid = eval(self.__sid.get())
             did = eval(self.__did.get())
@@ -109,13 +120,10 @@ class _DebuggerWindow(th.Thread):
             self.__input_box.insert(0, "Invalid Arguments")
 
     def __query_log(self, line: str) -> bool:
-        if 'recv' not in line and 'send' not in line:
-            return False
-        if self.__curr_module \
-                and str(self.__curr_module.id) not in line \
-                and self.__curr_module.module_type != 'network':
-            return False
-        if self.__curr_cmd and f'"c":{self.__curr_cmd},' not in line:
+        if ('recv' not in line and 'send' not in line) or \
+            (self.__curr_module and str(self.__curr_module.id) not in line
+                and self.__curr_module.module_type != 'network') \
+                or (self.__curr_cmd and f'"c":{self.__curr_cmd},' not in line):
             return False
         return True
 
