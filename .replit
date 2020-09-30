@@ -1,1 +1,9 @@
-run = "python3"
+# https://docs.repl.it/repls/dot-replit
+#run = "python3"
+language="python3"
+onBoot="python3 setup.py install"
+
+[packager]
+afterInstall="echo installation is finished!"
+ignoredPaths=[".git", ".github", "doc", "tests"]
+ignoredPackages=["python-can"]
