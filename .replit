@@ -1,5 +1,5 @@
 # https://docs.repl.it/repls/dot-replit
-#run = "python3"
+run="while true; do python; done"
 language="python3"
 onBoot="python3 setup.py install"
 
