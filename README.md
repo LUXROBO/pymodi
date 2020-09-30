@@ -111,7 +111,7 @@ bundle = modi.MODI()
 bundle = modi.MODI(conn_mode="ser")
 
 # 2. CAN connection (via CAN shield, not recommended to use it directly)
-bundle = modi.MODI(conn_modue="can")
+bundle = modi.MODI(conn_mode="can")
 
 # 3. BLE (Bluetooth Low Energy) connection, it's wireless! But it can be slow :(
 bundle = modi.MODI(conn_mode="ble", uuid="YOUR_NETWORK_MODULE_UUID")
