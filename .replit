@@ -1,9 +1,9 @@
 # https://docs.repl.it/repls/dot-replit
-run="while true; do python; done"
+run="python setup.py install; while true; do python; done"
 language="python3"
-onBoot="python3 setup.py install"
+onBoot="python setup.py install"
 
 [packager]
-afterInstall="echo installation is finished!"
+afterInstall="echo Package installation is finished!"
 ignoredPaths=[".git", ".github", "doc", "tests"]
 ignoredPackages=["python-can"]
