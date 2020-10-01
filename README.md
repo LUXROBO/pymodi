@@ -63,7 +63,8 @@ If you want to contribute to pymodi, be sure to review the contribution guidelin
 
 Installation
 ------------
-> When installing PyMODI package, we highly recommend you to use Anaconda to manage the distribution. With Anaconda, you can use an isolated virtual environment for PyMODI.
+> When installing PyMODI package, we highly recommend you to use Anaconda to manage the distribution.
+> With Anaconda, you can use an isolated virtual environment, solely for PyMODI.
 
 [Optional] Once you install [Anaconda](https://docs.anaconda.com/anaconda/install/), then:
 ```commandline
