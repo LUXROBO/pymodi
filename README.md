@@ -19,3 +19,9 @@
 Description
 ===========
 > Web-demo version of PyMODI
+
+Constraint
+--
+* Only curated modules can be used
+* Cannot change topology of modules
+* Pymodi code based on 1.0.0 release (will not be updated)
