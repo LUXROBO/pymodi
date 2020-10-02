@@ -3,24 +3,25 @@
 import atexit
 import time
 from importlib import import_module as im
-from typing import Optional
-import sys
 
 from modi._exe_thrd import ExeThrd
-from modi.util.conn_util import is_network_module_connected, is_on_pi
 from modi.util.misc import module_list
-from modi.util.stranger import check_complete
 from modi.util.topology_manager import TopologyManager
 
 
 class MODI:
 
-    def __init__(self, conn_mode: str = "", verbose: bool = False,
-                 port: str = None, uuid=""):
+    def __init__(self, conn_mode="ser", verbose=False, port=None):
+        if conn_mode and conn_mode != "ser":
+            raise ValueError("Custom conn_mode is not supported in demo!")
+        if port:
+            print("Cannot set port in demo version!")
+            raise ValueError("Custom port is not supported in demo version!")
+
         self._modules = list()
         self._topology_data = dict()
 
-        self._conn = self.__init_task(conn_mode, verbose, port, uuid)
+        self._conn = self.__init_task(verbose, port)
 
         self._exe_thrd = ExeThrd(
             self._modules, self._topology_data, self._conn
@@ -39,55 +40,12 @@ class MODI:
                 print("MODI init timeout over. "
                       "Check your module connection.")
                 break
-        check_complete(self)
         print("MODI modules are initialized!")
-
-        bad_modules = (
-            self.__wait_user_code_check() if conn_mode != 'ble' else []
-        )
-        if bad_modules:
-            cmd = input(f"{[str(module) for module in bad_modules]} "
-                        f"has user code in it.\n"
-                        f"Reset the user code? [y/n] ")
-            if 'y' in cmd:
-                self.close()
-                modules_to_reset = filter(
-                    lambda m: m.is_up_to_date, bad_modules
-                )
-                modules_to_update = filter(
-                    lambda m: not m.is_up_to_date, bad_modules
-                )
-                reset_module_firmware(
-                    tuple(module.id for module in modules_to_reset)
-                )
-                update_module_firmware(
-                    tuple(module.id for module in modules_to_update)
-                )
-                self.open()
         atexit.register(self.close)
 
-    def __wait_user_code_check(self):
-        def is_not_checked(module):
-            return module.user_code_status < 0
-
-        while list(filter(is_not_checked, self._modules)):
-            time.sleep(0.1)
-        bad_modules = []
-        for module in self._modules:
-            if module.has_user_code:
-                bad_modules.append(module)
-        return bad_modules
-
     @staticmethod
-    def __init_task(conn_mode, verbose, port, uuid):
-        if not conn_mode:
-            is_can = not is_network_module_connected() and is_on_pi()
-            conn_mode = 'can' if is_can else 'ser'
-
-        if conn_mode == 'ser':
-            return im('modi.task.ser_task').SerTask(verbose, port)
-        else:
-            raise ValueError(f'Invalid conn mode {conn_mode}')
+    def __init_task(verbose, port):
+        return im('modi.task.ser_task').SerTask(verbose, port)
 
     def open(self):
         atexit.register(self.close)
@@ -103,102 +61,63 @@ class MODI:
         self._exe_thrd.close()
         self._conn.close_conn()
 
-    def send(self, message) -> None:
-        """Low level method to send json pkt directly to modules
-
-        :param message: Json packet to send
-        :return: None
-        """
+    def send(self, message):
         self._conn.send_nowait(message)
 
-    def recv(self) -> Optional[str]:
-        """Low level method to receive json pkt directly from modules
-
-        :return: Json msg received
-        :rtype: str if msg exists, else None
-        """
+    def recv(self):
         return self._conn.recv()
 
-    def print_topology_map(self, print_id: bool = False) -> None:
-        """Prints out the topology map
-
-        :param print_id: if True, the result includes module id
-        :return: None
-        """
+    def print_topology_map(self, print_id):
         self._topology_manager.print_topology_map(print_id)
 
     @property
-    def modules(self) -> module_list:
-        """Module List of connected modules except network module.
-        """
+    def modules(self):
         return module_list(self._modules)
 
     @property
-    def networks(self) -> module_list:
+    def networks(self):
         return module_list(self._modules, 'network')
 
     @property
-    def buttons(self) -> module_list:
-        """Module List of connected Button modules.
-        """
+    def buttons(self):
         return module_list(self._modules, 'button')
 
     @property
-    def dials(self) -> module_list:
-        """Module List of connected Dial modules.
-        """
+    def dials(self):
         return module_list(self._modules, "dial")
 
     @property
-    def displays(self) -> module_list:
-        """Module List of connected Display modules.
-        """
+    def displays(self):
         return module_list(self._modules, "display")
 
     @property
-    def envs(self) -> module_list:
-        """Module List of connected Env modules.
-        """
+    def envs(self):
         return module_list(self._modules, "env")
 
     @property
-    def gyros(self) -> module_list:
-        """Module List of connected Gyro modules.
-        """
+    def gyros(self):
         return module_list(self._modules, "gyro")
 
     @property
-    def irs(self) -> module_list:
-        """Module List of connected Ir modules.
-        """
+    def irs(self):
         return module_list(self._modules, "ir")
 
     @property
-    def leds(self) -> module_list:
-        """Module List of connected Led modules.
-        """
+    def leds(self):
         return module_list(self._modules, "led")
 
     @property
-    def mics(self) -> module_list:
-        """Module List of connected Mic modules.
-        """
+    def mics(self):
         return module_list(self._modules, "mic")
 
     @property
-    def motors(self) -> module_list:
-        """Module List of connected Motor modules.
-        """
+    def motors(self):
         return module_list(self._modules, "motor")
 
     @property
-    def speakers(self) -> module_list:
-        """Module List of connected Speaker modules.
-        """
+    def speakers(self):
         return module_list(self._modules, "speaker")
 
     @property
-    def ultrasonics(self) -> module_list:
-        """Module List of connected Ultrasonic modules.
-        """
+    def ultrasonics(self):
         return module_list(self._modules, "ultrasonic")
