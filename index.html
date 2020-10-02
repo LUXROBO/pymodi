@@ -195,10 +195,64 @@
                 </div>
                 <!-- Usage Manual Content -->
                 <div align="center">
-                    <p>User Manual Coming Soon!</p>
+                    <div class="wrapper">
+                        <div class="network">
+                            <img src="assets/img/modules/network.png" alt="network" width="100" height="100">
+                        </div>
+                        <div class="button">
+                            <img src="assets/img/modules/button.png" alt="button" width="100" height="100">
+                        </div>
+                        <div class="dial">
+                            <img src="assets/img/modules/dial.png" alt="dial" width="100" height="100">
+                        </div>
+                        <div class="env">
+                            <img src="assets/img/modules/env.png" alt="env" width="100" height="100">
+                        </div>
+                        <div class="gyro">
+                            <img src="assets/img/modules/gyro.png" alt="gyro" width="100" height="100">
+                        </div>
+                        <div class="ir">
+                            <img src="assets/img/modules/ir.png" alt="ir" width="100" height="100">
+                        </div>
+                        <div class="mic">
+                            <img src="assets/img/modules/mic.png" alt="mic" width="100" height="100">
+                        </div>
+                        <div class="ultrasonic">
+                            <img src="assets/img/modules/ultrasonic.png" alt="ultrasonic" width="100" height="100">
+                        </div>
+                        <div class="display">
+                            <img src="assets/img/modules/display.png" alt="display" width="100" height="100">
+                        </div>
+                        <div class="led">
+                            <img src="assets/img/modules/led.png" alt="led" width="100" height="100">
+                        </div>
+                        <div class="motor">
+                            <img src="assets/img/modules/motor.png" alt="motor" width="100" height="100">
+                        </div>
+                        <div class="speaker">
+                            <img src="assets/img/modules/speaker.png" alt="speaker" width="100" height="100">
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
+
+        <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+          coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+              content.style.display = "none";
+            } else {
+              content.style.display = "block";
+            }
+          });
+        }
+        </script>
 
         <!-- About Section-->
         <section class="page-section bg-primary text-white mb-0" id="about">
