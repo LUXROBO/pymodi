@@ -106,7 +106,7 @@ to your machine while other modules are attached to the network module
 bundle = modi.MODI()
 ```
 
-[Optional] specify how you would like to establish the connection between your machine and the network module.
+[Optional] Specify how you would like to establish the connection between your machine and the network module.
 ```python
 # 1. Serial connection (via USB), it's the default connection method
 bundle = modi.MODI(conn_mode="ser")
