@@ -1,7 +1,7 @@
 import time
+
 from abc import ABC
 from abc import abstractmethod
-from typing import Optional
 
 
 class ConnTask(ABC):
@@ -33,19 +33,16 @@ class ConnTask(ABC):
         pass
 
     @abstractmethod
-    def recv(self) -> Optional[str]:
+    def recv(self):
         pass
 
     @abstractmethod
-    def send(self, pkt: str) -> None:
+    def send(self, pkt):
         pass
 
     @staticmethod
     def wait(func):
-        """Wait decorator
-        Make sure this is attached to inherited send method
-        """
-        def decorator(self, pkt: str) -> None:
+        def decorator(self, pkt):
             init_time = time.perf_counter()
             func(self, pkt)
             while time.perf_counter() - init_time < 0.04:

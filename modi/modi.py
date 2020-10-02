@@ -12,8 +12,9 @@ from modi.util.topology_manager import TopologyManager
 class MODI:
 
     def __init__(self, conn_mode="ser", verbose=False, port=None):
-        if conn_mode and conn_mode != "ser":
-            raise ValueError("Custom conn_mode is not supported in demo!")
+        # TODO: Fix OR logic here
+        #if conn_mode and (conn_mode != "ser" or conn_mode != "vir"):
+        #    raise ValueError("Custom conn_mode is not supported in demo!")
         if port:
             print("Cannot set port in demo version!")
             raise ValueError("Custom port is not supported in demo version!")
@@ -21,7 +22,7 @@ class MODI:
         self._modules = list()
         self._topology_data = dict()
 
-        self._conn = self.__init_task(verbose, port)
+        self._conn = self.__init_task(conn_mode, verbose, port)
 
         self._exe_thrd = ExeThrd(
             self._modules, self._topology_data, self._conn
@@ -44,8 +45,11 @@ class MODI:
         atexit.register(self.close)
 
     @staticmethod
-    def __init_task(verbose, port):
-        return im('modi.task.ser_task').SerTask(verbose, port)
+    def __init_task(conn_mode, verbose):
+        if conn_mode == "ser":
+            return im('modi.task.ser_task').SerTask(verbose)
+        else:
+            return im('modi.task.vir_task').VirTask(verbose)
 
     def open(self):
         atexit.register(self.close)
