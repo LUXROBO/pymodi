@@ -22,7 +22,7 @@ class MODI:
         self._modules = list()
         self._topology_data = dict()
 
-        self._conn = self.__init_task(conn_mode, verbose, port)
+        self._conn = self.__init_task(conn_mode, verbose)
 
         self._exe_thrd = ExeThrd(
             self._modules, self._topology_data, self._conn
