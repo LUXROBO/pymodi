@@ -16,7 +16,7 @@ def list_modi_ports() -> List[ListPortInfo]:
             port.manufacturer == "LUXROBO"
             or port.product == "MODI Network Module"
             or port.description == "MODI Network Module"
-            or (port.vid == 12254 and port.pid == 2))
+            or (port.vid == 0x2fdc and port.pid == 0x2))
 
     return [port for port in stl.comports() if __is_modi_port(port)]
 
