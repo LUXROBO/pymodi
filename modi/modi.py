@@ -12,9 +12,8 @@ from modi.util.topology_manager import TopologyManager
 class MODI:
 
     def __init__(self, conn_mode="ser", verbose=False, port=None):
-        # TODO: Fix OR logic here
-        #if conn_mode and (conn_mode != "ser" or conn_mode != "vir"):
-        #    raise ValueError("Custom conn_mode is not supported in demo!")
+        if conn_mode not in ["ser", "vir", "web"]:
+            raise ValueError("Custom conn_mode is not supported in demo!")
         if port:
             print("Cannot set port in demo version!")
             raise ValueError("Custom port is not supported in demo version!")
@@ -46,10 +45,14 @@ class MODI:
 
     @staticmethod
     def __init_task(conn_mode, verbose):
-        if conn_mode == "ser":
+        if conn_mode == "ser": # ser is used for testing purpose
             return im('modi.task.ser_task').SerTask(verbose)
-        else:
+        elif conn_mode == "vir":
             return im('modi.task.vir_task').VirTask(verbose)
+        elif conn_mode == "web":
+            return im('modi.task.web_task').WebTask(verbose)
+        else:
+            raise ValueError("Not supported connection type...")
 
     def open(self):
         atexit.register(self.close)
