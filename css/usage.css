@@ -5,8 +5,7 @@
 .module-description {
     display: none;
     position: absolute;
-    min-width: 50vh;
-    min-height: 20vh;
+    min-width: 550px;
     padding: 10px 15px;
     background-color: #2c3e50;
     border-radius: 8px;
@@ -15,16 +14,22 @@
     z-index: 10;
 }
 
-.module-description:before {
+.module-desc {
+    min-width: 450px;
+    max-height: 400px;
+    overflow: auto;
+}
+
+.module-description.opened:before {
     content: "";
-    position: relative;
-    top: 0%;
-    left: -245px;
+    position: absolute;
+    top: -12px;
+    left: 57px;
     width: 0;
     height: 0;
     border-left: 30px solid transparent;
     border-right: 30px solid transparent;
-    border-bottom: 15px solid #1a252f;
+    border-bottom: 12.5px solid #2c3e50;
 }
 
 .opened {
@@ -38,3 +43,5 @@
 .module:hover > img {
     opacity: 0.5
 }
+
+.
