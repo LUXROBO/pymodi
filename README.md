@@ -5,14 +5,14 @@
 --------
 <div align="center">
 
-[![image](https://img.shields.io/pypi/pyversions/pymodi.svg?style=flat-square)](https://pypi.python.org/pypi/pymodi)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/LUXROBO/pymodi?style=flat-square)](https://pypi.python.org/pypi/pymodi)
+[![Supported Python Versions](https://img.shields.io/pypi/pyversions/pymodi.svg?style=flat-square)](https://pypi.python.org/pypi/pymodi)
+[![PyPI Release (latest by date)](https://img.shields.io/github/v/release/LUXROBO/pymodi?style=flat-square)](https://pypi.python.org/pypi/pymodi)
 [![Read the Docs (version)](https://img.shields.io/readthedocs/pymodi/master?style=flat-square)](https://pymodi.readthedocs.io/en/master/?badge=master)
-[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Build%20Status/master?style=flat-square)](https://github.com/LUXROBO/pymodi/actions)
-[![Coveralls github branch](https://img.shields.io/coveralls/github/LUXROBO/pymodi/master?style=flat-square)](https://coveralls.io/github/LUXROBO/pymodi)
+[![GitHub Workflow Status (Build)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Build%20Status/master?style=flat-square)](https://github.com/LUXROBO/pymodi/actions)
+[![Coveralls Coverage](https://img.shields.io/coveralls/github/LUXROBO/pymodi/master?style=flat-square)](https://coveralls.io/github/LUXROBO/pymodi)
 [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/LUXROBO/pymodi/master?style=flat-square)](https://www.codefactor.io/repository/github/luxrobo/pymodi/overview/master)
-[![GitHub](https://img.shields.io/github/license/LUXROBO/pymodi?style=flat-square&color=blue)](https://github.com/LUXROBO/pymodi/blob/master/LICENSE)
-[![Lines of code](https://img.shields.io/tokei/lines/github/LUXROBO/pymodi?style=flat-square)](https://github.com/LUXROBO/pymodi/tree/master/modi)
+[![GitHub LICENSE](https://img.shields.io/github/license/LUXROBO/pymodi?style=flat-square&color=blue)](https://github.com/LUXROBO/pymodi/blob/master/LICENSE)
+[![Lines of Code](https://img.shields.io/tokei/lines/github/LUXROBO/pymodi?style=flat-square)](https://github.com/LUXROBO/pymodi/tree/master/modi)
 
 </div>
 
@@ -22,7 +22,7 @@ Description
 
 Promotion Video
 ---------------
-[![pymodi](https://github.com/LUXROBO/pymodi/blob/master/docs/_static/video/pymodi-intro.gif)](https://www.youtube.com/watch?v=7ciGw8V-8sM)
+[![PyMODI Intro Video](https://github.com/LUXROBO/pymodi/blob/master/docs/_static/video/pymodi-intro.gif)](https://www.youtube.com/watch?v=7ciGw8V-8sM)
 
 Features
 --------
@@ -203,4 +203,4 @@ $ python -m modi --help
 
 Sponsored by
 ------------
-[![ministry of smes and startups](https://gtihub.com/LUXROBO/pymodi/blob/master/docs/_static/img/smes_startups.png?raw=true)](https://www.mss.go.kr/site/eng/main.do)
+[![Ministry of SMEs and StartUps](https://gtihub.com/LUXROBO/pymodi/blob/master/docs/_static/img/smes_startups.png?raw=true)](https://www.mss.go.kr/site/eng/main.do)
