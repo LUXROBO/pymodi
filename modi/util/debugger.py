@@ -4,11 +4,13 @@ import time
 
 from _tkinter import TclError
 from io import StringIO
-from tkinter import Tk, Canvas, Button, Entry, Label
+from tkinter import Tk, Canvas, Entry, Label
 from tkinter import END, WORD, INSERT, NW
 from tkinter.scrolledtext import ScrolledText
 if sys.platform == 'darwin':
     from tkmacosx import Button
+else:
+    from tkinter import Button
 
 from modi.modi import MODI
 from modi.util.msgutil import parse_message
