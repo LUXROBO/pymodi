@@ -6,10 +6,8 @@ labels: ''
 assignees: ''
 
 ---
-
 ### Issue Description
 Describe what you were trying to get done.
-Tell us what happened, what went wrong, and what you expected to happen.
 
 ### What I Did
 Provide a reproducible test case that is the bare minimum necessary to generate the problem.
@@ -19,16 +17,19 @@ If there was a crash, please include the traceback here.
 ```
 
 ### Expected Behavior
+Tell us what you expected to happen.
 
 ### System Info
-* pymodi version:
+* PyMODI version:
 * Python version:
 * Operating System:
 
-You can obtain the pymodi version with:\
-python -c "import modi; print(modi.\_\_version__)"
+You can obtain the pymodi version with:
+```commandline
+python -c "import modi"
+```
 
-You can obtain the Python version with:\
+You can obtain the Python version with:
+```commandline
 python --version
-
-### Additional Context
+```

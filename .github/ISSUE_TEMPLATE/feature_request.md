@@ -7,11 +7,9 @@ assignees: ''
 
 ---
 
-### Feature Description
+### Feature Description (What you want)
 
-### Motivation
-
-### Why Do We Need This
+### Motivation (Why do we need this)
 
 ### Alternatives
 

@@ -15,11 +15,15 @@ class ExeTask:
         self._modules = modules
         self._topology_data = topology_data
         self._conn = conn_task
+
         # Reboot all modules
         self.__set_module_state(
             BROADCAST_ID, Module.REBOOT, Module.PNP_OFF
         )
+
+        # Request data required to initialize MODI
         self.__request_network_uuid()
+        self.__request_topology()
 
     def run(self, delay: float):
         """ Run in ExecutorThread
@@ -54,11 +58,12 @@ class ExeTask:
             0xA1: self.__update_esp_version,
         }.get(command, lambda _: None)
 
-    def __update_esp_version(self,
-                             message: Dict[str, Union[int, str]]) -> None:
+    def __update_esp_version(
+        self, message: Dict[str, Union[int, str]]
+    ) -> None:
         network_module = None
         for module in self._modules:
-            if module.module_type == 'Network':
+            if module.module_type == 'network':
                 network_module = module
                 break
         if not network_module:
@@ -90,11 +95,14 @@ class ExeTask:
             if topology_ids[idx] == 0:
                 if 0 not in self._topology_data:
                     self._modules.append(Battery(0, -1, None))
-                    battery_topology = {'type': 'Battery', 'r': None,
-                                        't': None, 'l': None, 'b': src_id}
+                    battery_topology = {
+                        'type': 'Battery',
+                        'r': None, 't': None, 'l': None, 'b': src_id
+                    }
                     self._topology_data[0] = battery_topology
                 elif src_id not in self._topology_data[0].values():
                     self._topology_data[0]['l'] = src_id
+
         # Update topology data for the module
         self._topology_data[src_id] = topology_by_id
 
@@ -115,6 +123,7 @@ class ExeTask:
         _, _, _, battery_state, user_code_state \
             = unpack_data(message['b'], (1, 1, 1, 1, 1))
         curr_time = time.time()
+
         # Checking starts only when module is registered
         if module_id in (module.id for module in self._modules):
             module = self.__get_module_by_id(module_id)
@@ -124,13 +133,24 @@ class ExeTask:
             if module.user_code_status < 0:
                 module.user_code_status = user_code_state % 2
             # Turn off pnp if pnp flag is on
-            if module.module_type != 'Network' and user_code_state < 2:
+            if module.module_type != 'network' and user_code_state < 2:
                 self.__set_module_state(
                     module_id, Module.RUN, Module.PNP_OFF
                 )
+            # Reset disconnection alert status
+            if module.has_printed:
+                module.has_printed = False
+
         # Disconnect module with no health message for more than 2 second
         for module in self._modules:
-            if curr_time - module.last_updated > 2:
+            if module.module_type != 'network' and \
+                    curr_time - module.last_updated > 2:
+                if not module.has_printed:
+                    print(
+                        f"{module.module_type} ({module_id}) "
+                        f"has been disconnected!!"
+                    )
+                    module.has_printed = True
                 module.is_connected = False
                 module._last_set_message = None
 
@@ -141,18 +161,17 @@ class ExeTask:
         :return: None
         """
         module_id = message['s']
-        module_uuid, module_version_info = \
-            unpack_data(message['b'], (6, 2))
+        module_uuid, module_version_info = unpack_data(message['b'], (6, 2))
 
         # Handle new modules
         if module_id not in (module.id for module in self._modules):
             module_type = get_module_type_from_uuid(module_uuid)
-            self.request_topology(module_id)
+            self.__request_topology(module_id)
             new_module = self.__add_new_module(
                 module_type, module_id, module_uuid, module_version_info
             )
             new_module.module_type = module_type
-            if module_type != 'Network' and not new_module.is_up_to_date:
+            if module_type != 'network' and not new_module.is_up_to_date:
                 print(f"{str(new_module)} is not up to date. "
                       f"Please update the module by calling "
                       f"modi.update_module_firmware")
@@ -160,6 +179,8 @@ class ExeTask:
         elif not self.__get_module_by_id(module_id).is_connected:
             # Handle Reconnected modules
             self.__get_module_by_id(module_id).is_connected = True
+            module_type = get_module_type_from_uuid(module_uuid)
+            print(f"{module_type} ({module_id}) has been reconnected!!")
 
     def __add_new_module(self, module_type, module_id,
                          module_uuid, module_version_info):
@@ -181,6 +202,7 @@ class ExeTask:
         :type message: Dictionary
         :return: None
         """
+
         # Do not update reserved property
         property_number = message["d"]
         if property_number == 0 or property_number == 1:
@@ -189,7 +211,7 @@ class ExeTask:
         if not module:
             return
         data = message['b']
-        if module.module_type == 'Network':
+        if module.module_type == 'network':
             module.update_property(property_number, unpack_data(data)[0])
         else:
             module.update_property(property_number, decode_data(data))
@@ -206,15 +228,16 @@ class ExeTask:
         :type pnp_state: int
         :return: None
         """
-        self._conn.send_nowait(parse_message(0x09, 0, destination_id,
-                                             (module_state, pnp_state)))
+        self._conn.send_nowait(
+            parse_message(0x09, 0, destination_id, (module_state, pnp_state))
+        )
 
     def __request_network_uuid(self):
         self._conn.send_nowait(
             parse_message(0x28, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
         )
 
-    def request_topology(self, module_id: int = BROADCAST_ID) -> None:
+    def __request_topology(self, module_id: int = BROADCAST_ID) -> None:
         """Request module topology
 
         :return: json serialized topology request message

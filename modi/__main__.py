@@ -7,7 +7,8 @@ from getopt import getopt, GetoptError
 
 import modi
 
-from modi.debugger import Debugger
+from modi.util.debugger import Debugger
+from modi.util.usage import Usage
 from modi.util.tutor import Tutor
 from modi.util.inspector import Inspector
 
@@ -48,17 +49,18 @@ if __name__ == "__main__":
     try:
         # all commands should be defined here in advance
         opts, args = getopt(
-            sys.argv[1:], 'tduhvpgin',
+            sys.argv[1:], "tamhvpdinu",
             [
                 "tutorial",
-                "debug",
+                "initialize",
                 "update",
                 "help",
                 "verbose",
                 "performance",
-                "gui",
+                "debug",
                 "inspect",
-                "network",
+                "update_network",
+                "usage",
             ]
         )
     # exit program if an invalid option has been entered
@@ -114,7 +116,7 @@ if __name__ == "__main__":
         os._exit(0)
 
     # Update STM32 modules (every modules but network module)
-    if check_option('-u', '--update'):
+    if check_option('-m', '--update'):
         init_time = time.time()
         updater = STM32FirmwareUpdater()
         updater.update_module_firmware()
@@ -123,16 +125,16 @@ if __name__ == "__main__":
         os._exit(0)
 
     # Update ESP32 module (only network module)
-    if check_option('-n', '--network'):
+    if check_option('-n', '--update_network'):
         init_time = time.time()
         updater = ESP32FirmwareUpdater()
         updater.update_firmware()
         fin_time = time.time()
-        print(f"Took {fin_time - init_time:.2f} seconds to update")
+        print(f"Took {fin_time - init_time:.2f} seconds to update :)")
         os._exit(0)
 
     # Initialize modules implicitly
-    if check_option('-d', '--debug'):
+    if check_option('-a', '--initialize'):
         # TODO: Handle when there are more than one module with the same type
         print(">>> bundle = modi.MODI()")
         init_time = time.time()
@@ -146,20 +148,25 @@ if __name__ == "__main__":
             exec(module_name + " = module")
 
     # Run GUI debugger
-    if check_option('-g', '--gui'):
+    if check_option('-d', '--debug'):
         print(">>> bundle = modi.MODI()")
         init_time = time.time()
         bundle = Debugger()
         fin_time = time.time()
         print(f'Took {fin_time - init_time:.2f} seconds to init MODI modules')
-        for module in bundle.modules:
-            module_name = module.module_type.lower()
-            print(">>> " + module_name + " = bundle." + module_name + "s[0]")
-            exec(module_name + " = module")
+        # for module in bundle.modules:
+        #    module_name = module.module_type.lower()
+        #    print(">>> " + module_name + " = bundle." + module_name + "s[0]")
+        #    exec(module_name + " = module")
 
     # Run inspection mode
     if check_option('-i', '--inspect'):
-        print("inspection mode has not been implemented yet!")
         pymodi_inspector = Inspector()
         pymodi_inspector.run_inspection()
+        os._exit(0)
+
+    # Show each module usage
+    if check_option('-u', '--usage'):
+        usage = Usage()
+        usage.run_usage_manual()
         os._exit(0)

@@ -1,10 +1,10 @@
 Contributing
-============
+==
 Contributions are welcomed, and they are greatly appreciated! Every
 little bit helps, and credit will always be given.
 
 Types of Contributions
-----------------------
+--
 
 ### Report Bugs
 Report bugs at <https://github.com/LUXROBO/pymodi/issues>. Fill in all the information required at issue template.
@@ -34,7 +34,7 @@ If you are proposing a feature:
     contributions are welcome :)
 
 Pre-requisites
--------------
+--
 You should be familiar with the following items.
 
 1. git-flow
@@ -44,7 +44,7 @@ You should be familiar with the following items.
 5. python type annotations
 
 Getting Ready for PyMODI Contribution
---------------------------------
+--
 Please read the following to get ready for the contribution!!
 
 1. Fork the pymodi repo on GitHub
@@ -61,9 +61,13 @@ Please read the following to get ready for the contribution!!
     ```commandline
     $ python setup.py develop
     ```
+   Or, in the rootdir, use this command instead:
+   ```commandline
+   $ python -m pip install -e .
+   ```
 4. Setup the git hooks to facilitate contribution:
     ```commandline
-    $ git config core.hooksPath .githooks
+    $  pre-commit install
     ```
 5. Do NOT manipulate master branch or develop branch directly. Create a new branch for local development.
 
@@ -111,16 +115,6 @@ git will automatically run the tests when you push your changes.
     <img src="https://github.com/LUXROBO/pymodi/blob/master/docs/_static/img/modi_thankyou.jpg?raw=true" alt="thanks" width=300, height=180>
 </p>
 
-Tips
-----
-To run a subset of tests:
-```commandline
-$ python -m unittest tests.test_modi
-```
-To automatically intialize the MODI object in an interactive shell:
-```commandline
-$ python -im modi -d
-```
 Contact Us
----
+--
 If you have any questions regarding PyMODI, contact us at <mailto> tech@luxrobo.com </mailto>

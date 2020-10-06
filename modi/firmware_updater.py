@@ -87,7 +87,7 @@ class STM32FirmwareUpdater:
             '4020': 'Led',
             '4030': 'Speaker',
         }.get(type_indicator)
-        return 'Network' if module_type is None else module_type
+        return 'network' if module_type is None else module_type
 
     def reset_state(self, update_in_progress: bool = False) -> None:
         """ Reset firmware updater's state
@@ -645,8 +645,8 @@ class STM32FirmwareUpdater:
         module_id = sid
         module_type = self.__get_module_type_from_uuid(module_uuid)
 
-        # No need to update Network module's STM firmware
-        if module_type == 'Network':
+        # No need to update network module's STM firmware
+        if module_type == 'network':
             return
 
         if warning_type == 1:
@@ -720,12 +720,7 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.__device_sync()
         self.__flash_attach()
         self.__set_flash_param()
-        try:
-            from modi.util.jump import JumpManager
-            manager = JumpManager()
-            th.Thread(target=manager.start, daemon=True).start()
-        except ImportError:
-            manager = None
+        manager = None
         self.__write_binary_firmware(firmware_buffer, manager)
         print("Booting to application...")
         self.__wait_for_json()
@@ -861,18 +856,20 @@ class ESP32FirmwareUpdater(serial.Serial):
         return ver.decode('ascii')
 
     def __set_esp_version(self, version_text: str):
-        print("Writing version info...")
+        print(f"Writing version info (v{version_text})")
         version_byte = version_text.encode('ascii')
         version_byte = b'\x00' * (8 - len(version_byte)) + version_byte
         version_text = b64encode(version_byte).decode('utf8')
         version_msg = '{' + f'"c":160,"s":24,"d":4095,' \
                             f'"b":"{version_text}","l":8' + '}'
-        self.write(version_msg.encode('utf8'))
+        version_msg_enc = version_msg.encode('utf8')
+        self.write(version_msg_enc)
 
         while json.loads(self.__wait_for_json())['c'] != 0xA1:
-            time.sleep(0.1)
+            time.sleep(0.5)
             self.__boot_to_app()
             self.write(version_msg.encode('utf8'))
+        print("The version info has been set!!")
 
     def __compose_binary_firmware(self):
         binary_firmware = b''

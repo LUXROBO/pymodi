@@ -6,14 +6,12 @@ Author
 -   LUXROBO (tech@luxrobo.com)
 
 Maintainer
-----------------
+----------
 -   Jinsung Ha (jinsung@luxrobo.com)
--   Sebeom Lee (moses97@gmail.com)
 
 Committer
 ---------
 -   Jinsung Ha (jinsung@luxrobo.com)
--   Sebeom Lee (moses97@gmail.com)
 
 Contributors
 ------------
