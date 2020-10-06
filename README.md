@@ -203,4 +203,4 @@ $ python -m modi --help
 
 Sponsored by
 ------------
-[![Ministry of SMEs and StartUps](https://github.com/LUXROBO/pymodi/tree/master/docs/_static/img/smes_startups.png?raw=true)](https://www.mss.go.kr/site/eng/main.do)
+[![Ministry of SMEs and StartUps](https://github.com/LUXROBO/pymodi/blob/master/docs/_static/img/ministry_of_smes_and_startups.png?raw=true)](https://www.mss.go.kr/site/eng/main.do)
