@@ -30,4 +30,3 @@ jobs:
       run: |
         coverage run --source=modi.module setup.py test
         coveralls
-

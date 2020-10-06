@@ -32,7 +32,7 @@ jobs:
     - name: Flake8 docstring check
       run: flake8 modi tests --select=D102,D103,D105,R --count --statistics --exit-zero
 
-  # Run code-stype check using autopep8
+  # Run code-style check using autopep8
   pycodestyle:
     name: pycodestyle
     runs-on: ubuntu-latest
