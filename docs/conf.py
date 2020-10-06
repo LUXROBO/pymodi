@@ -71,7 +71,7 @@ master_doc = 'index'
 # General information about the project.
 project = 'pymodi'
 copyright = "2018, LUXROBO"
-author = "Jinsung Ha"
+author = "LUXROBO"
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -166,8 +166,8 @@ latex_elements = {
 # [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'modi.tex',
-     'pyMODI Documentation',
-     'Jinsung Ha', 'manual'),
+     'PyMODI Documentation',
+     'LUXROBO', 'manual'),
 ]
 
 
@@ -177,7 +177,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     (master_doc, 'modi',
-     'pyMODI Documentation',
+     'PyMODI Documentation',
      [author], 1)
 ]
 
@@ -189,7 +189,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'modi',
-     'pyMODI Documentation',
+     'PyMODI Documentation',
      author,
      'modi',
      'One line description of project.',

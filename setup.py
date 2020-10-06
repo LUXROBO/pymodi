@@ -20,6 +20,7 @@ get_about = get_spec('./modi/about.py', 'd')
 get_readme = get_spec('README.md')
 get_history = get_spec('HISTORY.md')
 get_requirements = get_spec('requirements.txt')
+get_requirements_dev = get_spec('requirements-dev.txt')
 
 about = get_about()
 setup(
@@ -31,11 +32,12 @@ setup(
     long_description=get_readme() + '\n' + get_history(),
     long_description_content_type="text/markdown",
     install_requires=get_requirements(),
+    extras_require={'dev': get_requirements_dev()},
     license=about['__license__'],
     include_package_data=True,
     keywords=["python", "modi"],
     packages=find_packages(include=['modi', 'modi.util', 'modi.task',
-                                    'modi.task.ble', 'modi.module',
+                                    'modi.task.ble_task', 'modi.module',
                                     'modi.module.setup_module',
                                     'modi.module.input_module',
                                     'modi.module.output_module']),

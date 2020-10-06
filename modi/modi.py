@@ -10,7 +10,7 @@ from modi._exe_thrd import ExeThrd
 from modi.util.conn_util import is_network_module_connected, is_on_pi
 from modi.util.misc import module_list
 from modi.util.stranger import check_complete
-from modi.util.upython import upload_file
+# from modi.util.upython import upload_file
 from modi.util.topology_manager import TopologyManager
 from modi.firmware_updater import STM32FirmwareUpdater, ESP32FirmwareUpdater
 
@@ -54,13 +54,17 @@ class MODI:
             if 'y' in cmd:
                 self.close()
                 modules_to_reset = filter(
-                    lambda m: m.is_up_to_date, bad_modules)
+                    lambda m: m.is_up_to_date, bad_modules
+                )
                 modules_to_update = filter(
-                    lambda m: not m.is_up_to_date, bad_modules)
+                    lambda m: not m.is_up_to_date, bad_modules
+                )
                 reset_module_firmware(
-                    tuple(module.id for module in modules_to_reset))
+                    tuple(module.id for module in modules_to_reset)
+                )
                 update_module_firmware(
-                    tuple(module.id for module in modules_to_update))
+                    tuple(module.id for module in modules_to_update)
+                )
                 self.open()
         atexit.register(self.close)
 
@@ -76,16 +80,16 @@ class MODI:
                 bad_modules.append(module)
         return bad_modules
 
-    @staticmethod
-    def upload_user_code(filepath: str, remote_path: str) -> None:
-        """Upload python user code
-
-        :param filepath: Filepath to python file
-        :type filepath: str
-        :param remote_path: Filepath on esp device
-        :return: None
-        """
-        upload_file(filepath, remote_path)
+    # @staticmethod
+    # def upload_user_code(filepath: str, remote_path: str) -> None:
+    #    """Upload python user code
+    #
+    #    :param filepath: Filepath to python file
+    #    :type filepath: str
+    #    :param remote_path: Filepath on esp device
+    #    :return: None
+    #    """
+    #    upload_file(filepath, remote_path)
 
     @staticmethod
     def __init_task(conn_mode, verbose, port, uuid):
@@ -99,9 +103,9 @@ class MODI:
             return im('modi.task.can_task').CanTask(verbose)
         elif conn_mode == 'ble':
             mod_path = {
-                'win32': 'modi.task.ble.ble_task_win',
-                'linux': 'modi.task.ble.ble_task_rpi',
-                'darwin': 'modi.task.ble.ble_task_mac',
+                'win32': 'modi.task.ble_task.ble_task_win',
+                'linux': 'modi.task.ble_task.ble_task_rpi',
+                'darwin': 'modi.task.ble_task.ble_task_mac',
             }.get(sys.platform)
             return im(mod_path).BleTask(verbose, uuid)
         else:
@@ -153,7 +157,7 @@ class MODI:
 
     @property
     def networks(self) -> module_list:
-        return module_list(self._modules, 'Network')
+        return module_list(self._modules, 'network')
 
     @property
     def buttons(self) -> module_list:
@@ -239,5 +243,5 @@ def update_network_firmware(force=False):
     updater.update_firmware(force=force)
 
 
-def upload_user_code(filepath, remote_path):
-    upload_file(filepath, remote_path)
+# def upload_user_code(filepath, remote_path):
+#    upload_file(filepath, remote_path)

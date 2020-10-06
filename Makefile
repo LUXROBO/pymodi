@@ -29,43 +29,51 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+# remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test
 
-clean-build: ## remove build artifacts
+# remove build artifacts
+clean-build:
 	rm -fr build/
 	rm -fr dist/
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
 	find . -name '*.egg' -exec rm -f {} +
 
-clean-pyc: ## remove Python file artifacts
+# remove Python file artifacts
+clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 	find . -name '__pycache__' -exec rm -fr {} +
 
-clean-test: ## remove test and coverage artifacts
+# remove test and coverage artifacts
+clean-test:
 	rm -fr .tox/
 	rm -f .coverage
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
-
-lint: ## check style with flake8
+# check style with flake8
+lint:
 	flake8 modi tests
 
-test: ## run tests quickly with the default Python
+# run tests quickly with the default Python
+test:
 	python setup.py test
 
-test-all: ## run tests on every Python version with tox
+# run tests on every Python version with tox
+test-all:
 	tox
 
-coverage: ## check code coverage quickly with the default Python
+# check code coverage quickly with the default Python
+coverage:
 	coverage run --source modi setup.py test
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
-docs: ## generate Sphinx HTML documentation, including API docs
+# generate Sphinx HTML documentation, including API docs
+docs:
 	rm -f docs/modi.md
 	rm -f docs/modules.md
 	sphinx-apidoc -o docs/ modi
@@ -73,16 +81,20 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
 
-servedocs: docs ## compile the docs watching for changes
+# compile the docs watching for changes
+servedocs: docs
 	watchmedo shell-command -p '*.md' -c '$(MAKE) -C docs html' -R -D .
 
-release: dist ## package and upload a release
+# package and upload a release
+release: dist
 	twine upload dist/*
 
-dist: clean ## builds source and wheel package
+# builds source and wheel package
+dist: clean
 	python setup.py sdist
 	python setup.py bdist_wheel
 	ls -l dist
 
-install: clean ## install the package to the active Python's site-packages
+# install the package to the active Python's site-packages
+install: clean
 	python setup.py install

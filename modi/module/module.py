@@ -42,6 +42,7 @@ class Module:
         self.prop_samp_freq = 91
 
         self.is_connected = True
+        self.has_printed = False
         self.last_updated = time.time()
         self.battery = 100
         self.position = (0, 0)

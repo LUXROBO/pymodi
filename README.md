@@ -3,36 +3,35 @@
 </p>
 
 --------
+<div align="center">
 
-[![image](https://img.shields.io/pypi/pyversions/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
-[![image](https://img.shields.io/pypi/v/pymodi.svg)](https://pypi.python.org/pypi/pymodi)
-[![Documentation Status](https://readthedocs.org/projects/pymodi/badge/?version=master)](https://pymodi.readthedocs.io/en/master/?badge=master)
-[![Build Status](https://github.com/LUXROBO/pymodi/workflows/Build%20Status/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions)
-[![Coverage Status](https://coveralls.io/repos/github/LUXROBO/pymodi/badge.svg)](https://coveralls.io/github/LUXROBO/pymodi)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/LUXROBO/pymodi.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LUXROBO/pymodi/context:python)
-[![Maintainability](https://api.codeclimate.com/v1/badges/5a62f1585d723099e337/maintainability)](https://codeclimate.com/github/LUXROBO/pymodi/maintainability)
-[![License](https://img.shields.io/pypi/l/pymodi.svg?color=blue)](https://github.com/LUXROBO/pymodi/blob/master/LICENSE)
+[![Supported Python Versions](https://img.shields.io/pypi/pyversions/pymodi.svg?style=flat-square)](https://pypi.python.org/pypi/pymodi)
+[![PyPI Release (latest by date)](https://img.shields.io/github/v/release/LUXROBO/pymodi?style=flat-square)](https://pypi.python.org/pypi/pymodi)
+[![Read the Docs (version)](https://img.shields.io/readthedocs/pymodi/master?style=flat-square)](https://pymodi.readthedocs.io/en/master/?badge=master)
+[![GitHub Workflow Status (Build)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Build%20Status/master?style=flat-square)](https://github.com/LUXROBO/pymodi/actions)
+[![Coveralls Coverage](https://img.shields.io/coveralls/github/LUXROBO/pymodi/master?style=flat-square)](https://coveralls.io/github/LUXROBO/pymodi)
+[![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/LUXROBO/pymodi/master?style=flat-square)](https://www.codefactor.io/repository/github/luxrobo/pymodi/overview/master)
+[![GitHub LICENSE](https://img.shields.io/github/license/LUXROBO/pymodi?style=flat-square&color=blue)](https://github.com/LUXROBO/pymodi/blob/master/LICENSE)
+[![Lines of Code](https://img.shields.io/tokei/lines/github/LUXROBO/pymodi?style=flat-square)](https://github.com/LUXROBO/pymodi/tree/master/modi)
+
+</div>
 
 Description
 ===========
-Python API for controlling MODI.
--   Free software: MIT license
--   API Documentation: <https://pymodi.readthedocs.io>.
+> Python API for controlling modular electronics, MODI.
 
 Promotion Video
 ---------------
-<div align="center">
-    <a href="https://www.youtube.com/watch?v=7ciGw8V-8sM">
-        <img src="https://img.youtube.com/vi/7ciGw8V-8sM/0.jpg">
-    </a>
-</div>
+[![PyMODI Intro Video](https://github.com/LUXROBO/pymodi/blob/master/docs/_static/video/pymodi-intro.gif)](https://www.youtube.com/watch?v=7ciGw8V-8sM)
 
 Features
 --------
-PyMODI supports a control of modular electronics, MODI developed by [LUXROBO](https://modi.luxrobo.com/en)
-* Easy control of modules through serial connection on Windows, Linux, and macOS
-* Direct CAN communication to MODI modules on raspberry pi and other platforms
-* Utilities of firmware update and low-level debugging of the modules
+PyMODI provides a control of modular electronics, [MODI](https://modi.luxrobo.com/en)
+* Platform agnostic control of modules through serial connection
+* Explicit CAN communication to MODI modules via magnetic connector
+* Utilities of wireless connection with BLE (Bluetooth Low Engery)
+* Update of MODI firmware consisting of both ESP32 and STM32 modules
+* Direct manipulation of MODI network module using [MODI Play](https://play.google.com/store/apps/details?id=com.luxrobo.modiplay&hl=en_US)
 
 UML Diagram
 -----------
@@ -44,15 +43,15 @@ Build Status
 ------------
 |master|develop|
 |:---:|:---:|
-| [![Build Status](https://github.com/LUXROBO/pymodi/workflows/Build%20Status/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Build Status](https://github.com/LUXROBO/pymodi/workflows/Build%20Status/badge.svg?branch=develop)](https://github.com/LUXROBO/pymodi/actions) |
+| [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Build%20Status?label=master&branch=master&logo=github&style=flat-square)](https://github.com/LUXROBO/pymodi/actions) | [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Build%20Status?label=develop&branch=develop&logo=github&style=flat-square)](https://github.com/LUXROBO/pymodi/actions)
 
 System Support
 --------------
 | System | 3.6 | 3.7 | 3.8 |
-| :---: | :---: | :---: | :--: |
-| Linux | [![Unit Test (Ubuntu)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Ubuntu)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (Ubuntu)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Ubuntu)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (Ubuntu)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Ubuntu)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) |
-| Mac OS | [![Unit Test (macOS)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(macOS)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (macOS)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(macOS)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (macOS)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(macOS)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) |
-| Windows | [![Unit Test (Windows)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Windows)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (Windows)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Windows)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) | [![Unit Test (Windows)](https://github.com/LUXROBO/pymodi/workflows/Unit%20Test%20(Windows)/badge.svg?branch=master)](https://github.com/LUXROBO/pymodi/actions) |
+| :---: | :---: | :---: | :---: |
+| Linux | [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Unit%20Test%20(Ubuntu)/master?label=Unit%20Test%20%28Ubuntu%29&logo=github&style=flat-square)](https://github.com/LUXROBO/pymodi/actions) | [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Unit%20Test%20(Ubuntu)/master?label=Unit%20Test%20%28Ubuntu%29&logo=github&style=flat-square)](https://github.com/LUXROBO/pymodi/actions) |[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Unit%20Test%20(Ubuntu)/master?label=Unit%20Test%20%28Ubuntu%29&logo=github&style=flat-square)](https://github.com/LUXROBO/pymodi/actions)
+| Mac OS | [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square)](https://github.com/LUXROBO/pymodi/actions) |[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square)](https://github.com/LUXROBO/pymodi/actions) | [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square)](https://github.com/LUXROBO/pymodi/actions)
+| Windows | [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square)](https://github.com/LUXROBO/pymodi/actions) | [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square)](https://github.com/LUXROBO/pymodi/actions) | [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square)](https://github.com/LUXROBO/pymodi/actions)
 
 Contribution Guidelines
 -----------------------
@@ -60,38 +59,89 @@ We appreciate all contributions. If you are planning to report bugs, please do s
 
 If you want to contribute to pymodi, be sure to review the contribution guidelines. This project adheres to pymodi's code of conduct. By participating, you are expected to uphold this code.
 
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg?style=flat-square)](CODE_OF_CONDUCT.md)
 
-Quickstart
-----------
+Installation
+------------
+> When installing PyMODI package, we highly recommend you to use Anaconda to manage the distribution.
+> With Anaconda, you can use an isolated virtual environment, solely for PyMODI.
+
+[Optional] Once you install [Anaconda](https://docs.anaconda.com/anaconda/install/), then:
+```commandline
+# Install new python environment for PyMODI package, choose python version >= 3.6
+conda create --name pymodi python=3.6
+
+# Make sure that your python's version is compatible with PyMODI
+python --version
+
+# After you properly install the python environment, activate it
+conda activate pymodi
+```
+
 Install the latest PyMODI if you haven't installed it yet:
 ```commandline
-pip install -U pymodi --user
+python -m pip install -U pymodi --user
 ```
 
-You can also install PyMODI at develop branch (contains latest changes but it can be unstable) with:
+You can also install PyMODI at develop branch (containing latest changes but it can be unstable) with:
 ```commandline
-pip install git+https://github.com/LUXROBO/pymodi.git@develop --user --upgrade
+python -m pip install git+https://github.com/LUXROBO/pymodi.git@develop --user --upgrade
 ```
-Import **modi** package and create **MODI** instance:
+Alternatively, you can install a stable copy of PyMODI at a tag (representing a previous release) with:
+```commandline
+python -m pip install git+https://github.com/LUXROBO/pymodi.git@v1.0.0 --user --upgrade
+```
+
+Usage
+-----
+Import modi package and create MODI object (we call it "bundle", a bundle of MODI modules).
 ```python
+# Import modi package
 import modi
+
+"""
+Create MODI object, make sure that you have connected your network module
+to your machine while other modules are attached to the network module
+"""
 bundle = modi.MODI()
 ```
-List connected modules:
+
+[Optional] Specify how you would like to establish the connection between your machine and the network module.
 ```python
-bundle.modules
+# 1. Serial connection (via USB), it's the default connection method
+bundle = modi.MODI(conn_mode="ser")
+
+# 2. CAN connection (via CAN shield, not recommended to use it directly)
+bundle = modi.MODI(conn_mode="can")
+
+# 3. BLE (Bluetooth Low Energy) connection, it's wireless! But it can be slow :(
+bundle = modi.MODI(conn_mode="ble", uuid="YOUR_NETWORK_MODULE_UUID")
 ```
-List connected LED modules and pick the first one:
+
+List and create connected modules' object.
 ```python
-bundle.leds # List.
-bundle.leds[0] # Pick.
+# List connected modules
+print(bundle.modules)
+
+# List connected leds
+print(bundle.leds)
+
+# Pick the first led object from the bundle
+led = bundle.leds[0]
 ```
-Let's blink the LED's light 5 times:
+
+Visualize how modules are connected.
+```python
+# Print topology map without indicating module id
+bundle.print_topology_map()
+
+# Print topology map with module id printed
+bundle.print_topology_map(print_id=True)
+```
+
+Let's blink the LED 5 times.
 ```python
 import time
-
-led = bundle.leds[0]
 
 for _ in range(5):
     # turn on for 0.5 second
@@ -102,84 +152,28 @@ for _ in range(5):
     led.rgb = 0, 0, 0
     time.sleep(0.5)
 ```
-If you are still not sure how to use PyMODI, you can play an interactive PyMODI tutorial by running a command of
+
+If you are still not sure how to use PyMODI, you can play PyMODI tutorial over REPL:
 ```commandline
 $ python -m modi --tutorial
 ```
-Moreover, we provide some [usage and creation examples](examples), as well as a [descriptive web page](https://luxrobo.github.io/pymodi).
-
-Usage
------
-Import modi package and create MODI instance (we call it "bundle", a bundle of MODI modules).
-```python
-# Import modi package
-import modi
-
-# Create MODI instance, make sure that you have connected your network module to your machine
-bundle = modi.MODI()
+As well as an interactive usage examples:
+```commandline
+$ python -m modi --usage
 ```
 
-However, when creating the bundle, you can specify how you would like to establish the connection between your machine and the network module.
-```python
-# 1. Serial connection (via USB), it's the default connection method
-bundle = modi.MODI(conn_mode="ser")
-
-# 2. BLE (Bluetooth Low Energy) connection, it's wireless! But it can be slow :(
-bundle = modi.MODI(conn_mode="ble")
-
-# 3. CAN connection (via CAN shield, not recommended to use it directly)
-bundle = modi.MODI(conn_modue="can")
-```
-
-Once you created the MODI object, attach MODI modules to the network module. MODI will print what modules are connected, once they are recognized.
-
-```python
-# Create module objects given that you have attached modules below to the network module
-button = bundle.buttons[0]
-speaker = bundle.speakers[0]
-```
-
-To visualize how modules are connected, you can use our topology function.
-```python
-# Print topology map without indicating module id
-bundle.print_topology_map()
-
-# Print topology map with module id printed
-bundle.print_topology_map(print_id=True)
-```
-
-Now you are ready to implement a MODI creation using PyMODI! The code below shows a simple creation using a button and a speaker module.
-
-```python
-import time
-
-volume = 0
-while True:
-    speaker.tune = 880, volume
-    if button.clicked:
-        volume = 100 if (volume + 10) > 100 else volume + 10
-        time.sleep(0.1)
-    else:
-        volume = 0 if (volume - 0.5) < 0 else volume - 1
-
-    if button.double_clicked:
-        break
-
-    print(volume)
-```
-
-When implementing MODI creation with PyMODI, check [what module methods are available](https://pymodi.readthedocs.io/en/master/).
+Moreover, we provide [api documentation](https://pymodi.readthedocs.io/en/master/), [usage and creation examples](examples), and a [descriptive web page](https://luxrobo.github.io/pymodi).
 
 Additional Usage
 ----------------
 To update MODI modules (all modules but the network module),
 ```commandline
-$ python -m modi --update_module
+$ python -m modi --update
 ```
 
 To update MODI network module (the network module must be connected on serial),
 ```commandline
-$ python -m modi --update_network_module
+$ python -m modi --update_network
 ```
 
 To diagnose MODI modules (helpful to find existing malfunctioning modules),
@@ -187,12 +181,26 @@ To diagnose MODI modules (helpful to find existing malfunctioning modules),
 $ python -m modi --inspect
 ```
 
+To debug MODI modules with PyMODI debugger,
+```commandline
+$ python -m modi --debug
+```
+
 To check the performance of PyMODI on your machine,
 ```commandline
 $ python -m modi --performance
+```
+
+To initialize MODI modules implicitly (set `i` flag to enable REPL mode),
+```commandline
+$ python -im modi --initialize
 ```
 
 To see what other commands are available,
 ```commandline
 $ python -m modi --help
 ```
+
+Sponsored by
+------------
+[![Ministry of SMEs and StartUps](https://github.com/LUXROBO/pymodi/blob/master/docs/_static/img/ministry_of_smes_and_startups.png?raw=true)](https://www.mss.go.kr/site/eng/main.do)

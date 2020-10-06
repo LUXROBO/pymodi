@@ -20,9 +20,7 @@ class TestSpeaker(unittest.TestCase):
 
     def test_set_tune(self):
         """Test set_tune method."""
-        expected_values = frequency, volume = (
-            500, 30
-        )
+        expected_values = (500, 30)
         self.speaker.tune = expected_values
         sent_messages = []
         while self.conn.send_list:
@@ -105,7 +103,7 @@ class TestSpeaker(unittest.TestCase):
     def test_set_volume(self):
         """Test set_volume method."""
         expected_volume = 50
-        expected_values = (880, 50)
+        expected_values = (1318, 50)
         self.speaker.volume = expected_volume
         sent_messages = []
         while self.conn.send_list:
