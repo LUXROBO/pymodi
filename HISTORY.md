@@ -97,6 +97,7 @@ History
 5. Enhance topology manager to work with battery module
 6. Add functionality to reset existing user code on the modules
 7. Bug fixes
+
 1.0.1 (2020-10-06)
 --
 1. Implement experimental BLE functionality on Windows and macOS
@@ -104,4 +105,3 @@ History
 3. Implement module usage manual (i.e. quick-start)
 4. Implement module inspection functionality (i.e. diagnose)
 5.  Refactor GUI debugger design, fix initialization issue on macOS
-
