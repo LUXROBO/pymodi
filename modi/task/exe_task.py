@@ -25,7 +25,7 @@ class ExeTask:
         self.__request_network_uuid()
         self.__request_topology()
 
-    def run(self, delay: float):
+    def run(self, delay):
         """ Run in ExecutorThread
 
         :param delay: time value to wait in seconds
@@ -41,8 +41,7 @@ class ExeTask:
             except json.decoder.JSONDecodeError:
                 print('current json message:', json_pkt)
 
-    def __command_handler(self,
-                          command: int) -> Callable[[Dict[str, int]], None]:
+    def __command_handler(self, command):
         """ Execute task based on command message
 
         :param command: command code
@@ -58,9 +57,7 @@ class ExeTask:
             0xA1: self.__update_esp_version,
         }.get(command, lambda _: None)
 
-    def __update_esp_version(
-        self, message: Dict[str, Union[int, str]]
-    ) -> None:
+    def __update_esp_version(self, message):
         network_module = None
         for module in self._modules:
             if module.module_type == 'network':
@@ -70,7 +67,7 @@ class ExeTask:
             return
         network_module.esp_version = b64decode(message['b'])[3:].decode()
 
-    def __update_topology(self, message: Dict[str, Union[int, str]]) -> None:
+    def __update_topology(self, message):
         """Update the topology of the connected modules
 
         :param message: Dictionary format message of the module
@@ -112,7 +109,7 @@ class ExeTask:
             if module.id == module_id:
                 return module
 
-    def __update_health(self, message: Dict[str, Union[int, str]]) -> None:
+    def __update_health(self, message):
         """ Update information by health message
 
         :param message: Dictionary format message of the module
@@ -155,7 +152,7 @@ class ExeTask:
                 module.is_connected = False
                 module._last_set_message = None
 
-    def __update_modules(self, message: Dict[str, Union[str, int]]) -> None:
+    def __update_modules(self, message):
         """ Update module information
         :param message: Dictionary format module info
         :type message: Dictionary
@@ -183,8 +180,9 @@ class ExeTask:
             module_type = get_module_type_from_uuid(module_uuid)
             print(f"{module_type} ({module_id}) has been reconnected!!")
 
-    def __add_new_module(self, module_type, module_id,
-                         module_uuid, module_version_info):
+    def __add_new_module(
+        self, module_type, module_id, module_uuid, module_version_info
+    ):
         module_template = get_module_from_name(module_type)
         module_instance = module_template(
             module_id, module_uuid, self._conn
@@ -196,7 +194,7 @@ class ExeTask:
         print(f"{str(module_instance)} has been connected!")
         return module_instance
 
-    def __update_property(self, message: Dict[str, str]) -> None:
+    def __update_property(self, message):
         """ Update module property
 
         :param message: Dictionary format message
@@ -217,8 +215,7 @@ class ExeTask:
         else:
             module.update_property(property_number, decode_data(data))
 
-    def __set_module_state(self, destination_id: int, module_state: int,
-                           pnp_state: int) -> None:
+    def __set_module_state(self, destination_id, module_state, pnp_state):
         """ Generate message for set module state and pnp state
 
         :param destination_id: Id to target destination
@@ -238,7 +235,7 @@ class ExeTask:
             parse_message(0x28, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
         )
 
-    def __request_topology(self, module_id: int = BROADCAST_ID) -> None:
+    def __request_topology(self, module_id=BROADCAST_ID):
         """Request module topology
 
         :return: json serialized topology request message
@@ -250,3 +247,6 @@ class ExeTask:
         self._conn.send_nowait(
             parse_message(0x2A, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0))
         )
+
+    def __request_esp32_version(self, module_id):
+        pass
