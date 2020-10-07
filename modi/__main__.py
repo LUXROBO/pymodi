@@ -49,7 +49,7 @@ if __name__ == "__main__":
     try:
         # all commands should be defined here in advance
         opts, args = getopt(
-            sys.argv[1:], "tamhvpdinu",
+            sys.argv[1:], "tamhvpdinux",
             [
                 "tutorial",
                 "initialize",
@@ -61,6 +61,7 @@ if __name__ == "__main__":
                 "inspect",
                 "update_network",
                 "usage",
+                "update_base",
             ]
         )
     # exit program if an invalid option has been entered
@@ -120,6 +121,15 @@ if __name__ == "__main__":
         init_time = time.time()
         updater = STM32FirmwareUpdater()
         updater.update_module_firmware()
+        fin_time = time.time()
+        print(f"Took {fin_time - init_time:.2f} seconds to update")
+        os._exit(0)
+
+    # Update STM32 base (of network module)
+    if check_option('-x', '--update_base'):
+        init_time = time.time()
+        updater = STM32FirmwareUpdater()
+        updater.update_module_firmware(update_network_base=True)
         fin_time = time.time()
         print(f"Took {fin_time - init_time:.2f} seconds to update")
         os._exit(0)
