@@ -145,7 +145,7 @@ import time
 
 for _ in range(5):
     # turn on for 0.5 second
-    led.rgb = 255, 255, 255
+    led.rgb = 100, 100, 100
     time.sleep(0.5)
 
     # turn off for 0.5 second
