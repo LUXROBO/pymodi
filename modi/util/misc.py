@@ -2,9 +2,6 @@ from importlib.util import find_spec
 
 
 def get_module_type_from_uuid(uuid):
-    if uuid is None:
-        return 'network'
-
     hexadecimal = hex(uuid).lstrip("0x")
     type_indicator = str(hexadecimal)[:4]
     module_type = {
