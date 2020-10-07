@@ -247,6 +247,3 @@ class ExeTask:
         self._conn.send_nowait(
             parse_message(0x2A, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0))
         )
-
-    def __request_esp32_version(self, module_id):
-        pass
