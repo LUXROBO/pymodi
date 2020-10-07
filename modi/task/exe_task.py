@@ -1,7 +1,6 @@
 import json
 import time
 from base64 import b64decode
-from typing import Callable, Dict, Union
 
 from modi.module.module import Module, BROADCAST_ID
 from modi.module.setup_module.battery import Battery
