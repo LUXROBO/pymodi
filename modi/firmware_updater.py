@@ -10,7 +10,7 @@ from importlib import import_module as im
 import serial
 
 from modi.module.module import Module
-from modi.util.msgutil import unpack_data, decode_message
+from modi.util.msgutil import unpack_data, decode_message, parse_message
 from modi.util.conn_util import list_modi_ports, is_on_pi
 from modi.util.misc import get_module_type_from_uuid
 
@@ -59,7 +59,22 @@ class STM32FirmwareUpdater:
 
     def update_module_firmware(self, update_network_base=False):
         if update_network_base:
-            self.update_network_base = True
+            print(
+                "To update network base, "
+                "make sure that you have connected network module only."
+            )
+
+            # TODO: Retrieve network module only...
+            #delay = 0.1
+            #timeout = 3
+            #while not self.network_id:
+            #    if timeout <= 0:
+            #        raise Exception("Cannot obtain network module id!!")
+            #    self.request_network_id()
+            #    timeout -= delay
+            #    time.sleep(delay)
+            #self.update_network_base = True
+            #self.request_to_update_firmware(self.network_id, is_network=True)
             self.request_to_update_firmware(0xFFF, is_network=True)
         else:
             self.reset_state()
@@ -108,7 +123,7 @@ class STM32FirmwareUpdater:
             self.__conn.send_nowait(firmware_update_message)
             input(
                 "Please physically re-connect your network module!! "
-                "Once reconnected, press ENTER to continue updating:"
+                "\nOnce reconnected, press ENTER to continue updating:"
             )
         else:
             firmware_update_message = self.__set_module_state(
@@ -1018,99 +1033,3 @@ class ESP32FirmwareUpdater(serial.Serial):
         rest_bar = 70 - curr_bar
         return f"Firmware Upload: [{'=' * curr_bar}>{'.' * rest_bar}] " \
                f"{100 * current / total:3.2f}%"
-
-from modi.util.msgutil import parse_message
-
-class STM32BaseUpdater:
-    """STM32 Base Updater: Updates a firmware of network base module"""
-
-    NO_ERROR = 0
-    UPDATE_READY = 1
-    WRITE_FAIL = 2
-    VERIFY_FAIL = 3
-    CRC_ERROR = 4
-    CRC_COMPLETE = 5
-    ERASE_ERROR = 6
-    ERASE_COMPLETE = 7
-
-    def __init__(self, is_os_update=True, target_ids=(0xFFF,)):
-        self.__conn = None
-        self.run()
-        self.__target_ids = target_ids
-        self.response_flag = False
-        self.response_error_flag = False
-        self.response_error_count = 0
-        self.__running = True
-        self.__is_os_update = is_os_update
-        self.update_event = th.Event()
-        self.update_in_progress = False
-        self.modules_to_update = []
-        self.modules_updated = []
-        self.network_module_id = None
-
-    def run(self):
-        print('opening connection for firmware updater')
-        self.__conn = self.__open_conn()
-        self.__conn.open_conn()
-        self.__conn.send_nowait(
-            parse_message(0x28, 0xFFF, 0xFFF, (0xFF, 0x0F))
-        )
-        th.Thread(target=self.__read_conn, daemon=True).start()
-
-    def update_module_firmware(self):
-        self.reset_state()
-        for target in self.__target_ids:
-            self.request_to_update_firmware(target)
-        self.update_event.wait()
-        print("Module firmwares have been updated!")
-
-    def close(self):
-        self.__running = False
-        time.sleep(0.5)
-        self.__conn.close_conn()
-
-    @staticmethod
-    def __open_conn():
-        if is_on_pi():
-            return im('modi.task.can_task').CanTask()
-        else:
-            return im('modi.task.ser_task').SerTask()
-
-    def reset_state(self, update_in_progress: bool = False) -> None:
-        """ Reset firmware updater's state
-
-        :param update_in_progress: Whether the method is called during the
-        update process or at the end of the process
-        :type update_in_progress: bool
-        :return: None
-        """
-        self.response_flag = False
-        self.response_error_flag = False
-        self.response_error_count = 0
-        self.update_in_progress = False
-
-        if not update_in_progress:
-            print("Resetting firmware updater's state")
-            self.modules_to_update = []
-            self.modules_updated = []
-
-    def request_to_update_firmware(self, module_id) -> None:
-        """ Remove firmware of MODI modules (Removes EndFlash)
-        """
-        firmware_update_message = self.__set_network_state(
-            module_id, Module.UPDATE_FIRMWARE, Module.PNP_OFF
-        )
-        self.__conn.send_nowait(firmware_update_message)
-
-    def check_to_update_firmware(self, module_id: int) -> None:
-        """ Check if modules with no firmware are ready to update its firmware
-
-        :param module_id: Id of the module to check
-        :type module_id: int
-        :return: None
-        """
-        firmware_update_ready_message = self.__set_module_state(
-            module_id, Module.UPDATE_FIRMWARE_READY, Module.PNP_OFF
-        )
-        self.__conn.send_nowait(firmware_update_ready_message)
-        print('send this:', firmware_update_ready_message)
