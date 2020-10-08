@@ -49,7 +49,7 @@ if __name__ == "__main__":
     try:
         # all commands should be defined here in advance
         opts, args = getopt(
-            sys.argv[1:], "tamhvpdinux",
+            sys.argv[1:], "tamhvpdinub",
             [
                 "tutorial",
                 "initialize",
@@ -126,7 +126,7 @@ if __name__ == "__main__":
         os._exit(0)
 
     # Update STM32 base (of network module)
-    if check_option('-x', '--update_base'):
+    if check_option('-b', '--update_base'):
         init_time = time.time()
         updater = STM32FirmwareUpdater()
         updater.update_module_firmware(update_network_base=True)
