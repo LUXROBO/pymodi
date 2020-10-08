@@ -1,6 +1,6 @@
 from typing import Tuple, List, Union
 from modi.module.module import Module
-from modi.util.msgutil import parse_message, parse_data
+from modi.util.message_util import parse_message, parse_data
 
 
 class OutputModule(Module):

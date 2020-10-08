@@ -3,7 +3,7 @@ import unittest
 
 from queue import Queue
 from modi.task.can_task import CanTask
-from modi.util.msgutil import parse_message
+from modi.util.message_util import parse_message
 
 
 class MockCan:

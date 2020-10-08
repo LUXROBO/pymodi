@@ -14,7 +14,7 @@ else:
     from tkinter import Button
 
 from modi.modi import MODI
-from modi.util.msgutil import parse_message
+from modi.util.message_util import parse_message
 
 
 class Debugger(MODI):

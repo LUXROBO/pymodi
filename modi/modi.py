@@ -7,12 +7,13 @@ from typing import Optional
 import sys
 
 from modi._exe_thrd import ExeThrd
-from modi.util.conn_util import is_network_module_connected, is_on_pi
-from modi.util.misc import module_list
+from modi.util.connection_util import is_network_module_connected, is_on_pi
+from modi.util.misc import ModuleList
 from modi.util.stranger import check_complete
 # from modi.util.upython import upload_file
 from modi.util.topology_manager import TopologyManager
-from modi.util.firmware_updater import STM32FirmwareUpdater, ESP32FirmwareUpdater
+from modi.util.firmware_updater import STM32FirmwareUpdater
+from modi.util.firmware_updater import ESP32FirmwareUpdater
 
 
 class MODI:
@@ -150,80 +151,80 @@ class MODI:
         self._topology_manager.print_topology_map(print_id)
 
     @property
-    def modules(self) -> module_list:
+    def modules(self) -> ModuleList:
         """Module List of connected modules except network module.
         """
-        return module_list(self._modules)
+        return ModuleList(self._modules)
 
     @property
-    def networks(self) -> module_list:
-        return module_list(self._modules, 'network')
+    def networks(self) -> ModuleList:
+        return ModuleList(self._modules, 'network')
 
     @property
-    def buttons(self) -> module_list:
+    def buttons(self) -> ModuleList:
         """Module List of connected Button modules.
         """
-        return module_list(self._modules, 'button')
+        return ModuleList(self._modules, 'button')
 
     @property
-    def dials(self) -> module_list:
+    def dials(self) -> ModuleList:
         """Module List of connected Dial modules.
         """
-        return module_list(self._modules, "dial")
+        return ModuleList(self._modules, "dial")
 
     @property
-    def displays(self) -> module_list:
+    def displays(self) -> ModuleList:
         """Module List of connected Display modules.
         """
-        return module_list(self._modules, "display")
+        return ModuleList(self._modules, "display")
 
     @property
-    def envs(self) -> module_list:
+    def envs(self) -> ModuleList:
         """Module List of connected Env modules.
         """
-        return module_list(self._modules, "env")
+        return ModuleList(self._modules, "env")
 
     @property
-    def gyros(self) -> module_list:
+    def gyros(self) -> ModuleList:
         """Module List of connected Gyro modules.
         """
-        return module_list(self._modules, "gyro")
+        return ModuleList(self._modules, "gyro")
 
     @property
-    def irs(self) -> module_list:
+    def irs(self) -> ModuleList:
         """Module List of connected Ir modules.
         """
-        return module_list(self._modules, "ir")
+        return ModuleList(self._modules, "ir")
 
     @property
-    def leds(self) -> module_list:
+    def leds(self) -> ModuleList:
         """Module List of connected Led modules.
         """
-        return module_list(self._modules, "led")
+        return ModuleList(self._modules, "led")
 
     @property
-    def mics(self) -> module_list:
+    def mics(self) -> ModuleList:
         """Module List of connected Mic modules.
         """
-        return module_list(self._modules, "mic")
+        return ModuleList(self._modules, "mic")
 
     @property
-    def motors(self) -> module_list:
+    def motors(self) -> ModuleList:
         """Module List of connected Motor modules.
         """
-        return module_list(self._modules, "motor")
+        return ModuleList(self._modules, "motor")
 
     @property
-    def speakers(self) -> module_list:
+    def speakers(self) -> ModuleList:
         """Module List of connected Speaker modules.
         """
-        return module_list(self._modules, "speaker")
+        return ModuleList(self._modules, "speaker")
 
     @property
-    def ultrasonics(self) -> module_list:
+    def ultrasonics(self) -> ModuleList:
         """Module List of connected Ultrasonic modules.
         """
-        return module_list(self._modules, "ultrasonic")
+        return ModuleList(self._modules, "ultrasonic")
 
 
 def update_module_firmware(target_ids=(0xFFF, )):

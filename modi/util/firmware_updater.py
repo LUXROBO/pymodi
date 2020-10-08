@@ -10,8 +10,8 @@ from importlib import import_module as im
 import serial
 
 from modi.module.module import Module
-from modi.util.msgutil import unpack_data, decode_message, parse_message
-from modi.util.conn_util import list_modi_ports, is_on_pi
+from modi.util.message_util import unpack_data, decode_message, parse_message
+from modi.util.connection_util import list_modi_ports, is_on_pi
 from modi.util.misc import get_module_type_from_uuid
 
 

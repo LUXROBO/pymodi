@@ -2,7 +2,7 @@
 import unittest
 
 from modi.module.input_module.mic import Mic
-from modi.util.msgutil import parse_message
+from modi.util.message_util import parse_message
 from modi.util.misc import MockConn
 
 

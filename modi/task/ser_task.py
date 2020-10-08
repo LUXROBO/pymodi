@@ -3,7 +3,7 @@ from typing import Optional
 import serial
 from serial.serialutil import SerialException
 from modi.task.conn_task import ConnTask
-from modi.util.conn_util import list_modi_ports
+from modi.util.connection_util import list_modi_ports
 
 
 class SerTask(ConnTask):

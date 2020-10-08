@@ -4,7 +4,7 @@ import time
 from typing import Union
 from os import path
 
-from modi.util.msgutil import parse_message
+from modi.util.message_util import parse_message
 
 BROADCAST_ID = 0xFFF
 

@@ -8,13 +8,13 @@ from getopt import getopt, GetoptError
 import modi
 
 from modi.util.debugger import Debugger
-from modi.util.usage import Usage
+from modi.util.usage_instructor import UsageInstructor
 from modi.util.tutor import Tutor
 from modi.util.inspector import Inspector
 
 from modi.util.firmware_updater import STM32FirmwareUpdater
 from modi.util.firmware_updater import ESP32FirmwareUpdater
-from modi.util.msgutil import parse_message, decode_message
+from modi.util.message_util import parse_message, decode_message
 
 
 def check_option(*options):
@@ -177,6 +177,6 @@ if __name__ == "__main__":
 
     # Show each module usage
     if check_option('-u', '--usage'):
-        usage = Usage()
+        usage = UsageInstructor()
         usage.run_usage_manual()
         os._exit(0)

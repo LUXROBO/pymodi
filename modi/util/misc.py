@@ -49,7 +49,7 @@ def ask_modi_device(devices):
     return devices[int(i)].lstrip('MODI_')
 
 
-class module_list(list):
+class ModuleList(list):
 
     def __init__(self, src, module_type=None):
         self.__src = src

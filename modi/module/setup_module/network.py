@@ -2,7 +2,7 @@
 import time
 
 from modi.module.setup_module.setup_module import SetupModule
-from modi.util.msgutil import parse_message
+from modi.util.message_util import parse_message
 
 
 class Network(SetupModule):

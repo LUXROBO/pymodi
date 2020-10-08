@@ -1,7 +1,7 @@
 import unittest
 
 from modi.module.output_module.motor import Motor
-from modi.util.msgutil import parse_data, parse_message
+from modi.util.message_util import parse_data, parse_message
 from modi.util.misc import MockConn
 
 

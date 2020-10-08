@@ -1,7 +1,7 @@
 import time
 from typing import Dict, List, Tuple
 
-from modi.util.misc import module_list
+from modi.util.misc import ModuleList
 
 
 class TopologyManager:
@@ -166,7 +166,7 @@ class TopologyManager:
             else:
                 module_id = int(module_id)
                 module_type = self._tp_data[module_id]['type']
-                module_idx = module_list(
+                module_idx = ModuleList(
                     self._modules, module_type.lower()
                 ).find(module_id)
                 if module_idx < 0:

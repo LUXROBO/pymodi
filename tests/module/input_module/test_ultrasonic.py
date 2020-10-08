@@ -1,7 +1,7 @@
 import unittest
 
 from modi.module.input_module.ultrasonic import Ultrasonic
-from modi.util.msgutil import parse_message
+from modi.util.message_util import parse_message
 from modi.util.misc import MockConn
 
 
