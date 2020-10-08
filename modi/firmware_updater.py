@@ -254,7 +254,7 @@ class STM32FirmwareUpdater:
                 erase_page_success = self.send_firmware_command(
                     oper_type="erase", module_id=module_id, crc_val=0,
                     dest_addr=flash_memory_addr,
-                    page_addr=page_begin+page_offset
+                    page_addr=page_begin + page_offset
                 )
                 if not erase_page_success:
                     page_begin -= page_size
@@ -278,7 +278,7 @@ class STM32FirmwareUpdater:
                 crc_page_success = self.send_firmware_command(
                     oper_type="crc", module_id=module_id, crc_val=checksum,
                     dest_addr=flash_memory_addr,
-                    page_addr=page_begin+page_offset
+                    page_addr=page_begin + page_offset
                 )
                 if not crc_page_success:
                     page_begin -= page_size
