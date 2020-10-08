@@ -12,7 +12,7 @@ from modi.util.misc import module_list
 from modi.util.stranger import check_complete
 # from modi.util.upython import upload_file
 from modi.util.topology_manager import TopologyManager
-from modi.firmware_updater import STM32FirmwareUpdater, ESP32FirmwareUpdater
+from modi.util.firmware_updater import STM32FirmwareUpdater, ESP32FirmwareUpdater
 
 
 class MODI:

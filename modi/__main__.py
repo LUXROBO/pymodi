@@ -12,8 +12,8 @@ from modi.util.usage import Usage
 from modi.util.tutor import Tutor
 from modi.util.inspector import Inspector
 
-from modi.firmware_updater import STM32FirmwareUpdater
-from modi.firmware_updater import ESP32FirmwareUpdater
+from modi.util.firmware_updater import STM32FirmwareUpdater
+from modi.util.firmware_updater import ESP32FirmwareUpdater
 from modi.util.msgutil import parse_message, decode_message
 
 

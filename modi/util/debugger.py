@@ -28,12 +28,12 @@ class Debugger(MODI):
         self._buffer = StringIO()
         sys.stdout = self._buffer
         super().__init__(verbose=True, *args, **kwargs)
-        debugger = _DebuggerWindow(self, self._buffer)
+        debugger = DebuggerWindow(self, self._buffer)
         debugger.run()
 
 
 # TODO: Apply MVC pattern here
-class _DebuggerWindow:
+class DebuggerWindow:
     def __init__(self, bundle: MODI, buffer: StringIO):
         self._buffer = buffer
         self.bundle = bundle
