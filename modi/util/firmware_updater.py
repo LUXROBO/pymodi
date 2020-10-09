@@ -12,7 +12,7 @@ import serial
 from modi.module.module import Module
 from modi.util.message_util import unpack_data, decode_message, parse_message
 from modi.util.connection_util import list_modi_ports, is_on_pi
-from modi.util.misc import get_module_type_from_uuid
+from modi.util.miscellaneous import get_module_type_from_uuid
 
 
 class STM32FirmwareUpdater:
@@ -88,9 +88,8 @@ class STM32FirmwareUpdater:
         time.sleep(0.5)
         self.__conn.close_conn()
 
-    @staticmethod
-    def __open_conn():
-        if is_on_pi():
+    def __open_conn(self):
+        if is_on_pi() and not self.update_network_base:
             return im('modi.task.can_task').CanTask()
         else:
             return im('modi.task.ser_task').SerTask()

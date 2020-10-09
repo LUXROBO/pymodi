@@ -8,7 +8,7 @@ import sys
 
 from modi._exe_thrd import ExeThrd
 from modi.util.connection_util import is_network_module_connected, is_on_pi
-from modi.util.misc import ModuleList
+from modi.util.miscellaneous import ModuleList
 from modi.util.stranger import check_complete
 # from modi.util.upython import upload_file
 from modi.util.topology_manager import TopologyManager

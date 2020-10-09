@@ -6,7 +6,8 @@ from textwrap import dedent
 
 class UsageInstructor:
     """
-    Usage Instructor teaches basic module usage of PyMODI
+    Usage Instructor teaches basic module usage of PyMODI.
+    It mainly teachs what methods are available for each module.
     """
 
     row_len = 79

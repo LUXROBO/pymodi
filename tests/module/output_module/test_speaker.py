@@ -2,7 +2,7 @@ import unittest
 
 from modi.module.output_module.speaker import Speaker
 from modi.util.message_util import parse_data, parse_message
-from modi.util.misc import MockConn
+from modi.util.miscellaneous import MockConn
 
 
 class TestSpeaker(unittest.TestCase):

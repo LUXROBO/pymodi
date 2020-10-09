@@ -9,7 +9,7 @@ from typing import Optional
 from threading import Thread
 
 from modi.task.conn_task import ConnTask
-from modi.util.misc import ask_modi_device
+from modi.util.miscellaneous import ask_modi_device
 
 
 class BleTask(ConnTask):

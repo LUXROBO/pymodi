@@ -2,7 +2,7 @@ import unittest
 
 from modi.module.input_module.env import Env
 from modi.util.message_util import parse_message
-from modi.util.misc import MockConn
+from modi.util.miscellaneous import MockConn
 
 
 class TestEnv(unittest.TestCase):

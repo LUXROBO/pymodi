@@ -1,7 +1,7 @@
 import time
 from typing import Dict, List, Tuple
 
-from modi.util.misc import ModuleList
+from modi.util.miscellaneous import ModuleList
 
 
 class TopologyManager:
