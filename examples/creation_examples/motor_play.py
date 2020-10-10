@@ -3,7 +3,7 @@ import keyboard
 
 
 if __name__ == '__main__':
-    bundle = modi.MODI(conn_mode='ble', uuid="YOUR_NETWORK_MODULE_UUID")
+    bundle = modi.MODI(conn_type='ble', network_uuid="YOUR_NETWORK_MODULE_UUID")
     motor = bundle.motors[0]
     network = bundle.networks[0]
 

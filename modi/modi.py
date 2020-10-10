@@ -18,12 +18,13 @@ from modi.util.firmware_updater import ESP32FirmwareUpdater
 
 class MODI:
 
-    def __init__(self, conn_mode: str = "", verbose: bool = False,
-                 port: str = None, uuid=""):
+    def __init__(
+        self, conn_type="", verbose=False, port=None, network_uuid=""
+    ):
         self._modules = list()
         self._topology_data = dict()
 
-        self._conn = self.__init_task(conn_mode, verbose, port, uuid)
+        self._conn = self.__init_task(conn_type, verbose, port, network_uuid)
 
         self._exe_thrd = ExeThrd(
             self._modules, self._topology_data, self._conn
@@ -46,7 +47,7 @@ class MODI:
         print("MODI modules are initialized!")
 
         bad_modules = (
-            self.__wait_user_code_check() if conn_mode != 'ble' else []
+            self.__wait_user_code_check() if conn_type != 'ble' else []
         )
         if bad_modules:
             cmd = input(f"{[str(module) for module in bad_modules]} "

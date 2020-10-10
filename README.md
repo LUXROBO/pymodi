@@ -109,13 +109,13 @@ bundle = modi.MODI()
 [Optional] Specify how you would like to establish the connection between your machine and the network module.
 ```python
 # 1. Serial connection (via USB), it's the default connection method
-bundle = modi.MODI(conn_mode="ser")
+bundle = modi.MODI(conn_type="ser")
 
 # 2. CAN connection (via CAN shield, not recommended to use it directly)
-bundle = modi.MODI(conn_mode="can")
+bundle = modi.MODI(conn_type="can")
 
 # 3. BLE (Bluetooth Low Energy) connection, it's wireless! But it can be slow :(
-bundle = modi.MODI(conn_mode="ble", uuid="YOUR_NETWORK_MODULE_UUID")
+bundle = modi.MODI(conn_type="ble", network_uuid="YOUR_NETWORK_MODULE_UUID")
 ```
 
 List and create connected modules' object.
@@ -145,11 +145,11 @@ import time
 
 for _ in range(5):
     # turn on for 0.5 second
-    led.rgb = 100, 100, 100
+    led.turn_on()
     time.sleep(0.5)
 
     # turn off for 0.5 second
-    led.rgb = 0, 0, 0
+    led.turn_off()
     time.sleep(0.5)
 ```
 
