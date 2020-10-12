@@ -56,6 +56,7 @@ class Form(QtWidgets.QDialog):
         if random.uniform(0, 10) <= 2:
             self.ui.push_bar.setValue(curr_val - 5)
 
+    # TODO: Fix serial issue in ESP32 Firmware Updater
     def update_network_esp32(self):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
