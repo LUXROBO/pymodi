@@ -285,8 +285,11 @@ class STM32FirmwareUpdater:
 
         print(f"\rUpdating {module_type} ({module_id}) "
               f"{self.__progress_bar(1, 1)} 100%")
+        version_file = (
+            'base_version.txt' if self.update_network_base else 'version.txt'
+        )
         # Include MODI firmware version when writing end flash
-        version_path = path.join(root_path, 'version.txt')
+        version_path = path.join(root_path, version_file)
         with open(version_path) as version_file:
             version_info = version_file.readline().lstrip('v').rstrip('\n')
         version_digits = [int(digit) for digit in version_info.split('.')]
