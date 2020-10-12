@@ -52,9 +52,9 @@ class Form(QtWidgets.QDialog):
 
     def push(self):
         curr_val = self.ui.push_bar.value()
-        self.ui.push_bar.setValue(curr_val+1)
+        self.ui.push_bar.setValue(curr_val + 1)
         if random.uniform(0, 10) <= 2:
-            self.ui.push_bar.setValue(curr_val-5)
+            self.ui.push_bar.setValue(curr_val - 5)
 
     def update_network_esp32(self):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
