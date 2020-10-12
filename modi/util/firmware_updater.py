@@ -805,6 +805,8 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.ui = ui
 
     def update_firmware(self, force=False):
+        if self.ui:
+            self.ui.status_label.setText("Updating network ESP32 firmware!")
         self.update_in_progress = True
         self.__boot_to_app()
         self.__version_to_update = self.__get_latest_version()
@@ -818,6 +820,10 @@ class ESP32FirmwareUpdater(serial.Serial):
                 if 'y' not in response:
                     return
         print(f"Updating v{self.version} to v{self.__version_to_update}")
+        if self.ui:
+            self.ui.status_label.setText(
+                f"Updating network firmware to v{self.__version_to_update}"
+            )
         firmware_buffer = self.__compose_binary_firmware()
 
         self.__device_ready()
@@ -825,6 +831,9 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.__flash_attach()
         self.__set_flash_param()
         manager = None
+
+        if self.ui:
+            self.ui.local_module.setText("Update in Progress...")
         self.__write_binary_firmware(firmware_buffer, manager)
         print("Booting to application...")
         self.__wait_for_json()
@@ -833,6 +842,15 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.__set_esp_version(self.__version_to_update)
         print("ESP firmware update is complete!!")
         self.update_in_progress = False
+
+        if self.ui:
+            self.ui.status_label.setText(
+                "ESP32 firmware update is done!\n"
+                "This program will terminate in 3 seconds..."
+            )
+            # TODO: Make program available after each firmware update
+            time.sleep(3)
+            os._exit(0)
 
     def __device_ready(self):
         print("Redirecting connection to esp device...")
@@ -1081,9 +1099,12 @@ class ESP32FirmwareUpdater(serial.Serial):
     def __boot_to_app(self):
         self.write(b'{"c":160,"s":0,"d":174,"b":"AAAAAAAAAA==","l":8}')
 
-    @staticmethod
-    def __progress_bar(current: int, total: int) -> str:
+    def __progress_bar(self, current: int, total: int) -> str:
         curr_bar = 70 * current // total
         rest_bar = 70 - curr_bar
+        if self.ui:
+            self.ui.local_percentage.setText(
+                f"{round(100 * current / total, 3)} %"
+            )
         return f"Firmware Upload: [{'=' * curr_bar}>{'.' * rest_bar}] " \
                f"{100 * current / total:3.2f}%"
