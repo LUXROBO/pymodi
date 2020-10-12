@@ -1,13 +1,17 @@
-import json
+
+import os
 import sys
-import threading as th
 import time
-from base64 import b64encode, b64decode
-from io import open
+import json
+import serial
+import threading as th
+
 from os import path
+from io import open
+from base64 import b64encode, b64decode
 from importlib import import_module as im
 
-import serial
+from PyQt5.QtGui import QPixmap
 
 from modi.module.module import Module
 from modi.util.message_util import unpack_data, decode_message, parse_message
@@ -43,8 +47,12 @@ class STM32FirmwareUpdater:
         self.modules_updated = []
         self.network_id = None
         self.update_network_base = False
+        self.ui = None
 
         self.request_network_id()
+
+    def set_ui(self, ui):
+        self.ui = ui
 
     def request_network_id(self):
         self.__conn.send_nowait(
@@ -215,10 +223,22 @@ class STM32FirmwareUpdater:
         self.modules_updated.append((module_id, module_type))
 
         root_path = (
-            path.join(path.dirname(__file__), '../firmware', 'stm32')
+            path.join(path.dirname(__file__), '../assets/firmware', 'stm32')
         )
 
         if self.__is_os_update:
+            if self.ui:
+                self.ui.status_label.setText(
+                    "Start updating the STM32 firmware"
+                )
+                module_image_path = path.join(
+                    path.dirname(__file__),
+                    '../assets/image',
+                    module_type.lower() + '.png'
+                )
+                module_pixmap = QPixmap(module_image_path)
+                self.ui.curr_module_img.setPixmap(module_pixmap)
+
             # Init path to binary file
             bin_path = (
                 f"{module_type.lower()}.bin"
@@ -237,11 +257,25 @@ class STM32FirmwareUpdater:
             bin_begin = 0x9000 if not self.update_network_base else page_size
             bin_end = bin_size - ((bin_size - bin_begin) % page_size)
 
+            if self.ui:
+                self.ui.status_label.setText(
+                    "STM32 firmware update is in progress..."
+                )
+                self.ui.local_module.setText(
+                    f"Updating: {module_type.title()} ({module_id})"
+                )
+                self.ui.local_percentage.setText("0%")
+
             page_offset = 0 if not self.update_network_base else 0x8800
             for page_begin in range(bin_begin, bin_end + 1, page_size):
-                print(f"\rUpdating {module_type} ({module_id}) "
-                      f"{self.__progress_bar(page_begin, bin_end)} "
-                      f"{page_begin * 100 // bin_end}%", end='')
+                progress = 100 * page_begin // bin_end
+                if self.ui:
+                    self.ui.local_percentage.setText(f"{progress}%")
+                print(
+                    f"\rUpdating {module_type} ({module_id}) "
+                    f"{self.__progress_bar(page_begin, bin_end)} "
+                    f"{progress}%", end=''
+                )
                 page_end = page_begin + page_size
                 curr_page = bin_buffer[page_begin:page_end]
 
@@ -331,6 +365,16 @@ class STM32FirmwareUpdater:
                 print("Please physically reconnect your network module!!")
                 print("Press ENTER to exit update mode!!")
             self.update_event.set()
+            self.update_in_progress = False
+
+            if self.ui:
+                self.ui.status_label.setText(
+                    "STM32 firmware update is done!\n"
+                    "This program will terminate in 3 seconds..."
+                )
+                # TODO: Make program available after each firmware update
+                time.sleep(3)
+                os._exit(0)
 
     @staticmethod
     def __delay(span):
@@ -754,7 +798,14 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.version = None
         self.__version_to_update = None
 
+        self.update_in_progress = False
+        self.ui = None
+
+    def set_ui(self, ui):
+        self.ui = ui
+
     def update_firmware(self, force=False):
+        self.update_in_progress = True
         self.__boot_to_app()
         self.__version_to_update = self.__get_latest_version()
         self.id = self.__get_esp_id()
@@ -781,6 +832,7 @@ class ESP32FirmwareUpdater(serial.Serial):
         time.sleep(1)
         self.__set_esp_version(self.__version_to_update)
         print("ESP firmware update is complete!!")
+        self.update_in_progress = False
 
     def __device_ready(self):
         print("Redirecting connection to esp device...")
@@ -927,7 +979,7 @@ class ESP32FirmwareUpdater(serial.Serial):
     def __compose_binary_firmware(self):
         binary_firmware = b''
         root_path = path.join(
-            path.dirname(__file__), '../firmware', 'esp32'
+            path.dirname(__file__), '../assets/firmware', 'esp32'
         )
         for i, bin_path in enumerate(self.file_path):
             with open(path.join(root_path, bin_path), 'rb') as bin_file:
@@ -942,7 +994,7 @@ class ESP32FirmwareUpdater(serial.Serial):
     @staticmethod
     def __get_latest_version():
         root_path = path.join(
-            path.dirname(__file__), '../firmware', 'esp32'
+            path.dirname(__file__), '../assets/firmware', 'esp32'
         )
         with open(path.join(root_path, 'version.txt'), 'r') as version_file:
             version_info = version_file.readline().lstrip('v').rstrip('\n')

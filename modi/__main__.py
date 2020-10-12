@@ -49,7 +49,7 @@ if __name__ == "__main__":
     try:
         # all commands should be defined here in advance
         opts, args = getopt(
-            sys.argv[1:], "tamhvpdinub",
+            sys.argv[1:], "tamhvpdinubg",
             [
                 "tutorial",
                 "initialize",
@@ -62,6 +62,7 @@ if __name__ == "__main__":
                 "update_network",
                 "usage",
                 "update_base",
+                "gui_updater",
             ]
         )
     # exit program if an invalid option has been entered
@@ -179,4 +180,13 @@ if __name__ == "__main__":
     if check_option('-u', '--usage'):
         usage = UsageInstructor()
         usage.run_usage_manual()
+        os._exit(0)
+
+    # Run GUI MODI Firmware Updater
+    if check_option('-g', '--gui_updater'):
+        from PyQt5 import QtWidgets
+        from modi.util.gui_firmware_updater import Form
+        app = QtWidgets.QApplication(sys.argv)
+        w = Form()
+        sys.exit(app.exec())
         os._exit(0)
