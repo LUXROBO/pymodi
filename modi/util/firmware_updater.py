@@ -813,7 +813,7 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.id = self.__get_esp_id()
         self.version = self.__get_esp_version()
         if self.version and self.version == self.__version_to_update:
-            if not force:
+            if not force and not self.ui:
                 response = input(
                     f"ESP version already up to date (v{self.version})."
                     f" Do you still want to proceed? [y/n]: ")
