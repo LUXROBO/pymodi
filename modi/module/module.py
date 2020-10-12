@@ -102,7 +102,10 @@ class Module:
     @property
     def is_up_to_date(self):
         root_path = (
-            path.join(path.dirname(__file__), '..', 'firmware', 'stm32')
+            path.join(
+                path.dirname(__file__),
+                '..', 'assets', 'firmware', 'stm32'
+            )
         )
         version_path = path.join(root_path, 'version.txt')
         with open(version_path) as version_file:

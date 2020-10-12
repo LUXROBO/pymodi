@@ -223,7 +223,10 @@ class STM32FirmwareUpdater:
         self.modules_updated.append((module_id, module_type))
 
         root_path = (
-            path.join(path.dirname(__file__), '../assets/firmware', 'stm32')
+            path.join(
+                path.dirname(__file__),
+                '..', 'assets', 'firmware', 'stm32'
+            )
         )
 
         if self.__is_os_update:
@@ -233,8 +236,8 @@ class STM32FirmwareUpdater:
                 )
                 module_image_path = path.join(
                     path.dirname(__file__),
-                    '../assets/image',
-                    module_type.lower() + '.png'
+                    '..', 'assets', 'image',
+                    f'{module_type.lower()}.png'
                 )
                 module_pixmap = QPixmap(module_image_path)
                 self.ui.curr_module_img.setPixmap(module_pixmap)
@@ -997,7 +1000,8 @@ class ESP32FirmwareUpdater(serial.Serial):
     def __compose_binary_firmware(self):
         binary_firmware = b''
         root_path = path.join(
-            path.dirname(__file__), '../assets/firmware', 'esp32'
+            path.dirname(__file__),
+            '..', 'assets', 'firmware', 'esp32'
         )
         for i, bin_path in enumerate(self.file_path):
             with open(path.join(root_path, bin_path), 'rb') as bin_file:
@@ -1012,7 +1016,8 @@ class ESP32FirmwareUpdater(serial.Serial):
     @staticmethod
     def __get_latest_version():
         root_path = path.join(
-            path.dirname(__file__), '../assets/firmware', 'esp32'
+            path.dirname(__file__),
+            '..', 'assets', 'firmware', 'esp32'
         )
         with open(path.join(root_path, 'version.txt'), 'r') as version_file:
             version_info = version_file.readline().lstrip('v').rstrip('\n')
