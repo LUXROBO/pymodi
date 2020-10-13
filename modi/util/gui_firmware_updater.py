@@ -6,6 +6,7 @@ import threading as th
 
 from PyQt5 import uic
 from PyQt5 import QtWidgets
+from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 
 from modi.util.firmware_updater import STM32FirmwareUpdater
@@ -27,6 +28,10 @@ class Form(QtWidgets.QDialog):
         )
         self.ui = uic.loadUi(ui_path)
         self.ui.setWindowTitle("MODI Firmware Updater")
+        icon_path = os.path.join(
+            os.path.dirname(__file__), '..', 'assets', 'image', 'network.png'
+        )
+        self.ui.setWindowIcon(QIcon(icon_path))
         self.ui.show()
 
         # Connect up the buttons
@@ -43,7 +48,8 @@ class Form(QtWidgets.QDialog):
         # Init module image
         module_pixmap = QPixmap(
             os.path.join(
-                os.path.dirname(__file__), '../assets/image', 'network.png'
+                os.path.dirname(__file__),
+                '..', 'assets', 'image', 'network.png'
             )
         )
         self.ui.curr_module_img.setPixmap(module_pixmap)
@@ -58,6 +64,9 @@ class Form(QtWidgets.QDialog):
         self.ui.modi_ota_factory_rbutton.setEnabled(False)
         self.ui.ota_data_initial_rbutton.setEnabled(False)
         self.ui.partitions_rbutton.setEnabled(False)
+
+        # Hide ui available in the developer mode
+        self.ui.developer_frame.hide()
 
         # Set up field variables
         self.firmware_updater = None
