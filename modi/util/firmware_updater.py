@@ -810,6 +810,18 @@ class ESP32FirmwareUpdater(serial.Serial):
     def update_firmware(self, force=False):
         if self.ui:
             self.ui.status_label.setText("Updating network ESP32 firmware!")
+
+            for i, rbutton in enumerate([
+                self.ui.bootloader_rbutton,
+                self.ui.esp32_rbutton,
+                self.ui.modi_ota_factory_rbutton,
+                self.ui.ota_data_initial_rbutton,
+                self.ui.partitions_rbutton
+            ]):
+                if not rbutton.isClicked():
+                    self.__address.pop(i)
+                    self.file_path.pop(i)
+
         self.update_in_progress = True
         self.__boot_to_app()
         self.__version_to_update = self.__get_latest_version()
