@@ -46,8 +46,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Module 
-Image</string>
+          <string/>
          </property>
          <property name="pixmap">
           <pixmap>assets/imgs/network.png</pixmap>
@@ -195,7 +194,11 @@ speed up the update</string>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="password_field"/>
+        <widget class="QLineEdit" name="password_field">
+         <property name="text">
+          <string>Enter developer password to enable developer mode for esp32 update...</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
