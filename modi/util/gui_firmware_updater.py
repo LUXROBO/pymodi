@@ -52,9 +52,15 @@ class Form(QtWidgets.QDialog):
         self.ui.password_field.setEchoMode(QtWidgets.QLineEdit.Password)
         self.ui.password_field.returnPressed.connect(self.process_password)
 
+        # Init
+        self.ui.bootloader_rbutton.setEnabled(False)
+        self.ui.esp32_rbutton.setEnabled(False)
+        self.ui.modi_ota_factory_rbutton.setEnabled(False)
+        self.ui.ota_data_initial_rbutton.setEnabled(False)
+        self.ui.partitions_rbutton.setEnabled(False)
+
         # Set up field variables
         self.firmware_updater = None
-        self.dev_mode = False
 
     def push(self):
         curr_val = self.ui.push_bar.value()
@@ -65,7 +71,11 @@ class Form(QtWidgets.QDialog):
     def process_password(self):
         password = self.ui.password_field.text()
         if password == "19940929":
-            self.dev_mode = True
+            self.ui.bootloader_rbutton.setEnabled(True)
+            self.ui.esp32_rbutton.setEnabled(True)
+            self.ui.modi_ota_factory_rbutton.setEnabled(True)
+            self.ui.ota_data_initial_rbutton.setEnabled(True)
+            self.ui.partitions_rbutton.setEnabled(True)
 
     # TODO: Fix serial issue in ESP32 Firmware Updater
     def update_network_esp32(self):
