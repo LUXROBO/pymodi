@@ -40,6 +40,7 @@ class Form(QtWidgets.QDialog):
         self.ui.push_button.clicked.connect(self.push)
         self.ui.push_button.setFocus(True)
 
+        # Init module image
         module_pixmap = QPixmap(
             os.path.join(
                 os.path.dirname(__file__), '../assets/image', 'network.png'
@@ -47,14 +48,24 @@ class Form(QtWidgets.QDialog):
         )
         self.ui.curr_module_img.setPixmap(module_pixmap)
 
+        # Init password field for enabling developer mode
+        self.ui.password_field.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.ui.password_field.returnPressed.connect(self.process_password)
+
         # Set up field variables
         self.firmware_updater = None
+        self.dev_mode = False
 
     def push(self):
         curr_val = self.ui.push_bar.value()
         self.ui.push_bar.setValue(curr_val + 1)
         if random.uniform(0, 10) <= 2:
             self.ui.push_bar.setValue(curr_val - 5)
+
+    def process_password(self):
+        password = self.ui.password_field.text()
+        if password == "19940929":
+            self.dev_mode = True
 
     # TODO: Fix serial issue in ESP32 Firmware Updater
     def update_network_esp32(self):

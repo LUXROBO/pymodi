@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>786</width>
-    <height>331</height>
+    <height>501</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
+   <item row="3" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="local_module">
@@ -74,7 +74,7 @@
      <item>
       <widget class="QPushButton" name="push_button">
        <property name="text">
-        <string>Tap multiple times to 
+        <string>Tap this button to 
 speed up the update</string>
        </property>
       </widget>
@@ -164,6 +164,23 @@ speed up the update</string>
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
+   </item>
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="password_label">
+       <property name="text">
+        <string>Developer Password:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="password_field"/>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
