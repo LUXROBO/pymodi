@@ -52,7 +52,7 @@ class Form(QtWidgets.QDialog):
         self.ui.password_field.setEchoMode(QtWidgets.QLineEdit.Password)
         self.ui.password_field.returnPressed.connect(self.process_password)
 
-        # Init
+        # Init radio button states
         self.ui.bootloader_rbutton.setEnabled(False)
         self.ui.esp32_rbutton.setEnabled(False)
         self.ui.modi_ota_factory_rbutton.setEnabled(False)
@@ -65,7 +65,7 @@ class Form(QtWidgets.QDialog):
     def push(self):
         curr_val = self.ui.push_bar.value()
         self.ui.push_bar.setValue(curr_val + 1)
-        if random.uniform(0, 10) <= 2:
+        if self.ui.push_bar.value() >= 50 and random.uniform(0, 10) <= 3:
             self.ui.push_bar.setValue(curr_val - 5)
 
     def process_password(self):

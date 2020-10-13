@@ -24,7 +24,7 @@
        <item>
         <widget class="QLabel" name="local_module">
          <property name="text">
-          <string>Current module: ?? (??) </string>
+          <string>Processing module will display here!</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -46,7 +46,8 @@
           </font>
          </property>
          <property name="text">
-          <string/>
+          <string>Module 
+Image</string>
          </property>
          <property name="pixmap">
           <pixmap>assets/imgs/network.png</pixmap>
@@ -62,7 +63,7 @@
        <item>
         <widget class="QLabel" name="local_percentage">
          <property name="text">
-          <string>?? %</string>
+          <string>Progress will display here!</string>
          </property>
         </widget>
        </item>
