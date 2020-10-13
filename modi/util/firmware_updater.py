@@ -818,7 +818,7 @@ class ESP32FirmwareUpdater(serial.Serial):
                 self.ui.ota_data_initial_rbutton,
                 self.ui.partitions_rbutton
             ]):
-                if not rbutton.isClicked():
+                if not rbutton.isChecked():
                     self.__address.pop(i)
                     self.file_path.pop(i)
 
