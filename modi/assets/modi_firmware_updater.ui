@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>798</width>
-    <height>485</height>
+    <width>920</width>
+    <height>570</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,12 +22,12 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
         <y>20</y>
-        <width>774</width>
+        <width>841</width>
         <height>77</height>
        </rect>
       </property>
@@ -49,8 +49,29 @@
          </item>
          <item>
           <widget class="QLineEdit" name="password_field">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>650</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="text">
-            <string>Enter developer password to enable developer mode for esp32 update...</string>
+            <string/>
+           </property>
+           <property name="maxLength">
+            <number>300</number>
+           </property>
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+           <property name="clearButtonEnabled">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -181,6 +202,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="update_network_esp32">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>Update Network Module</string>
        </property>
@@ -198,6 +222,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="update_stm32_modules">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>Update STM32 Modules</string>
        </property>
@@ -215,6 +242,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="update_network_stm32">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="text">
         <string>Update Network Base</string>
        </property>
@@ -290,6 +320,9 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QPushButton" name="push_button">
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="text">
           <string>Tap this button to 
 speed up the update</string>

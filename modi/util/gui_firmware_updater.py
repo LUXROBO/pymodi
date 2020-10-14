@@ -8,6 +8,7 @@ from PyQt5 import uic
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 
 from modi.util.firmware_updater import STM32FirmwareUpdater
 from modi.util.firmware_updater import ESP32FirmwareUpdater
@@ -18,12 +19,23 @@ class Form(QtWidgets.QDialog):
     GUI Form of MODI Firmware Updater
     """
 
+    def handle_key_press_event(self):
+        modifiers = QtWidgets.QApplication.keyboardModifiers()
+        # TODO: Fix an issue with, (Qt.ControlModifier | Qt.ShiftModifier)
+        if modifiers == Qt.ShiftModifier:
+            if not self.is_dev_mode:
+                self.ui.developer_frame.show()
+                self.is_dev_mode = True
+            else:
+                self.ui.developer_frame.hide()
+                self.is_dev_mode = False
+
     def __init__(self, parent=None):
         QtWidgets.QDialog.__init__(self, parent)
         ui_path = (
             os.path.join(
                 os.path.dirname(__file__),
-                '../assets', 'modi_firmware_updater.ui'
+                '..', 'assets', 'modi_firmware_updater.ui'
             )
         )
         self.ui = uic.loadUi(ui_path)
@@ -32,6 +44,7 @@ class Form(QtWidgets.QDialog):
             os.path.dirname(__file__), '..', 'assets', 'image', 'network.png'
         )
         self.ui.setWindowIcon(QIcon(icon_path))
+        self.setFixedSize(self.size())
         self.ui.show()
 
         # Connect up the buttons
@@ -43,6 +56,7 @@ class Form(QtWidgets.QDialog):
         self.ui.update_network_stm32.setFocus(False)
 
         self.ui.push_button.clicked.connect(self.push)
+        self.ui.push_button.setAutoDefault(True)
         self.ui.push_button.setFocus(True)
 
         # Init module image
@@ -70,12 +84,14 @@ class Form(QtWidgets.QDialog):
 
         # Set up field variables
         self.firmware_updater = None
+        self.is_dev_mode = False
 
     def push(self):
         curr_val = self.ui.push_bar.value()
         self.ui.push_bar.setValue(curr_val + 1)
         if self.ui.push_bar.value() >= 50 and random.uniform(0, 10) <= 3:
             self.ui.push_bar.setValue(curr_val - 5)
+        self.handle_key_press_event()
 
     def process_password(self):
         password = self.ui.password_field.text()
