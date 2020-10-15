@@ -67,16 +67,15 @@ class Form(QtWidgets.QDialog):
         self.ui.push_button.setFocus(True)
 
         # Init module image
-        module_pixmap = QPixmap(
-            os.path.join(
-                os.path.dirname(__file__),
-                '..', 'assets', 'image', 'network.png'
-            )
+        module_image_path = os.path.join(
+            os.path.dirname(__file__),
+            '..', 'assets', 'image', 'network.png'
         )
         if installer:
-            module_pixmap = os.path.dirname(__file__).replace(
+            module_image_path = os.path.dirname(__file__).replace(
                 'util', 'network.png'
             )
+        module_pixmap = QPixmap(module_image_path)
         self.ui.curr_module_img.setPixmap(module_pixmap)
 
         # Init password field for enabling developer mode
