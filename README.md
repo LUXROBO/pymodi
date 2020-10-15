@@ -181,6 +181,11 @@ To update MODI modules (all modules but the network module),
 $ python -m modi --update_modules
 ```
 
+To update firmware in GUI mode (all three commands above are available)
+```commandline
+$ python -m modi --update_in_gui
+```
+
 To diagnose MODI modules (helpful to find existing malfunctioning modules),
 ```commandline
 $ python -m modi --inspect

@@ -62,7 +62,7 @@ if __name__ == "__main__":
                 "update_network",
                 "usage",
                 "update_network_base",
-                "gui_updater",
+                "update_in_gui",
             ]
         )
     # exit program if an invalid option has been entered
@@ -183,7 +183,7 @@ if __name__ == "__main__":
         os._exit(0)
 
     # Run GUI MODI Firmware Updater
-    if check_option('-g', '--gui_updater'):
+    if check_option('-g', '--update_in_gui'):
         from PyQt5 import QtWidgets
         from modi.util.gui_firmware_updater import Form
         app = QtWidgets.QApplication(sys.argv)

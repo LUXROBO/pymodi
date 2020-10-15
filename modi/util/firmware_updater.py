@@ -1127,20 +1127,24 @@ class ESP32FirmwareUpdater(serial.Serial):
         for seq, block in enumerate(block_queue):
             if manager:
                 manager.status = self.__progress_bar(curr_seq + seq, total_seq)
-            print(f'\r{self.__progress_bar(curr_seq + seq, total_seq)}',
-                  end='')
+            if not self.ui:
+                print(f'\r{self.__progress_bar(curr_seq + seq, total_seq)}',
+                      end='')
+            else:
+                current = curr_seq + seq
+                total = total_seq
+                self.ui.local_percentage.setText(
+                    f"{round(100 * current / total, 2)} %"
+                )
             self.__write_flash_block(block, seq)
         return len(block_queue)
 
     def __boot_to_app(self):
         self.write(b'{"c":160,"s":0,"d":174,"b":"AAAAAAAAAA==","l":8}')
 
-    def __progress_bar(self, current: int, total: int) -> str:
+    @staticmethod
+    def __progress_bar(current: int, total: int) -> str:
         curr_bar = 70 * current // total
         rest_bar = 70 - curr_bar
-        if self.ui:
-            self.ui.local_percentage.setText(
-                f"{round(100 * current / total, 3)} %"
-            )
         return f"Firmware Upload: [{'=' * curr_bar}>{'.' * rest_bar}] " \
                f"{100 * current / total:3.2f}%"
