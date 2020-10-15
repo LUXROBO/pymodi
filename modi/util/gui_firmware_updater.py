@@ -30,7 +30,7 @@ class Form(QtWidgets.QDialog):
                 self.ui.developer_frame.hide()
                 self.is_dev_mode = False
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, installer=False):
         QtWidgets.QDialog.__init__(self, parent)
         ui_path = (
             os.path.join(
@@ -46,6 +46,9 @@ class Form(QtWidgets.QDialog):
         self.ui.setWindowIcon(QIcon(icon_path))
         self.setFixedSize(self.size())
         self.ui.show()
+
+        # Init variable to check if the program is in installation mode
+        self.ui.installation = installer
 
         # Connect up the buttons
         self.ui.update_network_esp32.clicked.connect(self.update_network_esp32)
