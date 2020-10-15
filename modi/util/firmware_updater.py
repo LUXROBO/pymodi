@@ -251,7 +251,7 @@ class STM32FirmwareUpdater:
                 f"{module_type.lower()}.bin"
             )
             bin_path = path.join(root_path, local_bin_path)
-            if self.ui.installation:
+            if self.ui and self.ui.installation:
                 bin_path = os.path.dirname(__file__).replace(
                     'util', f'{module_type.lower()}.bin'
                 )
@@ -333,7 +333,7 @@ class STM32FirmwareUpdater:
         )
         # Include MODI firmware version when writing end flash
         version_path = path.join(root_path, version_file)
-        if self.ui.installation:
+        if self.ui and self.ui.installation:
             version_path = os.path.dirname(__file__).replace(
                 'util', 'version.txt'
             )
