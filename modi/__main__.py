@@ -53,7 +53,7 @@ if __name__ == "__main__":
             [
                 "tutorial",
                 "initialize",
-                "update",
+                "update_modules",
                 "help",
                 "verbose",
                 "performance",
@@ -61,7 +61,7 @@ if __name__ == "__main__":
                 "inspect",
                 "update_network",
                 "usage",
-                "update_base",
+                "update_network_base",
                 "gui_updater",
             ]
         )
@@ -117,24 +117,6 @@ if __name__ == "__main__":
         print(f"Took {took / 2:.10f} seconds for message transfer")
         os._exit(0)
 
-    # Update STM32 modules (every modules but network module)
-    if check_option('-m', '--update'):
-        init_time = time.time()
-        updater = STM32FirmwareUpdater()
-        updater.update_module_firmware()
-        fin_time = time.time()
-        print(f"Took {fin_time - init_time:.2f} seconds to update")
-        os._exit(0)
-
-    # Update STM32 base (of network module)
-    if check_option('-b', '--update_base'):
-        init_time = time.time()
-        updater = STM32FirmwareUpdater()
-        updater.update_module_firmware(update_network_base=True)
-        fin_time = time.time()
-        print(f"Took {fin_time - init_time:.2f} seconds to update")
-        os._exit(0)
-
     # Update ESP32 module (only network module)
     if check_option('-n', '--update_network'):
         init_time = time.time()
@@ -142,6 +124,24 @@ if __name__ == "__main__":
         updater.update_firmware()
         fin_time = time.time()
         print(f"Took {fin_time - init_time:.2f} seconds to update :)")
+        os._exit(0)
+
+    # Update STM32 base (of network module)
+    if check_option('-b', '--update_network_base'):
+        init_time = time.time()
+        updater = STM32FirmwareUpdater()
+        updater.update_module_firmware(update_network_base=True)
+        fin_time = time.time()
+        print(f"Took {fin_time - init_time:.2f} seconds to update")
+        os._exit(0)
+
+    # Update MODI STM32 modules (every modules but network module)
+    if check_option('-m', '--update_modules'):
+        init_time = time.time()
+        updater = STM32FirmwareUpdater()
+        updater.update_module_firmware()
+        fin_time = time.time()
+        print(f"Took {fin_time - init_time:.2f} seconds to update")
         os._exit(0)
 
     # Initialize modules implicitly

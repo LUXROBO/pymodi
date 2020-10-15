@@ -166,14 +166,19 @@ Moreover, we provide [api documentation](https://pymodi.readthedocs.io/en/master
 
 Additional Usage
 ----------------
-To update MODI modules (all modules but the network module),
-```commandline
-$ python -m modi --update
-```
-
 To update MODI network module (the network module must be connected on serial),
 ```commandline
 $ python -m modi --update_network
+```
+
+To update MODI network module's base (as above, the network module must be connected on serial),
+```commandline
+$ python -m modi --update_base
+```
+
+To update MODI modules (all modules but the network module),
+```commandline
+$ python -m modi --update_modules
 ```
 
 To diagnose MODI modules (helpful to find existing malfunctioning modules),
