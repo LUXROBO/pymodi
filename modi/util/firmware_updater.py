@@ -1026,7 +1026,12 @@ class ESP32FirmwareUpdater(serial.Serial):
             '..', 'assets', 'firmware', 'esp32'
         )
         for i, bin_path in enumerate(self.file_path):
-            with open(path.join(root_path, bin_path), 'rb') as bin_file:
+            firmware_path = path.join(root_path, bin_path)
+            if self.ui and self.ui.installation:
+                firmware_path = path.dirname(__file__).replace(
+                    'util', bin_path
+                )
+            with open(firmware_path, 'rb') as bin_file:
                 bin_data = bin_file.read()
             binary_firmware += bin_data
             if i < len(self.__address) - 1:
@@ -1035,13 +1040,17 @@ class ESP32FirmwareUpdater(serial.Serial):
                 )
         return binary_firmware
 
-    @staticmethod
-    def __get_latest_version():
+    def __get_latest_version(self):
         root_path = path.join(
             path.dirname(__file__),
             '..', 'assets', 'firmware', 'esp32'
         )
-        with open(path.join(root_path, 'version.txt'), 'r') as version_file:
+        version_path = path.join(root_path, 'version.txt')
+        if self.ui and self.ui.installation:
+            version_path = path.dirname(__file__).replace(
+                'util', 'version.txt'
+            )
+        with open(version_path, 'r') as version_file:
             version_info = version_file.readline().lstrip('v').rstrip('\n')
         return version_info
 
