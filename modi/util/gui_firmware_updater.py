@@ -67,7 +67,6 @@ class Form(QtWidgets.QDialog):
         self.ui.push_button.setFocus(True)
 
         # Init module image
-
         module_pixmap = QPixmap(
             os.path.join(
                 os.path.dirname(__file__),

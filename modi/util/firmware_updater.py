@@ -1045,10 +1045,10 @@ class ESP32FirmwareUpdater(serial.Serial):
             path.dirname(__file__),
             '..', 'assets', 'firmware', 'esp32'
         )
-        version_path = path.join(root_path, 'version.txt')
+        version_path = path.join(root_path, 'esp_version.txt')
         if self.ui and self.ui.installation:
             version_path = path.dirname(__file__).replace(
-                'util', 'version.txt'
+                'util', 'esp_version.txt'
             )
         with open(version_path, 'r') as version_file:
             version_info = version_file.readline().lstrip('v').rstrip('\n')
