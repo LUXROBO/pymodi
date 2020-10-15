@@ -239,16 +239,22 @@ class STM32FirmwareUpdater:
                     '..', 'assets', 'image',
                     f'{module_type.lower()}.png'
                 )
+                if self.ui.installation:
+                    module_image_path = path.dirname(__file__).replace(
+                        'util', f'{module_type.lower()}.png'
+                    )
                 module_pixmap = QPixmap(module_image_path)
                 self.ui.curr_module_img.setPixmap(module_pixmap)
 
             # Init path to binary file
-            bin_path = (
+            local_bin_path = (
                 f"{module_type.lower()}.bin"
             )
-
-            bin_path = path.join(root_path, bin_path)
-
+            bin_path = path.join(root_path, local_bin_path)
+            if self.ui.installation:
+                bin_path = os.path.dirname(__file__).replace(
+                    'util', f'{module_type.lower()}.bin'
+                )
             with open(bin_path, 'rb') as bin_file:
                 bin_buffer = bin_file.read()
 
@@ -327,6 +333,10 @@ class STM32FirmwareUpdater:
         )
         # Include MODI firmware version when writing end flash
         version_path = path.join(root_path, version_file)
+        if self.ui.installation:
+            version_path = os.path.dirname(__file__).replace(
+                'util', 'version.txt'
+            )
         with open(version_path) as version_file:
             version_info = version_file.readline().lstrip('v').rstrip('\n')
         version_digits = [int(digit) for digit in version_info.split('.')]
