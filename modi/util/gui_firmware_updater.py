@@ -38,6 +38,10 @@ class Form(QtWidgets.QDialog):
                 '..', 'assets', 'modi_firmware_updater.ui'
             )
         )
+        if installer:
+            ui_path = os.path.dirname(__file__).replace(
+                'util', 'modi_firmware_updater.ui'
+            )
         self.ui = uic.loadUi(ui_path)
         self.ui.setWindowTitle("MODI Firmware Updater")
         icon_path = os.path.join(
