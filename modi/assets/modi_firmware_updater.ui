@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>920</width>
-    <height>570</height>
+    <width>852</width>
+    <height>536</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,6 +60,9 @@
              <width>650</width>
              <height>0</height>
             </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::StrongFocus</enum>
            </property>
            <property name="text">
             <string/>
@@ -321,7 +324,7 @@
        <item>
         <widget class="QPushButton" name="push_button">
          <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
+          <enum>Qt::StrongFocus</enum>
          </property>
          <property name="text">
           <string>Tap this button to 
