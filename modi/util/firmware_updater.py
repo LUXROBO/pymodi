@@ -280,11 +280,12 @@ class STM32FirmwareUpdater:
                 progress = 100 * page_begin // bin_end
                 if self.ui:
                     self.ui.local_percentage.setText(f"{progress}%")
-                print(
-                    f"\rUpdating {module_type} ({module_id}) "
-                    f"{self.__progress_bar(page_begin, bin_end)} "
-                    f"{progress}%", end=''
-                )
+                else:
+                    print(
+                        f"\rUpdating {module_type} ({module_id}) "
+                        f"{self.__progress_bar(page_begin, bin_end)} "
+                        f"{progress}%", end=''
+                    )
                 page_end = page_begin + page_size
                 curr_page = bin_buffer[page_begin:page_end]
 
