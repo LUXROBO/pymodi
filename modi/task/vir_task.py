@@ -12,6 +12,10 @@ class VirTask(ConnTask):
         self.__json_buffer = b''
 
     class VirBus:
+        """
+        This wraps a virtual bundle object, where both are the interface for
+        PyMODI and VirtualMODI respectively.
+        """
 
         def __init__(self):
             self._virtual_bundle = None
@@ -22,6 +26,7 @@ class VirTask(ConnTask):
             self._virtual_bundle.open()
 
         def close(self):
+            # All running threads (mostly for read and write) are terminated
             self._virtual_bundle.close()
             self._virtual_bundle = None
 
@@ -37,7 +42,6 @@ class VirTask(ConnTask):
     # Inherited Methods
     #
     def open_conn(self):
-        # Init and open connection via virtual bus, VirBus
         self._bus = self.VirBus()
         self._bus.open()
 
