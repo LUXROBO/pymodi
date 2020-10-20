@@ -19,12 +19,20 @@ from modi.util.firmware_updater import ESP32FirmwareUpdater
 class MODI:
 
     def __init__(
-        self, conn_type="", verbose=False, port=None, network_uuid=""
+        self, conn_type="", verbose=False, port=None, network_uuid="",
+        virtual_modules=None,
     ):
+        if virtual_modules and conn_type != "vir":
+            raise ValueError(
+                "Virtual modules can only be defined in virtual connection"
+            )
+
         self._modules = list()
         self._topology_data = dict()
 
-        self._conn = self.__init_task(conn_type, verbose, port, network_uuid)
+        self._conn = self.__init_task(
+            conn_type, verbose, port, network_uuid, virtual_modules
+        )
 
         self._exe_thrd = ExeThrd(
             self._modules, self._topology_data, self._conn
@@ -94,7 +102,7 @@ class MODI:
     #    upload_file(filepath, remote_path)
 
     @staticmethod
-    def __init_task(conn_type, verbose, port, uuid):
+    def __init_task(conn_type, verbose, port, network_uuid, virtual_modules):
         if not conn_type:
             is_can = not is_network_module_connected() and is_on_pi()
             conn_type = 'can' if is_can else 'ser'
@@ -104,14 +112,14 @@ class MODI:
         elif conn_type == 'can':
             return im('modi.task.can_task').CanTask(verbose)
         elif conn_type == 'vir':
-            return im('modi.task.vir_task').VirTask(verbose)
+            return im('modi.task.vir_task').VirTask(verbose, virtual_modules)
         elif conn_type == 'ble':
             mod_path = {
                 'win32': 'modi.task.ble_task.ble_task_win',
                 'linux': 'modi.task.ble_task.ble_task_rpi',
                 'darwin': 'modi.task.ble_task.ble_task_mac',
             }.get(sys.platform)
-            return im(mod_path).BleTask(verbose, uuid)
+            return im(mod_path).BleTask(verbose, network_uuid)
         else:
             raise ValueError(f'Invalid conn mode {conn_type}')
 

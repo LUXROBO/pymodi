@@ -6,9 +6,10 @@ from virtual_modi import VirtualBundle
 
 class VirTask(ConnTask):
 
-    def __init__(self, verbose=False):
+    def __init__(self, verbose=False, virtual_modules=None):
         print("Initiating virtual connection...")
         super().__init__(verbose)
+        self.__virtual_modules = virtual_modules
         self.__json_buffer = b''
 
     class VirBus:
@@ -17,12 +18,13 @@ class VirTask(ConnTask):
         PyMODI and VirtualMODI respectively.
         """
 
-        def __init__(self):
+        def __init__(self, virtual_modules=None):
             self._virtual_bundle = None
+            self._virtual_modules = virtual_modules
 
         def open(self):
             # VirtualBundle asynchronously generates MODI json messages
-            self._virtual_bundle = VirtualBundle()
+            self._virtual_bundle = VirtualBundle(modules=self._virtual_modules)
             self._virtual_bundle.open()
 
         def close(self):
@@ -42,7 +44,7 @@ class VirTask(ConnTask):
     # Inherited Methods
     #
     def open_conn(self):
-        self._bus = self.VirBus()
+        self._bus = self.VirBus(virtual_modules=self.__virtual_modules)
         self._bus.open()
 
     def close_conn(self):
