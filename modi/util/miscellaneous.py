@@ -38,7 +38,7 @@ def get_module_from_name(module_type: str):
         module_module = find_spec(f'modi.module.output_module.{module_type}')
     if not module_module:
         module_module = find_spec(f'modi.module.setup_module.{module_type}')
-    module_module = module_module.loader.load_module()
+    module_module = module_module.loader.load_module(module_module.name)
     return getattr(module_module, module_name)
 
 
