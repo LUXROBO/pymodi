@@ -94,18 +94,18 @@ class MODI:
     #    upload_file(filepath, remote_path)
 
     @staticmethod
-    def __init_task(conn_mode, verbose, port, uuid):
-        if not conn_mode:
+    def __init_task(conn_type, verbose, port, uuid):
+        if not conn_type:
             is_can = not is_network_module_connected() and is_on_pi()
-            conn_mode = 'can' if is_can else 'ser'
+            conn_type = 'can' if is_can else 'ser'
 
-        if conn_mode == 'ser':
+        if conn_type == 'ser':
             return im('modi.task.ser_task').SerTask(verbose, port)
-        elif conn_mode == 'can':
+        elif conn_type == 'can':
             return im('modi.task.can_task').CanTask(verbose)
-        elif conn_mode == 'vir':
+        elif conn_type == 'vir':
             return im('modi.task.vir_task').VirTask(verbose)
-        elif conn_mode == 'ble':
+        elif conn_type == 'ble':
             mod_path = {
                 'win32': 'modi.task.ble_task.ble_task_win',
                 'linux': 'modi.task.ble_task.ble_task_rpi',
@@ -113,7 +113,7 @@ class MODI:
             }.get(sys.platform)
             return im(mod_path).BleTask(verbose, uuid)
         else:
-            raise ValueError(f'Invalid conn mode {conn_mode}')
+            raise ValueError(f'Invalid conn mode {conn_type}')
 
     def open(self):
         atexit.register(self.close)
