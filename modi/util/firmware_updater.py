@@ -67,23 +67,20 @@ class STM32FirmwareUpdater:
 
     def update_module_firmware(self, update_network_base=False):
         if update_network_base:
-            print(
-                "To update network base, "
-                "make sure that you have connected network module only."
-            )
-
-            # TODO: Retrieve network module only...
-            # delay = 0.1
-            # timeout = 3
-            # while not self.network_id:
-            #    if timeout <= 0:
-            #        raise Exception("Cannot obtain network module id!!")
-            #    self.request_network_id()
-            #    timeout -= delay
-            #    time.sleep(delay)
-            # self.request_to_update_firmware(self.network_id, is_network=True)
+            input()
+            # TODO: Retrieve network id and update it accordingly
+            timeout, delay = 3, 0.1
+            while not self.network_id:
+                if timeout <= 0:
+                    raise Exception("Cannot obtain network module id!!")
+                self.request_network_id()
+                timeout -= delay
+                time.sleep(delay)
+            print(f'request to update firmware of network({self.network_id})')
+            self.request_to_update_firmware(self.network_id, is_network=True)
             self.update_network_base = True
-            self.request_to_update_firmware(0xFFF, is_network=True)
+            #self.request_to_update_firmware(0xFFF, is_network=True)
+            input()
         else:
             self.reset_state()
             for target in self.__target_ids:
@@ -128,10 +125,13 @@ class STM32FirmwareUpdater:
                 module_id, 4, Module.PNP_OFF
             )
             self.__conn.send_nowait(firmware_update_message)
-            input(
-                "Please physically re-connect your network module!! "
-                "\nOnce reconnected, press ENTER to continue updating:"
-            )
+            # TODO: Disconnect the serial then reconnect with a different port
+            time.sleep(0.5)
+            #self.close()
+            time.sleep(0.5)
+            #self.__conn = self.__open_conn()
+            #self.__conn.open_conn()
+            input()
         else:
             firmware_update_message = self.__set_module_state(
                 module_id, Module.UPDATE_FIRMWARE, Module.PNP_OFF
@@ -397,7 +397,8 @@ class STM32FirmwareUpdater:
             pass
         return
 
-    def __set_network_state(self, destination_id: int, module_state: int,
+    @staticmethod
+    def __set_network_state(destination_id: int, module_state: int,
                             pnp_state: int) -> str:
         """ Generate message for set module state and pnp state
 
@@ -425,7 +426,8 @@ class STM32FirmwareUpdater:
 
         return json.dumps(message, separators=(",", ":"))
 
-    def __set_module_state(self, destination_id: int, module_state: int,
+    @staticmethod
+    def __set_module_state(destination_id: int, module_state: int,
                            pnp_state: int) -> str:
         """ Generate message for set module state and pnp state
 
