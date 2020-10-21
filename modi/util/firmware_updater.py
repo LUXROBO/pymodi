@@ -68,8 +68,6 @@ class STM32FirmwareUpdater:
     def update_module_firmware(self, update_network_base=False):
         if update_network_base:
             self.update_network_base = True
-            # TODO: Remove this hacky code for base update
-            input()
             # Retrieve the network id only and update it accordingly
             timeout, delay = 3, 0.1
             while not self.network_id:
@@ -83,6 +81,7 @@ class STM32FirmwareUpdater:
                 f'({self.network_id})'
             )
             self.request_to_update_firmware(self.network_id, is_network=True)
+            self.update_event.wait()
         else:
             self.reset_state()
             for target in self.__target_ids:
@@ -130,12 +129,13 @@ class STM32FirmwareUpdater:
             # TODO: Disconnect the serial then reconnect with a different port
             print('Temporally disconnecting the serial connection...')
             self.close()
-            time.sleep(0.5)
+            time.sleep(1)
 
             print('Re-initializing the serial connection for the update...')
             self.__conn = self.__open_conn()
             self.__conn.open_conn()
             self.__running = True
+            th.Thread(target=self.__read_conn, daemon=True).start()
         else:
             firmware_update_message = self.__set_module_state(
                 module_id, Module.UPDATE_FIRMWARE, Module.PNP_OFF
