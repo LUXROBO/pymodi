@@ -81,8 +81,8 @@ class STM32FirmwareUpdater:
             #    self.request_network_id()
             #    timeout -= delay
             #    time.sleep(delay)
-            # self.update_network_base = True
             # self.request_to_update_firmware(self.network_id, is_network=True)
+            self.update_network_base = True
             self.request_to_update_firmware(0xFFF, is_network=True)
         else:
             self.reset_state()
