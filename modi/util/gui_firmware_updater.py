@@ -138,7 +138,7 @@ class Form(QtWidgets.QDialog):
         stm32_updater.set_ui(self.ui)
         th.Thread(
             target=stm32_updater.update_module_firmware,
-            args=True,
+            args=[True],
             daemon=True
         ).start()
         self.firmware_updater = stm32_updater
