@@ -67,8 +67,10 @@ class STM32FirmwareUpdater:
 
     def update_module_firmware(self, update_network_base=False):
         if update_network_base:
+            self.update_network_base = True
+            # TODO: Remove this hacky code for base update
             input()
-            # TODO: Retrieve network id and update it accordingly
+            # Retrieve the network id only and update it accordingly
             timeout, delay = 3, 0.1
             while not self.network_id:
                 if timeout <= 0:
@@ -76,11 +78,11 @@ class STM32FirmwareUpdater:
                 self.request_network_id()
                 timeout -= delay
                 time.sleep(delay)
-            print(f'request to update firmware of network({self.network_id})')
+            print(
+                f'Sending a request to update firmware of network '
+                f'({self.network_id})'
+            )
             self.request_to_update_firmware(self.network_id, is_network=True)
-            self.update_network_base = True
-            #self.request_to_update_firmware(0xFFF, is_network=True)
-            input()
         else:
             self.reset_state()
             for target in self.__target_ids:
@@ -126,12 +128,14 @@ class STM32FirmwareUpdater:
             )
             self.__conn.send_nowait(firmware_update_message)
             # TODO: Disconnect the serial then reconnect with a different port
+            print('Temporally disconnecting the serial connection...')
+            self.close()
             time.sleep(0.5)
-            #self.close()
-            time.sleep(0.5)
-            #self.__conn = self.__open_conn()
-            #self.__conn.open_conn()
-            input()
+
+            print('Re-initializing the serial connection for the update...')
+            self.__conn = self.__open_conn()
+            self.__conn.open_conn()
+            self.__running = True
         else:
             firmware_update_message = self.__set_module_state(
                 module_id, Module.UPDATE_FIRMWARE, Module.PNP_OFF
