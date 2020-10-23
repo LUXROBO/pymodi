@@ -85,6 +85,7 @@ class STM32FirmwareUpdater:
                 f'Sending a request to update firmware of network '
                 f'({self.network_id})'
             )
+            # TODO: skip if network is in update mode(i.e. emits red light)
             self.request_to_update_firmware(self.network_id, is_network=True)
             self.update_event.wait()
         else:
@@ -104,6 +105,17 @@ class STM32FirmwareUpdater:
             return im('modi.task.can_task').CanTask()
         else:
             return im('modi.task.ser_task').SerTask()
+
+    def reinitialize_serial_connection(self):
+        print('Temporally disconnecting the serial connection...')
+        self.close()
+        time.sleep(1)
+
+        print('Re-initializing the serial connection for the update...')
+        self.__conn = self.__open_conn()
+        self.__conn.open_conn()
+        self.__running = True
+        th.Thread(target=self.__read_conn, daemon=True).start()
 
     def reset_state(self, update_in_progress: bool = False) -> None:
         """ Reset firmware updater's state
@@ -131,16 +143,7 @@ class STM32FirmwareUpdater:
                 module_id, 4, Module.PNP_OFF
             )
             self.__conn.send_nowait(firmware_update_message)
-            # TODO: Disconnect the serial then reconnect with a different port
-            print('Temporally disconnecting the serial connection...')
-            self.close()
-            time.sleep(1)
-
-            print('Re-initializing the serial connection for the update...')
-            self.__conn = self.__open_conn()
-            self.__conn.open_conn()
-            self.__running = True
-            th.Thread(target=self.__read_conn, daemon=True).start()
+            self.reinitialize_serial_connection()
         else:
             firmware_update_message = self.__set_module_state(
                 module_id, Module.UPDATE_FIRMWARE, Module.PNP_OFF
