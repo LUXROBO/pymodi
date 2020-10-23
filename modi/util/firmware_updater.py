@@ -81,12 +81,19 @@ class STM32FirmwareUpdater:
                 self.request_network_id()
                 timeout -= delay
                 time.sleep(delay)
-            print(
-                f'Sending a request to update firmware of network '
-                f'({self.network_id})'
-            )
-            # TODO: skip if network is in update mode(i.e. emits red light)
-            self.request_to_update_firmware(self.network_id, is_network=True)
+            """
+            If network id could not be retrieved, it's probably the case that
+            the network is already in the update progress. As such, we skip to
+            request to update the base firmware.
+            """
+            if self.network_id != 0xFFF:
+                print(
+                    f'Sending a request to update firmware of network '
+                    f'({self.network_id})'
+                )
+                self.request_to_update_firmware(
+                    self.network_id, is_network=True
+                )
             self.update_event.wait()
         else:
             self.reset_state()
