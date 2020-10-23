@@ -72,7 +72,12 @@ class STM32FirmwareUpdater:
             timeout, delay = 3, 0.1
             while not self.network_id:
                 if timeout <= 0:
-                    raise Exception("Cannot obtain network module id!!")
+                    print(
+                        'Could not retrieve network id, '
+                        'broadcast id will be used instead.'
+                    )
+                    self.network_id = 0xFFF
+                    break
                 self.request_network_id()
                 timeout -= delay
                 time.sleep(delay)
@@ -382,7 +387,6 @@ class STM32FirmwareUpdater:
             if self.update_network_base:
                 print("Please physically reconnect your network module!!")
                 print("Press ENTER to exit update mode!!")
-            self.update_event.set()
             self.update_in_progress = False
 
             if self.ui:
@@ -393,6 +397,8 @@ class STM32FirmwareUpdater:
                 # TODO: Make program available after each firmware update
                 time.sleep(3)
                 os._exit(0)
+
+            self.update_event.set()
 
     @staticmethod
     def __delay(span):
