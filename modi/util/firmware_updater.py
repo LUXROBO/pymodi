@@ -390,12 +390,14 @@ class STM32FirmwareUpdater:
             if self.update_network_base:
                 print("Please physically reconnect your network module!!")
                 print("Press ENTER to exit update mode!!")
+                self.reinitialize_serial_connection()
+                time.sleep(0.5)
             self.update_in_progress = False
 
             if self.ui:
                 self.ui.status_label.setText(
-                    "STM32 firmware update is done!\n"
-                    "This program will terminate in 3 seconds..."
+                    "STM32 firmware update is completed!\n"
+                    "The program will terminate in 3 seconds..."
                 )
                 # TODO: Make program available after each firmware update
                 time.sleep(3)
