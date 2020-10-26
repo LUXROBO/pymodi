@@ -137,7 +137,7 @@ class MODI:
         self._exe_thrd.close()
         self._conn.close_conn()
 
-    def send(self, message) -> None:
+    def send(self, message):
         """Low level method to send json pkt directly to modules
 
         :param message: Json packet to send
@@ -145,7 +145,7 @@ class MODI:
         """
         self._conn.send_nowait(message)
 
-    def recv(self) -> Optional[str]:
+    def recv(self):
         """Low level method to receive json pkt directly from modules
 
         :return: Json msg received
@@ -153,7 +153,7 @@ class MODI:
         """
         return self._conn.recv()
 
-    def print_topology_map(self, print_id: bool = False) -> None:
+    def print_topology_map(self, print_id=False):
         """Prints out the topology map
 
         :param print_id: if True, the result includes module id
