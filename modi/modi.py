@@ -1,10 +1,10 @@
 """Main MODI module."""
 
-import atexit
-import time
-from importlib import import_module as im
-from typing import Optional
 import sys
+import time
+import atexit
+
+from importlib import import_module as im
 
 from modi._exe_thrd import ExeThrd
 from modi.util.connection_util import is_network_module_connected, is_on_pi
