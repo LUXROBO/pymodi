@@ -5,7 +5,7 @@
 --------
 <div align="center">
 
-[![Supported Python Versions](https://img.shields.io/pypi/pyversions/pymodi.svg?style=flat-square)](https://pypi.python.org/pypi/pymodi)
+[![Python Versions](https://img.shields.io/pypi/pyversions/pymodi.svg?style=flat-square)](https://pypi.python.org/pypi/pymodi)
 [![PyPI Release (latest by date)](https://img.shields.io/github/v/release/LUXROBO/pymodi?style=flat-square)](https://pypi.python.org/pypi/pymodi)
 [![Read the Docs (version)](https://img.shields.io/readthedocs/pymodi/master?style=flat-square)](https://pymodi.readthedocs.io/en/master/?badge=master)
 [![GitHub Workflow Status (Build)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Build%20Status/master?style=flat-square)](https://github.com/LUXROBO/pymodi/actions)
@@ -71,11 +71,11 @@ Installation
 # Install new python environment for PyMODI package, choose python version >= 3.6
 conda create --name pymodi python=3.6
 
-# Make sure that your python's version is compatible with PyMODI
-python --version
-
 # After you properly install the python environment, activate it
 conda activate pymodi
+
+# Ensure that your python version is compatible with PyMODI
+python --version
 ```
 
 Install the latest PyMODI if you haven't installed it yet:
