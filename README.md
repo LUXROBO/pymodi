@@ -173,7 +173,7 @@ $ python -m modi --update_network
 
 To update MODI network module's base (as above, the network module must be connected on serial),
 ```commandline
-$ python -m modi --update_base
+$ python -m modi --update_network_base
 ```
 
 To update MODI modules (all modules but the network module),
