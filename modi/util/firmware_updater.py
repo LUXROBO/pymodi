@@ -32,6 +32,7 @@ class STM32FirmwareUpdater:
     ERASE_COMPLETE = 7
 
     def __init__(self, is_os_update=True, target_ids=(0xFFF, )):
+        self.update_network_base = False
         self.__conn = self.__open_conn()
         self.__conn.open_conn()
         th.Thread(target=self.__read_conn, daemon=True).start()
@@ -46,7 +47,6 @@ class STM32FirmwareUpdater:
         self.modules_to_update = []
         self.modules_updated = []
         self.network_id = None
-        self.update_network_base = False
         self.ui = None
 
         self.request_network_id()
