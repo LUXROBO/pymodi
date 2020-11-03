@@ -1,4 +1,8 @@
 
+import socket
+
+import threading as th
+
 from modi.task.conn_task import ConnTask
 
 from virtual_modi import VirtualBundle
@@ -9,7 +13,7 @@ class VirTask(ConnTask):
     def __init__(self, verbose=False, virtual_modules=None):
         print("Initiating virtual connection...")
         super().__init__(verbose)
-        self.__virtual_modules = virtual_modules
+        self._bus = self.VirBus(virtual_modules=virtual_modules)
         self.__json_buffer = b''
 
     class VirBus:
@@ -18,33 +22,52 @@ class VirTask(ConnTask):
         PyMODI and VirtualMODI respectively.
         """
 
+        HOST = '127.0.0.1'
+        PORT = 12345
+        RECV_BUFF_SIZE = 1024
+
         def __init__(self, virtual_modules=None):
-            self._virtual_bundle = None
-            self._virtual_modules = virtual_modules
+            # VirtualBundle asynchronously generates MODI messages
+            self._virtual_bundle = VirtualBundle(
+                conn_type='tcp', modi_version=1, modules=virtual_modules
+            )
+            self._s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         def open(self):
-            # VirtualBundle asynchronously generates MODI json messages
-            self._virtual_bundle = VirtualBundle(modules=self._virtual_modules)
-            self._virtual_bundle.open()
+            # Open server, VirtualMODI
+            th.Thread(target=self._virtual_bundle.open, daemon=True).start()
+
+            # Open client, PyMODI Side
+            self._s.connect((self.HOST, self.PORT))
 
         def close(self):
-            # All running threads (mostly for read and write) are terminated
+            # Close server, VirtualMODI
             self._virtual_bundle.close()
-            self._virtual_bundle = None
+
+            # Close client, PyMODI Side
+            self._s.close()
 
         def write(self, msg):
-            # Pass the message to virtual interface, a virtual bundle
-            self._virtual_bundle.recv(msg)
+            # Pass the outgoing message to virtual bundle
+            self._s.sendall(msg)
 
         def read(self):
-            # Flush all stacked messages from the virtual bundle interface
-            return self._virtual_bundle.send()
+            # Flush all stacked messages from the virtual bundle
+            return self._s.recv(self.RECV_BUFF_SIZE)
+
+        def readall(self):
+            data = bytearray()
+            while True:
+                packet = self._s.recv(self.RECV_BUFF_SIZE)
+                if not packet:
+                    break
+                data.extend(packet)
+            return data
 
     #
     # Inherited Methods
     #
     def open_conn(self):
-        self._bus = self.VirBus(virtual_modules=self.__virtual_modules)
         self._bus.open()
 
     def close_conn(self):
