@@ -10,10 +10,12 @@ from virtual_modi import VirtualBundle
 
 class VirTask(ConnTask):
 
-    def __init__(self, verbose=False, virtual_modules=None):
+    def __init__(self, verbose=False, virtual_modules=None, modi_version=1):
         print("Initiating virtual connection...")
         super().__init__(verbose)
-        self._bus = self.VirBus(virtual_modules=virtual_modules)
+        self._bus = self.VirBus(
+            virtual_modules=virtual_modules, modi_version=modi_version
+        )
         self.__json_buffer = b''
 
     class VirBus:
@@ -26,10 +28,12 @@ class VirTask(ConnTask):
         PORT = 12345
         RECV_BUFF_SIZE = 1024
 
-        def __init__(self, virtual_modules=None):
+        def __init__(self, virtual_modules=None, modi_version=1):
             # VirtualBundle asynchronously generates MODI messages
             self._virtual_bundle = VirtualBundle(
-                conn_type='tcp', modi_version=1, modules=virtual_modules
+                conn_type='tcp',
+                modi_version=modi_version,
+                modules=virtual_modules
             )
             self._s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
