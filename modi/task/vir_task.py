@@ -59,7 +59,7 @@ class VirTask(ConnTask):
             # Flush all stacked messages from the virtual bundle
             return self._s.recv(self.RECV_BUFF_SIZE)
 
-        def __recvall(self):
+        def __recv_all(self):
             data = bytearray()
             while True:
                 packet = self._s.recv(self.RECV_BUFF_SIZE)
