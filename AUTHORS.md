@@ -20,3 +20,5 @@ Contributors
 -   Hyeonwoo Park (patrick@luxrobo.com)
 -   Jiwoong Yeon (duswldnd12@naver.com)
 -   Sebeom Lee (moses97@gmail.com)
+-   Doyeon Kim (archdo0909@gmail.com)
+-   Seokyoung Woo (wsy8029@gmail.com)
