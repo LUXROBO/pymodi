@@ -3,6 +3,7 @@
 import sys
 import time
 import atexit
+import logging
 
 from importlib import import_module as im
 
@@ -15,6 +16,8 @@ from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import STM32FirmwareUpdater
 from modi.util.firmware_updater import ESP32FirmwareUpdater
 
+from modi.about import __version__
+
 
 class MODI:
 
@@ -22,6 +25,9 @@ class MODI:
         self, modi_version=1, conn_type="", verbose=False, port=None,
         network_uuid="", virtual_modules=None,
     ):
+        # Init logger
+        __logger = self.__init_logger()
+
         if virtual_modules and conn_type != "vir":
             raise ValueError(
                 "Virtual modules can only be defined in virtual connection"
@@ -78,6 +84,19 @@ class MODI:
                 )
                 self.open()
         atexit.register(self.close)
+
+    def __init_logger(self):
+        logger = logging.getLogger(f'PyMODI (v{__version__}) Logger')
+        logger.setLevel(logging.DEBUG)
+
+        formatter = logging.Formatter(
+            '%(asctime)s - %(levelname)s - %(message)s'
+        )
+        file_handler = logging.FileHandler('pymodi.log')
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+        return logger
 
     def __wait_user_code_check(self):
         def is_not_checked(module):
