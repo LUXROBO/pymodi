@@ -392,11 +392,8 @@ class STM32FirmwareUpdater:
             print("Reboot message has been sent to all connected modules")
             self.reset_state()
             if self.update_network_base:
-                print("Please physically reconnect your network module!!")
-                print("Press ENTER to exit update mode!!")
                 self.reinitialize_serial_connection()
                 time.sleep(0.5)
-            self.update_in_progress = False
 
             if self.ui:
                 curr_tick = 3
@@ -410,6 +407,7 @@ class STM32FirmwareUpdater:
                 os._exit(0)
 
             time.sleep(1)
+            self.update_in_progress = False
             self.update_event.set()
 
     @staticmethod
