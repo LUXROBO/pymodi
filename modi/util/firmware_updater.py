@@ -400,7 +400,7 @@ class STM32FirmwareUpdater:
                 while curr_tick > 0:
                     self.ui.status_label.setText(
                         f"STM32 firmware update is completed!\n"
-                        f"This program will terminate in {curr_tick} seconds..."
+                        f"This program will terminate in {curr_tick} seconds.."
                     )
                     time.sleep(1)
                     curr_tick -= 1
@@ -907,7 +907,7 @@ class ESP32FirmwareUpdater(serial.Serial):
             while curr_tick > 0:
                 self.ui.status_label.setText(
                     f"ESP32 firmware update is completed!\n"
-                    f"This program will terminate in {curr_tick} seconds..."
+                    f"This program will terminate in {curr_tick} seconds.."
                 )
                 time.sleep(1)
                 curr_tick -= 1
