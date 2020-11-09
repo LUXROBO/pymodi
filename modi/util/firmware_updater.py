@@ -94,13 +94,13 @@ class STM32FirmwareUpdater:
                 self.request_to_update_firmware(
                     self.network_id, is_network=True
                 )
-            self.update_event.wait()
         else:
             self.reset_state()
             for target in self.__target_ids:
                 self.request_to_update_firmware(target)
-            self.update_event.wait()
-            print("Module firmwares have been updated!")
+        self.update_event.wait()
+        print("Module firmwares have been updated!")
+        self.close()
 
     def close(self):
         self.__running = False
@@ -266,10 +266,7 @@ class STM32FirmwareUpdater:
                 self.ui.curr_module_img.setPixmap(module_pixmap)
 
             # Init path to binary file
-            local_bin_path = (
-                f"{module_type.lower()}.bin"
-            )
-            bin_path = path.join(root_path, local_bin_path)
+            bin_path = path.join(root_path, f"{module_type.lower()}.bin")
             if self.ui and self.ui.installation:
                 bin_path = os.path.dirname(__file__).replace(
                     'util', f'{module_type.lower()}.bin'
@@ -402,14 +399,17 @@ class STM32FirmwareUpdater:
             self.update_in_progress = False
 
             if self.ui:
-                self.ui.status_label.setText(
-                    "STM32 firmware update is completed!\n"
-                    "The program will terminate in 3 seconds..."
-                )
-                # TODO: Make program available after each firmware update
-                time.sleep(3)
+                curr_tick = 3
+                while curr_tick > 0:
+                    self.ui.status_label.setText(
+                        f"STM32 firmware update is completed!\n"
+                        f"This program will terminate in {curr_tick} seconds..."
+                    )
+                    time.sleep(1)
+                    curr_tick -= 1
                 os._exit(0)
 
+            time.sleep(1)
             self.update_event.set()
 
     @staticmethod
@@ -857,6 +857,17 @@ class ESP32FirmwareUpdater(serial.Serial):
                     self.__address.pop(i)
                     self.file_path.pop(i)
 
+            module_image_path = path.join(
+                path.dirname(__file__),
+                '..', 'assets', 'image', 'network.png'
+            )
+            if self.ui.installation:
+                module_image_path = path.dirname(__file__).replace(
+                    'util', 'network.png'
+                )
+            module_pixmap = QPixmap(module_image_path)
+            self.ui.curr_module_img.setPixmap(module_pixmap)
+
         self.update_in_progress = True
         self.__boot_to_app()
         self.__version_to_update = self.__get_latest_version()
@@ -894,13 +905,18 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.update_in_progress = False
 
         if self.ui:
-            self.ui.status_label.setText(
-                "ESP32 firmware update is done!\n"
-                "This program will terminate in 3 seconds..."
-            )
-            # TODO: Make program available after each firmware update
-            time.sleep(3)
+            curr_tick = 3
+            while curr_tick > 0:
+                self.ui.status_label.setText(
+                    f"ESP32 firmware update is completed!\n"
+                    f"This program will terminate in {curr_tick} seconds..."
+                )
+                time.sleep(1)
+                curr_tick -= 1
             os._exit(0)
+
+        time.sleep(1)
+        self.close()
 
     def __device_ready(self):
         print("Redirecting connection to esp device...")
