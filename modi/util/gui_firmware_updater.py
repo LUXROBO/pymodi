@@ -21,7 +21,7 @@ class Form(QtWidgets.QDialog):
 
     def handle_key_press_event(self):
         modifiers = QtWidgets.QApplication.keyboardModifiers()
-        # TODO: Fix an issue with, (Qt.ControlModifier | Qt.ShiftModifier)
+        # TODO: Fix issue with, (Qt.ControlModifier | Qt.ShiftModifier)
         if modifiers == Qt.ShiftModifier:
             if not self.is_dev_mode:
                 self.ui.developer_frame.show()
@@ -112,7 +112,6 @@ class Form(QtWidgets.QDialog):
             self.ui.ota_data_initial_rbutton.setEnabled(True)
             self.ui.partitions_rbutton.setEnabled(True)
 
-    # TODO: Fix serial issue in ESP32 Firmware Updater
     def update_network_esp32(self):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
