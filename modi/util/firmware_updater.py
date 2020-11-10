@@ -251,7 +251,7 @@ class STM32FirmwareUpdater:
         if self.__is_os_update:
             if self.ui:
                 self.ui.status_label.setText(
-                    "Start updating the STM32 firmware"
+                    "모듈 초기화를 시작합니다!!!"
                 )
                 module_image_path = path.join(
                     path.dirname(__file__),
@@ -284,10 +284,10 @@ class STM32FirmwareUpdater:
 
             if self.ui:
                 self.ui.status_label.setText(
-                    "STM32 firmware update is in progress..."
+                    "모듈 초기화가 진행 중입니다..."
                 )
                 self.ui.local_module.setText(
-                    f"Updating: {module_type.title()} ({module_id})"
+                    f"업데이트 중: {module_type.title()} ({module_id})"
                 )
                 self.ui.local_percentage.setText("0%")
 
@@ -396,15 +396,12 @@ class STM32FirmwareUpdater:
                 time.sleep(0.5)
 
             if self.ui:
-                curr_tick = 3
-                while curr_tick > 0:
-                    self.ui.status_label.setText(
-                        f"STM32 firmware update is completed!\n"
-                        f"This program will terminate in {curr_tick} seconds.."
-                    )
-                    time.sleep(1)
-                    curr_tick -= 1
-                os._exit(0)
+                self.ui.status_label.setText(
+                    "모듈 초기화가 성공적으로 종료되었습니다!\n"
+                    "곧바로 다른 업데이트를 진행하셔도 되지만 안전한 시리얼 컨넥션을 위해\n"
+                    "이 프로그램을 종료하시는 것을 추천드립니다.\n"
+                    "프로그램의 종료는 ESC를 눌러 하실 수 있습니다."
+                )
 
             time.sleep(1)
             self.update_in_progress = False
@@ -842,7 +839,7 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     def update_firmware(self, force=False):
         if self.ui:
-            self.ui.status_label.setText("Updating network ESP32 firmware!")
+            self.ui.status_label.setText("네트워크 모듈 업데이트를 시작합니다!!!")
 
             for i, rbutton in enumerate([
                 self.ui.bootloader_rbutton,
@@ -881,7 +878,7 @@ class ESP32FirmwareUpdater(serial.Serial):
         print(f"Updating v{self.version} to v{self.__version_to_update}")
         if self.ui:
             self.ui.status_label.setText(
-                f"Updating network firmware to v{self.__version_to_update}"
+                f"네트워크 모듈의 버전을 v{self.__version_to_update}로 업데이트 합니다."
             )
         firmware_buffer = self.__compose_binary_firmware()
 
@@ -892,7 +889,7 @@ class ESP32FirmwareUpdater(serial.Serial):
         manager = None
 
         if self.ui:
-            self.ui.local_module.setText("Update in Progress...")
+            self.ui.local_module.setText("업데이트가 진행 중입니다!")
         self.__write_binary_firmware(firmware_buffer, manager)
         print("Booting to application...")
         self.__wait_for_json()
@@ -903,15 +900,12 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.update_in_progress = False
 
         if self.ui:
-            curr_tick = 3
-            while curr_tick > 0:
-                self.ui.status_label.setText(
-                    f"ESP32 firmware update is completed!\n"
-                    f"This program will terminate in {curr_tick} seconds.."
-                )
-                time.sleep(1)
-                curr_tick -= 1
-            os._exit(0)
+            self.ui.status_label.setText(
+                "네트워크 모듈 업데이트가 성공적으로 끝났습니다!\n"
+                "곧바로 다른 업데이트를 진행하셔도 되지만 안전한 시리얼 컨넥션을 위해\n"
+                "이 프로그램을 종료하시는 것을 추천드립니다.\n"
+                "프로그램의 종료는 ESC를 눌러 하실 수 있습니다."
+            )
 
         time.sleep(1)
         self.close()

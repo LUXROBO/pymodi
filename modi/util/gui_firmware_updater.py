@@ -62,10 +62,6 @@ class Form(QtWidgets.QDialog):
         self.ui.update_stm32_modules.setFocus(False)
         self.ui.update_network_stm32.setFocus(False)
 
-        self.ui.push_button.clicked.connect(self.push)
-        self.ui.push_button.setAutoDefault(True)
-        self.ui.push_button.setFocus(True)
-
         # Init module image
         module_image_path = os.path.join(
             os.path.dirname(__file__),
@@ -77,20 +73,6 @@ class Form(QtWidgets.QDialog):
             )
         module_pixmap = QPixmap(module_image_path)
         self.ui.curr_module_img.setPixmap(module_pixmap)
-
-        # Init password field for enabling developer mode
-        self.ui.password_field.setEchoMode(QtWidgets.QLineEdit.Password)
-        self.ui.password_field.returnPressed.connect(self.process_password)
-
-        # Init radio button states
-        self.ui.bootloader_rbutton.setEnabled(False)
-        self.ui.esp32_rbutton.setEnabled(False)
-        self.ui.modi_ota_factory_rbutton.setEnabled(False)
-        self.ui.ota_data_initial_rbutton.setEnabled(False)
-        self.ui.partitions_rbutton.setEnabled(False)
-
-        # Hide ui available in the developer mode
-        self.ui.developer_frame.hide()
 
         # Set up field variables
         self.firmware_updater = None
