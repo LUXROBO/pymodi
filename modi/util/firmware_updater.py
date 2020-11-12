@@ -841,17 +841,6 @@ class ESP32FirmwareUpdater(serial.Serial):
         if self.ui:
             self.ui.status_label.setText("네트워크 모듈 업데이트를 시작합니다!!!")
 
-            for i, rbutton in enumerate([
-                self.ui.bootloader_rbutton,
-                self.ui.esp32_rbutton,
-                self.ui.modi_ota_factory_rbutton,
-                self.ui.ota_data_initial_rbutton,
-                self.ui.partitions_rbutton
-            ]):
-                if not rbutton.isChecked():
-                    self.__address.pop(i)
-                    self.file_path.pop(i)
-
             module_image_path = path.join(
                 path.dirname(__file__),
                 '..', 'assets', 'image', 'network.png'
@@ -908,6 +897,8 @@ class ESP32FirmwareUpdater(serial.Serial):
             )
 
         time.sleep(1)
+        self.flushInput()
+        self.flushOutput()
         self.close()
 
     def __device_ready(self):
@@ -1165,6 +1156,7 @@ class ESP32FirmwareUpdater(serial.Serial):
                       end='')
             else:
                 current = curr_seq + seq
+                current = 100 if current > 99 else current
                 total = total_seq
                 self.ui.local_percentage.setText(
                     f"{round(100 * current / total, 2)} %"
