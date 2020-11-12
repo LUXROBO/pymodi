@@ -1156,10 +1156,11 @@ class ESP32FirmwareUpdater(serial.Serial):
                       end='')
             else:
                 current = curr_seq + seq
-                current = 100 if current > 99 else current
                 total = total_seq
+                percentage = round(100 * current / total, 2)
+                percentage = 100 if percentage > 99 else percentage
                 self.ui.local_percentage.setText(
-                    f"{round(100 * current / total, 2)} %"
+                    f"{percentage} %"
                 )
             self.__write_flash_block(block, seq)
         return len(block_queue)
