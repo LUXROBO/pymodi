@@ -27,8 +27,8 @@ class MODI:
     ):
         # Init logger
         __logger = self.__init_logger()
-        __logger.info('modi version:', modi_version)
-        __logger.info('connection type:', conn_type)
+        #__logger.info('modi version:', modi_version)
+        #__logger.info('connection type:', conn_type)
 
         if virtual_modules and conn_type != "vir":
             raise ValueError(
