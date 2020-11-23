@@ -143,12 +143,12 @@ class ExeTask:
         for module in self._modules:
             if module.module_type != 'network' and \
                     curr_time - module.last_updated > 2:
-                if not module.has_printed:
-                    print(
-                        f"{module.module_type} ({module_id}) "
-                        f"has been disconnected!!"
-                    )
-                    module.has_printed = True
+                # if not module.has_printed:
+                #    print(
+                #        f"{module.module_type.title()} ({module_id}) "
+                #        f"has been disconnected!!"
+                #    )
+                #    module.has_printed = True
                 module.is_connected = False
                 module._last_set_message = None
 
