@@ -1,8 +1,6 @@
 
 import socket
 
-import threading as th
-
 from modi.task.conn_task import ConnTask
 
 from virtual_modi import VirtualBundle
@@ -24,8 +22,6 @@ class VirTask(ConnTask):
         PyMODI and VirtualMODI respectively.
         """
 
-        HOST = '127.0.0.1'
-        PORT = 12345
         RECV_BUFF_SIZE = 1024
 
         def __init__(self, virtual_modules=None, modi_version=1):
@@ -39,10 +35,10 @@ class VirTask(ConnTask):
 
         def open(self):
             # Open server, VirtualMODI
-            th.Thread(target=self._virtual_bundle.open, daemon=True).start()
+            server_host, server_port = self._virtual_bundle.open()
 
             # Open client, PyMODI Side
-            self._s.connect((self.HOST, self.PORT))
+            self._s.connect((server_host, server_port))
 
         def close(self):
             # Close server, VirtualMODI
