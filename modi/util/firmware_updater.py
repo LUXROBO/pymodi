@@ -73,6 +73,7 @@ class STM32FirmwareUpdater:
             while not self.network_id:
                 if timeout <= 0:
                     print(
+                        '\n'
                         'Could not retrieve network id, '
                         'broadcast id will be used instead.'
                     )
