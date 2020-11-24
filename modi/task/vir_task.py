@@ -3,17 +3,13 @@ import socket
 
 from modi.task.conn_task import ConnTask
 
-from virtual_modi import VirtualBundle
-
 
 class VirTask(ConnTask):
 
-    def __init__(self, verbose=False, virtual_modules=None, modi_version=1):
+    def __init__(self, verbose=False):
         print("Initiating virtual connection...")
         super().__init__(verbose)
-        self._bus = self.VirBus(
-            virtual_modules=virtual_modules, modi_version=modi_version
-        )
+        self._bus = self.VirBus()
         self.__json_buffer = b''
 
     class VirBus:
@@ -24,26 +20,17 @@ class VirTask(ConnTask):
 
         RECV_BUFF_SIZE = 1024
 
-        def __init__(self, virtual_modules=None, modi_version=1):
+        def __init__(self, serv_info=('127.0.0.1', 12345)):
             # VirtualBundle asynchronously generates MODI messages
-            self._virtual_bundle = VirtualBundle(
-                conn_type='tcp',
-                modi_version=modi_version,
-                modules=virtual_modules
-            )
             self._s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        def open(self):
-            # Open server, VirtualMODI
-            server_host, server_port = self._virtual_bundle.open()
+            self.serv_host, self.serv_port = serv_info
 
+        def open(self):
             # Open client, PyMODI Side
-            self._s.connect((server_host, server_port))
+            self._s.connect((self.serv_host, self.serv_port))
 
         def close(self):
-            # Close server, VirtualMODI
-            self._virtual_bundle.close()
-
             # Close client, PyMODI Side
             self._s.close()
 
@@ -55,7 +42,7 @@ class VirTask(ConnTask):
             # Flush all stacked messages from the virtual bundle
             return self._s.recv(self.RECV_BUFF_SIZE)
 
-        def __recv_all(self):
+        def __read_all(self):
             data = bytearray()
             while True:
                 packet = self._s.recv(self.RECV_BUFF_SIZE)

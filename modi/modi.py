@@ -23,24 +23,19 @@ class MODI:
 
     def __init__(
         self, modi_version=1, conn_type="", verbose=False, port=None,
-        network_uuid="", virtual_modules=None,
+        network_uuid="",
     ):
         # Init logger
         # __logger = self.__init_logger()
         # __logger.info('modi version:', modi_version)
         # __logger.info('connection type:', conn_type)
-
-        if virtual_modules and conn_type != "vir":
-            raise ValueError(
-                "Virtual modules can only be defined in virtual connection"
-            )
+        print('This PyMODI Object is set to work with MODI 1')
 
         self._modules = list()
         self._topology_data = dict()
 
         self._conn = self.__init_task(
-            conn_type, verbose, port, network_uuid, virtual_modules,
-            modi_version
+            conn_type, verbose, port, network_uuid,
         )
 
         self._exe_thrd = ExeThrd(
@@ -126,7 +121,7 @@ class MODI:
 
     @staticmethod
     def __init_task(
-        conn_type, verbose, port, network_uuid, virtual_modules, modi_version
+        conn_type, verbose, port, network_uuid,
     ):
         if not conn_type:
             is_can = not is_network_module_connected() and is_on_pi()
@@ -137,9 +132,7 @@ class MODI:
         elif conn_type == 'can':
             return im('modi.task.can_task').CanTask(verbose)
         elif conn_type == 'vir':
-            return im('modi.task.vir_task').VirTask(
-                verbose, virtual_modules, modi_version
-            )
+            return im('modi.task.vir_task').VirTask(verbose)
         elif conn_type == 'ble':
             mod_path = {
                 'win32': 'modi.task.ble_task.ble_task_win',
