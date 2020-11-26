@@ -3,7 +3,7 @@ from io import open
 from setuptools import setup, find_packages
 
 
-def get_spec(filename: str, mode: str = "r"):
+def get_spec(filename: str, mode: str = 'r'):
     def wrapper():
         here = path.dirname(__file__)
         result = {}
@@ -30,29 +30,33 @@ setup(
     author_email=about['__email__'],
     description=about['__summary__'],
     long_description=get_readme() + '\n' + get_history(),
-    long_description_content_type="text/markdown",
+    long_description_content_type='text/markdown',
     install_requires=get_requirements(),
     extras_require={'dev': get_requirements_dev()},
     license=about['__license__'],
     include_package_data=True,
-    keywords=["python", "modi"],
-    packages=find_packages(include=['modi', 'modi.util', 'modi.task',
-                                    'modi.task.ble_task', 'modi.module',
-                                    'modi.module.setup_module',
-                                    'modi.module.input_module',
-                                    'modi.module.output_module']),
-    test_suite="tests",
+    keywords=['python', 'modi'],
+    packages=find_packages(
+        include=[
+            'modi', 'modi.util', 'modi.task', 'modi.task.ble_task',
+            'modi.module',
+            'modi.module.setup_module',
+            'modi.module.input_module',
+            'modi.module.output_module'
+        ]
+    ),
+    test_suite='tests',
     url=about['__url__'],
     classifiers=[
-        "Natural Language :: English",
-        "Intended Audience :: Developers",
-        "Intended Audience :: Education",
+        'Natural Language :: English',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Education',
         'Intended Audience :: Information Technology',
         'Intended Audience :: Science/Research',
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
     ],
 )
