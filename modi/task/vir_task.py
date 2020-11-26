@@ -6,10 +6,10 @@ from modi.task.conn_task import ConnTask
 
 class VirTask(ConnTask):
 
-    def __init__(self, verbose=False):
+    def __init__(self, verbose=False, port=12345):
         print("Initiating virtual connection...")
         super().__init__(verbose)
-        self._bus = self.VirBus()
+        self._bus = self.VirBus(serv_info=('127.0.0.1', port))
         self.__json_buffer = b''
 
     class VirBus:

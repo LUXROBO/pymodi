@@ -132,7 +132,7 @@ class MODI:
         elif conn_type == 'can':
             return im('modi.task.can_task').CanTask(verbose)
         elif conn_type == 'vir':
-            return im('modi.task.vir_task').VirTask(verbose)
+            return im('modi.task.vir_task').VirTask(verbose, port)
         elif conn_type == 'ble':
             mod_path = {
                 'win32': 'modi.task.ble_task.ble_task_win',
