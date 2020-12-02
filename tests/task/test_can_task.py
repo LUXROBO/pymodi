@@ -39,9 +39,10 @@ class TestCanTask(unittest.TestCase):
         """Test _send_data method"""
         json_pkt = parse_message(0x03, 0, 1)
         self.can_task.send(json_pkt)
-        self.assertEqual(self.can_task.bus.recv_buffer.get().data,
-                         CanTask.compose_can_msg(json.loads(json_pkt)).data
-                         )
+        self.assertEqual(
+            self.can_task.bus.recv_buffer.get().data,
+            CanTask.compose_can_msg(json.loads(json_pkt)).data
+        )
 
 
 if __name__ == "__main__":
