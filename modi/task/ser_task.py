@@ -23,7 +23,6 @@ class SerTask(ConnTask):
         :return: None
         """
         modi_ports = list_modi_ports()
-        print('?', modi_ports[0].product)
         if not modi_ports:
             raise SerialException("No MODI network module is available")
 
