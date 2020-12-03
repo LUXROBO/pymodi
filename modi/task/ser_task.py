@@ -23,6 +23,7 @@ class SerTask(ConnTask):
         :return: None
         """
         modi_ports = list_modi_ports()
+        print('?', modi_ports[0].product)
         if not modi_ports:
             raise SerialException("No MODI network module is available")
 
@@ -67,7 +68,8 @@ class SerTask(ConnTask):
 
         :return: str
         """
-        self.__json_buffer += self._bus.read_all()
+        buf_temp = self._bus.read_all()
+        self.__json_buffer += buf_temp
         idx = self.__json_buffer.find(b'{')
         if idx < 0:
             self.__json_buffer = b''
