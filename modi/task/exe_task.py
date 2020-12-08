@@ -22,6 +22,7 @@ class ExeTask:
         )
 
         # Request data required to initialize MODI
+        self.__request_module_uuid()
         self.__request_network_uuid()
         self.__request_topology()
 
@@ -228,6 +229,11 @@ class ExeTask:
         """
         self._conn.send_nowait(
             parse_message(0x09, 0, destination_id, (module_state, pnp_state))
+        )
+
+    def __request_module_uuid(self):
+        self._conn.send_nowait(
+            parse_message(0x8, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
         )
 
     def __request_network_uuid(self):
