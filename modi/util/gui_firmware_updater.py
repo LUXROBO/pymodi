@@ -85,6 +85,8 @@ class Form(QtWidgets.QDialog):
     def update_network_esp32(self):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
+        self.ui.console.clear()
+        print('ESP32 Firmware Updater has been initialized for esp update!')
         esp32_updater = ESP32FirmwareUpdater()
         esp32_updater.set_ui(self.ui)
         th.Thread(target=esp32_updater.update_firmware, daemon=True).start()
@@ -93,6 +95,8 @@ class Form(QtWidgets.QDialog):
     def update_stm32_modules(self):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
+        self.ui.console.clear()
+        print('STM32 Firmware Updater has been initialized for module update!')
         stm32_updater = STM32FirmwareUpdater()
         stm32_updater.set_ui(self.ui)
         th.Thread(
@@ -103,6 +107,8 @@ class Form(QtWidgets.QDialog):
     def update_network_stm32(self):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
+        self.ui.console.clear()
+        print('STM32 Firmware Updater has been initialized for base update!')
         stm32_updater = STM32FirmwareUpdater()
         stm32_updater.set_ui(self.ui)
         th.Thread(
