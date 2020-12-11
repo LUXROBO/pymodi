@@ -133,10 +133,9 @@ class ExeTask:
                 module.user_code_status = user_code_state % 2
             # Turn off pnp if pnp flag is on
             if module.module_type != 'network' and user_code_state < 2:
-                #self.__set_module_state(
-                #    module_id, Module.RUN, Module.PNP_OFF
-                #)
-                pass
+                self.__set_module_state(
+                    module_id, Module.RUN, Module.PNP_OFF
+                )
             # Reset disconnection alert status
             if module.has_printed:
                 module.has_printed = False
