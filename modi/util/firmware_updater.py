@@ -1,15 +1,22 @@
 
-import os
+import io
 import sys
 import time
 import json
 import serial
+import zipfile
+import requests
+
 import threading as th
+import urllib.request as ur
 
 from os import path
 from io import open
 from base64 import b64encode, b64decode
+
 from importlib import import_module as im
+
+from urllib.error import URLError
 
 from modi.module.module import Module
 from modi.util.message_util import unpack_data, decode_message, parse_message
@@ -240,22 +247,34 @@ class STM32FirmwareUpdater:
         self.update_in_progress = True
         self.modules_updated.append((module_id, module_type))
 
-        root_path = (
-            path.join(
-                path.dirname(__file__),
-                '..', 'assets', 'firmware', 'stm32'
-            )
-        )
-
         if self.__is_os_update:
             # Init path to binary file
-            bin_path = path.join(root_path, f"{module_type.lower()}.bin")
-            if self.ui and self.ui.installation:
-                bin_path = os.path.dirname(__file__).replace(
-                    'util', f'{module_type.lower()}.bin'
+            if self.update_network_base:
+                root_path = (
+                    'https://download.luxrobo.com/modi-network-os/network.zip'
                 )
-            with open(bin_path, 'rb') as bin_file:
-                bin_buffer = bin_file.read()
+                bin_path = 'network.bin'
+            else:
+                root_path = (
+                    'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
+                )
+                bin_path = (
+                    path.join('skeleton', f'{module_type.lower()}.bin')
+                    if module_type != 'env' else
+                    path.join('skeleton', 'environment.bin')
+                )
+
+            try:
+                # Init bytes data from the given binary file of current module
+                download_response = requests.get(root_path, timeout=5)
+            except URLError:
+                raise URLError(
+                    "Failed to download firmware. Please check your internet."
+                )
+            zip_content = zipfile.ZipFile(
+                io.BytesIO(download_response.content), 'r'
+            )
+            bin_buffer = zip_content.read(bin_path)
 
             # Init metadata of the bytes loaded
             page_size = 0x800
@@ -273,8 +292,13 @@ class STM32FirmwareUpdater:
                     f"{self.__progress_bar(page_begin, bin_end)} "
                     f"{progress}%", end=''
                 )
+
                 page_end = page_begin + page_size
                 curr_page = bin_buffer[page_begin:page_end]
+
+                # Skip current page if empty
+                if not sum(curr_page):
+                    continue
 
                 # Erase page (send erase request and receive its response)
                 erase_page_success = self.send_firmware_command(
@@ -309,28 +333,30 @@ class STM32FirmwareUpdater:
                 if not crc_page_success:
                     page_begin -= page_size
                 time.sleep(0.01)
-
-        print(f"\rUpdating {module_type} ({module_id}) "
-              f"{self.__progress_bar(1, 1)} 100%")
-        version_file = (
-            'base_version.txt' if self.update_network_base else 'version.txt'
+        print(
+            f"\rUpdating {module_type} ({module_id}) "
+            f"{self.__progress_bar(1, 1)} 100%"
         )
+
         # Include MODI firmware version when writing end flash
-        version_path = path.join(root_path, version_file)
-        if self.ui and self.ui.installation:
-            version_path = os.path.dirname(__file__).replace(
-                'util', 'version.txt'
+        version_path = None
+        if self.update_network_base:
+            verison_path = (
+                "https://download.luxrobo.com/modi-network-os/version.txt"
             )
-        with open(version_path) as version_file:
-            version_info = version_file.readline().lstrip('v').rstrip('\n')
+        else:
+            version_path = (
+                "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
+            )
+        version_info = None
+        for line in ur.urlopen(version_path, timeout=5):
+            version_info = line.decode('utf-8').lstrip('v')
         version_digits = [int(digit) for digit in version_info.split('.')]
         """ Version number is formed by concatenating all three version bits
             e.g. 2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
         """
         version = (
-            version_digits[0] << 13
-            | version_digits[1] << 8
-            | version_digits[2]
+            version_digits[0] << 13 | version_digits[1] << 8 | version_digits[2]
         )
 
         # Set end-flash data to be sent at the end of the firmware update
@@ -341,6 +367,7 @@ class STM32FirmwareUpdater:
         end_flash_data[6] = version & 0xFF
         end_flash_data[7] = (version >> 8) & 0xFF
         self.send_end_flash_data(module_type, module_id, end_flash_data)
+        print(f'Version info: {version_info} has been written to its firmware!')
 
         # Firmware update flag down, resetting used flags
         print(f'Firmware update is done for {module_type} ({module_id})')
