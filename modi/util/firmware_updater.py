@@ -11,8 +11,6 @@ from io import open
 from base64 import b64encode, b64decode
 from importlib import import_module as im
 
-from PyQt5.QtGui import QPixmap
-
 from modi.module.module import Module
 from modi.util.message_util import unpack_data, decode_message, parse_message
 from modi.util.connection_util import list_modi_ports, is_on_pi
@@ -72,10 +70,11 @@ class STM32FirmwareUpdater:
             timeout, delay = 3, 0.1
             while not self.network_id:
                 if timeout <= 0:
-                    print(
-                        'Could not retrieve network id, '
-                        'broadcast id will be used instead.'
-                    )
+                    if not self.update_in_progress:
+                        print(
+                            'Could not retrieve network id, '
+                            'broadcast id will be used instead.'
+                        )
                     self.network_id = 0xFFF
                     break
                 self.request_network_id()
@@ -249,22 +248,6 @@ class STM32FirmwareUpdater:
         )
 
         if self.__is_os_update:
-            if self.ui:
-                self.ui.status_label.setText(
-                    "모듈 초기화를 시작합니다!!!"
-                )
-                module_image_path = path.join(
-                    path.dirname(__file__),
-                    '..', 'assets', 'image',
-                    f'{module_type.lower()}.png'
-                )
-                if self.ui.installation:
-                    module_image_path = path.dirname(__file__).replace(
-                        'util', f'{module_type.lower()}.png'
-                    )
-                module_pixmap = QPixmap(module_image_path)
-                self.ui.curr_module_img.setPixmap(module_pixmap)
-
             # Init path to binary file
             bin_path = path.join(root_path, f"{module_type.lower()}.bin")
             if self.ui and self.ui.installation:
@@ -282,32 +265,16 @@ class STM32FirmwareUpdater:
             bin_begin = 0x9000 if not self.update_network_base else page_size
             bin_end = bin_size - ((bin_size - bin_begin) % page_size)
 
-            if self.ui:
-                self.ui.status_label.setText(
-                    "모듈 초기화가 진행 중입니다..."
-                )
-                self.ui.local_module.setText(
-                    f"업데이트 중: {module_type.title()} ({module_id})"
-                )
-                self.ui.local_percentage.setText("0%")
-
             page_offset = 0 if not self.update_network_base else 0x8800
             for page_begin in range(bin_begin, bin_end + 1, page_size):
                 progress = 100 * page_begin // bin_end
-                if self.ui:
-                    self.ui.local_percentage.setText(f"{progress}%")
-                else:
-                    print(
-                        f"\rUpdating {module_type} ({module_id}) "
-                        f"{self.__progress_bar(page_begin, bin_end)} "
-                        f"{progress}%", end=''
-                    )
+                print(
+                    f"\rUpdating {module_type} ({module_id}) "
+                    f"{self.__progress_bar(page_begin, bin_end)} "
+                    f"{progress}%", end=''
+                )
                 page_end = page_begin + page_size
                 curr_page = bin_buffer[page_begin:page_end]
-
-                # Skip current page if empty
-                if not sum(curr_page):
-                    continue
 
                 # Erase page (send erase request and receive its response)
                 erase_page_success = self.send_firmware_command(
@@ -394,14 +361,6 @@ class STM32FirmwareUpdater:
             if self.update_network_base:
                 self.reinitialize_serial_connection()
                 time.sleep(0.5)
-
-            if self.ui:
-                self.ui.status_label.setText(
-                    "모듈 초기화가 성공적으로 종료되었습니다!\n"
-                    "곧바로 다른 업데이트를 진행하셔도 되지만 안전한 시리얼 컨넥션을 위해\n"
-                    "이 프로그램을 종료하시는 것을 추천드립니다.\n"
-                    "프로그램의 종료는 ESC를 눌러 하실 수 있습니다."
-                )
 
             time.sleep(1)
             self.update_in_progress = False
@@ -838,20 +797,6 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.ui = ui
 
     def update_firmware(self, force=False):
-        if self.ui:
-            self.ui.status_label.setText("네트워크 모듈 업데이트를 시작합니다!!!")
-
-            module_image_path = path.join(
-                path.dirname(__file__),
-                '..', 'assets', 'image', 'network.png'
-            )
-            if self.ui.installation:
-                module_image_path = path.dirname(__file__).replace(
-                    'util', 'network.png'
-                )
-            module_pixmap = QPixmap(module_image_path)
-            self.ui.curr_module_img.setPixmap(module_pixmap)
-
         self.update_in_progress = True
         self.__boot_to_app()
         self.__version_to_update = self.__get_latest_version()
@@ -865,10 +810,6 @@ class ESP32FirmwareUpdater(serial.Serial):
                 if 'y' not in response:
                     return
         print(f"Updating v{self.version} to v{self.__version_to_update}")
-        if self.ui:
-            self.ui.status_label.setText(
-                f"네트워크 모듈의 버전을 v{self.__version_to_update}로 업데이트 합니다."
-            )
         firmware_buffer = self.__compose_binary_firmware()
 
         self.__device_ready()
@@ -877,8 +818,6 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.__set_flash_param()
         manager = None
 
-        if self.ui:
-            self.ui.local_module.setText("업데이트가 진행 중입니다!")
         self.__write_binary_firmware(firmware_buffer, manager)
         print("Booting to application...")
         self.__wait_for_json()
@@ -887,14 +826,6 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.__set_esp_version(self.__version_to_update)
         print("ESP firmware update is complete!!")
         self.update_in_progress = False
-
-        if self.ui:
-            self.ui.status_label.setText(
-                "네트워크 모듈 업데이트가 성공적으로 끝났습니다!\n"
-                "곧바로 다른 업데이트를 진행하셔도 되지만 안전한 시리얼 컨넥션을 위해\n"
-                "이 프로그램을 종료하시는 것을 추천드립니다.\n"
-                "프로그램의 종료는 ESC를 눌러 하실 수 있습니다."
-            )
 
         time.sleep(1)
         self.flushInput()
@@ -1151,17 +1082,7 @@ class ESP32FirmwareUpdater(serial.Serial):
         for seq, block in enumerate(block_queue):
             if manager:
                 manager.status = self.__progress_bar(curr_seq + seq, total_seq)
-            if not self.ui:
-                print(f'\r{self.__progress_bar(curr_seq + seq, total_seq)}',
-                      end='')
-            else:
-                current = curr_seq + seq
-                total = total_seq
-                percentage = round(100 * current / total, 2)
-                percentage = 100 if percentage > 99 else percentage
-                self.ui.local_percentage.setText(
-                    f"{percentage} %"
-                )
+            print(f'\r{self.__progress_bar(curr_seq + seq, total_seq)}', end='')
             self.__write_flash_block(block, seq)
         return len(block_queue)
 
@@ -1173,4 +1094,4 @@ class ESP32FirmwareUpdater(serial.Serial):
         curr_bar = 70 * current // total
         rest_bar = 70 - curr_bar
         return f"Firmware Upload: [{'=' * curr_bar}>{'.' * rest_bar}] " \
-               f"{100 * current / total:3.2f}%"
+               f"{100 * current / total:3.1f}%"
