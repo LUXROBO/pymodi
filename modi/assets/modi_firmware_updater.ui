@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1070</width>
-    <height>341</height>
+    <width>1141</width>
+    <height>338</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item row="1" column="2">
     <widget class="QTextBrowser" name="console">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>

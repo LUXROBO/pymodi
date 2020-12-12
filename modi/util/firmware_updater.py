@@ -123,8 +123,8 @@ class STM32FirmwareUpdater:
         print('Temporally disconnecting the serial connection...')
         self.close()
 
-        print('Re-initializing the serial connection for the update in 3 seconds...')
-        time.sleep(3)
+        print('Re-initializing the serial connection for the update in 2 seconds...')
+        time.sleep(2)
         self.__conn = self.__open_conn()
         self.__conn.open_conn()
         self.__running = True
@@ -1139,4 +1139,4 @@ class ESP32FirmwareUpdater(serial.Serial):
         curr_bar = 70 * current // total
         rest_bar = 70 - curr_bar
         return f"Firmware Upload: [{'=' * curr_bar}>{'.' * rest_bar}] " \
-               f"{100 * current / total:3.1f}%"
+               f"{100 * current / total:3.2f}%"

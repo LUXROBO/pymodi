@@ -122,8 +122,28 @@ class Form(QtWidgets.QDialog):
     # Helper functions
     #
     def __append_text_line(self, line):
+        self.ui.console.moveCursor(QtGui.QTextCursor.End, QtGui.QTextCursor.MoveAnchor)
+        self.ui.console.moveCursor(QtGui.QTextCursor.StartOfLine, QtGui.QTextCursor.MoveAnchor)
+        self.ui.console.moveCursor(QtGui.QTextCursor.End, QtGui.QTextCursor.KeepAnchor)
+
+        # Remove new line character if current line represents update_progress
+        if self.__is_update_progress_line(line):
+            self.ui.console.textCursor().removeSelectedText()
+            self.ui.console.textCursor().deletePreviousChar()
+
+        # Display user text input
         self.ui.console.moveCursor(QtGui.QTextCursor.End)
         self.ui.console.insertPlainText(line)
         QtWidgets.QApplication.processEvents(
             QtCore.QEventLoop.ExcludeUserInputEvents
         )
+
+    @staticmethod
+    def __is_update_progress_line(line):
+        if line.startswith('\rUpdating'):
+            return True
+
+        if line.startswith('\rFirmware Upload: ['):
+            return True
+
+        return False
