@@ -341,7 +341,7 @@ class STM32FirmwareUpdater:
         # Include MODI firmware version when writing end flash
         version_path = None
         if self.update_network_base:
-            verison_path = (
+            version_path = (
                 "https://download.luxrobo.com/modi-network-os/version.txt"
             )
         else:
@@ -1003,18 +1003,41 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     def __compose_binary_firmware(self):
         binary_firmware = b''
-        root_path = path.join(
-            path.dirname(__file__),
-            '..', 'assets', 'firmware', 'esp32'
-        )
         for i, bin_path in enumerate(self.file_path):
-            firmware_path = path.join(root_path, bin_path)
-            if self.ui and self.ui.installation:
-                firmware_path = path.dirname(__file__).replace(
-                    'util', bin_path
+            if i == 2:
+                root_path = path.join(
+                    path.dirname(__file__),
+                    '..', 'assets', 'firmware', 'esp32'
                 )
-            with open(firmware_path, 'rb') as bin_file:
-                bin_data = bin_file.read()
+            elif i == 3:
+                root_path = (
+                    'https://download.luxrobo.com/modi-ota-firmware/ota.zip'
+                )
+            else:
+                root_path = (
+                    'https://download.luxrobo.com/modi-esp32-firmware/esp.zip'
+                )
+
+            if i != 2:
+                try:
+                    # Init bytes data from the given binary file of current module
+                    download_response = requests.get(root_path, timeout=5)
+                except URLError:
+                    raise URLError(
+                        'Failed to download firmware. Please check your internet.'
+                    )
+                zip_content = zipfile.ZipFile(
+                    io.BytesIO(download_response.content), 'r'
+                )
+                bin_data = zip_content.read(bin_path)
+            elif i == 2:
+                firmware_path = path.join(root_path, bin_path)
+                if self.ui and self.ui.installation:
+                    firmware_path = path.dirname(__file__).replace(
+                        'util', bin_path
+                    )
+                with open(firmware_path, 'rb') as bin_file:
+                    bin_data = bin_file.read()
             binary_firmware += bin_data
             if i < len(self.__address) - 1:
                 binary_firmware += b'\xFF' * (
@@ -1023,17 +1046,12 @@ class ESP32FirmwareUpdater(serial.Serial):
         return binary_firmware
 
     def __get_latest_version(self):
-        root_path = path.join(
-            path.dirname(__file__),
-            '..', 'assets', 'firmware', 'esp32'
+        version_path = (
+            'https://download.luxrobo.com/modi-esp32-firmware/version.txt'
         )
-        version_path = path.join(root_path, 'esp_version.txt')
-        if self.ui and self.ui.installation:
-            version_path = path.dirname(__file__).replace(
-                'util', 'esp_version.txt'
-            )
-        with open(version_path, 'r') as version_file:
-            version_info = version_file.readline().lstrip('v').rstrip('\n')
+        version_info = None
+        for line in ur.urlopen(version_path, timeout=5):
+            version_info = line.decode('utf-8').lstrip('v').rstrip('\n')
         return version_info
 
     def __erase_chunk(self, size, offset):
