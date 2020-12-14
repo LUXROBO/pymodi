@@ -24,7 +24,7 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>700</width>
+       <width>550</width>
        <height>0</height>
       </size>
      </property>
@@ -139,6 +139,13 @@
            <width>64</width>
            <height>64</height>
           </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="translate_button">
+         <property name="text">
+          <string>버튼 텍스트 한/영 전환</string>
          </property>
         </widget>
        </item>

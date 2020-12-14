@@ -52,7 +52,6 @@ class Form(QtWidgets.QDialog):
                     '..', 'assets', 'modi_firmware_updater.ui'
                 )
             )
-        print('Loading GUI from', ui_path)
         self.ui = uic.loadUi(ui_path)
         self.ui.setWindowTitle('MODI Firmware Updater')
         self.setFixedSize(self.size())
@@ -72,6 +71,14 @@ class Form(QtWidgets.QDialog):
         self.ui.update_network_esp32.clicked.connect(self.update_network_esp32)
         self.ui.update_stm32_modules.clicked.connect(self.update_stm32_modules)
         self.ui.update_network_stm32.clicked.connect(self.update_network_stm32)
+        self.ui.translate_button.clicked.connect(self.translate_button_text)
+
+        self.buttons = [
+            self.ui.update_network_esp32,
+            self.ui.update_stm32_modules,
+            self.ui.update_network_stm32,
+            self.ui.translate_button,
+        ]
 
         # Disable the first button to be focused when UI is loaded
         self.ui.update_network_esp32.setAutoDefault(False)
@@ -79,6 +86,7 @@ class Form(QtWidgets.QDialog):
 
         # Set up field variables
         self.firmware_updater = None
+        self.button_in_english = False
 
     #
     # Main methods
@@ -118,6 +126,25 @@ class Form(QtWidgets.QDialog):
             daemon=True
         ).start()
         self.firmware_updater = stm32_updater
+
+    def translate_button_text(self):
+        button_en = [
+            'Update Network ESP32',
+            'Update STM32 Modules',
+            'Update Network STM32',
+            'Translate Button Text To Korean',
+        ]
+        button_kr = [
+            '네트워크 모듈 업데이트',
+            '모듈 초기화',
+            '네트워크 모듈 초기화',
+            '버튼 텍스트를 영어로 변경',
+        ]
+        appropriate_translation = \
+            button_kr if self.button_in_english else button_en
+        self.button_in_english = not self.button_in_english
+        for i, button in enumerate(self.buttons):
+            button.setText(appropriate_translation[i])
 
     #
     # Helper functions
