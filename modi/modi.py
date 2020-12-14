@@ -11,7 +11,6 @@ from modi._exe_thrd import ExeThrd
 from modi.util.connection_util import is_network_module_connected, is_on_pi
 from modi.util.miscellaneous import ModuleList
 from modi.util.stranger import check_complete
-# from modi.util.upython import upload_file
 from modi.util.topology_manager import TopologyManager
 from modi.util.firmware_updater import STM32FirmwareUpdater
 from modi.util.firmware_updater import ESP32FirmwareUpdater
@@ -23,7 +22,7 @@ class MODI:
 
     def __init__(
         self, modi_version=1, conn_type="", verbose=False, port=None,
-        network_uuid="", virtual_modules=None,
+        network_uuid="",
     ):
         # Init logger
         __logger = self.__init_logger()
@@ -32,13 +31,11 @@ class MODI:
             raise ValueError(
                 "Virtual modules can only be defined in virtual connection"
             )
-
         self._modules = list()
         self._topology_data = dict()
 
         self._conn = self.__init_task(
-            conn_type, verbose, port, network_uuid, virtual_modules,
-            modi_version
+            conn_type, verbose, port, network_uuid,
         )
 
         self._exe_thrd = ExeThrd(
@@ -111,20 +108,9 @@ class MODI:
                 bad_modules.append(module)
         return bad_modules
 
-    # @staticmethod
-    # def upload_user_code(filepath: str, remote_path: str) -> None:
-    #    """Upload python user code
-    #
-    #    :param filepath: Filepath to python file
-    #    :type filepath: str
-    #    :param remote_path: Filepath on esp device
-    #    :return: None
-    #    """
-    #    upload_file(filepath, remote_path)
-
     @staticmethod
     def __init_task(
-        conn_type, verbose, port, network_uuid, virtual_modules, modi_version
+        conn_type, verbose, port, network_uuid,
     ):
         if not conn_type:
             is_can = not is_network_module_connected() and is_on_pi()
@@ -135,9 +121,7 @@ class MODI:
         elif conn_type == 'can':
             return im('modi.task.can_task').CanTask(verbose)
         elif conn_type == 'vir':
-            return im('modi.task.vir_task').VirTask(
-                verbose, virtual_modules, modi_version
-            )
+            return im('modi.task.vir_task').VirTask(verbose, port)
         elif conn_type == 'ble':
             mod_path = {
                 'win32': 'modi.task.ble_task.ble_task_win',
@@ -278,7 +262,3 @@ def reset_module_firmware(target_ids=(0xFFF, )):
 def update_network_firmware(force=False):
     updater = ESP32FirmwareUpdater()
     updater.update_firmware(force=force)
-
-
-# def upload_user_code(filepath, remote_path):
-#    upload_file(filepath, remote_path)

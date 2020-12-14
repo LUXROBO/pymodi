@@ -67,7 +67,8 @@ class SerTask(ConnTask):
 
         :return: str
         """
-        self.__json_buffer += self._bus.read_all()
+        buf_temp = self._bus.read_all()
+        self.__json_buffer += buf_temp
         idx = self.__json_buffer.find(b'{')
         if idx < 0:
             self.__json_buffer = b''

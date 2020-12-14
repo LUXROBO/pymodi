@@ -36,7 +36,10 @@ class STM32FirmwareUpdater:
     ERASE_ERROR = 6
     ERASE_COMPLETE = 7
 
-    def __init__(self, is_os_update=True, target_ids=(0xFFF, )):
+    def __init__(
+        self, is_os_update=True, target_ids=(0xFFF, ), conn_type='ser'
+    ):
+        self.conn_type = conn_type
         self.update_network_base = False
         self.__conn = self.__open_conn()
         self.__conn.open_conn()
@@ -114,7 +117,7 @@ class STM32FirmwareUpdater:
         self.__conn.close_conn()
 
     def __open_conn(self):
-        if is_on_pi() and not self.update_network_base:
+        if is_on_pi() and self.conn_type == 'can':
             return im('modi.task.can_task').CanTask()
         else:
             return im('modi.task.ser_task').SerTask()
