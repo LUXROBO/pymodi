@@ -197,7 +197,7 @@ class STM32FirmwareUpdater:
             if module_id == curr_module_id:
                 return
 
-        print(f"\rAdding {module_type} ({module_id}) to waiting list..."
+        print(f"Adding {module_type} ({module_id}) to waiting list..."
               f"{' ' * 60}")
 
         # Add the module to the waiting list
@@ -370,7 +370,7 @@ class STM32FirmwareUpdater:
         end_flash_data[6] = version & 0xFF
         end_flash_data[7] = (version >> 8) & 0xFF
         self.send_end_flash_data(module_type, module_id, end_flash_data)
-        print(f'Version info: {version_info} has been written to its firmware!')
+        print(f'Version info (v{version_info}) has been written to its firmware!')
 
         # Firmware update flag down, resetting used flags
         print(f'Firmware update is done for {module_type} ({module_id})')

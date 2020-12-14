@@ -1,5 +1,7 @@
 import os
 import sys
+import time
+import logging
 
 import threading as th
 
@@ -20,6 +22,7 @@ class StdoutRedirect(QObject):
         self.daemon = True
         self.sysstdout = sys.stdout.write
         self.sysstderr = sys.stderr.write
+        self.logger = None
 
     def stop(self):
         sys.stdout.write = self.sysstdout
@@ -32,6 +35,21 @@ class StdoutRedirect(QObject):
     def write(self, s, color="black"):
         sys.stdout.flush()
         self.printOccur.emit(s, color)
+        if self.logger and not self.__is_redundant_line(s):
+            self.logger.info(s)
+
+    @staticmethod
+    def __is_redundant_line(line):
+        if line.startswith('\rUpdating'):
+            return True
+
+        if line.startswith('\rFirmware Upload: ['):
+            return True
+
+        if len(line) < 3:
+            return True
+
+        return False
 
 
 class Form(QtWidgets.QDialog):
@@ -40,6 +58,7 @@ class Form(QtWidgets.QDialog):
     """
 
     def __init__(self, installer=False):
+        self.logger = self.__init_logger()
         QtWidgets.QDialog.__init__(self)
         if installer:
             ui_path = os.path.dirname(__file__).replace(
@@ -63,6 +82,7 @@ class Form(QtWidgets.QDialog):
         self.stdout.printOccur.connect(
             lambda line: self.__append_text_line(line)
         )
+        self.stdout.logger = self.logger
 
         # Init variable to check if the program is in installation mode
         self.ui.installation = installer
@@ -88,6 +108,10 @@ class Form(QtWidgets.QDialog):
         self.firmware_updater = None
         self.button_in_english = False
 
+        # Print init status
+        time_now_str = time.strftime('[%Y/%m/%d@%X]', time.localtime())
+        print(time_now_str + ' GUI MODI Firmware Updater has been started!')
+
     #
     # Main methods
     #
@@ -95,7 +119,11 @@ class Form(QtWidgets.QDialog):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
         self.ui.console.clear()
-        print('ESP32 Firmware Updater has been initialized for esp update!')
+        time_now_str = time.strftime('[%Y/%m/%d %X]', time.localtime())
+        print(
+            time_now_str +
+            ' ESP32 Firmware Updater has been initialized for esp update!'
+        )
         esp32_updater = ESP32FirmwareUpdater()
         esp32_updater.set_ui(self.ui)
         th.Thread(target=esp32_updater.update_firmware, daemon=True).start()
@@ -105,7 +133,11 @@ class Form(QtWidgets.QDialog):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
         self.ui.console.clear()
-        print('STM32 Firmware Updater has been initialized for module update!')
+        time_now_str = time.strftime('[%Y/%m/%d %X]', time.localtime())
+        print(
+            time_now_str +
+            ' STM32 Firmware Updater has been initialized for module update!'
+        )
         stm32_updater = STM32FirmwareUpdater()
         stm32_updater.set_ui(self.ui)
         th.Thread(
@@ -117,7 +149,11 @@ class Form(QtWidgets.QDialog):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
         self.ui.console.clear()
-        print('STM32 Firmware Updater has been initialized for base update!')
+        time_now_str = time.strftime('[%Y/%m/%d %X]', time.localtime())
+        print(
+            time_now_str +
+            ' STM32 Firmware Updater has been initialized for base update!'
+        )
         stm32_updater = STM32FirmwareUpdater()
         stm32_updater.set_ui(self.ui)
         th.Thread(
@@ -149,6 +185,21 @@ class Form(QtWidgets.QDialog):
     #
     # Helper functions
     #
+    @staticmethod
+    def __init_logger():
+        logger = logging.getLogger(f'GUI MODI Firmware Updater Logger')
+        logger.setLevel(logging.DEBUG)
+
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+        file_handler = logging.FileHandler('gmfu.log')
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+
+        logger.addHandler(file_handler)
+        return logger
+
     def __append_text_line(self, line):
         self.ui.console.moveCursor(QtGui.QTextCursor.End, QtGui.QTextCursor.MoveAnchor)
         self.ui.console.moveCursor(QtGui.QTextCursor.StartOfLine, QtGui.QTextCursor.MoveAnchor)
