@@ -14,6 +14,7 @@ from modi.util.inspector import Inspector
 
 from modi.util.firmware_updater import STM32FirmwareUpdater
 from modi.util.firmware_updater import ESP32FirmwareUpdater
+from modi.util.firmware_updater import GD32FirmwareUpdater
 from modi.util.message_util import parse_message, decode_message
 
 
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     try:
         # all commands should be defined here in advance
         opts, args = getopt(
-            sys.argv[1:], "tamhvpdinubg",
+            sys.argv[1:], "tamhvpdinubgxy",
             [
                 "tutorial",
                 "initialize",
@@ -63,6 +64,8 @@ if __name__ == "__main__":
                 "usage",
                 "update_network_base",
                 "update_in_gui",
+                "update_modules_gd",
+                "update_network_base_gd",
             ]
         )
     # exit program if an invalid option has been entered
@@ -140,6 +143,22 @@ if __name__ == "__main__":
         init_time = time.time()
         updater = STM32FirmwareUpdater()
         updater.update_module_firmware()
+        fin_time = time.time()
+        print(f"Took {fin_time - init_time:.2f} seconds to update")
+        os._exit(0)
+
+    if check_option('-x', '--update_modules_gd'):
+        init_time = time.time()
+        updater = GD32FirmwareUpdater()
+        updater.update_module_firmware()
+        fin_time = time.time()
+        print(f"Took {fin_time - init_time:.2f} seconds to update")
+        os._exit(0)
+
+    if check_option('-y', '--update_network_base_gd'):
+        init_time = time.time()
+        updater = GD32FirmwareUpdater()
+        updater.update_module_firmware(update_network_base=True)
         fin_time = time.time()
         print(f"Took {fin_time - init_time:.2f} seconds to update")
         os._exit(0)
