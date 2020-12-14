@@ -25,11 +25,12 @@ class MODI:
         network_uuid="",
     ):
         # Init logger
-        # __logger = self.__init_logger()
-        # __logger.info('modi version:', modi_version)
-        # __logger.info('connection type:', conn_type)
-        print('This PyMODI Object is set to work with MODI 1')
+        __logger = self.__init_logger()
 
+        if virtual_modules and conn_type != "vir":
+            raise ValueError(
+                "Virtual modules can only be defined in virtual connection"
+            )
         self._modules = list()
         self._topology_data = dict()
 

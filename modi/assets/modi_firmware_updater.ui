@@ -6,339 +6,146 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>852</width>
-    <height>536</height>
+    <width>1141</width>
+    <height>338</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
-    <widget class="QFrame" name="developer_frame">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+   <item row="1" column="2">
+    <widget class="QTextBrowser" name="console">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+     <property name="minimumSize">
+      <size>
+       <width>550</width>
+       <height>0</height>
+      </size>
      </property>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>841</width>
-        <height>77</height>
-       </rect>
-      </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="topMargin">
-        <number>0</number>
-       </property>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
-         <property name="topMargin">
-          <number>0</number>
+        <widget class="QPushButton" name="update_network_esp32">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <item>
-          <widget class="QLabel" name="password_label">
-           <property name="text">
-            <string>Developer Password:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="password_field">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>650</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="maxLength">
-            <number>300</number>
-           </property>
-           <property name="readOnly">
-            <bool>false</bool>
-           </property>
-           <property name="clearButtonEnabled">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="developer_label">
-           <property name="text">
-            <string>Firmwares to Update:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="bootloader_rbutton">
-           <property name="autoFillBackground">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>bootloader.bin</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-           <property name="autoExclusive">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="esp32_rbutton">
-           <property name="text">
-            <string>esp32.bin</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-           <property name="autoExclusive">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="modi_ota_factory_rbutton">
-           <property name="text">
-            <string>modi_ota_factory.bin</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-           <property name="autoExclusive">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="ota_data_initial_rbutton">
-           <property name="text">
-            <string>ota_data_initial.bin</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-           <property name="autoExclusive">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="partitions_rbutton">
-           <property name="text">
-            <string>partitions.bin</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-           <property name="autoExclusive">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="status_label">
-     <property name="font">
-      <font>
-       <pointsize>20</pointsize>
-       <weight>75</weight>
-       <italic>false</italic>
-       <bold>true</bold>
-       <underline>false</underline>
-       <kerning>true</kerning>
-      </font>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::WinPanel</enum>
-     </property>
-     <property name="text">
-      <string>Welcome to MODI Firmware Updater! 
- This GUI application utilizes PyMODI as its backend :) 
-
- To start updating your MODI firmware, click an appropriate button below!</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="update_network_esp32">
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>Update Network Module</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>assets/imgs/network.png</normaloff>assets/imgs/network.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>64</width>
-         <height>64</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="update_stm32_modules">
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>Update STM32 Modules</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>assets/imgs/button.png</normaloff>assets/imgs/button.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>64</width>
-         <height>64</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="update_network_stm32">
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="text">
-        <string>Update Network Base</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>assets/imgs/network.png</normaloff>assets/imgs/network.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>64</width>
-         <height>64</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="3" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
-       <property name="rightMargin">
-        <number>50</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="local_module">
-         <property name="text">
-          <string>Processing module will display here!</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="curr_module_img">
          <property name="maximumSize">
+          <size>
+           <width>10000</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>28</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+           <kerning>false</kerning>
+          </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
+         <property name="text">
+          <string>네트워크 모듈 업데이트</string>
+         </property>
+         <property name="iconSize">
           <size>
            <width>64</width>
            <height>64</height>
           </size>
          </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="update_stm32_modules">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>10000</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="font">
           <font>
-           <weight>50</weight>
-           <bold>false</bold>
+           <pointsize>28</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+           <kerning>false</kerning>
           </font>
          </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="pixmap">
-          <pixmap>assets/imgs/network.png</pixmap>
-         </property>
-         <property name="scaledContents">
-          <bool>true</bool>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="local_percentage">
-         <property name="text">
-          <string>Progress will display here!</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QPushButton" name="push_button">
          <property name="focusPolicy">
-          <enum>Qt::StrongFocus</enum>
+          <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
-          <string>Tap this button to 
-speed up the update</string>
+          <string>모듈 초기화</string>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>64</width>
+           <height>64</height>
+          </size>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QProgressBar" name="push_bar">
-         <property name="value">
-          <number>0</number>
+        <widget class="QPushButton" name="update_network_stm32">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+         <property name="maximumSize">
+          <size>
+           <width>10000</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>28</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+           <kerning>false</kerning>
+          </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string>네트워크 모듈 초기화</string>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>64</width>
+           <height>64</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="translate_button">
+         <property name="text">
+          <string>버튼 텍스트 한/영 전환</string>
          </property>
         </widget>
        </item>

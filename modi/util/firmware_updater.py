@@ -1,17 +1,22 @@
 
-import os
+import io
 import sys
 import time
 import json
 import serial
+import zipfile
+import requests
+
 import threading as th
+import urllib.request as ur
 
 from os import path
 from io import open
 from base64 import b64encode, b64decode
+
 from importlib import import_module as im
 
-from PyQt5.QtGui import QPixmap
+from urllib.error import URLError
 
 from modi.module.module import Module
 from modi.util.message_util import unpack_data, decode_message, parse_message
@@ -75,11 +80,11 @@ class STM32FirmwareUpdater:
             timeout, delay = 3, 0.1
             while not self.network_id:
                 if timeout <= 0:
-                    print(
-                        '\n'
-                        'Could not retrieve network id, '
-                        'broadcast id will be used instead.'
-                    )
+                    if not self.update_in_progress:
+                        print(
+                            'Could not retrieve network id, '
+                            'broadcast id will be used instead.'
+                        )
                     self.network_id = 0xFFF
                     break
                 self.request_network_id()
@@ -120,9 +125,9 @@ class STM32FirmwareUpdater:
     def reinitialize_serial_connection(self):
         print('Temporally disconnecting the serial connection...')
         self.close()
-        time.sleep(1)
 
-        print('Re-initializing the serial connection for the update...')
+        print('Re-initializing the serial connection for the update in 2 seconds...')
+        time.sleep(2)
         self.__conn = self.__open_conn()
         self.__conn.open_conn()
         self.__running = True
@@ -245,38 +250,34 @@ class STM32FirmwareUpdater:
         self.update_in_progress = True
         self.modules_updated.append((module_id, module_type))
 
-        root_path = (
-            path.join(
-                path.dirname(__file__),
-                '..', 'assets', 'firmware', 'stm32'
-            )
-        )
-
         if self.__is_os_update:
-            if self.ui:
-                self.ui.status_label.setText(
-                    "Start updating the STM32 firmware"
-                )
-                module_image_path = path.join(
-                    path.dirname(__file__),
-                    '..', 'assets', 'image',
-                    f'{module_type.lower()}.png'
-                )
-                if self.ui.installation:
-                    module_image_path = path.dirname(__file__).replace(
-                        'util', f'{module_type.lower()}.png'
-                    )
-                module_pixmap = QPixmap(module_image_path)
-                self.ui.curr_module_img.setPixmap(module_pixmap)
-
             # Init path to binary file
-            bin_path = path.join(root_path, f"{module_type.lower()}.bin")
-            if self.ui and self.ui.installation:
-                bin_path = os.path.dirname(__file__).replace(
-                    'util', f'{module_type.lower()}.bin'
+            if self.update_network_base:
+                root_path = (
+                    'https://download.luxrobo.com/modi-network-os/network.zip'
                 )
-            with open(bin_path, 'rb') as bin_file:
-                bin_buffer = bin_file.read()
+                bin_path = 'network.bin'
+            else:
+                root_path = (
+                    'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
+                )
+                bin_path = (
+                    path.join('skeleton', f'{module_type.lower()}.bin')
+                    if module_type != 'env' else
+                    path.join('skeleton', 'environment.bin')
+                )
+
+            try:
+                # Init bytes data from the given binary file of current module
+                download_response = requests.get(root_path, timeout=5)
+            except URLError:
+                raise URLError(
+                    "Failed to download firmware. Please check your internet."
+                )
+            zip_content = zipfile.ZipFile(
+                io.BytesIO(download_response.content), 'r'
+            )
+            bin_buffer = zip_content.read(bin_path)
 
             # Init metadata of the bytes loaded
             page_size = 0x800
@@ -286,26 +287,15 @@ class STM32FirmwareUpdater:
             bin_begin = 0x9000 if not self.update_network_base else page_size
             bin_end = bin_size - ((bin_size - bin_begin) % page_size)
 
-            if self.ui:
-                self.ui.status_label.setText(
-                    "STM32 firmware update is in progress..."
-                )
-                self.ui.local_module.setText(
-                    f"Updating: {module_type.title()} ({module_id})"
-                )
-                self.ui.local_percentage.setText("0%")
-
             page_offset = 0 if not self.update_network_base else 0x8800
             for page_begin in range(bin_begin, bin_end + 1, page_size):
                 progress = 100 * page_begin // bin_end
-                if self.ui:
-                    self.ui.local_percentage.setText(f"{progress}%")
-                else:
-                    print(
-                        f"\rUpdating {module_type} ({module_id}) "
-                        f"{self.__progress_bar(page_begin, bin_end)} "
-                        f"{progress}%", end=''
-                    )
+                print(
+                    f"\rUpdating {module_type} ({module_id}) "
+                    f"{self.__progress_bar(page_begin, bin_end)} "
+                    f"{progress}%", end=''
+                )
+
                 page_end = page_begin + page_size
                 curr_page = bin_buffer[page_begin:page_end]
 
@@ -346,28 +336,30 @@ class STM32FirmwareUpdater:
                 if not crc_page_success:
                     page_begin -= page_size
                 time.sleep(0.01)
-
-        print(f"\rUpdating {module_type} ({module_id}) "
-              f"{self.__progress_bar(1, 1)} 100%")
-        version_file = (
-            'base_version.txt' if self.update_network_base else 'version.txt'
+        print(
+            f"\rUpdating {module_type} ({module_id}) "
+            f"{self.__progress_bar(1, 1)} 100%"
         )
+
         # Include MODI firmware version when writing end flash
-        version_path = path.join(root_path, version_file)
-        if self.ui and self.ui.installation:
-            version_path = os.path.dirname(__file__).replace(
-                'util', 'version.txt'
+        version_path = None
+        if self.update_network_base:
+            version_path = (
+                "https://download.luxrobo.com/modi-network-os/version.txt"
             )
-        with open(version_path) as version_file:
-            version_info = version_file.readline().lstrip('v').rstrip('\n')
+        else:
+            version_path = (
+                "https://download.luxrobo.com/modi-skeleton-mobile/version.txt"
+            )
+        version_info = None
+        for line in ur.urlopen(version_path, timeout=5):
+            version_info = line.decode('utf-8').lstrip('v')
         version_digits = [int(digit) for digit in version_info.split('.')]
         """ Version number is formed by concatenating all three version bits
             e.g. 2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
         """
         version = (
-            version_digits[0] << 13
-            | version_digits[1] << 8
-            | version_digits[2]
+            version_digits[0] << 13 | version_digits[1] << 8 | version_digits[2]
         )
 
         # Set end-flash data to be sent at the end of the firmware update
@@ -378,6 +370,7 @@ class STM32FirmwareUpdater:
         end_flash_data[6] = version & 0xFF
         end_flash_data[7] = (version >> 8) & 0xFF
         self.send_end_flash_data(module_type, module_id, end_flash_data)
+        print(f'Version info: {version_info} has been written to its firmware!')
 
         # Firmware update flag down, resetting used flags
         print(f'Firmware update is done for {module_type} ({module_id})')
@@ -398,17 +391,6 @@ class STM32FirmwareUpdater:
             if self.update_network_base:
                 self.reinitialize_serial_connection()
                 time.sleep(0.5)
-
-            if self.ui:
-                curr_tick = 3
-                while curr_tick > 0:
-                    self.ui.status_label.setText(
-                        f"STM32 firmware update is completed!\n"
-                        f"This program will terminate in {curr_tick} seconds.."
-                    )
-                    time.sleep(1)
-                    curr_tick -= 1
-                os._exit(0)
 
             time.sleep(1)
             self.update_in_progress = False
@@ -845,31 +827,6 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.ui = ui
 
     def update_firmware(self, force=False):
-        if self.ui:
-            self.ui.status_label.setText("Updating network ESP32 firmware!")
-
-            for i, rbutton in enumerate([
-                self.ui.bootloader_rbutton,
-                self.ui.esp32_rbutton,
-                self.ui.modi_ota_factory_rbutton,
-                self.ui.ota_data_initial_rbutton,
-                self.ui.partitions_rbutton
-            ]):
-                if not rbutton.isChecked():
-                    self.__address.pop(i)
-                    self.file_path.pop(i)
-
-            module_image_path = path.join(
-                path.dirname(__file__),
-                '..', 'assets', 'image', 'network.png'
-            )
-            if self.ui.installation:
-                module_image_path = path.dirname(__file__).replace(
-                    'util', 'network.png'
-                )
-            module_pixmap = QPixmap(module_image_path)
-            self.ui.curr_module_img.setPixmap(module_pixmap)
-
         self.update_in_progress = True
         self.__boot_to_app()
         self.__version_to_update = self.__get_latest_version()
@@ -883,10 +840,6 @@ class ESP32FirmwareUpdater(serial.Serial):
                 if 'y' not in response:
                     return
         print(f"Updating v{self.version} to v{self.__version_to_update}")
-        if self.ui:
-            self.ui.status_label.setText(
-                f"Updating network firmware to v{self.__version_to_update}"
-            )
         firmware_buffer = self.__compose_binary_firmware()
 
         self.__device_ready()
@@ -895,8 +848,6 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.__set_flash_param()
         manager = None
 
-        if self.ui:
-            self.ui.local_module.setText("Update in Progress...")
         self.__write_binary_firmware(firmware_buffer, manager)
         print("Booting to application...")
         self.__wait_for_json()
@@ -906,18 +857,9 @@ class ESP32FirmwareUpdater(serial.Serial):
         print("ESP firmware update is complete!!")
         self.update_in_progress = False
 
-        if self.ui:
-            curr_tick = 3
-            while curr_tick > 0:
-                self.ui.status_label.setText(
-                    f"ESP32 firmware update is completed!\n"
-                    f"This program will terminate in {curr_tick} seconds.."
-                )
-                time.sleep(1)
-                curr_tick -= 1
-            os._exit(0)
-
         time.sleep(1)
+        self.flushInput()
+        self.flushOutput()
         self.close()
 
     def __device_ready(self):
@@ -1064,18 +1006,41 @@ class ESP32FirmwareUpdater(serial.Serial):
 
     def __compose_binary_firmware(self):
         binary_firmware = b''
-        root_path = path.join(
-            path.dirname(__file__),
-            '..', 'assets', 'firmware', 'esp32'
-        )
         for i, bin_path in enumerate(self.file_path):
-            firmware_path = path.join(root_path, bin_path)
-            if self.ui and self.ui.installation:
-                firmware_path = path.dirname(__file__).replace(
-                    'util', bin_path
+            if i == 2:
+                root_path = path.join(
+                    path.dirname(__file__),
+                    '..', 'assets', 'firmware', 'esp32'
                 )
-            with open(firmware_path, 'rb') as bin_file:
-                bin_data = bin_file.read()
+            elif i == 3:
+                root_path = (
+                    'https://download.luxrobo.com/modi-ota-firmware/ota.zip'
+                )
+            else:
+                root_path = (
+                    'https://download.luxrobo.com/modi-esp32-firmware/esp.zip'
+                )
+
+            if i != 2:
+                try:
+                    # Init bytes data from the given binary file of current module
+                    download_response = requests.get(root_path, timeout=5)
+                except URLError:
+                    raise URLError(
+                        'Failed to download firmware. Please check your internet.'
+                    )
+                zip_content = zipfile.ZipFile(
+                    io.BytesIO(download_response.content), 'r'
+                )
+                bin_data = zip_content.read(bin_path)
+            elif i == 2:
+                firmware_path = path.join(root_path, bin_path)
+                if self.ui and self.ui.installation:
+                    firmware_path = path.dirname(__file__).replace(
+                        'util', bin_path
+                    )
+                with open(firmware_path, 'rb') as bin_file:
+                    bin_data = bin_file.read()
             binary_firmware += bin_data
             if i < len(self.__address) - 1:
                 binary_firmware += b'\xFF' * (
@@ -1084,17 +1049,12 @@ class ESP32FirmwareUpdater(serial.Serial):
         return binary_firmware
 
     def __get_latest_version(self):
-        root_path = path.join(
-            path.dirname(__file__),
-            '..', 'assets', 'firmware', 'esp32'
+        version_path = (
+            'https://download.luxrobo.com/modi-esp32-firmware/version.txt'
         )
-        version_path = path.join(root_path, 'esp_version.txt')
-        if self.ui and self.ui.installation:
-            version_path = path.dirname(__file__).replace(
-                'util', 'esp_version.txt'
-            )
-        with open(version_path, 'r') as version_file:
-            version_info = version_file.readline().lstrip('v').rstrip('\n')
+        version_info = None
+        for line in ur.urlopen(version_path, timeout=5):
+            version_info = line.decode('utf-8').lstrip('v').rstrip('\n')
         return version_info
 
     def __erase_chunk(self, size, offset):
@@ -1170,15 +1130,7 @@ class ESP32FirmwareUpdater(serial.Serial):
         for seq, block in enumerate(block_queue):
             if manager:
                 manager.status = self.__progress_bar(curr_seq + seq, total_seq)
-            if not self.ui:
-                print(f'\r{self.__progress_bar(curr_seq + seq, total_seq)}',
-                      end='')
-            else:
-                current = curr_seq + seq
-                total = total_seq
-                self.ui.local_percentage.setText(
-                    f"{round(100 * current / total, 2)} %"
-                )
+            print(f'\r{self.__progress_bar(curr_seq + seq, total_seq)}', end='')
             self.__write_flash_block(block, seq)
         return len(block_queue)
 

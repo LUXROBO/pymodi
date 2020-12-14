@@ -1,17 +1,37 @@
 import os
-import random
+import sys
 
 import threading as th
 
 
 from PyQt5 import uic
-from PyQt5 import QtWidgets
-from PyQt5.QtGui import QIcon
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt
+from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5.QtCore import QObject, pyqtSignal
 
 from modi.util.firmware_updater import STM32FirmwareUpdater
 from modi.util.firmware_updater import ESP32FirmwareUpdater
+
+
+class StdoutRedirect(QObject):
+    printOccur = pyqtSignal(str, str, name='print')
+
+    def __init__(self):
+        QObject.__init__(self, None)
+        self.daemon = True
+        self.sysstdout = sys.stdout.write
+        self.sysstderr = sys.stderr.write
+
+    def stop(self):
+        sys.stdout.write = self.sysstdout
+        sys.stderr.write = self.sysstderr
+
+    def start(self):
+        sys.stdout.write = self.write
+        sys.stderr.write = lambda msg: self.write(msg, color='red')
+
+    def write(self, s, color="black"):
+        sys.stdout.flush()
+        self.printOccur.emit(s, color)
 
 
 class Form(QtWidgets.QDialog):
@@ -19,37 +39,30 @@ class Form(QtWidgets.QDialog):
     GUI Form of MODI Firmware Updater
     """
 
-    def handle_key_press_event(self):
-        modifiers = QtWidgets.QApplication.keyboardModifiers()
-        # TODO: Fix issue with, (Qt.ControlModifier | Qt.ShiftModifier)
-        if modifiers == Qt.ShiftModifier:
-            if not self.is_dev_mode:
-                self.ui.developer_frame.show()
-                self.is_dev_mode = True
-            else:
-                self.ui.developer_frame.hide()
-                self.is_dev_mode = False
-
-    def __init__(self, parent=None, installer=False):
-        QtWidgets.QDialog.__init__(self, parent)
-        ui_path = (
-            os.path.join(
-                os.path.dirname(__file__),
-                '..', 'assets', 'modi_firmware_updater.ui'
-            )
-        )
+    def __init__(self, installer=False):
+        QtWidgets.QDialog.__init__(self)
         if installer:
             ui_path = os.path.dirname(__file__).replace(
                 'util', 'modi_firmware_updater.ui'
             )
+        else:
+            ui_path = (
+                os.path.join(
+                    os.path.dirname(__file__),
+                    '..', 'assets', 'modi_firmware_updater.ui'
+                )
+            )
         self.ui = uic.loadUi(ui_path)
-        self.ui.setWindowTitle("MODI Firmware Updater")
-        icon_path = os.path.join(
-            os.path.dirname(__file__), '..', 'assets', 'image', 'network.png'
-        )
-        self.ui.setWindowIcon(QIcon(icon_path))
+        self.ui.setWindowTitle('MODI Firmware Updater')
         self.setFixedSize(self.size())
         self.ui.show()
+
+        # Redirect stdout to text browser (i.e. console in our UI)
+        self.stdout = StdoutRedirect()
+        self.stdout.start()
+        self.stdout.printOccur.connect(
+            lambda line: self.__append_text_line(line)
+        )
 
         # Init variable to check if the program is in installation mode
         self.ui.installation = installer
@@ -58,63 +71,31 @@ class Form(QtWidgets.QDialog):
         self.ui.update_network_esp32.clicked.connect(self.update_network_esp32)
         self.ui.update_stm32_modules.clicked.connect(self.update_stm32_modules)
         self.ui.update_network_stm32.clicked.connect(self.update_network_stm32)
-        self.ui.update_network_esp32.setFocus(False)
-        self.ui.update_stm32_modules.setFocus(False)
-        self.ui.update_network_stm32.setFocus(False)
+        self.ui.translate_button.clicked.connect(self.translate_button_text)
 
-        self.ui.push_button.clicked.connect(self.push)
-        self.ui.push_button.setAutoDefault(True)
-        self.ui.push_button.setFocus(True)
+        self.buttons = [
+            self.ui.update_network_esp32,
+            self.ui.update_stm32_modules,
+            self.ui.update_network_stm32,
+            self.ui.translate_button,
+        ]
 
-        # Init module image
-        module_image_path = os.path.join(
-            os.path.dirname(__file__),
-            '..', 'assets', 'image', 'network.png'
-        )
-        if installer:
-            module_image_path = os.path.dirname(__file__).replace(
-                'util', 'network.png'
-            )
-        module_pixmap = QPixmap(module_image_path)
-        self.ui.curr_module_img.setPixmap(module_pixmap)
-
-        # Init password field for enabling developer mode
-        self.ui.password_field.setEchoMode(QtWidgets.QLineEdit.Password)
-        self.ui.password_field.returnPressed.connect(self.process_password)
-
-        # Init radio button states
-        self.ui.bootloader_rbutton.setEnabled(False)
-        self.ui.esp32_rbutton.setEnabled(False)
-        self.ui.modi_ota_factory_rbutton.setEnabled(False)
-        self.ui.ota_data_initial_rbutton.setEnabled(False)
-        self.ui.partitions_rbutton.setEnabled(False)
-
-        # Hide ui available in the developer mode
-        self.ui.developer_frame.hide()
+        # Disable the first button to be focused when UI is loaded
+        self.ui.update_network_esp32.setAutoDefault(False)
+        self.ui.update_network_esp32.setDefault(False)
 
         # Set up field variables
         self.firmware_updater = None
-        self.is_dev_mode = False
+        self.button_in_english = False
 
-    def push(self):
-        curr_val = self.ui.push_bar.value()
-        self.ui.push_bar.setValue(curr_val + 1)
-        if self.ui.push_bar.value() >= 50 and random.uniform(0, 10) <= 3:
-            self.ui.push_bar.setValue(curr_val - 5)
-        self.handle_key_press_event()
-
-    def process_password(self):
-        password = self.ui.password_field.text()
-        if password == "19940929":
-            self.ui.bootloader_rbutton.setEnabled(True)
-            self.ui.esp32_rbutton.setEnabled(True)
-            self.ui.modi_ota_factory_rbutton.setEnabled(True)
-            self.ui.ota_data_initial_rbutton.setEnabled(True)
-            self.ui.partitions_rbutton.setEnabled(True)
-
+    #
+    # Main methods
+    #
     def update_network_esp32(self):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
+        self.ui.console.clear()
+        print('ESP32 Firmware Updater has been initialized for esp update!')
         esp32_updater = ESP32FirmwareUpdater()
         esp32_updater.set_ui(self.ui)
         th.Thread(target=esp32_updater.update_firmware, daemon=True).start()
@@ -123,6 +104,8 @@ class Form(QtWidgets.QDialog):
     def update_stm32_modules(self):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
+        self.ui.console.clear()
+        print('STM32 Firmware Updater has been initialized for module update!')
         stm32_updater = STM32FirmwareUpdater()
         stm32_updater.set_ui(self.ui)
         th.Thread(
@@ -133,6 +116,8 @@ class Form(QtWidgets.QDialog):
     def update_network_stm32(self):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
+        self.ui.console.clear()
+        print('STM32 Firmware Updater has been initialized for base update!')
         stm32_updater = STM32FirmwareUpdater()
         stm32_updater.set_ui(self.ui)
         th.Thread(
@@ -141,3 +126,52 @@ class Form(QtWidgets.QDialog):
             daemon=True
         ).start()
         self.firmware_updater = stm32_updater
+
+    def translate_button_text(self):
+        button_en = [
+            'Update Network ESP32',
+            'Update STM32 Modules',
+            'Update Network STM32',
+            'Translate Button Text To Korean',
+        ]
+        button_kr = [
+            '네트워크 모듈 업데이트',
+            '모듈 초기화',
+            '네트워크 모듈 초기화',
+            '버튼 텍스트를 영어로 변경',
+        ]
+        appropriate_translation = \
+            button_kr if self.button_in_english else button_en
+        self.button_in_english = not self.button_in_english
+        for i, button in enumerate(self.buttons):
+            button.setText(appropriate_translation[i])
+
+    #
+    # Helper functions
+    #
+    def __append_text_line(self, line):
+        self.ui.console.moveCursor(QtGui.QTextCursor.End, QtGui.QTextCursor.MoveAnchor)
+        self.ui.console.moveCursor(QtGui.QTextCursor.StartOfLine, QtGui.QTextCursor.MoveAnchor)
+        self.ui.console.moveCursor(QtGui.QTextCursor.End, QtGui.QTextCursor.KeepAnchor)
+
+        # Remove new line character if current line represents update_progress
+        if self.__is_update_progress_line(line):
+            self.ui.console.textCursor().removeSelectedText()
+            self.ui.console.textCursor().deletePreviousChar()
+
+        # Display user text input
+        self.ui.console.moveCursor(QtGui.QTextCursor.End)
+        self.ui.console.insertPlainText(line)
+        QtWidgets.QApplication.processEvents(
+            QtCore.QEventLoop.ExcludeUserInputEvents
+        )
+
+    @staticmethod
+    def __is_update_progress_line(line):
+        if line.startswith('\rUpdating'):
+            return True
+
+        if line.startswith('\rFirmware Upload: ['):
+            return True
+
+        return False
