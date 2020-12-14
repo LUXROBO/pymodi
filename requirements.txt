@@ -1,7 +1,6 @@
 # common
 pyserial
 pyqt5
-requests
 
 # windows
 bleak==0.8.0; sys_platform == 'win32'

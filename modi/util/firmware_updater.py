@@ -5,7 +5,6 @@ import time
 import json
 import serial
 import zipfile
-import requests
 
 import threading as th
 import urllib.request as ur
@@ -269,13 +268,14 @@ class STM32FirmwareUpdater:
 
             try:
                 # Init bytes data from the given binary file of current module
-                download_response = requests.get(root_path, timeout=5)
+                with ur.urlopen(root_path, timeout=5) as conn:
+                    download_response = conn.read()
             except URLError:
                 raise URLError(
                     "Failed to download firmware. Please check your internet."
                 )
             zip_content = zipfile.ZipFile(
-                io.BytesIO(download_response.content), 'r'
+                io.BytesIO(download_response), 'r'
             )
             bin_buffer = zip_content.read(bin_path)
 
@@ -1023,14 +1023,14 @@ class ESP32FirmwareUpdater(serial.Serial):
 
             if i != 2:
                 try:
-                    # Init bytes data from the given binary file of current module
-                    download_response = requests.get(root_path, timeout=5)
+                    with ur.urlopen(root_path, timeout=5) as conn:
+                        download_response = conn.read()
                 except URLError:
                     raise URLError(
                         'Failed to download firmware. Please check your internet.'
                     )
                 zip_content = zipfile.ZipFile(
-                    io.BytesIO(download_response.content), 'r'
+                    io.BytesIO(download_response), 'r'
                 )
                 bin_data = zip_content.read(bin_path)
             elif i == 2:
