@@ -52,6 +52,7 @@ class Form(QtWidgets.QDialog):
                     '..', 'assets', 'modi_firmware_updater.ui'
                 )
             )
+        print('Loading GUI from', ui_path)
         self.ui = uic.loadUi(ui_path)
         self.ui.setWindowTitle('MODI Firmware Updater')
         self.setFixedSize(self.size())
