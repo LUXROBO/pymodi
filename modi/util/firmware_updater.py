@@ -155,7 +155,8 @@ class STM32FirmwareUpdater:
             firmware_update_message = self.__set_module_state(
                 module_id, Module.UPDATE_FIRMWARE, Module.PNP_OFF
             )
-            self.__conn.send_nowait(firmware_update_message)
+            self.__conn.send_nowait(firmware_update_message, verbose=True)
+        print('Firmware update has been requested')
 
     def check_to_update_firmware(self, module_id: int) -> None:
         firmware_update_ready_message = self.__set_module_state(
@@ -551,7 +552,7 @@ class STM32FirmwareUpdater:
 
         if not msg:
             return
-
+        #print('recved:', msg)
         try:
             ins, sid, did, data, length = decode_message(msg)
         except json.JSONDecodeError:

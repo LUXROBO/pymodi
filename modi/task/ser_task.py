@@ -42,6 +42,7 @@ class SerTask(ConnTask):
             self._bus = self.__init_serial(modi_port.device)
             try:
                 self._bus.open()
+                print(f'Serial is open at "{modi_port}"')
                 return
             except SerialException:
                 continue
@@ -84,24 +85,28 @@ class SerTask(ConnTask):
         return json_pkt
 
     @ConnTask.wait
-    def send(self, pkt: str) -> None:
+    def send(self, pkt: str, verbose=False) -> None:
         """ Send json pkt
 
         :param pkt: Json pkt to send
         :type pkt: str
+        :param verbose: Verbosity parameter
+        :type verbose: bool
         :return: None
         """
         self._bus.write(pkt.encode('utf8'))
-        if self.verbose:
+        if self.verbose or verbose:
             print(f'send: {pkt}')
 
-    def send_nowait(self, pkt: str) -> None:
+    def send_nowait(self, pkt: str, verbose=False) -> None:
         """ Send json pkt
 
         :param pkt: Json pkt to send
         :type pkt: str
+        :param verbose: Verbosity parameter
+        :type verbose: bool
         :return: None
         """
         self._bus.write(pkt.encode('utf8'))
-        if self.verbose:
+        if self.verbose or verbose:
             print(f'send: {pkt}')

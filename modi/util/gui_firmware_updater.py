@@ -104,13 +104,13 @@ class Form(QtWidgets.QDialog):
         self.ui.update_network_esp32.setAutoDefault(False)
         self.ui.update_network_esp32.setDefault(False)
 
-        # Set up field variables
-        self.firmware_updater = None
-        self.button_in_english = False
-
         # Print init status
         time_now_str = time.strftime('[%Y/%m/%d@%X]', time.localtime())
         print(time_now_str + ' GUI MODI Firmware Updater has been started!')
+
+        # Set up field variables
+        self.firmware_updater = STM32FirmwareUpdater()
+        self.button_in_english = False
 
     #
     # Main methods
