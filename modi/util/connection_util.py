@@ -18,8 +18,10 @@ def list_modi_ports() -> List[ListPortInfo]:
                 "MODI Network Module",
                 "MODI Network Module(BootLoader)",
                 "STM32 Virtual ComPort",
+                "STMicroelectronics Virtual COM Port",
             )
             or (port.vid == 0x2fde and port.pid == 0x2)
+            or (port.vid == 0x483 and port.pid == 0x5740)
         )
 
     return [port for port in stl.comports() if __is_modi_port(port)]
