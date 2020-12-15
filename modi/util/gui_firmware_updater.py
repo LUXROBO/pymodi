@@ -119,10 +119,8 @@ class Form(QtWidgets.QDialog):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
         self.ui.console.clear()
-        time_now_str = time.strftime('[%Y/%m/%d %X]', time.localtime())
         print(
-            time_now_str +
-            ' ESP32 Firmware Updater has been initialized for esp update!'
+            'ESP32 Firmware Updater has been initialized for esp update!'
         )
         esp32_updater = ESP32FirmwareUpdater()
         esp32_updater.set_ui(self.ui)
@@ -133,10 +131,8 @@ class Form(QtWidgets.QDialog):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
         self.ui.console.clear()
-        time_now_str = time.strftime('[%Y/%m/%d %X]', time.localtime())
         print(
-            time_now_str +
-            ' STM32 Firmware Updater has been initialized for module update!'
+            'STM32 Firmware Updater has been initialized for module update!'
         )
         stm32_updater = STM32FirmwareUpdater()
         stm32_updater.set_ui(self.ui)
@@ -149,10 +145,8 @@ class Form(QtWidgets.QDialog):
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
         self.ui.console.clear()
-        time_now_str = time.strftime('[%Y/%m/%d %X]', time.localtime())
         print(
-            time_now_str +
-            ' STM32 Firmware Updater has been initialized for base update!'
+            'STM32 Firmware Updater has been initialized for base update!'
         )
         stm32_updater = STM32FirmwareUpdater()
         stm32_updater.set_ui(self.ui)
