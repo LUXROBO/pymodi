@@ -321,7 +321,7 @@ class STM32FirmwareUpdater:
         # Set end-flash data to be sent at the end of the firmware update
         end_flash_data = bytearray(8)
         end_flash_data[0] = 0xAA
-        end_flash_data[1] = 1
+        end_flash_data[1] = 0
         end_flash_data[2] = 0
         end_flash_data[6] = version & 0xFF
         end_flash_data[7] = (version >> 8) & 0xFF
