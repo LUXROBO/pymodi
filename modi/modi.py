@@ -22,7 +22,7 @@ class MODI:
 
     def __init__(
         self, modi_version=1, conn_type="", verbose=False, port=None,
-        network_uuid="",
+        network_uuid="", virtual_modules=None,
     ):
         # Init logger
         __logger = self.__init_logger()
