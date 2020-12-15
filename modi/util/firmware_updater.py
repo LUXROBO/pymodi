@@ -215,9 +215,9 @@ class STM32FirmwareUpdater:
                     'https://download.luxrobo.com/modi-skeleton-mobile/skeleton.zip'
                 )
                 bin_path = (
-                    path.join('skeleton', f'{module_type.lower()}.bin')
+                    path.join(f'skeleton/{module_type.lower()}.bin')
                     if module_type != 'env' else
-                    path.join('skeleton', 'environment.bin')
+                    path.join('skeleton/environment.bin')
                 )
 
             try:
