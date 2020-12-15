@@ -860,7 +860,7 @@ class ESP32FirmwareUpdater(serial.Serial):
                         download_response = conn.read()
                 except URLError:
                     raise URLError(
-                        'Failed to download firmware. Please check your internet.'
+                        'Failed to download firmware. Check your internet.'
                     )
                 zip_content = zipfile.ZipFile(
                     io.BytesIO(download_response), 'r'
@@ -874,6 +874,7 @@ class ESP32FirmwareUpdater(serial.Serial):
                     )
                 with open(firmware_path, 'rb') as bin_file:
                     bin_data = bin_file.read()
+
             binary_firmware += bin_data
             if i < len(self.__address) - 1:
                 binary_firmware += b'\xFF' * (
@@ -882,12 +883,21 @@ class ESP32FirmwareUpdater(serial.Serial):
         return binary_firmware
 
     def __get_latest_version(self):
-        version_path = (
-            'https://download.luxrobo.com/modi-esp32-firmware/version.txt'
-        )
-        version_info = None
-        for line in ur.urlopen(version_path, timeout=5):
-            version_info = line.decode('utf-8').lstrip('v').rstrip('\n')
+        if self.ui:
+            version_path = (
+                'https://download.luxrobo.com/modi-esp32-firmware/version.txt'
+            )
+            version_info = None
+            for line in ur.urlopen(version_path, timeout=5):
+                version_info = line.decode('utf-8').lstrip('v').rstrip('\n')
+        else:
+            root_path = path.join(
+                path.dirname(__file__),
+                '..', 'assets', 'firmware', 'esp32'
+            )
+            version_path = path.join(root_path, 'esp_version.txt')
+            with open(version_path, 'r') as version_file:
+                version_info = version_file.readline().lstrip('v').rstrip('\n')
         return version_info
 
     def __erase_chunk(self, size, offset):
