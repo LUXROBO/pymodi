@@ -1222,13 +1222,13 @@ class GD32FirmwareUpdater:
 
             # Init metadata of the bytes loaded
             page_size = 0x800
-            flash_memory_addr = 0x08004800
+            flash_memory_addr = 0x08000000
 
             bin_size = sys.getsizeof(bin_buffer)
-            bin_begin = 0x9000 if not self.update_network_base else 0x4800
+            bin_begin = 0x4800
             bin_end = bin_size - ((bin_size - bin_begin) % page_size)
 
-            page_offset = 0 if not self.update_network_base else 0x8800
+            page_offset = 0
             for page_begin in range(bin_begin, bin_end + 1, page_size):
                 progress = 100 * page_begin // bin_end
                 print(
@@ -1325,7 +1325,7 @@ class GD32FirmwareUpdater:
             )
             self.__conn.send_nowait(reboot_message)
             print("Reboot message has been sent to all connected modules")
-            self.reset_state()
+            #self.reset_state()
             if self.update_network_base:
                 self.reinitialize_serial_connection()
                 time.sleep(0.5)
