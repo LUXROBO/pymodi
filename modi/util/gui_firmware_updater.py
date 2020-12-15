@@ -109,7 +109,7 @@ class Form(QtWidgets.QDialog):
         print(time_now_str + ' GUI MODI Firmware Updater has been started!')
 
         # Set up field variables
-        self.firmware_updater = STM32FirmwareUpdater()
+        self.firmware_updater = None
         self.button_in_english = False
 
     #
