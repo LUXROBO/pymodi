@@ -139,6 +139,7 @@ class STM32FirmwareUpdater:
         self.update_in_progress = False
 
         if not update_in_progress:
+            print('Make sure you have connected module(s) to update')
             print("Resetting firmware updater's state")
             self.modules_to_update = []
             self.modules_updated = []
@@ -155,7 +156,7 @@ class STM32FirmwareUpdater:
             firmware_update_message = self.__set_module_state(
                 module_id, Module.UPDATE_FIRMWARE, Module.PNP_OFF
             )
-            self.__conn.send_nowait(firmware_update_message, verbose=True)
+            self.__conn.send_nowait(firmware_update_message)
         print('Firmware update has been requested')
 
     def check_to_update_firmware(self, module_id: int) -> None:
