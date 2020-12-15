@@ -840,41 +840,49 @@ class ESP32FirmwareUpdater(serial.Serial):
     def __compose_binary_firmware(self):
         binary_firmware = b''
         for i, bin_path in enumerate(self.file_path):
-            if i == 2:
+            if self.ui:
+                if i == 2:
+                    root_path = path.join(
+                        path.dirname(__file__),
+                        '..', 'assets', 'firmware', 'esp32'
+                    )
+                elif i == 3:
+                    root_path = (
+                        'https://download.luxrobo.com/modi-ota-firmware/ota.zip'
+                    )
+                else:
+                    root_path = (
+                        'https://download.luxrobo.com/modi-esp32-firmware/esp.zip'
+                    )
+
+                if i != 2:
+                    try:
+                        with ur.urlopen(root_path, timeout=5) as conn:
+                            download_response = conn.read()
+                    except URLError:
+                        raise URLError(
+                            'Failed to download firmware. Check your internet.'
+                        )
+                    zip_content = zipfile.ZipFile(
+                        io.BytesIO(download_response), 'r'
+                    )
+                    bin_data = zip_content.read(bin_path)
+                elif i == 2:
+                    firmware_path = path.join(root_path, bin_path)
+                    if self.ui and self.ui.installation:
+                        firmware_path = path.dirname(__file__).replace(
+                            'util', bin_path
+                        )
+                    with open(firmware_path, 'rb') as bin_file:
+                        bin_data = bin_file.read()
+            else:
                 root_path = path.join(
                     path.dirname(__file__),
                     '..', 'assets', 'firmware', 'esp32'
                 )
-            elif i == 3:
-                root_path = (
-                    'https://download.luxrobo.com/modi-ota-firmware/ota.zip'
-                )
-            else:
-                root_path = (
-                    'https://download.luxrobo.com/modi-esp32-firmware/esp.zip'
-                )
-
-            if i != 2:
-                try:
-                    with ur.urlopen(root_path, timeout=5) as conn:
-                        download_response = conn.read()
-                except URLError:
-                    raise URLError(
-                        'Failed to download firmware. Check your internet.'
-                    )
-                zip_content = zipfile.ZipFile(
-                    io.BytesIO(download_response), 'r'
-                )
-                bin_data = zip_content.read(bin_path)
-            elif i == 2:
                 firmware_path = path.join(root_path, bin_path)
-                if self.ui and self.ui.installation:
-                    firmware_path = path.dirname(__file__).replace(
-                        'util', bin_path
-                    )
                 with open(firmware_path, 'rb') as bin_file:
                     bin_data = bin_file.read()
-
             binary_firmware += bin_data
             if i < len(self.__address) - 1:
                 binary_firmware += b'\xFF' * (
