@@ -113,5 +113,3 @@ ENV/
 # PyCharm
 .idea/
 
-# Test File
-test.py
