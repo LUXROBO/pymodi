@@ -105,6 +105,7 @@ History
 3. Implement module usage manual (i.e. quick-start)
 4. Implement module inspection functionality (i.e. diagnose)
 5.  Refactor GUI debugger design, fix initialization issue on macOS
+
 1.1.0 (2020-12-17)
 --
 1. Implement GUI Firmware Updater in PyMODI
