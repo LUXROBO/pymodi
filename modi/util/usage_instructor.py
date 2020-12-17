@@ -4,7 +4,12 @@ from textwrap import fill
 from textwrap import dedent
 
 
-class Usage:
+class UsageInstructor:
+    """
+    Usage Instructor teaches basic module usage of PyMODI.
+    It mainly teachs what methods are available for each module.
+    """
+
     row_len = 79
 
     def __init__(self):

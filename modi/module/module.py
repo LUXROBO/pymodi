@@ -4,7 +4,7 @@ import time
 from typing import Union
 from os import path
 
-from modi.util.msgutil import parse_message
+from modi.util.message_util import parse_message
 
 BROADCAST_ID = 0xFFF
 
@@ -37,6 +37,7 @@ class Module:
 
         self.module_type = str()
         self._properties = dict()
+        self._topology = {'r': 0, 't': 0, 'l': 0, 'b': 0}
 
         # sampling_rate = (100 - property_sampling_frequency) * 11, in ms
         self.prop_samp_freq = 91
@@ -101,7 +102,10 @@ class Module:
     @property
     def is_up_to_date(self):
         root_path = (
-            path.join(path.dirname(__file__), '..', 'firmware', 'stm32')
+            path.join(
+                path.dirname(__file__),
+                '..', 'assets', 'firmware', 'stm32'
+            )
         )
         version_path = path.join(root_path, 'version.txt')
         with open(version_path) as version_file:

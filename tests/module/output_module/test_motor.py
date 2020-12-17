@@ -1,8 +1,8 @@
 import unittest
 
 from modi.module.output_module.motor import Motor
-from modi.util.msgutil import parse_data, parse_message
-from modi.util.misc import MockConn
+from modi.util.message_util import parse_data, parse_message
+from modi.util.miscellaneous import MockConn
 
 
 class TestMotor(unittest.TestCase):
@@ -17,117 +17,6 @@ class TestMotor(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
         del self.motor
-
-    def test_set_torque(self):
-        """Test set_torque method."""
-        expected_values = first_torque_value, second_torque_value = 50, 50
-        self.motor.torque = expected_values
-        sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(
-            parse_message(
-                0x03, 0, -1,
-                (Motor.FIRST_TORQUE, None, self.motor.prop_samp_freq, None)
-            ) in sent_messages
-        )
-        self.assertTrue(
-            parse_message(
-                0x03, 0, -1,
-                (Motor.SECOND_TORQUE, None, self.motor.prop_samp_freq, None)
-            ) in sent_messages
-        )
-        self.assertTrue(
-            parse_message(
-                0x04, 16, -1,
-                parse_data(expected_values, 'int')
-            ) in sent_messages
-        )
-
-    def test_set_first_torque(self):
-        """Test set_first_torque method."""
-        first_torque_value = 50
-        self.motor.first_torque = first_torque_value
-        sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(
-            parse_message(
-                0x03, 0, -1,
-                (Motor.FIRST_TORQUE, None, self.motor.prop_samp_freq, None)
-            ) in sent_messages
-        )
-        self.assertTrue(
-            parse_message(
-                0x04, 16, -1,
-                parse_data((first_torque_value, 0), 'int')
-            ) in sent_messages
-        )
-
-    def test_set_second_torque(self):
-        """Test set_second_torque method."""
-        second_torque_value = 50
-        self.motor.second_torque = second_torque_value
-        sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(
-            parse_message(
-                0x03, 0, -1,
-                (Motor.SECOND_TORQUE, None, self.motor.prop_samp_freq, None)
-            ) in sent_messages
-        )
-        self.assertTrue(
-            parse_message(
-                0x04, 16, -1,
-                parse_data((0, second_torque_value), 'int')
-            ) in sent_messages
-        )
-
-    def test_get_torque(self):
-        """Test set_torque method with none input."""
-        _ = self.motor.torque
-        sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(
-            parse_message(
-                0x03, 0, -1,
-                (Motor.FIRST_TORQUE, None, self.motor.prop_samp_freq, None)
-            )
-            in sent_messages)
-        self.assertTrue(
-            parse_message(
-                0x03, 0, -1,
-                (Motor.SECOND_TORQUE, None, self.motor.prop_samp_freq, None)
-            ) in sent_messages
-        )
-
-    def test_get_first_torque(self):
-        """Test get_first_torque method"""
-        _ = self.motor.first_torque
-        sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(
-            parse_message(
-                0x03, 0, -1,
-                (Motor.FIRST_TORQUE, None, self.motor.prop_samp_freq, None)
-            ) in sent_messages
-        )
-
-    def test_get_second_torque(self):
-        """Test get_second_torque method"""
-        _ = self.motor.second_torque
-        sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(
-            parse_message(
-                0x03, 0, -1,
-                (Motor.SECOND_TORQUE, None, self.motor.prop_samp_freq, None)
-            ) in sent_messages
-        )
 
     def test_set_speed(self):
         """Test set_speed method."""

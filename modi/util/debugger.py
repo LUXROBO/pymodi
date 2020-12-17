@@ -2,6 +2,7 @@ import sys
 import modi
 import time
 
+import tkinter as tk
 from _tkinter import TclError
 from io import StringIO
 from tkinter import Tk, Canvas, Entry, Label
@@ -13,7 +14,7 @@ else:
     from tkinter import Button
 
 from modi.modi import MODI
-from modi.util.msgutil import parse_message
+from modi.util.message_util import parse_message
 
 
 class Debugger(MODI):
@@ -27,12 +28,12 @@ class Debugger(MODI):
         self._buffer = StringIO()
         sys.stdout = self._buffer
         super().__init__(verbose=True, *args, **kwargs)
-        debugger = _DebuggerWindow(self, self._buffer)
+        debugger = DebuggerWindow(self, self._buffer)
         debugger.run()
 
 
 # TODO: Apply MVC pattern here
-class _DebuggerWindow:
+class DebuggerWindow:
     def __init__(self, bundle: MODI, buffer: StringIO):
         self._buffer = buffer
         self.bundle = bundle
@@ -48,7 +49,7 @@ class _DebuggerWindow:
             None, None, None, None
 
     def run(self):
-        width, height = 910, 750
+        width, height = 930, 790
         window = Tk()
         window.title(f"GUI Debugger for PyMODI (v{modi.__version__})")
         window.geometry(f"{width}x{height}")
@@ -83,6 +84,7 @@ class _DebuggerWindow:
         Label(window, text='msg:').place(x=545, y=5)
         self.__input_box = Entry(window)
         self.__input_box.place(x=580, y=5, width=250)
+        self.__input_box["state"] = tk.DISABLED
         send_button = Button(window, text="Send", command=self.send)
         send_button.place(x=830, y=5)
 
@@ -129,12 +131,16 @@ class _DebuggerWindow:
             did = eval(self.__did.get())
             data = eval(self.__data.get())
             msg = parse_message(cmd, sid, did, data)
+            self.__input_box["state"] = tk.NORMAL
             self.__input_box.delete(0, END)
             self.__input_box.insert(0, msg)
+            self.__input_box["state"] = tk.DISABLED
         except Exception as e:
             print("An exception in Tkinter callback has been raised:", e)
+            self.__input_box["state"] = tk.NORMAL
             self.__input_box.delete(0, END)
             self.__input_box.insert(0, "Invalid Arguments")
+            self.__input_box["state"] = tk.DISABLED
 
     def __query_log(self, line: str) -> bool:
         if ('recv' not in line and 'send' not in line) or \

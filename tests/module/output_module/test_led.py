@@ -1,16 +1,12 @@
 import unittest
 
 from modi.module.output_module.led import Led
-from modi.util.msgutil import parse_data, parse_message
-from modi.util.misc import MockConn
+from modi.util.message_util import parse_data, parse_message
+from modi.util.miscellaneous import MockConn
 
 
 class TestLed(unittest.TestCase):
     """Tests for 'Led' class."""
-
-    @staticmethod
-    def to_true_color(color):
-        return tuple(map(lambda c: c * 100 // 255, color))
 
     def setUp(self):
         """Set up test fixtures, if any."""
@@ -24,38 +20,11 @@ class TestLed(unittest.TestCase):
 
     def test_set_rgb(self):
         """Test set_rgb method with user-defined inputs."""
-        expected_color = (10, 20, 255)
+        expected_color = (10, 20, 100)
         self.led.rgb = expected_color
         set_message = parse_message(
             0x04, 16, -1,
-            parse_data(self.to_true_color(expected_color), 'int')
-        )
-        sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(set_message in sent_messages)
-
-    def test_on(self):
-        """Test on method."""
-        expected_color = (255, 255, 255)
-        self.led.rgb = expected_color
-        set_message = parse_message(
-            0x04, 16, -1,
-            parse_data(self.to_true_color(expected_color), 'int')
-        )
-        sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
-        self.assertTrue(set_message in sent_messages)
-
-    def test_off(self):
-        """Test off method."""
-        expected_color = (0, 0, 0)
-        self.led.turn_on()
-        self.led.turn_off()
-        set_message = parse_message(
-            0x04, 16, -1,
-            parse_data(self.to_true_color(expected_color), 'int')
+            parse_data(expected_color, 'int')
         )
         sent_messages = []
         while self.conn.send_list:
@@ -67,7 +36,7 @@ class TestLed(unittest.TestCase):
         expected_color = (20, 0, 0)
         set_message = parse_message(
             0x04, 16, -1,
-            parse_data(self.to_true_color(expected_color), 'int')
+            parse_data(expected_color, 'int')
         )
         sent_messages = []
         self.led.red = 20
@@ -90,7 +59,7 @@ class TestLed(unittest.TestCase):
         expected_color = (0, 20, 0)
         set_message = parse_message(
             0x04, 16, -1,
-            parse_data(self.to_true_color(expected_color), 'int')
+            parse_data(expected_color, 'int')
         )
         sent_messages = []
         self.led.green = 20
@@ -114,7 +83,7 @@ class TestLed(unittest.TestCase):
         expected_color = (0, 0, 20)
         set_message = parse_message(
             0x04, 16, -1,
-            parse_data(self.to_true_color(expected_color), 'int')
+            parse_data(expected_color, 'int')
         )
         sent_messages = []
         self.led.blue = 20
@@ -132,6 +101,33 @@ class TestLed(unittest.TestCase):
                 (Led.BLUE, None, self.led.prop_samp_freq, None)
             )
         )
+
+    def test_on(self):
+        """Test on method."""
+        expected_color = (100, 100, 100)
+        self.led.rgb = expected_color
+        set_message = parse_message(
+            0x04, 16, -1,
+            parse_data(expected_color, 'int')
+        )
+        sent_messages = []
+        while self.conn.send_list:
+            sent_messages.append(self.conn.send_list.pop())
+        self.assertTrue(set_message in sent_messages)
+
+    def test_off(self):
+        """Test off method."""
+        expected_color = (0, 0, 0)
+        self.led.turn_on()
+        self.led.turn_off()
+        set_message = parse_message(
+            0x04, 16, -1,
+            parse_data(expected_color, 'int')
+        )
+        sent_messages = []
+        while self.conn.send_list:
+            sent_messages.append(self.conn.send_list.pop())
+        self.assertTrue(set_message in sent_messages)
 
 
 if __name__ == "__main__":

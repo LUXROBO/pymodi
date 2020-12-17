@@ -8,13 +8,14 @@ from getopt import getopt, GetoptError
 import modi
 
 from modi.util.debugger import Debugger
-from modi.util.usage import Usage
+from modi.util.usage_instructor import UsageInstructor
 from modi.util.tutor import Tutor
 from modi.util.inspector import Inspector
 
-from modi.firmware_updater import STM32FirmwareUpdater
-from modi.firmware_updater import ESP32FirmwareUpdater
-from modi.util.msgutil import parse_message, decode_message
+from modi.util.firmware_updater import STM32FirmwareUpdater
+from modi.util.firmware_updater import ESP32FirmwareUpdater
+from modi.util.firmware_updater import GD32FirmwareUpdater
+from modi.util.message_util import parse_message, decode_message
 
 
 def check_option(*options):
@@ -49,11 +50,11 @@ if __name__ == "__main__":
     try:
         # all commands should be defined here in advance
         opts, args = getopt(
-            sys.argv[1:], "tamhvpdinu",
+            sys.argv[1:], "tamhvpdinubgxy",
             [
                 "tutorial",
                 "initialize",
-                "update",
+                "update_modules",
                 "help",
                 "verbose",
                 "performance",
@@ -61,6 +62,10 @@ if __name__ == "__main__":
                 "inspect",
                 "update_network",
                 "usage",
+                "update_network_base",
+                "update_in_gui",
+                "update_modules_gd",
+                "update_network_base_gd",
             ]
         )
     # exit program if an invalid option has been entered
@@ -115,15 +120,6 @@ if __name__ == "__main__":
         print(f"Took {took / 2:.10f} seconds for message transfer")
         os._exit(0)
 
-    # Update STM32 modules (every modules but network module)
-    if check_option('-m', '--update'):
-        init_time = time.time()
-        updater = STM32FirmwareUpdater()
-        updater.update_module_firmware()
-        fin_time = time.time()
-        print(f"Took {fin_time - init_time:.2f} seconds to update")
-        os._exit(0)
-
     # Update ESP32 module (only network module)
     if check_option('-n', '--update_network'):
         init_time = time.time()
@@ -131,6 +127,40 @@ if __name__ == "__main__":
         updater.update_firmware()
         fin_time = time.time()
         print(f"Took {fin_time - init_time:.2f} seconds to update :)")
+        os._exit(0)
+
+    # Update STM32 base (of network module)
+    if check_option('-b', '--update_network_base'):
+        init_time = time.time()
+        updater = STM32FirmwareUpdater()
+        updater.update_module_firmware(update_network_base=True)
+        fin_time = time.time()
+        print(f"Took {fin_time - init_time:.2f} seconds to update")
+        os._exit(0)
+
+    # Update MODI STM32 modules (every modules but network module)
+    if check_option('-m', '--update_modules'):
+        init_time = time.time()
+        updater = STM32FirmwareUpdater()
+        updater.update_module_firmware()
+        fin_time = time.time()
+        print(f"Took {fin_time - init_time:.2f} seconds to update")
+        os._exit(0)
+
+    if check_option('-x', '--update_modules_gd'):
+        init_time = time.time()
+        updater = GD32FirmwareUpdater()
+        updater.update_module_firmware()
+        fin_time = time.time()
+        print(f"Took {fin_time - init_time:.2f} seconds to update")
+        os._exit(0)
+
+    if check_option('-y', '--update_network_base_gd'):
+        init_time = time.time()
+        updater = GD32FirmwareUpdater()
+        updater.update_module_firmware(update_network_base=True)
+        fin_time = time.time()
+        print(f"Took {fin_time - init_time:.2f} seconds to update")
         os._exit(0)
 
     # Initialize modules implicitly
@@ -167,6 +197,15 @@ if __name__ == "__main__":
 
     # Show each module usage
     if check_option('-u', '--usage'):
-        usage = Usage()
+        usage = UsageInstructor()
         usage.run_usage_manual()
+        os._exit(0)
+
+    # Run GUI MODI Firmware Updater
+    if check_option('-g', '--update_in_gui'):
+        from PyQt5 import QtWidgets
+        from modi.util.gui_firmware_updater import Form
+        app = QtWidgets.QApplication(sys.argv)
+        w = Form()
+        sys.exit(app.exec())
         os._exit(0)
