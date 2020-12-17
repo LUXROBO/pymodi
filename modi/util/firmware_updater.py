@@ -125,7 +125,7 @@ class STM32FirmwareUpdater:
         print('Temporally disconnecting the serial connection...')
         self.close()
 
-        print('Reinitializing serial connection for the update, in 2 seconds..')
+        print('Re-init serial connection for the update, in 2 seconds...')
         time.sleep(2)
         self.__conn = self.__open_conn()
         self.__conn.open_conn()
@@ -327,7 +327,9 @@ class STM32FirmwareUpdater:
             e.g. 2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
         """
         version = (
-            version_digits[0] << 13 | version_digits[1] << 8 | version_digits[2]
+            version_digits[0] << 13 |
+            version_digits[1] << 8 |
+            version_digits[2]
         )
 
         # Set end-flash data to be sent at the end of the firmware update
@@ -336,7 +338,9 @@ class STM32FirmwareUpdater:
         end_flash_data[6] = version & 0xFF
         end_flash_data[7] = (version >> 8) & 0xFF
         self.send_end_flash_data(module_type, module_id, end_flash_data)
-        print(f'Version info (v{version_info}) has been written to its firmware!')
+        print(
+            f'Version info (v{version_info}) has been written to its firmware!'
+        )
 
         # Firmware update flag down, resetting used flags
         print(f'Firmware update is done for {module_type} ({module_id})')
@@ -847,11 +851,13 @@ class ESP32FirmwareUpdater(serial.Serial):
                     )
                 elif i == 3:
                     root_path = (
-                        'https://download.luxrobo.com/modi-ota-firmware/ota.zip'
+                        'https://download.luxrobo.com/modi-ota-firmware/'
+                        'ota.zip'
                     )
                 else:
                     root_path = (
-                        'https://download.luxrobo.com/modi-esp32-firmware/esp.zip'
+                        'https://download.luxrobo.com/modi-esp32-firmware/'
+                        'esp.zip'
                     )
 
                 if i != 2:
@@ -980,7 +986,9 @@ class ESP32FirmwareUpdater(serial.Serial):
         for seq, block in enumerate(block_queue):
             if manager:
                 manager.status = self.__progress_bar(curr_seq + seq, total_seq)
-            print(f'\r{self.__progress_bar(curr_seq + seq, total_seq)}', end='')
+            print(
+                f'\r{self.__progress_bar(curr_seq + seq, total_seq)}', end=''
+            )
             self.__write_flash_block(block, seq)
         return len(block_queue)
 
@@ -1097,7 +1105,7 @@ class GD32FirmwareUpdater:
         print('Temporally disconnecting the serial connection...')
         self.close()
 
-        print('Reinitializing serial connection for the update, in 2 seconds..')
+        print('Re-init serial connection for the update, in 2 seconds...')
         time.sleep(2)
         self.__conn = self.__open_conn()
         self.__conn.open_conn()
@@ -1299,7 +1307,9 @@ class GD32FirmwareUpdater:
             e.g. 2.2.4 -> 010 00010 00000100 -> 0100 0010 0000 0100
         """
         version = (
-            version_digits[0] << 13 | version_digits[1] << 8 | version_digits[2]
+            version_digits[0] << 13 |
+            version_digits[1] << 8 |
+            version_digits[2]
         )
 
         # Set end-flash data to be sent at the end of the firmware update
@@ -1308,7 +1318,9 @@ class GD32FirmwareUpdater:
         end_flash_data[6] = version & 0xFF
         end_flash_data[7] = (version >> 8) & 0xFF
         self.send_end_flash_data(module_type, module_id, end_flash_data)
-        print(f'Version info (v{version_info}) has been written to its firmware!')
+        print(
+            f'Version info (v{version_info}) has been written to its firmware!'
+        )
 
         # Firmware update flag down, resetting used flags
         print(f'Firmware update is done for {module_type} ({module_id})')
@@ -1325,7 +1337,7 @@ class GD32FirmwareUpdater:
             )
             self.__conn.send_nowait(reboot_message)
             print("Reboot message has been sent to all connected modules")
-            #self.reset_state()
+            # self.reset_state()
             if self.update_network_base:
                 self.reinitialize_serial_connection()
                 time.sleep(0.5)

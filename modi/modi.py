@@ -24,9 +24,6 @@ class MODI:
         self, modi_version=1, conn_type="", verbose=False, port=None,
         network_uuid="", virtual_modules=None,
     ):
-        # Init logger
-        __logger = self.__init_logger()
-
         if virtual_modules and conn_type != "vir":
             raise ValueError(
                 "Virtual modules can only be defined in virtual connection"

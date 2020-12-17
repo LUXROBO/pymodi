@@ -181,7 +181,7 @@ class Form(QtWidgets.QDialog):
     #
     @staticmethod
     def __init_logger():
-        logger = logging.getLogger(f'GUI MODI Firmware Updater Logger')
+        logger = logging.getLogger('GUI MODI Firmware Updater Logger')
         logger.setLevel(logging.DEBUG)
 
         formatter = logging.Formatter(
@@ -195,9 +195,15 @@ class Form(QtWidgets.QDialog):
         return logger
 
     def __append_text_line(self, line):
-        self.ui.console.moveCursor(QtGui.QTextCursor.End, QtGui.QTextCursor.MoveAnchor)
-        self.ui.console.moveCursor(QtGui.QTextCursor.StartOfLine, QtGui.QTextCursor.MoveAnchor)
-        self.ui.console.moveCursor(QtGui.QTextCursor.End, QtGui.QTextCursor.KeepAnchor)
+        self.ui.console.moveCursor(
+            QtGui.QTextCursor.End, QtGui.QTextCursor.MoveAnchor
+        )
+        self.ui.console.moveCursor(
+            QtGui.QTextCursor.StartOfLine, QtGui.QTextCursor.MoveAnchor
+        )
+        self.ui.console.moveCursor(
+            QtGui.QTextCursor.End, QtGui.QTextCursor.KeepAnchor
+        )
 
         # Remove new line character if current line represents update_progress
         if self.__is_update_progress_line(line):
