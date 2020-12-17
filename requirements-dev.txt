@@ -4,3 +4,4 @@ black
 tox
 coverage
 pre-commit
+bumpversion
