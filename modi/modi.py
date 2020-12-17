@@ -1,28 +1,39 @@
 """Main MODI module."""
 
-import atexit
-import time
-from importlib import import_module as im
-from typing import Optional
 import sys
+import time
+import atexit
+import logging
+
+from importlib import import_module as im
 
 from modi._exe_thrd import ExeThrd
-from modi.util.conn_util import is_network_module_connected, is_on_pi
-from modi.util.misc import module_list
+from modi.util.connection_util import is_network_module_connected, is_on_pi
+from modi.util.miscellaneous import ModuleList
 from modi.util.stranger import check_complete
-# from modi.util.upython import upload_file
 from modi.util.topology_manager import TopologyManager
-from modi.firmware_updater import STM32FirmwareUpdater, ESP32FirmwareUpdater
+from modi.util.firmware_updater import STM32FirmwareUpdater
+from modi.util.firmware_updater import ESP32FirmwareUpdater
+
+from modi.about import __version__
 
 
 class MODI:
 
-    def __init__(self, conn_mode: str = "", verbose: bool = False,
-                 port: str = None, uuid=""):
+    def __init__(
+        self, modi_version=1, conn_type="", verbose=False, port=None,
+        network_uuid="", virtual_modules=None,
+    ):
+        if virtual_modules and conn_type != "vir":
+            raise ValueError(
+                "Virtual modules can only be defined in virtual connection"
+            )
         self._modules = list()
         self._topology_data = dict()
 
-        self._conn = self.__init_task(conn_mode, verbose, port, uuid)
+        self._conn = self.__init_task(
+            conn_type, verbose, port, network_uuid,
+        )
 
         self._exe_thrd = ExeThrd(
             self._modules, self._topology_data, self._conn
@@ -45,7 +56,7 @@ class MODI:
         print("MODI modules are initialized!")
 
         bad_modules = (
-            self.__wait_user_code_check() if conn_mode != 'ble' else []
+            self.__wait_user_code_check() if conn_type != 'ble' else []
         )
         if bad_modules:
             cmd = input(f"{[str(module) for module in bad_modules]} "
@@ -68,6 +79,21 @@ class MODI:
                 self.open()
         atexit.register(self.close)
 
+    @staticmethod
+    def __init_logger():
+        logger = logging.getLogger(f'PyMODI (v{__version__}) Logger')
+        logger.setLevel(logging.DEBUG)
+
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+        file_handler = logging.FileHandler('pymodi.log')
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+
+        logger.addHandler(file_handler)
+        return logger
+
     def __wait_user_code_check(self):
         def is_not_checked(module):
             return module.user_code_status < 0
@@ -80,36 +106,29 @@ class MODI:
                 bad_modules.append(module)
         return bad_modules
 
-    # @staticmethod
-    # def upload_user_code(filepath: str, remote_path: str) -> None:
-    #    """Upload python user code
-    #
-    #    :param filepath: Filepath to python file
-    #    :type filepath: str
-    #    :param remote_path: Filepath on esp device
-    #    :return: None
-    #    """
-    #    upload_file(filepath, remote_path)
-
     @staticmethod
-    def __init_task(conn_mode, verbose, port, uuid):
-        if not conn_mode:
+    def __init_task(
+        conn_type, verbose, port, network_uuid,
+    ):
+        if not conn_type:
             is_can = not is_network_module_connected() and is_on_pi()
-            conn_mode = 'can' if is_can else 'ser'
+            conn_type = 'can' if is_can else 'ser'
 
-        if conn_mode == 'ser':
+        if conn_type == 'ser':
             return im('modi.task.ser_task').SerTask(verbose, port)
-        elif conn_mode == 'can':
+        elif conn_type == 'can':
             return im('modi.task.can_task').CanTask(verbose)
-        elif conn_mode == 'ble':
+        elif conn_type == 'vir':
+            return im('modi.task.vir_task').VirTask(verbose, port)
+        elif conn_type == 'ble':
             mod_path = {
                 'win32': 'modi.task.ble_task.ble_task_win',
                 'linux': 'modi.task.ble_task.ble_task_rpi',
                 'darwin': 'modi.task.ble_task.ble_task_mac',
             }.get(sys.platform)
-            return im(mod_path).BleTask(verbose, uuid)
+            return im(mod_path).BleTask(verbose, network_uuid)
         else:
-            raise ValueError(f'Invalid conn mode {conn_mode}')
+            raise ValueError(f'Invalid conn mode {conn_type}')
 
     def open(self):
         atexit.register(self.close)
@@ -125,7 +144,7 @@ class MODI:
         self._exe_thrd.close()
         self._conn.close_conn()
 
-    def send(self, message) -> None:
+    def send(self, message):
         """Low level method to send json pkt directly to modules
 
         :param message: Json packet to send
@@ -133,7 +152,7 @@ class MODI:
         """
         self._conn.send_nowait(message)
 
-    def recv(self) -> Optional[str]:
+    def recv(self):
         """Low level method to receive json pkt directly from modules
 
         :return: Json msg received
@@ -141,7 +160,7 @@ class MODI:
         """
         return self._conn.recv()
 
-    def print_topology_map(self, print_id: bool = False) -> None:
+    def print_topology_map(self, print_id=False):
         """Prints out the topology map
 
         :param print_id: if True, the result includes module id
@@ -150,80 +169,80 @@ class MODI:
         self._topology_manager.print_topology_map(print_id)
 
     @property
-    def modules(self) -> module_list:
+    def modules(self) -> ModuleList:
         """Module List of connected modules except network module.
         """
-        return module_list(self._modules)
+        return ModuleList(self._modules)
 
     @property
-    def networks(self) -> module_list:
-        return module_list(self._modules, 'network')
+    def networks(self) -> ModuleList:
+        return ModuleList(self._modules, 'network')
 
     @property
-    def buttons(self) -> module_list:
+    def buttons(self) -> ModuleList:
         """Module List of connected Button modules.
         """
-        return module_list(self._modules, 'button')
+        return ModuleList(self._modules, 'button')
 
     @property
-    def dials(self) -> module_list:
+    def dials(self) -> ModuleList:
         """Module List of connected Dial modules.
         """
-        return module_list(self._modules, "dial")
+        return ModuleList(self._modules, "dial")
 
     @property
-    def displays(self) -> module_list:
+    def displays(self) -> ModuleList:
         """Module List of connected Display modules.
         """
-        return module_list(self._modules, "display")
+        return ModuleList(self._modules, "display")
 
     @property
-    def envs(self) -> module_list:
+    def envs(self) -> ModuleList:
         """Module List of connected Env modules.
         """
-        return module_list(self._modules, "env")
+        return ModuleList(self._modules, "env")
 
     @property
-    def gyros(self) -> module_list:
+    def gyros(self) -> ModuleList:
         """Module List of connected Gyro modules.
         """
-        return module_list(self._modules, "gyro")
+        return ModuleList(self._modules, "gyro")
 
     @property
-    def irs(self) -> module_list:
+    def irs(self) -> ModuleList:
         """Module List of connected Ir modules.
         """
-        return module_list(self._modules, "ir")
+        return ModuleList(self._modules, "ir")
 
     @property
-    def leds(self) -> module_list:
+    def leds(self) -> ModuleList:
         """Module List of connected Led modules.
         """
-        return module_list(self._modules, "led")
+        return ModuleList(self._modules, "led")
 
     @property
-    def mics(self) -> module_list:
+    def mics(self) -> ModuleList:
         """Module List of connected Mic modules.
         """
-        return module_list(self._modules, "mic")
+        return ModuleList(self._modules, "mic")
 
     @property
-    def motors(self) -> module_list:
+    def motors(self) -> ModuleList:
         """Module List of connected Motor modules.
         """
-        return module_list(self._modules, "motor")
+        return ModuleList(self._modules, "motor")
 
     @property
-    def speakers(self) -> module_list:
+    def speakers(self) -> ModuleList:
         """Module List of connected Speaker modules.
         """
-        return module_list(self._modules, "speaker")
+        return ModuleList(self._modules, "speaker")
 
     @property
-    def ultrasonics(self) -> module_list:
+    def ultrasonics(self) -> ModuleList:
         """Module List of connected Ultrasonic modules.
         """
-        return module_list(self._modules, "ultrasonic")
+        return ModuleList(self._modules, "ultrasonic")
 
 
 def update_module_firmware(target_ids=(0xFFF, )):
@@ -241,7 +260,3 @@ def reset_module_firmware(target_ids=(0xFFF, )):
 def update_network_firmware(force=False):
     updater = ESP32FirmwareUpdater()
     updater.update_firmware(force=force)
-
-
-# def upload_user_code(filepath, remote_path):
-#    upload_file(filepath, remote_path)

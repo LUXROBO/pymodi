@@ -6,6 +6,10 @@ from textwrap import dedent
 
 
 class Tutor:
+    """
+    Tutor teaches overall usage of PyMODI
+    """
+
     row_len = 79
 
     def __init__(self):

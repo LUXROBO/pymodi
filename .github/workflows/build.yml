@@ -26,4 +26,4 @@ jobs:
         python --version
         python -m unittest
     - name: Run convention tests
-      run: python -m flake8 modi tests
+      run: python -m flake8 modi tests --ignore E265,W503,W504

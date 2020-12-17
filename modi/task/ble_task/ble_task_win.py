@@ -10,7 +10,7 @@ from threading import Thread
 from bleak import discover, BleakClient, BleakError
 
 from modi.task.conn_task import ConnTask
-from modi.util.conn_util import MODIConnectionError
+from modi.util.connection_util import MODIConnectionError
 
 
 class BleTask(ConnTask):

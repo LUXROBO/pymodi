@@ -8,7 +8,7 @@ include about.py
 
 include requirements.txt
 
-recursive-include modi/firmware *
+recursive-include modi/assets *
 recursive-include modi/task/ble_task *
 
 recursive-include tests *

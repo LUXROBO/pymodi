@@ -2,9 +2,6 @@ from importlib.util import find_spec
 
 
 def get_module_type_from_uuid(uuid):
-    if uuid is None:
-        return 'network'
-
     hexadecimal = hex(uuid).lstrip("0x")
     type_indicator = str(hexadecimal)[:4]
     module_type = {
@@ -41,7 +38,7 @@ def get_module_from_name(module_type: str):
         module_module = find_spec(f'modi.module.output_module.{module_type}')
     if not module_module:
         module_module = find_spec(f'modi.module.setup_module.{module_type}')
-    module_module = module_module.loader.load_module()
+    module_module = module_module.loader.load_module(module_module.name)
     return getattr(module_module, module_name)
 
 
@@ -52,7 +49,7 @@ def ask_modi_device(devices):
     return devices[int(i)].lstrip('MODI_')
 
 
-class module_list(list):
+class ModuleList(list):
 
     def __init__(self, src, module_type=None):
         self.__src = src

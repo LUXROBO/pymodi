@@ -5,7 +5,7 @@
 --------
 <div align="center">
 
-[![Supported Python Versions](https://img.shields.io/pypi/pyversions/pymodi.svg?style=flat-square)](https://pypi.python.org/pypi/pymodi)
+[![Python Versions](https://img.shields.io/pypi/pyversions/pymodi.svg?style=flat-square)](https://pypi.python.org/pypi/pymodi)
 [![PyPI Release (latest by date)](https://img.shields.io/github/v/release/LUXROBO/pymodi?style=flat-square)](https://pypi.python.org/pypi/pymodi)
 [![Read the Docs (version)](https://img.shields.io/readthedocs/pymodi/master?style=flat-square)](https://pymodi.readthedocs.io/en/master/?badge=master)
 [![GitHub Workflow Status (Build)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi/Build%20Status/master?style=flat-square)](https://github.com/LUXROBO/pymodi/actions)
@@ -71,11 +71,11 @@ Installation
 # Install new python environment for PyMODI package, choose python version >= 3.6
 conda create --name pymodi python=3.6
 
-# Make sure that your python's version is compatible with PyMODI
-python --version
-
 # After you properly install the python environment, activate it
 conda activate pymodi
+
+# Ensure that your python version is compatible with PyMODI
+python --version
 ```
 
 Install the latest PyMODI if you haven't installed it yet:
@@ -109,13 +109,13 @@ bundle = modi.MODI()
 [Optional] Specify how you would like to establish the connection between your machine and the network module.
 ```python
 # 1. Serial connection (via USB), it's the default connection method
-bundle = modi.MODI(conn_mode="ser")
+bundle = modi.MODI(conn_type="ser")
 
 # 2. CAN connection (via CAN shield, not recommended to use it directly)
-bundle = modi.MODI(conn_mode="can")
+bundle = modi.MODI(conn_type="can")
 
 # 3. BLE (Bluetooth Low Energy) connection, it's wireless! But it can be slow :(
-bundle = modi.MODI(conn_mode="ble", uuid="YOUR_NETWORK_MODULE_UUID")
+bundle = modi.MODI(conn_type="ble", network_uuid="YOUR_NETWORK_MODULE_UUID")
 ```
 
 List and create connected modules' object.
@@ -145,11 +145,11 @@ import time
 
 for _ in range(5):
     # turn on for 0.5 second
-    led.rgb = 255, 255, 255
+    led.turn_on()
     time.sleep(0.5)
 
     # turn off for 0.5 second
-    led.rgb = 0, 0, 0
+    led.turn_off()
     time.sleep(0.5)
 ```
 
@@ -166,14 +166,24 @@ Moreover, we provide [api documentation](https://pymodi.readthedocs.io/en/master
 
 Additional Usage
 ----------------
-To update MODI modules (all modules but the network module),
-```commandline
-$ python -m modi --update
-```
-
 To update MODI network module (the network module must be connected on serial),
 ```commandline
 $ python -m modi --update_network
+```
+
+To update MODI network module's base (as above, the network module must be connected on serial),
+```commandline
+$ python -m modi --update_network_base
+```
+
+To update MODI modules (all modules but the network module),
+```commandline
+$ python -m modi --update_modules
+```
+
+To update firmware in GUI mode (all three commands above are available)
+```commandline
+$ python -m modi --update_in_gui
 ```
 
 To diagnose MODI modules (helpful to find existing malfunctioning modules),

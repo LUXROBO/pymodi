@@ -3,7 +3,7 @@ from typing import Optional
 import serial
 from serial.serialutil import SerialException
 from modi.task.conn_task import ConnTask
-from modi.util.conn_util import list_modi_ports
+from modi.util.connection_util import list_modi_ports
 
 
 class SerTask(ConnTask):
@@ -42,6 +42,7 @@ class SerTask(ConnTask):
             self._bus = self.__init_serial(modi_port.device)
             try:
                 self._bus.open()
+                print(f'Serial is open at "{modi_port}"')
                 return
             except SerialException:
                 continue
@@ -67,7 +68,8 @@ class SerTask(ConnTask):
 
         :return: str
         """
-        self.__json_buffer += self._bus.read_all()
+        buf_temp = self._bus.read_all()
+        self.__json_buffer += buf_temp
         idx = self.__json_buffer.find(b'{')
         if idx < 0:
             self.__json_buffer = b''
@@ -83,24 +85,28 @@ class SerTask(ConnTask):
         return json_pkt
 
     @ConnTask.wait
-    def send(self, pkt: str) -> None:
+    def send(self, pkt: str, verbose=False) -> None:
         """ Send json pkt
 
         :param pkt: Json pkt to send
         :type pkt: str
+        :param verbose: Verbosity parameter
+        :type verbose: bool
         :return: None
         """
         self._bus.write(pkt.encode('utf8'))
-        if self.verbose:
+        if self.verbose or verbose:
             print(f'send: {pkt}')
 
-    def send_nowait(self, pkt: str) -> None:
+    def send_nowait(self, pkt: str, verbose=False) -> None:
         """ Send json pkt
 
         :param pkt: Json pkt to send
         :type pkt: str
+        :param verbose: Verbosity parameter
+        :type verbose: bool
         :return: None
         """
         self._bus.write(pkt.encode('utf8'))
-        if self.verbose:
+        if self.verbose or verbose:
             print(f'send: {pkt}')

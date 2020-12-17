@@ -1,0 +1,42 @@
+name: pymodi
+channels:
+  - defaults
+dependencies:
+  - ca-certificates=2020.7.22=0
+  - certifi=2020.6.20=py36_0
+  - libcxx=10.0.0=1
+  - libedit=3.1.20191231=h1de35cc_1
+  - libffi=3.3=hb1e8313_2
+  - ncurses=6.2=h0a44026_1
+  - openssl=1.1.1h=haf1e3a3_0
+  - pip=20.2.3=py36_0
+  - python=3.6.12=h26836e1_2
+  - readline=8.0=h1de35cc_0
+  - setuptools=50.3.0=py36h0dc7051_1
+  - sqlite=3.33.0=hffcf06c_0
+  - tk=8.6.10=hb0a8c7a_0
+  - wheel=0.35.1=py_0
+  - xz=5.2.5=h1de35cc_0
+  - zlib=1.2.11=h1de35cc_3
+  - pip:
+    - aenum==2.2.4
+    - bleak==0.8.0
+    - colour==0.1.5
+    - filelock==3.0.12
+    - flake8==3.8.4
+    - importlib-metadata==2.0.0
+    - mccabe==0.6.1
+    - mypy-extensions==0.4.3
+    - pycodestyle==2.6.0
+    - pyflakes==2.2.0
+    - pymodi==1.0.1
+    - pyobjc-core==6.2.2
+    - pyobjc-framework-cocoa==6.2.2
+    - pyobjc-framework-corebluetooth==6.2.2
+    - pyobjc-framework-libdispatch==6.2.2
+    - pyqt5==5.15.1
+    - pyqt5-sip==12.8.1
+    - pyserial==3.5b0
+    - tkmacosx==0.1.5
+    - wrapt==1.12.1
+    - zipp==3.4.0
