@@ -79,7 +79,8 @@ class MODI:
                 self.open()
         atexit.register(self.close)
 
-    def __init_logger(self):
+    @staticmethod
+    def __init_logger():
         logger = logging.getLogger(f'PyMODI (v{__version__}) Logger')
         logger.setLevel(logging.DEBUG)
 
