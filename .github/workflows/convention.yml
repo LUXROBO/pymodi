@@ -26,7 +26,7 @@ jobs:
     - name: Flake8 convention test
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        flake8 modi tests --ignore=R,D,A,W503,E265 --count --statistics
+        flake8 modi tests --ignore=R,D,A,W503,W504,E265 --count --statistics
     - name: Flake8 type annotation check
       run: flake8 modi tests --select=A --count --statistics --exit-zero
     - name: Flake8 docstring check
