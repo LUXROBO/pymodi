@@ -112,4 +112,3 @@ History
 2. Implement network base (STM32) firmware updater
 3. Implement GD32 firmware updater
 4. Implement [VirtualMODI](https://github.com/luxrobo/virtual-modi) integration code
-
