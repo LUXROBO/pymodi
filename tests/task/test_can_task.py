@@ -1,16 +1,19 @@
+import sys
 import json
 import unittest
 
 from queue import Queue
-from modi.task.can_task import CanTask
 from modi.util.message_util import parse_message
+
+if sys.platform == 'linux':
+    from modi.task.can_task import CanTask
 
 
 class MockCan:
     def __init__(self):
         self.recv_buffer = Queue()
 
-    def recv(self, timeout):
+    def recv(self):
         json_pkt = parse_message(0x03, 0, 1)
         return CanTask.compose_can_msg(json.loads(json_pkt))
 
@@ -18,6 +21,9 @@ class MockCan:
         self.recv_buffer.put(item)
 
 
+@unittest.skipUnless(
+    sys.platform == 'linux', reason='CanTask is supported only on Linux'
+)
 class TestCanTask(unittest.TestCase):
     """Tests for 'CanTask' class"""
 
