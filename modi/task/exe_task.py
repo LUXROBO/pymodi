@@ -22,8 +22,8 @@ class ExeTask:
         )
 
         # Request data required to initialize MODI
-        self.__request_module_uuid()
         self.__request_network_uuid()
+        self.__request_module_uuid()
         self.__request_topology()
 
     def run(self, delay):
@@ -144,12 +144,12 @@ class ExeTask:
         for module in self._modules:
             if module.module_type != 'network' and \
                     curr_time - module.last_updated > 2:
-                # if not module.has_printed:
-                #    print(
-                #        f"{module.module_type.title()} ({module_id}) "
-                #        f"has been disconnected!!"
-                #    )
-                #    module.has_printed = True
+                if not module.has_printed:
+                   print(
+                       f"{module.module_type.title()} ({module_id}) "
+                       f"has been disconnected!!"
+                   )
+                   module.has_printed = True
                 module.is_connected = False
                 module._last_set_message = None
 
@@ -231,22 +231,17 @@ class ExeTask:
             parse_message(0x09, 0, destination_id, (module_state, pnp_state))
         )
 
-    def __request_module_uuid(self):
-        self._conn.send_nowait(
-            parse_message(0x8, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
-        )
-
     def __request_network_uuid(self):
         self._conn.send_nowait(
             parse_message(0x28, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
         )
 
-    def __request_topology(self, module_id=BROADCAST_ID):
-        """Request module topology
+    def __request_module_uuid(self):
+        self._conn.send_nowait(
+            parse_message(0x8, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
+        )
 
-        :return: json serialized topology request message
-        :rtype: str
-        """
+    def __request_topology(self, module_id=BROADCAST_ID):
         self._conn.send_nowait(
             parse_message(0x07, 0, module_id, (0, 0, 0, 0, 0, 0, 0, 0))
         )
