@@ -7,7 +7,7 @@ from getopt import getopt, GetoptError
 
 import modi
 
-from modi.util.debugger import Debugger
+from modi.util.debugging_util import Debugger
 from modi.util.usage_instructor import UsageInstructor
 from modi.util.tutor import Tutor
 from modi.util.inspector import Inspector
