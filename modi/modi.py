@@ -10,7 +10,7 @@ from importlib import import_module as im
 from modi._exe_thrd import ExeThrd
 from modi.util.connection_util import is_network_module_connected, is_on_pi
 from modi.util.miscellaneous_util import ModuleList
-from modi.util.stranger import check_complete
+from modi.util.strange_util import check_complete
 from modi.util.topology_util import TopologyManager
 from modi.util.firmware_updater import STM32FirmwareUpdater
 from modi.util.firmware_updater import ESP32FirmwareUpdater
