@@ -1,6 +1,6 @@
 import unittest
 
-from modi.util.miscellaneous import MockConn
+from modi.util.miscellaneous_util import MockConn
 from modi.task.exe_task import ExeTask
 
 

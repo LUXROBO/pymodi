@@ -7,10 +7,10 @@ from getopt import getopt, GetoptError
 
 import modi
 
-from modi.util.debugger import Debugger
-from modi.util.usage_instructor import UsageInstructor
-from modi.util.tutor import Tutor
-from modi.util.inspector import Inspector
+from modi.util.debugging_util import Debugger
+from modi.util.usage_util import UsageInstructor
+from modi.util.tutorial_util import Tutor
+from modi.util.inspection_util import Inspector
 
 from modi.util.firmware_updater import STM32FirmwareUpdater
 from modi.util.firmware_updater import ESP32FirmwareUpdater
