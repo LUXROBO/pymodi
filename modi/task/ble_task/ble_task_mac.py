@@ -11,7 +11,7 @@ from bleak.backends.corebluetooth import client as mac_client
 
 from modi.task.conn_task import ConnTask
 from modi.util.connection_util import MODIConnectionError
-from modi.util.miscellaneous import ask_modi_device
+from modi.util.miscellaneous_util import ask_modi_device
 
 
 class BleTask(ConnTask):

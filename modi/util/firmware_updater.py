@@ -20,7 +20,7 @@ from urllib.error import URLError
 from modi.module.module import Module
 from modi.util.message_util import unpack_data, decode_message, parse_message
 from modi.util.connection_util import list_modi_ports, is_on_pi
-from modi.util.miscellaneous import get_module_type_from_uuid
+from modi.util.miscellaneous_util import get_module_type_from_uuid
 
 
 class STM32FirmwareUpdater:

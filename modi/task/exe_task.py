@@ -4,8 +4,8 @@ from base64 import b64decode
 
 from modi.module.module import Module, BROADCAST_ID
 from modi.module.setup_module.battery import Battery
-from modi.util.miscellaneous import get_module_from_name
-from modi.util.miscellaneous import get_module_type_from_uuid
+from modi.util.miscellaneous_util import get_module_from_name
+from modi.util.miscellaneous_util import get_module_type_from_uuid
 from modi.util.message_util import unpack_data, decode_data, parse_message
 
 

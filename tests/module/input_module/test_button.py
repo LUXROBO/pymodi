@@ -2,7 +2,7 @@ import unittest
 
 from modi.module.input_module.button import Button
 from modi.util.message_util import parse_message
-from modi.util.miscellaneous import MockConn
+from modi.util.miscellaneous_util import MockConn
 
 
 class TestButton(unittest.TestCase):
