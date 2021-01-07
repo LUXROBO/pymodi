@@ -11,7 +11,9 @@ Maintainer
 
 Committer
 ---------
--   Jinsung Ha (jinsung@luxrobo.com)
+-   Jinsoo Heo (koriel@luxrobo.com)
+-   Jinsung Ha (jsung5381@naver.com)
+-   Sebeom Lee (moses97@gmail.com)
 
 Contributors
 ------------
