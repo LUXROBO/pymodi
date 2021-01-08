@@ -292,6 +292,7 @@
                                         : Returns True when the button is pressed and False when the button is released
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: True / False</li>
+                                            <li class="module-funcs"><b>Type value</b>: bool</li>
                                         </ul>
                                     </li>
                                     <br>
@@ -300,6 +301,7 @@
                                         : Returns True when the button is double clicked
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: True / False</li>
+                                            <li class="module-funcs"><b>Type value</b>: bool</li>
                                         </ul>
                                     </li>
                                     <br>
@@ -308,6 +310,7 @@
                                         : Returns True when the button is pressed
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: True / False</li>
+                                            <li class="module-funcs"><b>Type value</b>: bool</li>
                                         </ul>
                                     </li>
                                     <br>
@@ -316,31 +319,37 @@
                                         : Returns True/False each time the button is toggled. It changes the value when the button is pressed.
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: True / False</li>
+                                            <li class="module-funcs"><b>Type value</b>: bool</li>
                                         </ul>
                                     </li>
                                     <br>
                                 </ul>
                             </div>
                         </div>
-                        <!-- logfind1 -->
                         <div class="module dial">
                             <img src="assets/img/modules/dial.png" alt="dial" width="100" height="100">
                             <div class="module-description">
                                 <h2 class="module-title">Dial Module</h2>
                                 <ul class="module-desc">
                                     <li class="module-funcs">
-                                        <b>degree</b>: Returns the angle of the dial
+                                        <b>How to call Module</b>: dial = bundle.dials[0]
+                                    </li>
+                                    <br>
+                                    <li class="module-funcs">
+                                        <b>dial.degree</b><br>
+                                        : Returns the angle of the dial in the range of 0 to 100
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: dial.degree</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
                                     <li class="module-funcs">
-                                        <b>turnspeed</b>: Returns the turnspeed of the dial
+                                        <b>dial.turnspeed</b><br>
+                                        : Returns the turnspeed of the dial in the range of 0 to 100
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: dial.turnspeed</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
@@ -353,50 +362,63 @@
                                 <h2 class="module-title">Environment Module</h2>
                                 <ul class="module-desc">
                                     <li class="module-funcs">
-                                        <b>brightness</b>: Returns the brightness value
+                                        <b>How to call Module</b>: env = bundle.envs[0]
+                                    </li>
+                                    <br>
+                                    <li class="module-funcs">
+                                        <b>env.brightness</b><br>
+                                        : Returns the brightness value in the range of 0 to 100
+                                        <ul class="module-detail">
+                                            <li class="module-funcs">The higher the value, the higher the brightness</li>
+                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
+                                        </ul>
+                                    </li>
+                                    <br>
+                                    <li class="module-funcs">
+                                        <b>env.humidity</b><br>
+                                        : Returns the current humidity in the range of 0 to 100
+                                        <ul class="module-detail">
+                                            <li class="module-funcs">The higher the value, the higher the humidity</li>
+                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
+                                        </ul>
+                                    </li>
+                                    <br>
+                                    <li class="module-funcs">
+                                        <b>env.temperature</b><br>
+                                        : Returns the current temperature in the range of 0 to 100
+                                        <ul class="module-detail">
+                                            <li class="module-funcs">The higher the value, the higher the temperature</li>
+                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
+                                        </ul>
+                                    </li>
+                                    <br>
+                                    <li class="module-funcs">
+                                        <b>env.red</b><br>
+                                        : Returns the red value of the light in the range of 0 to 100
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: env.brightness</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
                                     <li class="module-funcs">
-                                        <b>humidity</b>: Returns the current humidity
+                                        <b>env.green</b><br>
+                                        : Returns the green value of the light in the range of 0 to 100
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: env.humidity</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
                                     <li class="module-funcs">
-                                        <b>temperature</b>: Returns the current temperature
+                                        <b>env.blue</b><br>
+                                        : Returns the blue value of the light in the range of 0 to 100
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: env.temperature</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>red</b>: Returns the red value of the light
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 255</li>
-                                            <li class="module-funcs"><b>Usage</b>: env.red</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>green</b>: Returns the green value of the light
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 255</li>
-                                            <li class="module-funcs"><b>Usage</b>: env.green</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>red</b>: Returns the blue value of the light
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 255</li>
-                                            <li class="module-funcs"><b>Usage</b>: env.blue</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
@@ -409,82 +431,96 @@
                                 <h2 class="module-title">Gyro Module</h2>
                                 <ul class="module-desc">
                                     <li class="module-funcs">
-                                        <b>pitch</b>: Returns the pitch value
+                                        <b>How to call Module</b>:  gyro = bundle.gyros[0]
+                                    </li>
+                                    <br>
+                                    <li class="module-funcs">
+                                        <b>gyro.pitch</b><br>
+                                        : Returns the pitch value in the range of -180 to 180
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: -180 ~ 180</li>
-                                            <li class="module-funcs"><b>Usage</b>: gyro.pitch</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
                                     <li class="module-funcs">
-                                        <b>roll</b>: Returns the roll value
+                                        <b>gyro.roll</b><br>
+                                        : Returns the roll value in the range of -180 to 180
                                         <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: -180 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: gyro.roll</li>
+                                            <li class="module-funcs"><b>Return value</b>: -180 ~ 180</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
                                     <li class="module-funcs">
-                                        <b>yaw</b>: Returns the yaw value
+                                        <b>gyro.yaw</b><br>
+                                        : Returns the yaw value in the range of -180 to 180
                                         <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: -180 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: gyro.yaw</li>
+                                            <li class="module-funcs"><b>Return value</b>: -180 ~ 180</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
                                     <li class="module-funcs">
-                                        <b>angular_vel_x</b>: Returns the angular velocity with respect to x axis
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: gyro.angular_vel_x</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>angular_vel_y</b>: Returns the angular velocity with respect to y axis
+                                        <b>gyro.angular_vel_x</b><br>
+                                        : Returns the angular velocity with respect to x axis in the range of -100 to 100
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: gyro.angular_vel_y</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
                                     <li class="module-funcs">
-                                        <b>angular_vel_z</b>: Returns the angular velocity with respect to z axis
+                                        <b>gyro.angular_vel_y</b><br>
+                                        : Returns the angular velocity with respect to y axis in the range of -100 to 100
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: gyro.angular_vel_z</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
                                     <li class="module-funcs">
-                                        <b>acceleration_x</b>: Returns the acceleration to x axis
+                                        <b>gyro.angular_vel_z</b><br>
+                                        : Returns the angular velocity with respect to z axis in the range of -100 to 100
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: gyro.acceleration_x</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
                                     <li class="module-funcs">
-                                        <b>acceleration_y</b>: Returns the acceleration to y axis
+                                        <b>gyro.acceleration_x</b><br>
+                                        : Returns the acceleration to x axis in the range of -100 to 100
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: gyro.acceleration_y</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
                                     <li class="module-funcs">
-                                        <b>acceleration_z</b>: Returns the acceleration to z axis
+                                        <b>gyro.acceleration_y</b><br>
+                                        : Returns the acceleration to y axis in the range of -100 to 100
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: gyro.acceleration_z</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
                                     <li class="module-funcs">
-                                        <b>vibration</b>: Returns the magnitude of vibration
+                                        <b>gyro.acceleration_z</b><br>
+                                        : Returns the acceleration to z axis in the range of -100 to 100
+                                        <ul class="module-detail">
+                                            <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
+                                        </ul>
+                                    </li>
+                                    <br>
+                                    <li class="module-funcs">
+                                        <b>gyro.vibration</b><br>
+                                        : Returns the magnitude of vibration in the range of 0 to 100
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: gyro.vibration</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
@@ -497,10 +533,16 @@
                                 <h2 class="module-title">Infrared Module</h2>
                                 <ul class="module-desc">
                                     <li class="module-funcs">
-                                        <b>proximity</b>: Returns the proximity value
+                                        <b>How to call Module</b>:  ir = bundle.irs[0]
+                                    </li>
+                                    <br>
+                                    <li class="module-funcs">
+                                        <b>ir.proximity</b><br>
+                                        : Returns the proximity value in the range of 0 to 100
                                         <ul class="module-detail">
+                                            <li class="module-funcs">ir moudle can measure objects between 4 and 30 cm</li>
                                             <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: ir.proximity</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -512,18 +554,24 @@
                                 <h2 class="module-title">Mic Module</h2>
                                 <ul class="module-desc">
                                     <li class="module-funcs">
-                                        <b>frequency</b>: Returns the frequency of the input sound
+                                        <b>How to call Module</b>:  mic = bundle.mics[0]
+                                    </li>
+                                    <br>
+                                    <li class="module-funcs">
+                                        <b>mic.frequency</b><br>
+                                        : Returns the frequency of the input sound
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: float value</li>
-                                            <li class="module-funcs"><b>Usage</b>: mic.frequency</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
                                     <li class="module-funcs">
-                                        <b>volume</b>: Returns the volume of the input sound
+                                        <b>mic.volume</b><br>
+                                        : Returns the volume of the input sound in the range of 0 to 100
                                         <ul class="module-detail">
                                             <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: mic.volume</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                     <br>
@@ -536,15 +584,22 @@
                                 <h2 class="module-title">Ultrasonic Module</h2>
                                 <ul class="module-desc">
                                     <li class="module-funcs">
-                                        <b>distance</b>: Returns the distance to the object
+                                        <b>How to call Module</b>:  ultrasonic = bundle.ultrasonics[0]
+                                    </li>
+                                    <br>
+                                    <li class="module-funcs">
+                                        <b>ultrasonic.distance</b><br>
+                                        : Returns the distance to the object in the range of 0 to 100
                                         <ul class="module-detail">
+                                            <li class="module-funcs">ultrasonic moudle can measure objects between 50 and 450 cm</li>
                                             <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: ultrasonic.distance</li>
+                                            <li class="module-funcs"><b>Type value</b>: float</li>
                                         </ul>
                                     </li>
                                 </ul>
                             </div>
                         </div>
+                        <!-- findlog -->
                         <div class="module display">
                             <img src="assets/img/modules/display.png" alt="display" width="100" height="100">
                             <div class="module-description">
