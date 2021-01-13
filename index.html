@@ -108,6 +108,7 @@
                 <!-- Portfolio Grid Item Content -->
                 <div class="row">
                     <!-- Portfolio Item 1-->
+					<!-- checkpoint1 -->
                     <div class="col-md-6 col-lg-4 mb-5">
                         <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal1">
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
@@ -182,7 +183,9 @@
                 </div>
             </div>
         </section>
-
+		
+		
+		<!-- Elcy : Usage update 21-01-08~ -->
         <!-- Usage Section-->
         <section class="page-section mb-0" id="usage">
             <div class="container">
@@ -195,630 +198,67 @@
                     <div class="divider-custom-line"></div>
                 </div>
                 <!-- Usage Manual Content -->
+				
                 <div align="center">
                     <div class="wrapper">
-                        <div class="module network">
-                            <img src="assets/img/modules/network.png" alt="network" width="100" height="100">
-                            <div class="module-description">
-                                <h2 class="module-title">Network Module</h2>
-                                <ul class="module-desc">
-                                    <li class="module-funcs">
-                                        <b>button_pressed</b>: Returns whether MODI Play button is pressed
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: True if pressed</li>
-                                            <li class="module-funcs"><b>Usage</b>: network.button_pressed</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>dial</b>: Returns MODI Play dial value
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: network.dial </li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>joystick</b>: Returns MODI Play joystick direction
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 'up', 'down', 'left', 'right', and None if not pressed</li>
-                                            <li class="module-funcs"><b>Usage</b>: network.joystick </li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>left_slider</b>: Returns MODI Play left slider value
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: network.left_slider </li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>right_slider</b>: Returns MODI Play right slider value
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Usage</b>: network.right_slider </li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>timer</b>: Returns if MODI Play timer is up
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: True / False</li>
-                                            <li class="module-funcs"><b>Usage</b>: network.timer </li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>buzzer_on()</b>: Turns on MODI Play buzzer
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: None</li>
-                                            <li class="module-funcs"><b>Usage</b>: network.buzzer_on() </li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>buzzer_off()</b>: Turns off MODI Play buzzer
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: None</li>
-                                            <li class="module-funcs"><b>Usage</b>: network.buzzer_off() </li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>take_picture()</b>: Takes a picture with MODI Play camera
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: None</li>
-                                            <li class="module-funcs"><b>Usage</b>: network.take_picture() </li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                </ul>
-                            </div>
-                        </div>
-                        <!-- Elcy : Usage update 21-01-08~ -->
-                        <div class="module button">
-                            <img src="assets/img/modules/button.png" alt="button" width="100" height="100">
-                            <div class="module-description triangle">
-                                <h2 class="module-title">Button Module</h2>
-                                <ul class="module-desc">
-                                    <li class="module-funcs">
-                                        <b>How to call Module</b>: button = bundle.buttons[0]
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>button.clicked</b><br>
-                                        : Returns True when the button is pressed and False when the button is released
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: True / False</li>
-                                            <li class="module-funcs"><b>Type</b>: bool</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>button.double_clicked</b><br>
-                                        : Returns True when the button is double clicked
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: True / False</li>
-                                            <li class="module-funcs"><b>Type</b>: bool</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>button.pressed</b><br>
-                                        : Returns True when the button is pressed
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: True / False</li>
-                                            <li class="module-funcs"><b>Type</b>: bool</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>button.toggled</b><br>
-                                        : Returns True/False each time the button is toggled. The value changes when the button is pressed
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: True / False</li>
-                                            <li class="module-funcs"><b>Type</b>: bool</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="module dial">
-                            <img src="assets/img/modules/dial.png" alt="dial" width="100" height="100">
-                            <div class="module-description">
-                                <h2 class="module-title">Dial Module</h2>
-                                <ul class="module-desc">
-                                    <li class="module-funcs">
-                                        <b>How to call Module</b>: dial = bundle.dials[0]
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>dial.degree</b><br>
-                                        : Returns the angle of the dial in the range of 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>dial.turnspeed</b><br>
-                                        : Returns the turnspeed of the dial in the range of 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="module env">
-                            <img src="assets/img/modules/env.png" alt="env" width="100" height="100">
-                            <div class="module-description">
-                                <h2 class="module-title">Environment Module</h2>
-                                <ul class="module-desc">
-                                    <li class="module-funcs">
-                                        <b>How to call Module</b>: env = bundle.envs[0]
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>env.brightness</b><br>
-                                        : Returns the brightness value in the range of 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs">The higher the value, the higher the brightness</li>
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>env.humidity</b><br>
-                                        : Returns the current humidity in the range of 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs">The higher the value, the higher the humidity</li>
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>env.temperature</b><br>
-                                        : Returns the current temperature in the range of 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs">The higher the value, the higher the temperature</li>
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>env.red</b><br>
-                                        : Returns the red value of the light in the range of 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>env.green</b><br>
-                                        : Returns the green value of the light in the range of 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>env.blue</b><br>
-                                        : Returns the blue value of the light in the range of 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="module gyro">
+						<!-- Network Module -->
+                        <div class="module network" data-toggle="modal" data-target="#networkmodulee">
+							<img src="assets/img/modules/network.png" alt="network" width="100" height="100" />
+						</div>
+
+						<!-- Button Module -->
+						<div class="module button" data-toggle="modal" data-target="#buttonmodulee">
+                            <img src="assets/img/modules/button.png" alt="button" width="100" height="100" />
+						</div>
+						
+						<!-- Dial Module -->
+                        <div class="module dial" data-toggle="modal" data-target="#dialmodule">
+                            <img src="assets/img/modules/dial.png" alt="dial" width="100" height="100" />
+						</div>
+						
+						<!-- Env Module -->
+						<div class="module env" data-toggle="modal" data-target="#envmodulee">
+                            <img src="assets/img/modules/env.png" alt="env" width="100" height="100" />
+						</div>
+							
+						<!-- Gyro Module --> 
+                        <div class="module gyro" data-toggle="modal" data-target="#gyromodulee">
                             <img src="assets/img/modules/gyro.png" alt="gyro" width="100" height="100">
-                            <div class="module-description">
-                                <h2 class="module-title">Gyro Module</h2>
-                                <ul class="module-desc">
-                                    <li class="module-funcs">
-                                        <b>How to call Module</b>:  gyro = bundle.gyros[0]
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>gyro.pitch</b><br>
-                                        : Returns the pitch value in the range of -180 to 180
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: -180 ~ 180</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>gyro.roll</b><br>
-                                        : Returns the roll value in the range of -180 to 180
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: -180 ~ 180</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>gyro.yaw</b><br>
-                                        : Returns the yaw value in the range of -180 to 180
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: -180 ~ 180</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>gyro.angular_vel_x</b><br>
-                                        : Returns the angular velocity with respect to x axis in the range of -100 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>gyro.angular_vel_y</b><br>
-                                        : Returns the angular velocity with respect to y axis in the range of -100 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>gyro.angular_vel_z</b><br>
-                                        : Returns the angular velocity with respect to z axis in the range of -100 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>gyro.acceleration_x</b><br>
-                                        : Returns the acceleration to x axis in the range of -100 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>gyro.acceleration_y</b><br>
-                                        : Returns the acceleration to y axis in the range of -100 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>gyro.acceleration_z</b><br>
-                                        : Returns the acceleration to z axis in the range of -100 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: -100 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>gyro.vibration</b><br>
-                                        : Returns the magnitude of vibration in the range of 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="module ir">
+						</div>
+
+						<!-- Ir Module -->
+                        <div class="module ir" data-toggle="modal" data-target="#irmodulee">
                             <img src="assets/img/modules/ir.png" alt="ir" width="100" height="100">
-                            <div class="module-description">
-                                <h2 class="module-title">Infrared Module</h2>
-                                <ul class="module-desc">
-                                    <li class="module-funcs">
-                                        <b>How to call Module</b>:  ir = bundle.irs[0]
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>ir.proximity</b><br>
-                                        : Returns the proximity value in the range of 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs">ir moudle can measure objects between 4 and 30 cm</li>
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
-                        <div class="module mic">
+						
+						<!-- Mic Module -->
+                        <div class="module mic" data-toggle="modal" data-target="#micmodulee">
                             <img src="assets/img/modules/mic.png" alt="mic" width="100" height="100">
-                            <div class="module-description">
-                                <h2 class="module-title">Mic Module</h2>
-                                <ul class="module-desc">
-                                    <li class="module-funcs">
-                                        <b>How to call Module</b>:  mic = bundle.mics[0]
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>mic.frequency</b><br>
-                                        : Returns the frequency of the input sound
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: float value</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>mic.volume</b><br>
-                                        : Returns the volume of the input sound in the range of 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                </ul>
-                            </div>
                         </div>
-                        <div class="module ultrasonic">
+						
+						<!-- Ultrasonic Module-->
+                        <div class="module ultrasonic" data-toggle="modal" data-target="#ultrasonicmodulee">
                             <img src="assets/img/modules/ultrasonic.png" alt="ultrasonic" width="100" height="100">
-                            <div class="module-description">
-                                <h2 class="module-title">Ultrasonic Module</h2>
-                                <ul class="module-desc">
-                                    <li class="module-funcs">
-                                        <b>How to call Module</b>:  ultrasonic = bundle.ultrasonics[0]
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>ultrasonic.distance</b><br>
-                                        : Returns the distance to the object in the range of 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs">ultrasonic moudle can measure objects between 50 and 450 cm</li>
-                                            <li class="module-funcs"><b>Return value</b>: 0 ~ 100</li>
-                                            <li class="module-funcs"><b>Type</b>: float</li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
-                        <div class="module display">
+						
+						<!-- Display Module-->
+                        <div class="module display" data-toggle="modal" data-target="#displaymodulee">
                             <img src="assets/img/modules/display.png" alt="display" width="100" height="100">
-                            <div class="module-description">
-                                <h2 class="module-title">Display Module</h2>
-                                <ul class="module-desc">
-                                    <li class="module-funcs">
-                                        <b>How to call Module</b>:  display = bundle.displays[0]
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>display.text = "Text"</b><br>
-                                        : Sets the text of the display module
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: current text of the module</li>
-                                            <li class="module-funcs"><b>Type</b>: str</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>display.clear()</b><br>
-                                        : Clears the screen of display module
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: None</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>display.show_variable(number, pos_x, pos_y)</b><br>
-                                        : Show a variable on position (pos_x, pos_y) of the screen. The range of pos_x, pos_y is 0 to 255
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: None</li>
-                                            <li class="module-funcs"><b>Parameters</b>: <ul>
-                                                <li>variable: number to show on the screen</li>
-                                                <li>position_x(pos_x): vertical position of the number</li>
-                                                <li>position_y(pos_y): horizontal position of the number</li></ul>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                </ul>
-                            </div>
                         </div>
-                        <div class="module led">
+						
+						<!-- LED Module-->
+                        <div class="module led" data-toggle="modal" data-target="#ledmodulee">
                             <img src="assets/img/modules/led.png" alt="led" width="100" height="100">
-                            <div class="module-description">
-                                <h2 class="module-title">Led Module</h2>
-                                <ul class="module-desc">
-                                    <li class="module-funcs">
-                                        <b>How to call Module</b>:  led = bundle.leds[0]
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>led.red = 100</b><br>
-                                        : Sets the red component of the light. The range of component is 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: red component of the current light</li>
-                                            <li class="module-funcs"><b>Type</b>: int</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>led.green = 100</b><br>
-                                        : Sets the green component of the light. The range of component is 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: green component of the current light</li>
-                                            <li class="module-funcs"><b>Type</b>: int</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>led.blue = 100</b><br>
-                                        : Sets the blue component of the light. The range of component is 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: blue component of the current light</li>
-                                            <li class="module-funcs"><b>Type</b>: int</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>led.rgb = 10,0, 60</b><br>
-                                        : Sets the rgb components of the light. The range of components is 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: Current rgb values</li>
-                                            <li class="module-funcs"><b>Type</b>: int</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>led.turn_on()</b><br>
-                                        : Turns on the led to maximum brightness
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 100, 100, 100</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>led.turn_off()</b><br>
-                                        : Turns off the led
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0, 0, 0</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                </ul>
-                            </div>
                         </div>
-                        <div class="module motor">
+						
+						<!-- Motor Module-->
+                        <div class="module motor" data-toggle="modal" data-target="#motormodulee">
                             <img src="assets/img/modules/motor.png" alt="motor" width="100" height="100">
-                            <div class="module-description">
-                                <h2 class="module-title">Motor Module</h2>
-                                <ul class="module-desc">
-                                    <li class="module-funcs">
-                                        <b>How to call Module</b>:  motor = bundle.motors[0]
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>motor.degree = 30, 90</b><br>
-                                        : Sets the degree of motors on both channel. The range of degree is 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs">As the degree value increases, the number of rotations of the motor increases</li>
-                                            <li class="module-funcs"><b>Return value</b>: Current degree of the motors</li>
-                                            <li class="module-funcs"><b>Type</b>: int, int</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>motor.first_degree = 30</b><br>
-                                        : Sets the degree of motors on channel I. The range of degree is 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: Current degree of the motor on channel I</li>
-                                            <li class="module-funcs"><b>Type</b>: int</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>motor.second_degree = 50</b><br>
-                                        : Sets the degree of motors on channel II. The range of degree is 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: Current degree of the motor on channel II</li>
-                                            <li class="module-funcs"><b>Type</b>: int</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>motor.speed = 50, 100</b><br>
-                                        : Sets the speed of motors on both channel. The range of speed is -100 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs">If the current speed of the motors is -, it rotates in reverse </li>
-                                            <li class="module-funcs"><b>Return value</b>: Current speed of the motors</li>
-                                            <li class="module-funcs"><b>Type</b>: int, int</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>motor.first_speed = 50</b><br>
-                                        : Sets the speed of motors on channel I. The range of speed is -100 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: Current speed of the motor on channel I</li>
-                                            <li class="module-funcs"><b>Type</b>: int</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>motor.second_speed = 100</b><br>
-                                        : Sets the speed of motors on channel II. The range of speed is -100 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: Current speed of the motor on channel II</li>
-                                            <li class="module-funcs"><b>Type</b>: int</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                </ul>
-                            </div>
                         </div>
-                        <div class="module speaker">
+						
+						<!-- Speaker Module-->
+                        <div class="module speaker" data-toggle="modal" data-target="#speakermodulee">
                             <img src="assets/img/modules/speaker.png" alt="speaker" width="100" height="100">
-                            <div class="module-description">
-                                <h2 class="module-title">Speaker Module</h2>
-                                <ul class="module-desc">
-                                    <li class="module-funcs">
-                                        <b>How to call Module</b>:  speaker = bundle.speakers[0]
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>speaker.tune = 220(frequency), 100(volume)</b><br>
-                                        : Sets the frequency and volume of the sound. The range of the volume is 0 to 100
-                                        <ul class="module-detail">
-                                            <li class ="module-funcs">Plays the sound with frequency 220Hz and volume 100</li>
-                                            <li class="module-funcs"><b>Return value</b>: Current frequency, current volume</li>
-                                            <li class="module-funcs"><b>Type</b>: int</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>speaker.frequency = 550</b><br>
-                                        : Sets the frequency of the sound
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: Current frequency</li>
-                                            <li class="module-funcs"><b>Type</b>: int</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>speaker.volume = 100</b><br>
-                                        : Sets the volume of the sound. The range of the volume is 0 to 100
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: Current volume</li>
-                                            <li class="module-funcs"><b>Type</b>: int</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                    <li class="module-funcs">
-                                        <b>speaker.turn_off()</b><br>
-                                        : Turns off the sound
-                                        <ul class="module-detail">
-                                            <li class="module-funcs"><b>Return value</b>: 0</li>
-                                        </ul>
-                                    </li>
-                                    <br>
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1088,6 +528,1352 @@
                                         Notable ones will be added to this creation list :)
                                     </p>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		<!-- Network Module -->
+		<div class="portfolio-modal modal fade" id="networkmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div class="modal-body text-left">
+                        <div class="container">
+                            <div class="row justify-content-left">
+                                <div class="col-lg-12">
+                                    <!-- Title-->
+                                    <center><h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">Network Module</h2></center>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Image-->
+                                    <img src="assets/img/modules/network.png" alt="" width="400" height="400" style = "float: left" vspace= 100 hspace=30 />
+									<!-- Text-->
+									<br>
+									<table class = "table-bordered" width = 550px height = 50px style = 'line-height: 150%' cellpadding="10">
+										<tbody>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module classification</th>
+													<td>Setup Module</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Description</th>
+													<td>Network modules are available either wired or wirelessly.<br>
+													Wired connections connect the PC to the network module using USB.<br>
+													Wireless connections are used to connect to Bluetooth or Wi-Fi or to connect to mobile devices.</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Main<br> Function</th>
+													<td>1. Module to PC<br>
+														2. Module to Smartphone Connection Mode (MODI Play Application)<br>
+														3. Module-to-module connection mode</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Size</th>
+													<td>23.8*47.8*16.1(mm)</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Weight</th>
+													<td>12g</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Network Spec</th>
+													<td>BLE Version 4.1v <br>
+													Wi-Fi Network standby 802.11n(2.4GHz),up to 150 Mbps<br>
+													</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Terminal</th>
+													<td>Micro-B USB port X1<br>
+													Magnetic connector X3</td>
+											</tr>
+										</tbody>
+									</table>
+									<br>
+									<br>
+									<center><h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4></center>
+									<br>
+									<!-- HTML generated using hilite.me -->
+									<div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">modi</span>
+										<br>
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">time</span>
+										<br><br>
+										bundle <span style="color: #333333">=</span> modi.MODI()
+										<br><br>
+										<span style="color: #888888">#Call Module</span><br>
+										network <span style="color: #333333">=</span> bundle.networks[<span style="color: #0000DD; font-weight: bold">0</span>]
+										<br><br>
+										<span style="color: #888888">#Returns whether MODI Play button is pressed , True if pressed</span>
+										<br>
+										is_pressed = network.button_pressed
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#39;Network button_pressed state: &#39;</span>, is_pressed)
+										<br><br>
+										<span style="color: #888888">#Returns MODI Play dial value in range 0~100</span>
+										<br>
+										value_dial = network.dial
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#39;Network dial_value state: &#39;</span>, value_dial) 
+										<br><br>
+										<span style="color: #888888">#&#39;up&#39;, &#39;down&#39;, &#39;left&#39;, &#39;right&#39;, and None if not pressed</span>
+										<br>
+										state_joystick = network.joystick
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#39;Network joystick state: &#39;</span>, state_joystick)
+										<br><br>
+										<span style="color: #888888">#Returns MODI Play left slider value in range 0~100</span>
+										<br>
+										value_left_slider = network.left_slider
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#39;Network left_slider_value state: &#39;</span>, value_left_slider) 
+										<br><br>
+										<span style="color: #888888">#Returns MODI Play right slider value</span>
+										<br>
+										value_right_slider = network.right_slider
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#39;Network right_slider_value state: &#39;</span>, value_right_slider) 
+										<br><br>
+										<span style="color: #888888">#Returns True if MODI Play timer is up</span>
+										<br>
+										is_timeup = network.timer
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#39;Network timer state: &#39;</span>,is_timeup) 
+										<br><br>
+										<span style="color: #888888">#Turns on MODI Play buzzer</span>
+										<br>
+										network<span style="color: #333333">.</span>buzzer_on()
+										<br>
+										<span style="color: #888888">#Turn on the buzzer during 2 sec</span>
+										<br>
+										time.sleep(<span style="color: #0000DD; font-weight: bold">2</span>)
+										<br>
+										<span style="color: #888888">#Turns off MODI Play buzzer</span>
+										<br>
+										network<span style="color: #333333">.</span>buzzer_off()
+										<br><br>
+										<span style="color: #888888">#Takes a picture with MODI Play camera</span>
+										<br>
+										network<span style="color: #333333">.</span>take_picture()
+									</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+		<!-- Button Module -->
+		<div class="portfolio-modal modal fade" id="buttonmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div class="modal-body text-left">
+                        <div class="container">
+                            <div class="row justify-content-left">
+                                <div class="col-lg-12">
+                                    <!-- Title-->
+                                    <center><h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">BUTTON MODULE</h2></center>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Image-->
+                                    <img src="assets/img/modules/button.png" alt="" width="400" height="400" style = "float: left" vspace= 60 hspace=30 />
+									<!-- Text-->
+									<br>
+									<table class = "table-bordered" width = 550px height = 50px style = 'line-height: 150%' cellpadding="10">
+										<tbody>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module classification</th>
+													<td>Input Module</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Description</th>
+													<td>The button module detects the button is pressed.<br>
+													You can see the status of a single click, a double click, and a pressed state.<br>
+													You can use the toggle to keep the status ON or OFF.</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Main<br> Function</th>
+													<td>1. One-click detection<br>
+														2. Double-click detection<br>
+														3. Detects conditions pressed<br>
+														4. Switch state whenever pressed (ON/OFF)</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Size</th>
+													<td>23.8*47.8*16.1(mm)</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Weight</th>
+													<td>12g</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Connection Terminal</th>
+													<td>
+													Magnetic connector X4</td>
+											</tr>
+										</tbody>
+									</table>
+									<br>
+									<br>
+									<center><h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4></center>
+									<br>
+									<!-- HTML generated using hilite.me -->
+									<div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">modi</span>
+										<br>
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">time</span>
+										<br><br>
+										bundle <span style="color: #333333">=</span> modi.MODI()
+										<br><br>
+										<span style="color: #888888">#Call Module</span><br>
+										button = bundle.buttons[<span style="color: #0000DD; font-weight: bold">0</span>]
+										<br><br>
+										
+										<span style="color: #888888">#Returns True when the button is pressed</span>
+										<br>
+										is_pressed = button.pressed
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Button_pressed state:&#34;</span>,is_pressed)
+										<br><br>
+										<span style="color: #888888">#Returns True when the button is double clicked</span>
+										<br>
+										is_double_clicked = button.double_clicked
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Button_double_clicked state:&#34;</span>,is_double_clicked)
+										<br><br>
+										<span style="color: #888888">#Returns True/False each time the button is toggled. The value changes when the button is pressed</span>
+										<br>
+										bt_toggled = button.toggled
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Button_toggled state:&#34;</span>,bt_toggled)
+										<br><br>
+										<span style="color: #888888">#Returns True when the button is pressed and False when the button is released</span>
+										<br>
+										is_clicked = button.clicked
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Button_cliked state:&#34;</span>,is_clicked)
+										<br><br>
+									</div>	
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		<!-- Dial Module -->
+		<div class="portfolio-modal modal fade" id="dialmodule" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div class="modal-body text-left">
+                        <div class="container">
+                            <div class="row justify-content-left">
+                                <div class="col-lg-12">
+                                    <!-- Title-->
+                                    <center><h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">DIAL MODULE</h2></center>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Image-->
+                                    <img src="assets/img/modules/dial.png" alt="" width="400" height="400" style = "float: left" vspace= 60 hspace=30 />
+									<!-- Text-->
+									<br>
+									<table class = "table-bordered" width = 550px height = 50px style = 'line-height: 150%' cellpadding="10">
+										<tbody>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module classification</th>
+													<td>Input Module</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Description</th>
+													<td>The dial module uses the rotation of the module handle.<br>
+													Measures the angle of rotation or the rate of rotation.</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Main<br> Function</th>
+													<td>1. Rotation Angle Measurement<br>
+														2. Rotation Speed Measurement<br>
+														</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Size</th>
+													<td>23.8*23.8*24.0(mm)</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Weight</th>
+													<td>13g</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Connection Terminal</th>
+													<td>
+													Magnetic connector X4</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Sensor Specifications</th>
+													<td>
+													Operating range 0° to 235° (± 5°)</td>
+											</tr>
+										</tbody>
+									</table>
+									<br>
+									<br>
+									<center><h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4></center>
+									<br>
+									<!-- HTML generated using hilite.me -->
+									<div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">modi</span>
+										<br>
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">time</span>
+										<br><br>
+										bundle <span style="color: #333333">=</span> modi.MODI()
+										<br><br>
+										<span style="color: #888888">#Call Module</span><br>
+										dial = bundle.dials[<span style="color: #0000DD; font-weight: bold">0</span>]
+										<br><br>
+										<span style="color: #888888">#Returns the angle of the dial in the range of 0 to 100</span>
+										<br>
+										degree = dial.degree
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Dial_degree state:&#34;</span>, degree)
+										<br><br>
+										<span style="color: #888888">#Returns the turnspeed of the dial in the range of -100 to 100</span>
+										<br>
+										turnspeed = dial.turnspeed
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Dial_turnspeed state:&#34;</span>, turnspeed)
+										<br><br>
+									</div>	
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		<!-- Env Module -->
+		<div class="portfolio-modal modal fade" id="envmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div class="modal-body text-left">
+                        <div class="container">
+                            <div class="row justify-content-left">
+                                <div class="col-lg-12">
+                                    <!-- Title-->
+                                    <center><h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">ENV MODULE</h2></center>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Image-->
+                                    <img src="assets/img/modules/env.png" alt="" width="400" height="400" style = "float: left" vspace= 60 hspace=30 />
+									<!-- Text-->
+									<br>
+									<table class = "table-bordered" width = 550px height = 50px style = 'line-height: 150%' cellpadding="10">
+										<tbody>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module classification</th>
+													<td>Input Module</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Description</th>
+													<td>The environment module uses semiconductor sensors to detect ambient physical changes and colors.<br>
+														Measure the ambient physical change values: temperature, humidity, illumination, and three primary colors (R,G,B) for color detection.
+													</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Main<br> Function</th>
+													<td>1. Temperature measurement<br>
+														2. Humidity Measurement<br>
+														3. Brightness Measurement<br>
+														4. RGB Measurement
+														</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Size</th>
+													<td>23.8*23.8*16.1(mm)</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Weight</th>
+													<td>12g</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Connection Terminal</th>
+													<td>
+													Magnetic connector X4</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Sensor Specifications</th>
+													<td>
+													Temperature -10℃ to 85℃<br>
+													Humidity 0 to 90% RH<br>
+													Brightness 0 to 40,000 Lux<br>
+													Color 0 to 40,000 Lux<br>
+													*Some values may be marked as % due to low sensitivity.<br>
+													*Products and sensors are attached to each other, requiring the proper distance between the object and the module being measured.</td>
+											</tr>
+										</tbody>
+									</table>
+									<br>
+									<br>
+									<center><h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4></center>
+									<br>
+									<!-- HTML generated using hilite.me -->
+									<div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">modi</span>
+										<br>
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">time</span>
+										<br><br>
+										bundle <span style="color: #333333">=</span> modi.MODI()
+										<br><br>
+										<span style="color: #888888">#Call Module</span><br>
+										env = bundle.envs[<span style="color: #0000DD; font-weight: bold">0</span>]
+										<br><br>
+										<span style="color: #888888">#Returns the brightness value in the range of 0 to 100</span>
+										<br>
+										brightness = env.brightness
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Env_brightness state:&#34;</span>, brightness)
+										<br><br>
+										<span style="color: #888888">#Returns the current humidity in the range of 0 to 100</span>
+										<br>
+										humidity = env.humidity
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Env_humidity state:&#34;</span>, humidity)
+										<br><br>
+										<span style="color: #888888">#Returns the current temperature in the range of 0 to 100</span>
+										<br>
+										temperature = env.temperature
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Env_temperature state:&#34;</span>, temperature) 
+										<br><br>
+										<span style="color: #888888">#Returns the red value of the light in the range of 0 to 100</span>
+										<br>
+										env_red = env.red
+										<br>
+										<span style="color: #888888">#Returns the green value of the light in the range of 0 to 100</span>
+										<br>
+										env_green = env.green
+										<br>
+										<span style="color: #888888">#Returns the blue value of the light in the range of 0 to 100</span>
+										<br>
+										env_blue = env.blue
+										<br><br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34; R : {0}, G : {1}, B : {2} &#34;</span>.format(env_red, env_green, env_blue))
+										<br><br>
+									</div>
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		<!-- Gyro Module -->
+		<div class="portfolio-modal modal fade" id="gyromodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div class="modal-body text-left">
+                        <div class="container">
+                            <div class="row justify-content-left">
+                                <div class="col-lg-12">
+                                    <!-- Title-->
+                                    <center><h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">GYROSCOPE MODULE</h2></center>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Image-->
+                                    <img src="assets/img/modules/gyro.png" alt="" width="400" height="400" style = "float: left" vspace= 60 hspace=30 />
+									<!-- Text-->
+									<br>
+									<table class = "table-bordered" width = 550px height = 50px style = 'line-height: 150%' cellpadding="10">
+										<tbody>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module classification</th>
+													<td>Input Module</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Description</th>
+													<td>The gyro module uses geomagnetic gravity acceleration.<br>
+														Measure the tilt angle, vibration rate, and acceleration and angular velocity for each axis of the sensor in the module.
+													</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Main<br> Function</th>
+													<td>1. Rotation angle measurement (Roll, Pitch, Yaw)<br>
+														2. Acceleration measurements (X, Y, Z codeinates)<br>
+														3. Angular velocity measurement(X, Y, Z codeinates)<br>
+														4. Vibrations measurement
+														</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Size</th>
+													<td>23.8*23.8*16.1(mm)</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Weight</th>
+													<td>12g</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Connection Terminal</th>
+													<td>
+													Magnetic connector X4</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Sensor Specifications</th>
+													<td>
+													measurable ranges (X, Y, Z): -180° to 180° (± 5°)<br>
+													In the case of the Z axis, due to the nature of the sensor, the magnetic field can cause errors.
+													</td>
+											</tr>
+										</tbody>
+									</table>
+									<br>
+									<br>
+									<center><h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4></center>
+									<br>
+									<!-- HTML generated using hilite.me -->
+									<div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">modi</span>
+										<br>
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">time</span>
+										<br><br>
+										bundle <span style="color: #333333">=</span> modi.MODI()
+										<br><br>
+										<span style="color: #888888">#Call Module</span><br>
+										gyro = bundle.gyros[<span style="color: #0000DD; font-weight: bold">0</span>]
+										<br><br>
+										<span style="color: #888888">#Returns the pitch value in the range of -180 to 180</span>
+										<br>
+										g_pitch = gyro.pitch
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Gyro_Pitch:&#34;</span>,g_pitch)
+										<br><br>
+										<span style="color: #888888">#Returns the roll value in the range of -180 to 180</span>
+										<br>
+										g_roll = gyro.roll
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Gyro_Roll:&#34;</span>,g_roll)
+										<br><br>
+										<span style="color: #888888">#Returns the yaw value in the range of -180 to 180</span>
+										<br>
+										g_yaw = gyro.yaw
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Gyro_Yaw:&#34;</span>,g_yaw)
+										<br><br>
+										<span style="color: #888888">#Returns the angular velocity with respect to x axis in the range of -100 to 100</span>
+										<br>
+										g_angular_vel_x = gyro.angular_vel_x
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Gyro_Angular_vel_x:&#34;</span>,g_angular_vel_x)
+										<br><br>
+										<span style="color: #888888">#Returns the angular velocity with respect to y axis in the range of -100 to 100</span>
+										<br>
+										g_angular_vel_y = gyro.angular_vel_y
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Gyro_Angular_vel_y:&#34;</span>,g_angular_vel_y)
+										<br><br>
+										<span style="color: #888888">#Returns the angular velocity with respect to z axis in the range of -100 to 100</span>
+										<br>
+										g_angular_vel_z = gyro.angular_vel_z
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Gyro_Angular_vel_z:&#34;</span>,g_angular_vel_z)
+										<br><br>
+										<span style="color: #888888">#Returns the acceleration to x axis in the range of -100 to 100</span>
+										<br>
+										g_acceleration_x = gyro.acceleration_x
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Gyro_Acceleration_x:&#34;</span>,g_acceleration_x)
+										<br><br>
+										<span style="color: #888888">#Returns the acceleration to y axis in the range of -100 to 100</span>
+										<br>
+										g_acceleration_y = gyro.acceleration_y
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Gyro_Acceleration_y:&#34;</span>,g_acceleration_y)
+										<br><br>
+										<span style="color: #888888">#Returns the acceleration to z axis in the range of -100 to 100</span>
+										<br>
+										g_acceleration_z = gyro.acceleration_z
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Gyro_Acceleration_z:&#34;</span>,g_acceleration_z)
+										<br><br>
+										<span style="color: #888888">#Returns the magnitude of vibration in the range of 0 to 100</span>
+										<br>
+										g_vibration = gyro.vibration
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Gyro_Vibration:&#34;</span>,g_vibration)
+										<br><br>
+									</div>	
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		<!-- Ir Module -->
+		<div class="portfolio-modal modal fade" id="irmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div class="modal-body text-left">
+                        <div class="container">
+                            <div class="row justify-content-left">
+                                <div class="col-lg-12">
+                                    <!-- Title-->
+                                    <center><h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">IR(Infrared) MODULE</h2></center>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Image-->
+                                    <img src="assets/img/modules/ir.png" alt="" width="400" height="400" style = "float: left" vspace= 60 hspace=30 />
+									<!-- Text-->
+									<br>
+									<table class = "table-bordered" width = 550px height = 50px style = 'line-height: 150%' cellpadding="10">
+										<tbody>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module classification</th>
+													<td>Input Module</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Description</th>
+													<td>The ir module detects how much infrared radiation is reflected back from the module.<br>
+														Measures proximity based on the amount of reflected infrared light.
+													</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Main<br> Function</th>
+													<td>1. Proximity Measurement<br>
+														</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Size</th>
+													<td>23.8*23.8*21.5(mm)</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Weight</th>
+													<td>12g</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Connection Terminal</th>
+													<td>
+													Magnetic connector X2</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Sensor Specifications</th>
+													<td>
+													Within a measurable range of approximately 4 to 30 cm (based on white paper).<br>
+													*Due to the nature of the light, depending on the curvature, reflectivity, and color of the reflecting surface The measurements may be differently.
+													</td>
+											</tr>
+										</tbody>
+									</table>
+									<br>
+									<br>
+									<center><h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4></center>
+									<br>
+									<!-- HTML generated using hilite.me -->
+									<div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">modi</span>
+										<br>
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">time</span>
+										<br><br>
+										bundle <span style="color: #333333">=</span> modi.MODI()
+										<br><br>
+										<span style="color: #888888">#Call Module</span><br>
+										ir = bundle.irs[<span style="color: #0000DD; font-weight: bold">0</span>]
+										<br><br>
+										<span style="color: #888888">#Returns the proximity value in the range of 0 to 100</span>
+										<br>
+										ir_prox = if.proximity
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Ir_Proximity :&#34;</span>, ir_prox))
+										<br><br>
+									</div>
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		<!-- Mic Module -->
+		<div class="portfolio-modal modal fade" id="micmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div class="modal-body text-left">
+                        <div class="container">
+                            <div class="row justify-content-left">
+                                <div class="col-lg-12">
+                                    <!-- Title-->
+                                    <center><h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">MIC MODULE</h2></center>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Image-->
+                                    <img src="assets/img/modules/mic.png" alt="" width="400" height="400" style = "float: left" vspace= 60 hspace=30 />
+									<!-- Text-->
+									<br>
+									<table class = "table-bordered" width = 550px height = 50px style = 'line-height: 150%' cellpadding="10">
+										<tbody>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module classification</th>
+													<td>Input Module</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Description</th>
+													<td>The mic module uses sound-induced air pressure changes.<br>
+														Measures the size or frequency of surrounding sounds.
+													</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Main<br> Function</th>
+													<td>1. Sound Size Measurement<br>
+														2. Sound Frequency Measurements<br>
+														</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Size</th>
+													<td>23.8*23.8*16.4(mm)</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Weight</th>
+													<td>11g</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Connection Terminal</th>
+													<td>
+													Magnetic connector X4</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Sensor Specifications</th>
+													<td>
+													measurable volume 0 to 100%<br>
+													measurable frequency from 50 to 400 Hz<br>
+													</td>
+											</tr>
+										</tbody>
+									</table>
+									<br>
+									<br>
+									<center><h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4></center>
+									<br>
+									<!-- HTML generated using hilite.me -->
+									<div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">modi</span>
+										<br>
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">time</span>
+										<br><br>
+										bundle <span style="color: #333333">=</span> modi.MODI()
+										<br><br>
+										<span style="color: #888888">#Call Module</span><br>
+										mic = bundle.mics[<span style="color: #0000DD; font-weight: bold">0</span>]
+										<br><br>
+										<span style="color: #888888">#Returns the frequency of the input sound</span>
+										<br>
+										m_frequency = mic.frequency
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Mic_Frequency :&#34;</span>, m_frequency)
+										<br><br>
+										<span style="color: #888888">#Returns the volume of the input sound in the range of 0 to 100</span>
+										<br>
+										m_volume = mic.volume
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Mic_Volume :&#34;</span>, m_volume)
+										<br><br>
+									</div>	
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		<!-- Ultrasonic Module -->
+		<div class="portfolio-modal modal fade" id="ultrasonicmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div class="modal-body text-left">
+                        <div class="container">
+                            <div class="row justify-content-left">
+                                <div class="col-lg-12">
+                                    <!-- Title-->
+                                    <center><h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">ULTRASONIC MODULE</h2></center>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Image-->
+                                    <img src="assets/img/modules/ultrasonic.png" alt="" width="400" height="400" style = "float: left" vspace= 60 hspace=30 />
+									<!-- Text-->
+									<br>
+									<table class = "table-bordered" width = 550px height = 50px style = 'line-height: 150%' cellpadding="10">
+										<tbody>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module classification</th>
+													<td>Input Module</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Description</th>
+													<td>Ultrasonic modules use ultrasonic waves above 20 kHz that cannot be heard by humans.<br>
+													The distance is calculated by measuring the time the high frequency sound emitted by the module is reflected back to the object.
+													</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Main<br> Function</th>
+													<td>1. Distance measurement
+														</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Size</th>
+													<td>23.8*47.8*18.3(mm)</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Weight</th>
+													<td>18g</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Connection Terminal</th>
+													<td>
+													Magnetic connector X3</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Sensor Specifications</th>
+													<td>
+													Measureable range 50 to 450 cm<br>
+													*Since it is a radial sensor, measuring distances perpendicular to the sensor, but interfering with the measurement by objects that are obstructed can cause errors within the distance you want to measure.<br>
+													*Error may occur when measuring distances of objects small enough to be undetectable.<br>
+													</td>
+											</tr>
+										</tbody>
+									</table>
+									<br>
+									<br>
+									<center><h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4></center>
+									<br>
+									<!-- HTML generated using hilite.me -->
+									<div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">modi</span>
+										<br>
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">time</span>
+										<br><br>
+										bundle <span style="color: #333333">=</span> modi.MODI()
+										<br><br>
+										<span style="color: #888888">#Call Module</span><br>
+										ultrasonic = bundle.ultrasonics[<span style="color: #0000DD; font-weight: bold">0</span>]
+										<br><br>
+										<span style="color: #888888">#Returns the distance to the object in the range of 0 to 100</span>
+										<br>
+										ul_distance = ultrasonic.distance 
+										<br>
+										<span style="color: #007020">print</span>(<span style = "color:#BA2121">&#34;Ultrasonic_Distance: &#34;</span>, ul_distance)
+										<br><br>
+									</div>	
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		<!-- Display Module -->
+		<div class="portfolio-modal modal fade" id="displaymodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div class="modal-body text-left">
+                        <div class="container">
+                            <div class="row justify-content-left">
+                                <div class="col-lg-12">
+                                    <!-- Title-->
+                                    <center><h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">DISPLAY MODULE</h2></center>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Image-->
+                                    <img src="assets/img/modules/display.png" alt="" width="400" height="400" style = "float: left" vspace= 60 hspace=30 />
+									<!-- Text-->
+									<br>
+									<table class = "table-bordered" width = 550px height = 50px style = 'line-height: 150%' cellpadding="10">
+										<tbody>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module classification</th>
+													<td>Output Module</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Description</th>
+													<td>The display module communicates various information to the user, such as pictures and letters, to the screen.<br>
+														You can display your drawings, letters, or module information on the screen.
+													</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Main<br> Function</th>
+													<td>1. Picture representation in pixels<br>
+														2. Information representation of linked modules<br>
+														</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Size</th>
+													<td>23.8*23.8*16.1(mm)</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Weight</th>
+													<td>12g</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Connection Terminal</th>
+													<td>
+													Magnetic connector X3</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Output range</th>
+													<td>
+													64 * 48 pixel<br>
+													</td>
+											</tr>
+										</tbody>
+									</table>
+									<br>
+									<br>
+									<center><h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4></center>
+									<br>
+									<!-- HTML generated using hilite.me -->
+									<div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">modi</span>
+										<br>
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">time</span>
+										<br><br>
+										bundle <span style="color: #333333">=</span> modi.MODI()
+										<br><br>
+										<span style="color: #888888">#Call Module</span><br>
+										display = bundle.displays[<span style="color: #0000DD; font-weight: bold">0</span>]
+										<br><br>
+										<span style="color: #888888">#Sets the text of the display module</span>
+										<br>
+										display.text = <span style = "color:#BA2121">&#34;Hello MODI!&#34;</span>
+										<br><br>
+										<span style="color: #DD4422">"""<br>Show a variable on position (pos_x, pos_y) of the screen. The range of pos_x, pos_y is 0 to 255<br>
+										Parameters : <br>
+										&ensp;&ensp;&ensp;variable: number to show on the screen<br>
+										&ensp;&ensp;&ensp;position_x(pos_x): vertical position of the number<br>
+										&ensp;&ensp;&ensp;position_y(pos_y): horizontal position of the number
+										<br>"""</span><br>
+										pos_x = <span style = "color: #0000DD;">20</span><br>
+										pos_y = <span style = "color: #0000DD;">30</span><br>
+										display.show_variable(<span style = "color: #0000DD;">0</span>, pos_x, pos_y)
+										<br><br>
+										<span style="color: #888888">#Clears the screen of display module</span>
+										<br>
+										display.clear()
+										<br><br>
+									</div>	
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		<!-- LED Module -->
+		<div class="portfolio-modal modal fade" id="ledmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div class="modal-body text-left">
+                        <div class="container">
+                            <div class="row justify-content-left">
+                                <div class="col-lg-12">
+                                    <!-- Title-->
+                                    <center><h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">LED MODULE</h2></center>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Image-->
+                                    <img src="assets/img/modules/led.png" alt="" width="400" height="400" style = "float: left" vspace= 60 hspace=30 />
+									<!-- Text-->
+									<br>
+									<table class = "table-bordered" width = 550px height = 50px style = 'line-height: 150%' cellpadding="10">
+										<tbody>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module classification</th>
+													<td>Output Module</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Description</th>
+													<td>LED modules are semiconductor devices that turn electrical signals into light.<br>
+														The combination of the three primary colors of light, R, G, and B, produces 65,000 different colors of light.
+													</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Main<br> Function</th>
+													<td>1. Four color representations (red, green, blue, white, and off)<br>
+														2. 65,000 color representations through red, green, and blue combinations
+													</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Size</th>
+													<td>23.8*23.8*16.1(mm)</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Weight</th>
+													<td>11g</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Connection Terminal</th>
+													<td>
+													Magnetic connector X4</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Sensor Specifications</th>
+													<td>
+													Brightness (R, G, B) 180, 50, 120 mcd (based on 2.5V)<br>
+													*DO NOT light LEDs directly on human eyes as this may damage vision.
+											</tr>
+										</tbody>
+									</table>
+									<br>
+									<br>
+									<center><h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4></center>
+									<br>
+									<!-- HTML generated using hilite.me -->
+									<div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">modi</span>
+										<br>
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">time</span>
+										<br><br>
+										bundle <span style="color: #333333">=</span> modi.MODI()
+										<br><br>
+										<span style="color: #888888">#Call Module</span><br>
+										led = bundle.leds[<span style="color: #0000DD; font-weight: bold">0</span>]
+										<br><br>
+										<span style="color: #888888">#Sets the red component of the light. The range of component is 0 to 100</span>
+										<br>
+										led.red = <span style="color: #0000DD;">100</span>
+										<br><br>
+										<span style="color: #888888">#Sets the green component of the light. The range of component is 0 to 100</span>
+										<br>
+										eld.green = <span style="color: #0000DD;">100</span>
+										<br><br>
+										<span style="color: #888888">#Sets the blue component of the light. The range of component is 0 to 100</span>
+										<br>
+										eld.blue = <span style="color: #0000DD;">100</span>
+										<br><br>
+										<span style="color: #888888">#Sets the rgb components of the light. The range of components is 0 to 100</span>
+										<br>
+										led.rgb = <span style="color: #0000DD;">10</span>, <span style="color: #0000DD;">0</span>, <span style="color: #0000DD;">60</span>
+										<br><br>
+										<span style="color: #888888">#Turns on the led to maximum brightness</span>
+										<br>
+										led.turn_on()
+										<br><br>
+										<span style="color: #888888">#Turns off the led</span>
+										<br>
+										led.turn_off()
+										<br><br>
+									</div>	
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		<!-- Motor Module -->
+		<div class="portfolio-modal modal fade" id="motormodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div class="modal-body text-left">
+                        <div class="container">
+                            <div class="row justify-content-left">
+                                <div class="col-lg-12">
+                                    <!-- Title-->
+                                    <center><h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">MOTOR MODULE</h2></center>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Image-->
+                                    <img src="assets/img/modules/motor.png" alt="" width="400" height="400" style = "float: left" vspace= 60 hspace=30 />
+									<!-- Text-->
+									<br>
+									<table class = "table-bordered" width = 550px height = 50px style = 'line-height: 150%' cellpadding="10">
+										<tbody>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module classification</th>
+													<td>Output Module</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Description</th>
+													<td>The motor controller module is a module that sends an electrical signal to the motor module for rotational motion.<br>
+														You can set the speed, angle, and torque at which the motor rotates.
+													</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Main<br> Function</th>
+													<td>1. Rotation angle output<br>
+														2. Speed Output<br>
+														3. Print out a torque<br>
+														</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Size</th>
+													<td>23.8*23.8*16.1(mm)</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Weight</th>
+													<td>12g</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Connection Terminal</th>
+													<td>
+													Magnetic connector X3<br>
+													6-pin Port X2
+													</td>
+											</tr>
+										</tbody>
+									</table>
+									<br>
+									<br>
+									<center><h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4></center>
+									<br>
+									<!-- HTML generated using hilite.me -->
+									<div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">modi</span>
+										<br>
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">time</span>
+										<br><br>
+										bundle <span style="color: #333333">=</span> modi.MODI()
+										<br><br>
+										<span style="color: #888888">#Call Module</span><br>
+										motor = bundle.motors[<span style="color: #0000DD; font-weight: bold">0</span>]
+										<br><br>
+										<span style="color: #888888">#Sets the degree of motors on both channel. The range of degree is 0 to 100</span>
+										<br>
+										motor.degree = <span style="color: #0000DD;">30</span>, <span style="color: #0000DD;">90</span>
+										<br><br>
+										<span style="color: #888888">#Sets the degree of motors on channel I. The range of degree is 0 to 100</span>
+										<br>
+										motor.first_degree = <span style="color: #0000DD;">30</span>
+										<br><br>
+										<span style="color: #888888">#Sets the degree of motors on channel II. The range of degree is 0 to 100</span>
+										<br>
+										motor.second_degree = <span style="color: #0000DD;">90</span>
+										<br><br>
+										<span style="color: #888888">#Sets the speed of motors on both channel. The range of speed is -100 to 100</span>
+										<br>
+										<span style="color: #888888">#If the current speed of the motors is -, it rotates in reverse</span>
+										<br>
+										motor.speed = <span style="color: #0000DD;">50</span>, <span style="color: #0000DD;">100</span>
+										<br><br>
+										<span style="color: #888888">#Sets the speed of motors on channel I. The range of speed is -100 to 100</span>
+										<br>
+										motor.first_speed = <span style="color: #0000DD;">50</span>
+										<br><br>
+										<span style="color: #888888">#Sets the speed of motors on channel II. The range of speed is -100 to 100</span>
+										<br>
+										motor.second_speed = <span style="color: #0000DD;">100</span>
+										<br><br>
+									</div>
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		<!-- Speaker Module -->
+		<div class="portfolio-modal modal fade" id="speakermodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                    </button>
+                    <div class="modal-body text-left">
+                        <div class="container">
+                            <div class="row justify-content-left">
+                                <div class="col-lg-12">
+                                    <!-- Title-->
+                                    <center><h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">SPEAKER MODULE</h2></center>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Image-->
+                                    <img src="assets/img/modules/speaker.png" alt="" width="400" height="400" style = "float: left" vspace= 60 hspace=30 />
+									<!-- Text-->
+									<br>
+									<table class = "table-bordered" width = 550px height = 50px style = 'line-height: 150%' cellpadding="10">
+										<tbody>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module classification</th>
+													<td>Output Module</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Description</th>
+													<td>The speaker module converts the electrical signal into a sound signal.<br>
+														You can use the piano keyboard UI to select a note or enter the desired frequency directly to make a sound.
+													</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Main<br> Function</th>
+													<td>1. Sound output corresponding to frequency
+														</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Size</th>
+													<td>23.8*23.8*16.1(mm)</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Module Weight</th>
+													<td>12g</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Connection Terminal</th>
+													<td>
+													Magnetic connector X4</td>
+											</tr>
+											<tr>
+												<th style = "vertical-align:top" class = "table-primary" width = 110px >Sensor Specifications</th>
+													<td>
+													Outputable frequency 17 to 10,000 Hz
+													</td>
+											</tr>
+										</tbody>
+									</table>
+									<br>
+									<br>
+									<center><h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4></center>
+									<br>
+									<!-- HTML generated using hilite.me -->
+									<div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">modi</span>
+										<br>
+										<span style="color: #008800; font-weight: bold">import</span> 
+										<span style="color: #0e84b5; font-weight: bold">time</span>
+										<br><br>
+										bundle <span style="color: #333333">=</span> modi.MODI()
+										<br><br>
+										<span style="color: #888888">#Call Module</span><br>
+										speaker = bundle.speakers[<span style="color: #0000DD; font-weight: bold">0</span>]
+										<br><br>
+										<span style="color: #888888">#Sets the frequency and volume of the sound. The range of the volume is 0 to 100</span>
+										<br>
+										<span style="color: #888888">#Plays the sound with frequency 220Hz and volume 100</span>
+										<br>
+										speaker.tune = <span style="color: #0000DD;">220</span>, <span style="color: #0000DD;">100</span>
+										<br><br>
+										<span style="color: #888888">#Sets the frequency of the sound</span>
+										<br>
+										speaker.frequency = <span style="color: #0000DD;">550</span>
+										<br><br>
+										<span style="color: #888888">#Sets the volume of the sound. The range of the volume is 0 to 100</span>
+										<br>
+										speaker.volume = <span style="color: #0000DD;">100</span>
+										<br><br>
+										<span style="color: #888888">#Turns off the sound</span>
+										<br>
+										speaker.turn_off()
+										<br><br>
+									</div>	
+								</div>
                             </div>
                         </div>
                     </div>
