@@ -620,34 +620,34 @@
                                     
                                     # Returns whether MODI Play button is pressed, True if pressed
                                     is_pressed = network.button_pressed
-                                    print('Network button pressed state :', is_pressed)
+                                    print('Network Button Pressed State :', is_pressed)
                                     
                                     # Returns MODI Play dial value in range 0~100
                                     value_dial = network.dial
-                                    print('Network dial value state :', value_dial)
+                                    print('Network Dial Value State :', value_dial)
                                     
                                     # 'up' , 'down' , 'left' , 'right', and None if not pressed
                                     state_joystick = network.joystick
-                                    print('Network joystick state :', state_joystick)
+                                    print('Network Joystick State :', state_joystick)
                                     
                                     # Returns MODI Play left slider value in range 0~100
                                     value_left_slider = network.left_slider
-                                    print('Network left slider value state :', value_left_slider)
+                                    print('Network Left Slider Value State :', value_left_slider)
                                     
                                     # Returns MODI Play right slider value
                                     value_right_slider = network.right_slider
-                                    print('Network right slider value state :', value_right_slider)
+                                    print('Network Right Slider Value State :', value_right_slider)
                                     
                                     # Returns True if MODI Play timer is up
                                     is_timeup = network.timer
-                                    print('Network timer state :', is_timeup)
+                                    print('Network Timer State :', is_timeup)
                                     
                                     # Turns on MODI Play buzzer
                                     network.buzzer_on()
-									
+				    
                                     # Turn on the buzzer during 2 sec
                                     time.sleep(2)
-									
+				    
                                     # Turns off MODI Play buzzer
                                     network.buzzer_off()
                                     
@@ -732,7 +732,7 @@
                                 <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
                                 <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:17px;"> import modi
                                     import time
-									
+				    
                                     # To connect a chunk of the MODI module, create an MODI object.
                                     bundle = modi.MODI()
                                     
@@ -741,19 +741,19 @@
                                     
                                     # Returns True when the button is pressed
                                     is_pressed = button.pressed
-                                    print('Button pressed state :', is_pressed)
+                                    print('Button Pressed State :', is_pressed)
                                     
                                     # Returns True when the button is double clicked
                                     is_double_clicked = button.double_clicked
-                                    print('Button double clicked state :', is_double_clicked)
+                                    print('Button Double Clicked State :', is_double_clicked)
                                     
                                     # Returns True/False each time the button is toggled. The value changes when the button is pressed
                                     button_toggled = button.toggled
-                                    print('Button toggled state :', button_toggled)
+                                    print('Button Toggled State :', button_toggled)
                                     
 				    # Returns True when the button is pressed and False when the button is released
                                     is_clicked = button.clicked
-                                    print('Button cliked state :', is_clicked)
+                                    print('Button Cliked State :', is_clicked)
                                 </code></pre>
                                 </div>
                             </div>
@@ -845,11 +845,11 @@
                                     
                                     # Returns the angle of the dial in the range of 0 to 100
                                     degree = dial.degree
-                                    print('Dial degree state :', degree)
+                                    print('Dial Degree State :', degree)
                                     
                                     # Returns the turnspeed of the dial in the range of -100 to 100
                                     turnspeed = dial.turnspeed
-                                    print('Dial turnspeed state :', turnspeed)
+                                    print('Dial Turnspeed State :', turnspeed)
                                 </code></pre>
                                 </div>
                             </div>
@@ -949,15 +949,15 @@
                                     
                                     # Returns the brightness value in the range of 0 to 100
                                     brightness = env.brightness
-                                    print('Env brightness state :', brightness)
+                                    print('Env Brightness State :', brightness)
                                     
                                     # Returns the current humidity in the range of 0 to 100
                                     humidity = env.humidity
-                                    print('Env humidity state :', humidity)
+                                    print('Env Humidity State :', humidity)
                                     
                                     # Returns the current temperature in the range of 0 to 100
                                     temperature = env.temperature
-                                    print('Env temperature state :', temperature)
+                                    print('Env Temperature State :', temperature)
                                     
                                     # Returns the red value of the light in the range of 0 to 100
                                     env_red = env.red
@@ -1077,15 +1077,15 @@
 
                                     # Returns the angular velocity with respect to x axis in the range of -100 to 100
                                     gyro_angular_vel_x = gyro.angular_vel_x
-                                    print('Gyro Angular velue x :', gyro_angular_vel_x)
+                                    print('Gyro Angular Velocity x :', gyro_angular_vel_x)
                                     
                                     # Returns the angular velocity with respect to y axis in the range of -100 to 100
                                     gyro_angular_vel_y = gyro.angular_vel_y
-                                    print('Gyro Angular velue y :', gyro_angular_vel_y)
+                                    print('Gyro Angular Velocity y :', gyro_angular_vel_y)
 
                                     # Returns the angular velocity with respect to z axis in the range of -100 to 100
                                     gyro_angular_vel_z = gyro.angular_vel_z
-                                    print('Gyro Angular velue z :', gyro_angular_vel_z)
+                                    print('Gyro Angular Velocity z :', gyro_angular_vel_z)
 
                                     # Returns the acceleration to x axis in the range of -100 to 100
                                     gyro_acceleration_x = gyro.acceleration_x
@@ -1186,7 +1186,7 @@
                                 <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
                                 <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:17px;"> import modi
                                     import time
-									
+				    
                                     # To connect a chunk of the MODI module, create an MODI object.
                                     bundle = modi.MODI()
                                     
@@ -1194,8 +1194,8 @@
                                     ir = bundle.irs[0]
                                     
                                     # Returns the proximity value in the range of 0 to 100
-                                    ir_prox = if.proximity
-                                    print('Ir Proximity :', ir_prox)
+                                    ir_proximity = ir.proximity
+                                    print('Ir Proximity :', ir_proximity)
                                 </code></pre>
                                 </div>
                             </div>
