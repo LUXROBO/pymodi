@@ -7,6 +7,10 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>PyMODI</title>
+	<!-- Code highlight -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/8.7/styles/rainbow.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" />
     <!-- Font Awesome icons (free version)-->
@@ -600,73 +604,58 @@
                                 <br>
                                 <br>
                                 <center>
-                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Code Usage</h4>
                                 </center>
                                 <br>
                                 <!-- HTML generated using hilite.me -->
-                                <div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">modi</span>
-                                    <br>
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">time</span>
-                                    <br><br>
-                                    bundle <span style="color: #333333">=</span> modi.MODI()
-                                    <br><br>
-                                    <span style="color: #888888">#Call Module</span><br>
-                                    network <span style="color: #333333">=</span> bundle.networks[<span style="color: #0000DD; font-weight: bold">0</span>]
-                                    <br><br>
-                                    <span style="color: #888888">#Returns whether MODI Play button is pressed , True if pressed</span>
-                                    <br>
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+								<pre style ="white-space : pre-line;"><code class = "python">
+                                    import modi
+                                    import time
+									
+									# To connect a chunk of the MODI module, create an MODI object.
+                                    bundle = modi.MODI()
+                                    
+									# Stores the module use by the variable named 'network'
+                                    network = bundle.networks[0]
+                                    
+                                    # Returns whether MODI Play button is pressed , True if pressed
                                     is_pressed = network.button_pressed
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#39;Network button_pressed state: &#39;</span>, is_pressed)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns MODI Play dial value in range 0~100</span>
-                                    <br>
+                                    print("Network button pressed state : " , is_pressed)
+                                    
+                                    # Returns MODI Play dial value in range 0~100
                                     value_dial = network.dial
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#39;Network dial_value state: &#39;</span>, value_dial)
-                                    <br><br>
-                                    <span style="color: #888888">#&#39;up&#39;, &#39;down&#39;, &#39;left&#39;, &#39;right&#39;, and None if not pressed</span>
-                                    <br>
+                                    print("Network dial value state : " , value_dial)
+                                    
+                                    # 'up' , 'down' , 'left' , 'right' , and None if not pressed
                                     state_joystick = network.joystick
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#39;Network joystick state: &#39;</span>, state_joystick)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns MODI Play left slider value in range 0~100</span>
-                                    <br>
+                                    print("Network joystick state : " , state_joystick)
+                                    
+                                    # Returns MODI Play left slider value in range 0~100
                                     value_left_slider = network.left_slider
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#39;Network left_slider_value state: &#39;</span>, value_left_slider)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns MODI Play right slider value</span>
-                                    <br>
+                                    print("Network left slider value state : " , value_left_slider)
+                                    
+                                    # Returns MODI Play right slider value
                                     value_right_slider = network.right_slider
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#39;Network right_slider_value state: &#39;</span>, value_right_slider)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns True if MODI Play timer is up</span>
-                                    <br>
+                                    print("Network right slider value state : " , value_right_slider)
+                                    
+                                    # Returns True if MODI Play timer is up
                                     is_timeup = network.timer
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#39;Network timer state: &#39;</span>,is_timeup)
-                                    <br><br>
-                                    <span style="color: #888888">#Turns on MODI Play buzzer</span>
-                                    <br>
-                                    network<span style="color: #333333">.</span>buzzer_on()
-                                    <br>
-                                    <span style="color: #888888">#Turn on the buzzer during 2 sec</span>
-                                    <br>
-                                    time.sleep(<span style="color: #0000DD; font-weight: bold">2</span>)
-                                    <br>
-                                    <span style="color: #888888">#Turns off MODI Play buzzer</span>
-                                    <br>
-                                    network<span style="color: #333333">.</span>buzzer_off()
-                                    <br><br>
-                                    <span style="color: #888888">#Takes a picture with MODI Play camera</span>
-                                    <br>
-                                    network<span style="color: #333333">.</span>take_picture()
+                                    print("Network timer state : " , is_timeup)
+                                    
+                                    # Turns on MODI Play buzzer
+                                    network.buzzer_on()
+									
+                                    # Turn on the buzzer during 2 sec
+                                    time.sleep(2)
+									
+                                    # Turns off MODI Play buzzer
+                                    network.buzzer_off()
+                                    
+                                    # Takes a picture with MODI Play camera
+                                    network.take_picture()
+									
+									</code></pre>
                                 </div>
                             </div>
                         </div>
@@ -738,47 +727,39 @@
                                 <br>
                                 <br>
                                 <center>
-                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Code Usage</h4>
                                 </center>
                                 <br>
                                 <!-- HTML generated using hilite.me -->
-                                <div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">modi</span>
-                                    <br>
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">time</span>
-                                    <br><br>
-                                    bundle <span style="color: #333333">=</span> modi.MODI()
-                                    <br><br>
-                                    <span style="color: #888888">#Call Module</span><br>
-                                    button = bundle.buttons[<span style="color: #0000DD; font-weight: bold">0</span>]
-                                    <br><br>
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+								<pre style ="white-space : pre-line;"><code class = "python">
+                                    import modi
+                                    import time
+									
+									# To connect a chunk of the MODI module, create an MODI object.
+                                    bundle = modi.MODI()
+                                    
+									# Stores the module use by the variable named 'button'
+                                    button = bundle.buttons[0]
+                                    
 
-                                    <span style="color: #888888">#Returns True when the button is pressed</span>
-                                    <br>
+                                    # Returns True when the button is pressed
                                     is_pressed = button.pressed
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Button_pressed state:&#34;</span>,is_pressed)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns True when the button is double clicked</span>
-                                    <br>
+                                    print("Button pressed state : " , is_pressed)
+                                    
+                                    # Returns True when the button is double clicked
                                     is_double_clicked = button.double_clicked
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Button_double_clicked state:&#34;</span>,is_double_clicked)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns True/False each time the button is toggled. The value changes when the button is pressed</span>
-                                    <br>
-                                    bt_toggled = button.toggled
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Button_toggled state:&#34;</span>,bt_toggled)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns True when the button is pressed and False when the button is released</span>
-                                    <br>
+                                    print("Button double clicked state : " , is_double_clicked)
+                                    
+                                    # Returns True/False each time the button is toggled. The value changes when the button is pressed
+                                    button_toggled = button.toggled
+                                    print("Button toggled state : " , button_toggled)
+                                    
+									# Returns True when the button is pressed and False when the button is released
                                     is_clicked = button.clicked
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Button_cliked state:&#34;</span>,is_clicked)
-                                    <br><br>
+                                    print("Button cliked state : " , is_clicked)
+                                    
+									</code></pre>
                                 </div>
                             </div>
                         </div>
@@ -853,34 +834,31 @@
                                 <br>
                                 <br>
                                 <center>
-                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Code Usage</h4>
                                 </center>
                                 <br>
                                 <!-- HTML generated using hilite.me -->
-                                <div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">modi</span>
-                                    <br>
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">time</span>
-                                    <br><br>
-                                    bundle <span style="color: #333333">=</span> modi.MODI()
-                                    <br><br>
-                                    <span style="color: #888888">#Call Module</span><br>
-                                    dial = bundle.dials[<span style="color: #0000DD; font-weight: bold">0</span>]
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the angle of the dial in the range of 0 to 100</span>
-                                    <br>
+                               <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+								<pre style ="white-space : pre-line;"><code class = "python">
+                                    import modi
+                                    import time
+									
+									# To connect a chunk of the MODI module, create an MODI object.
+                                    bundle = modi.MODI()
+                                    
+									# Stores the module use by the variable named 'dial'
+                                    dial = bundle.dials[0]
+                                    
+									
+                                    # Returns the angle of the dial in the range of 0 to 100
                                     degree = dial.degree
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Dial_degree state:&#34;</span>, degree)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the turnspeed of the dial in the range of -100 to 100</span>
-                                    <br>
+                                    print("Dial degree state : " , degree)
+                                    
+                                    # Returns the turnspeed of the dial in the range of -100 to 100
                                     turnspeed = dial.turnspeed
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Dial_turnspeed state:&#34;</span>, turnspeed)
-                                    <br><br>
+                                    print("Dial turnspeed state : " , turnspeed)
+                                    
+									</code></pre>
                                 </div>
                             </div>
                         </div>
@@ -963,54 +941,46 @@
                                 <br>
                                 <br>
                                 <center>
-                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Code Usage</h4>
                                 </center>
                                 <br>
                                 <!-- HTML generated using hilite.me -->
-                                <div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">modi</span>
-                                    <br>
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">time</span>
-                                    <br><br>
-                                    bundle <span style="color: #333333">=</span> modi.MODI()
-                                    <br><br>
-                                    <span style="color: #888888">#Call Module</span><br>
-                                    env = bundle.envs[<span style="color: #0000DD; font-weight: bold">0</span>]
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the brightness value in the range of 0 to 100</span>
-                                    <br>
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+								<pre style ="white-space : pre-line;"><code class = "python">
+                                    import modi
+                                    import time
+									
+									# To connect a chunk of the MODI module, create an MODI object.
+                                    bundle = modi.MODI()
+                                    
+									# Stores the module use by the variable named 'env'
+                                    env = bundle.envs[0]
+                                    
+									
+                                    # Returns the brightness value in the range of 0 to 100
                                     brightness = env.brightness
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Env_brightness state:&#34;</span>, brightness)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the current humidity in the range of 0 to 100</span>
-                                    <br>
+                                    print("Env brightness state : " , brightness)
+                                    
+                                    # Returns the current humidity in the range of 0 to 100
                                     humidity = env.humidity
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Env_humidity state:&#34;</span>, humidity)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the current temperature in the range of 0 to 100</span>
-                                    <br>
+                                    print("Env humidity state : " , humidity)
+                                    
+                                    # Returns the current temperature in the range of 0 to 100
                                     temperature = env.temperature
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Env_temperature state:&#34;</span>, temperature)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the red value of the light in the range of 0 to 100</span>
-                                    <br>
+                                    print("Env temperature state : " , temperature)
+                                    
+                                    # Returns the red value of the light in the range of 0 to 100
                                     env_red = env.red
-                                    <br>
-                                    <span style="color: #888888">#Returns the green value of the light in the range of 0 to 100</span>
-                                    <br>
+									
+                                    # Returns the green value of the light in the range of 0 to 100
                                     env_green = env.green
-                                    <br>
-                                    <span style="color: #888888">#Returns the blue value of the light in the range of 0 to 100</span>
-                                    <br>
+
+                                    # Returns the blue value of the light in the range of 0 to 100
                                     env_blue = env.blue
-                                    <br><br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34; R : {0}, G : {1}, B : {2} &#34;</span>.format(env_red, env_green, env_blue))
-                                    <br><br>
+
+                                    print("Env Red : {0}, Green : {1}, Blue : {2}".format(env_red, env_green, env_blue))
+                                    
+									</code></pre>
                                 </div>
                             </div>
                         </div>
@@ -1090,82 +1060,63 @@
                                 <br>
                                 <br>
                                 <center>
-                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Code Usage</h4>
                                 </center>
                                 <br>
                                 <!-- HTML generated using hilite.me -->
-                                <div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">modi</span>
-                                    <br>
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">time</span>
-                                    <br><br>
-                                    bundle <span style="color: #333333">=</span> modi.MODI()
-                                    <br><br>
-                                    <span style="color: #888888">#Call Module</span><br>
-                                    gyro = bundle.gyros[<span style="color: #0000DD; font-weight: bold">0</span>]
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the pitch value in the range of -180 to 180</span>
-                                    <br>
-                                    g_pitch = gyro.pitch
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Gyro_Pitch:&#34;</span>,g_pitch)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the roll value in the range of -180 to 180</span>
-                                    <br>
-                                    g_roll = gyro.roll
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Gyro_Roll:&#34;</span>,g_roll)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the yaw value in the range of -180 to 180</span>
-                                    <br>
-                                    g_yaw = gyro.yaw
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Gyro_Yaw:&#34;</span>,g_yaw)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the angular velocity with respect to x axis in the range of -100 to 100</span>
-                                    <br>
-                                    g_angular_vel_x = gyro.angular_vel_x
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Gyro_Angular_vel_x:&#34;</span>,g_angular_vel_x)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the angular velocity with respect to y axis in the range of -100 to 100</span>
-                                    <br>
-                                    g_angular_vel_y = gyro.angular_vel_y
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Gyro_Angular_vel_y:&#34;</span>,g_angular_vel_y)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the angular velocity with respect to z axis in the range of -100 to 100</span>
-                                    <br>
-                                    g_angular_vel_z = gyro.angular_vel_z
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Gyro_Angular_vel_z:&#34;</span>,g_angular_vel_z)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the acceleration to x axis in the range of -100 to 100</span>
-                                    <br>
-                                    g_acceleration_x = gyro.acceleration_x
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Gyro_Acceleration_x:&#34;</span>,g_acceleration_x)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the acceleration to y axis in the range of -100 to 100</span>
-                                    <br>
-                                    g_acceleration_y = gyro.acceleration_y
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Gyro_Acceleration_y:&#34;</span>,g_acceleration_y)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the acceleration to z axis in the range of -100 to 100</span>
-                                    <br>
-                                    g_acceleration_z = gyro.acceleration_z
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Gyro_Acceleration_z:&#34;</span>,g_acceleration_z)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the magnitude of vibration in the range of 0 to 100</span>
-                                    <br>
-                                    g_vibration = gyro.vibration
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Gyro_Vibration:&#34;</span>,g_vibration)
-                                    <br><br>
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+								<pre style ="white-space : pre-line;"><code class = "python">
+                                    import modi
+                                    import time
+									
+									# To connect a chunk of the MODI module, create an MODI object.
+                                    bundle = modi.MODI()
+                                    
+									# Stores the module use by the variable named 'gyro'
+                                    gyro = bundle.gyros[0]
+                                    
+									
+                                    # Returns the pitch value in the range of -180 to 180
+                                    gyro_pitch = gyro.pitch
+                                    print("Gyro Pitch : " , gyro_pitch)
+                                    
+                                    # Returns the roll value in the range of -180 to 180
+                                    gyro_roll = gyro.roll
+                                    print("Gyro Roll : " , gyro_roll)
+
+                                    # Returns the yaw value in the range of -180 to 180
+                                    gyro_yaw = gyro.yaw
+                                    print("Gyro Yaw : " , gyro_yaw)
+
+                                    # Returns the angular velocity with respect to x axis in the range of -100 to 100
+                                    gyro_angular_vel_x = gyro.angular_vel_x
+                                    print("Gyro Angular velue x : " , gyro_angular_vel_x)
+                                    
+                                    # Returns the angular velocity with respect to y axis in the range of -100 to 100
+                                    gyro_angular_vel_y = gyro.angular_vel_y
+                                    print("Gyro Angular velue y : " , gyro_angular_vel_y)
+
+                                    # Returns the angular velocity with respect to z axis in the range of -100 to 100
+                                    gyro_angular_vel_z = gyro.angular_vel_z
+                                    print("Gyro Angular velue z : " , gyro_angular_vel_z)
+
+                                    # Returns the acceleration to x axis in the range of -100 to 100
+                                    gyro_acceleration_x = gyro.acceleration_x
+                                    print("Gyro Acceleration x : " , gyro_acceleration_x)
+
+                                    # Returns the acceleration to y axis in the range of -100 to 100
+                                    gyro_acceleration_y = gyro.acceleration_y
+                                    print("Gyro Acceleration y : " , gyro_acceleration_y)
+                                    
+                                    # Returns the acceleration to z axis in the range of -100 to 100
+                                    gyro_acceleration_z = gyro.acceleration_z
+                                    print("Gyro Acceleration z : " , gyro_acceleration_z)
+
+                                    # Returns the magnitude of vibration in the range of 0 to 100
+                                    gyro_vibration = gyro.vibration
+                                    print("Gyro Vibration : " , gyro_vibration)
+
+                                    </code></pre>
                                 </div>
                             </div>
                         </div>
@@ -1242,28 +1193,26 @@
                                 <br>
                                 <br>
                                 <center>
-                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Code Usage</h4>
                                 </center>
                                 <br>
                                 <!-- HTML generated using hilite.me -->
-                                <div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">modi</span>
-                                    <br>
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">time</span>
-                                    <br><br>
-                                    bundle <span style="color: #333333">=</span> modi.MODI()
-                                    <br><br>
-                                    <span style="color: #888888">#Call Module</span><br>
-                                    ir = bundle.irs[<span style="color: #0000DD; font-weight: bold">0</span>]
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the proximity value in the range of 0 to 100</span>
-                                    <br>
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+								<pre style ="white-space : pre-line;"><code class = "python">
+                                    import modi
+                                    import time
+									
+									# To connect a chunk of the MODI module, create an MODI object.
+                                    bundle = modi.MODI()
+                                    
+									# Stores the module use by the variable named 'ir'
+                                    ir = bundle.irs[0]
+                                    
+									
+                                    # Returns the proximity value in the range of 0 to 100
                                     ir_prox = if.proximity
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Ir_Proximity :&#34;</span>, ir_prox))
-                                    <br><br>
+                                    print("Ir Proximity : " , ir_prox)
+                                </code></pre>
                                 </div>
                             </div>
                         </div>
@@ -1341,34 +1290,31 @@
                                 <br>
                                 <br>
                                 <center>
-                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Code Usage</h4>
                                 </center>
                                 <br>
                                 <!-- HTML generated using hilite.me -->
-                                <div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">modi</span>
-                                    <br>
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">time</span>
-                                    <br><br>
-                                    bundle <span style="color: #333333">=</span> modi.MODI()
-                                    <br><br>
-                                    <span style="color: #888888">#Call Module</span><br>
-                                    mic = bundle.mics[<span style="color: #0000DD; font-weight: bold">0</span>]
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the frequency of the input sound</span>
-                                    <br>
-                                    m_frequency = mic.frequency
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Mic_Frequency :&#34;</span>, m_frequency)
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the volume of the input sound in the range of 0 to 100</span>
-                                    <br>
-                                    m_volume = mic.volume
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Mic_Volume :&#34;</span>, m_volume)
-                                    <br><br>
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+								<pre style ="white-space : pre-line;"><code class = "python">
+                                    import modi
+                                    import time
+									
+									# To connect a chunk of the MODI module, create an MODI object.
+                                    bundle = modi.MODI()
+                                    
+									# Stores the module use by the variable named 'mic'
+                                    mic = bundle.mics[0]
+                                    
+									
+                                    # Returns the frequency of the input sound
+                                    mic_frequency = mic.frequency
+                                    print("Mic Frequency : " , mic_frequency)
+
+                                    # Returns the volume of the input sound in the range of 0 to 100
+                                    mic_volume = mic.volume
+                                    print("Mic Volume : " , mic_volume)
+                                    
+								</code></pre>	
                                 </div>
                             </div>
                         </div>
@@ -1446,28 +1392,27 @@
                                 <br>
                                 <br>
                                 <center>
-                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Code Usage</h4>
                                 </center>
                                 <br>
                                 <!-- HTML generated using hilite.me -->
-                                <div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">modi</span>
-                                    <br>
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">time</span>
-                                    <br><br>
-                                    bundle <span style="color: #333333">=</span> modi.MODI()
-                                    <br><br>
-                                    <span style="color: #888888">#Call Module</span><br>
-                                    ultrasonic = bundle.ultrasonics[<span style="color: #0000DD; font-weight: bold">0</span>]
-                                    <br><br>
-                                    <span style="color: #888888">#Returns the distance to the object in the range of 0 to 100</span>
-                                    <br>
-                                    ul_distance = ultrasonic.distance
-                                    <br>
-                                    <span style="color: #007020">print</span>(<span style="color:#BA2121">&#34;Ultrasonic_Distance: &#34;</span>, ul_distance)
-                                    <br><br>
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+								<pre style ="white-space : pre-line;"><code class = "python">
+                                    import modi
+                                    import time
+									
+									# To connect a chunk of the MODI module, create an MODI object.
+                                    bundle = modi.MODI()
+                                    
+									# Stores the module use by the variable named 'ultrasonic'
+                                    ultrasonic = bundle.ultrasonics[0]
+									
+									
+                                    # Returns the distance to the object in the range of 0 to 100
+                                    ultrasonic_distance = ultrasonic.distance
+                                    print("Ultrasonic Distance: " , ul_distance)
+									
+                                </code></pre>
                                 </div>
                             </div>
                         </div>
@@ -1544,40 +1489,40 @@
                                 <br>
                                 <br>
                                 <center>
-                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Code Usage</h4>
                                 </center>
                                 <br>
                                 <!-- HTML generated using hilite.me -->
-                                <div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">modi</span>
-                                    <br>
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">time</span>
-                                    <br><br>
-                                    bundle <span style="color: #333333">=</span> modi.MODI()
-                                    <br><br>
-                                    <span style="color: #888888">#Call Module</span><br>
-                                    display = bundle.displays[<span style="color: #0000DD; font-weight: bold">0</span>]
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the text of the display module</span>
-                                    <br>
-                                    display.text = <span style="color:#BA2121">&#34;Hello MODI!&#34;</span>
-                                    <br><br>
-                                    <span style="color: #DD4422">"""<br>Show a variable on position (pos_x, pos_y) of the screen. The range of pos_x, pos_y is 0 to 255<br>
-                                        Parameters : <br>
-                                        &ensp;&ensp;&ensp;variable: number to show on the screen<br>
-                                        &ensp;&ensp;&ensp;position_x(pos_x): vertical position of the number<br>
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+								<pre style ="white-space : pre-line;"><code class = "python">
+                                    import modi
+                                    import time
+									
+									# To connect a chunk of the MODI module, create an MODI object.
+                                    bundle = modi.MODI()
+                                    
+									# Stores the module use by the variable named 'display'
+                                    display = bundle.displays[0]
+									
+									
+                                    # Sets the text of the display module
+                                    display.text = "Hello MODI!"
+                                    
+                                    """ 
+									Show a variable on position (pos_x, pos_y) of the screen. The range of pos_x, pos_y is 0 to 255
+                                    Parameters : 
+                                        &ensp;&ensp;&ensp;variable: number to show on the screen
+                                        &ensp;&ensp;&ensp;position_x(pos_x): vertical position of the number
                                         &ensp;&ensp;&ensp;position_y(pos_y): horizontal position of the number
-                                        <br>"""</span><br>
-                                    pos_x = <span style="color: #0000DD;">20</span><br>
-                                    pos_y = <span style="color: #0000DD;">30</span><br>
-                                    display.show_variable(<span style="color: #0000DD;">0</span>, pos_x, pos_y)
-                                    <br><br>
-                                    <span style="color: #888888">#Clears the screen of display module</span>
-                                    <br>
+                                        """
+                                    pos_x = 20
+                                    pos_y = 30
+                                    display.show_variable(0, pos_x, pos_y)
+                                    
+                                    # Clears the screen of display module
                                     display.clear()
-                                    <br><br>
+
+                                </code></pre>
                                 </div>
                             </div>
                         </div>
@@ -1654,46 +1599,40 @@
                                 <br>
                                 <br>
                                 <center>
-                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Code Usage</h4>
                                 </center>
                                 <br>
                                 <!-- HTML generated using hilite.me -->
-                                <div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">modi</span>
-                                    <br>
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">time</span>
-                                    <br><br>
-                                    bundle <span style="color: #333333">=</span> modi.MODI()
-                                    <br><br>
-                                    <span style="color: #888888">#Call Module</span><br>
-                                    led = bundle.leds[<span style="color: #0000DD; font-weight: bold">0</span>]
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the red component of the light. The range of component is 0 to 100</span>
-                                    <br>
-                                    led.red = <span style="color: #0000DD;">100</span>
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the green component of the light. The range of component is 0 to 100</span>
-                                    <br>
-                                    eld.green = <span style="color: #0000DD;">100</span>
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the blue component of the light. The range of component is 0 to 100</span>
-                                    <br>
-                                    eld.blue = <span style="color: #0000DD;">100</span>
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the rgb components of the light. The range of components is 0 to 100</span>
-                                    <br>
-                                    led.rgb = <span style="color: #0000DD;">10</span>, <span style="color: #0000DD;">0</span>, <span style="color: #0000DD;">60</span>
-                                    <br><br>
-                                    <span style="color: #888888">#Turns on the led to maximum brightness</span>
-                                    <br>
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+								<pre style ="white-space : pre-line;"><code class = "python">
+                                    import modi
+                                    import time
+									
+									# To connect a chunk of the MODI module, create an MODI object.
+                                    bundle = modi.MODI()
+                                    
+									# Stores the module use by the variable named 'led'
+                                    led = bundle.leds[0]
+									
+									
+                                    # Sets the red component of the light. The range of component is 0 to 100 
+                                    led.red = 100
+                                    
+                                    # Sets the green component of the light. The range of component is 0 to 100
+                                    eld.green = 100
+                                    
+                                    # Sets the blue component of the light. The range of component is 0 to 100
+                                    eld.blue = 100
+                                    
+                                    # Sets the rgb components of the light. The range of components is 0 to 100
+                                    led.rgb = 10, 0, 60
+                                    
+                                    # Turns on the led to maximum brightness
                                     led.turn_on()
-                                    <br><br>
-                                    <span style="color: #888888">#Turns off the led</span>
-                                    <br>
+                                    
+                                    # Turns off the led
                                     led.turn_off()
-                                    <br><br>
+								</code></pre>
                                 </div>
                             </div>
                         </div>
@@ -1767,48 +1706,42 @@
                                 <br>
                                 <br>
                                 <center>
-                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Code Usage</h4>
                                 </center>
                                 <br>
                                 <!-- HTML generated using hilite.me -->
-                                <div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">modi</span>
-                                    <br>
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">time</span>
-                                    <br><br>
-                                    bundle <span style="color: #333333">=</span> modi.MODI()
-                                    <br><br>
-                                    <span style="color: #888888">#Call Module</span><br>
-                                    motor = bundle.motors[<span style="color: #0000DD; font-weight: bold">0</span>]
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the degree of motors on both channel. The range of degree is 0 to 100</span>
-                                    <br>
-                                    motor.degree = <span style="color: #0000DD;">30</span>, <span style="color: #0000DD;">90</span>
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the degree of motors on channel I. The range of degree is 0 to 100</span>
-                                    <br>
-                                    motor.first_degree = <span style="color: #0000DD;">30</span>
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the degree of motors on channel II. The range of degree is 0 to 100</span>
-                                    <br>
-                                    motor.second_degree = <span style="color: #0000DD;">90</span>
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the speed of motors on both channel. The range of speed is -100 to 100</span>
-                                    <br>
-                                    <span style="color: #888888">#If the current speed of the motors is -, it rotates in reverse</span>
-                                    <br>
-                                    motor.speed = <span style="color: #0000DD;">50</span>, <span style="color: #0000DD;">100</span>
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the speed of motors on channel I. The range of speed is -100 to 100</span>
-                                    <br>
-                                    motor.first_speed = <span style="color: #0000DD;">50</span>
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the speed of motors on channel II. The range of speed is -100 to 100</span>
-                                    <br>
-                                    motor.second_speed = <span style="color: #0000DD;">100</span>
-                                    <br><br>
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+								<pre style ="white-space : pre-line;"><code class = "python">
+                                    import modi
+                                    import time
+									
+									# To connect a chunk of the MODI module, create an MODI object.
+                                    bundle = modi.MODI()
+                                    
+									# Stores the module use by the variable named 'motor'
+                                    motor = bundle.motors[0]
+                                    
+									
+                                    # Sets the degree of motors on both channel. The range of degree is 0 to 100
+                                    motor.degree = 30, 90
+
+									# Sets the degree of motors on channel I. The range of degree is 0 to 100
+                                    motor.first_degree = 30
+                                    
+                                    # Sets the degree of motors on channel II. The range of degree is 0 to 100
+                                    motor.second_degree = 90
+                                    
+                                    # Sets the speed of motors on both channel. The range of speed is -100 to 100
+                                    # If the current speed of the motors is -, it rotates in reverse
+                                    motor.speed = 50, 100
+
+									# Sets the speed of motors on channel I. The range of speed is -100 to 100
+                                    motor.first_speed = 50
+                                    
+                                    # Sets the speed of motors on channel II. The range of speed is -100 to 100
+                                    motor.second_speed = 10
+                                    
+									</code></pre>
                                 </div>
                             </div>
                         </div>
@@ -1884,40 +1817,36 @@
                                 <br>
                                 <br>
                                 <center>
-                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Usage</h4>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">Code Usage</h4>
                                 </center>
                                 <br>
                                 <!-- HTML generated using hilite.me -->
-                                <div class="col-lg-11" style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em; margin: auto;">
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">modi</span>
-                                    <br>
-                                    <span style="color: #008800; font-weight: bold">import</span>
-                                    <span style="color: #0e84b5; font-weight: bold">time</span>
-                                    <br><br>
-                                    bundle <span style="color: #333333">=</span> modi.MODI()
-                                    <br><br>
-                                    <span style="color: #888888">#Call Module</span><br>
-                                    speaker = bundle.speakers[<span style="color: #0000DD; font-weight: bold">0</span>]
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the frequency and volume of the sound. The range of the volume is 0 to 100</span>
-                                    <br>
-                                    <span style="color: #888888">#Plays the sound with frequency 220Hz and volume 100</span>
-                                    <br>
-                                    speaker.tune = <span style="color: #0000DD;">220</span>, <span style="color: #0000DD;">100</span>
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the frequency of the sound</span>
-                                    <br>
-                                    speaker.frequency = <span style="color: #0000DD;">550</span>
-                                    <br><br>
-                                    <span style="color: #888888">#Sets the volume of the sound. The range of the volume is 0 to 100</span>
-                                    <br>
-                                    speaker.volume = <span style="color: #0000DD;">100</span>
-                                    <br><br>
-                                    <span style="color: #888888">#Turns off the sound</span>
-                                    <br>
-                                    speaker.turn_off()
-                                    <br><br>
+								
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+								<pre style ="white-space : pre-line;"><code class = "python">
+                                 import modi                                  
+								 import time
+
+								 # To connect a chunk of the MODI module, create an MODI object.
+								 bundle = modi.MODI()
+
+
+								 # Stores the module use by the variable named 'speaker'
+								 speaker = bundle.speakers[0]
+
+								 # Sets the frequency and volume of the sound. The range of the volume is 0 to 100
+								 # Plays the sound with frequency 220Hz and volume 100
+								 speaker.tune = 220, 100
+
+								 # Sets the frequency of the sound
+								 speaker.frequency = 550
+
+								 # Sets the volume of the sound. The range of the volume is 0 to 100
+								 speaker.volume = 100
+
+								 # Turns off the sound
+								 speaker.turn_off()
+								</code></pre>
                                 </div>
                             </div>
                         </div>
@@ -1936,6 +1865,10 @@
     <script src="assets/mail/contact_me.js"></script>
     <!-- Core theme JS-->
     <script src="js/scripts.js"></script>
+
+
 </body>
 
 </html>
+
+
