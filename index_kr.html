@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>PyMODI</title>
+	  <!-- Code highlight -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/8.7/styles/rainbow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" />
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <link href="css/usage.css" rel="stylesheet" />
+</head>
+
+<body id="page-top">
+    <!-- Dialogflow Messenger-->
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <df-messenger intent="WELCOME" chat-title="PyMODI QnA Chatbot" chat-icon="https://github.com/LUXROBO/pymodi/blob/gh-pages/assets/img/chat-icon.png?raw=true" agent-id="c8def732-3607-44cb-97a7-805e4f4f6ad8" language-code="en"></df-messenger>
+    <style>
+        df-messenger {
+            --df-messenger-bot-message: #6c757d;
+            --df-messenger-button-titlebar-color: #49d5e0;
+            --df-messenger-chat-background-color: #fafafa;
+            --df-messenger-font-color: white;
+            --df-messenger-send-icon: #6c757d;
+            --df-messenger-user-message: #49d5e0;
+        }
+    </style>
+
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand js-scroll-trigger" href="index.html#page-top">PyMODI</a>
+            <button class="navbar-toggler navbar-toggler-right text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#introduction">소개</a></li>
+                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#creations">Creations</a></li>
+                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#try-out">Try Out</a></li>
+                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#usage">모듈 소개 및 사용법</a></li>
+                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">About</a></li>
+                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="mailto:tech@luxrobo.com">E-mail 문의</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Masthead-->
+    <header class="masthead bg-primary text-white text-center">
+        <div class="container d-flex align-items-center flex-column">
+            <!-- Masthead Avatar Image-->
+            <img class="masthead-avatar" src="assets/img/logo.png" alt="" />
+            <!-- Icon Divider-->
+            <div class="divider-custom divider-light">
+                <div class="divider-custom-line"></div>
+                <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                <div class="divider-custom-line"></div>
+            </div>
+            <!-- Masthead Subheading-->
+            <p class="masthead-subheading font-weight-light mb-0">
+                전기 모듈 장치 MODI의 Python API 입니다.
+            </p>
+            <br>
+            <!-- Transfer to KOR-->
+            <div class="text-center mt-4">
+                <a class="btn btn-xl btn-outline-light" href="index.html">
+                    Translate into English
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Video Section-->
+    <section class="page-section mb-0" id="introduction">
+        <div class="container">
+            <!-- About Section Heading-->
+            <h2 class="page-section-heading text-center text-uppercase text-secondary">소개</h2>
+            <!-- Icon Divider-->
+            <div class="divider-custom">
+                <div class="divider-custom-line"></div>
+                <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                <div class="divider-custom-line"></div>
+            </div>
+            <!-- Embedded Video Link Content -->
+            <div align="center">
+                <iframe width="693" height="390" src="https://www.youtube.com/embed/7ciGw8V-8sM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section-->
+    <section class="page-section portfolio" id="creations">
+        <div class="container">
+            <!-- Portfolio Section Heading-->
+            <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Creations</h2>
+            <!-- Icon Divider-->
+            <div class="divider-custom">
+                <div class="divider-custom-line"></div>
+                <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                <div class="divider-custom-line"></div>
+            </div>
+            <!-- Portfolio Grid Item Content -->
+            <div class="row">
+                <!-- Portfolio Item 1-->
+                <!-- checkpoint1 -->
+                <div class="col-md-6 col-lg-4 mb-5">
+                    <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal1">
+                        <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                            <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
+                        </div>
+                        <img class="img-fluid" src="assets/img/portfolio/galaga.gif" alt="" />
+                    </div>
+                </div>
+                <!-- Portfolio Item 2-->
+                <div class="col-md-6 col-lg-4 mb-5">
+                    <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal2">
+                        <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                            <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
+                        </div>
+                        <img class="img-fluid" src="assets/img/portfolio/dodge.gif" alt="" />
+                    </div>
+                </div>
+                <!-- Portfolio Item 3-->
+                <div class="col-md-6 col-lg-4 mb-5">
+                    <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal3">
+                        <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                            <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
+                        </div>
+                        <img class="img-fluid" src="assets/img/portfolio/mouse.gif" alt="" />
+                    </div>
+                </div>
+                <!-- Portfolio Item 4-->
+                <div class="col-md-6 col-lg-4 mb-5 mb-lg-0">
+                    <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal4">
+                        <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                            <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
+                        </div>
+                        <img class="img-fluid" src="assets/img/portfolio/spuit.gif" alt="" />
+                    </div>
+                </div>
+                <!-- Portfolio Item 5-->
+                <div class="col-md-6 col-lg-4 mb-5 mb-lg-0">
+                    <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal5">
+                        <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                            <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
+                        </div>
+                        <img class="img-fluid" src="assets/img/portfolio/rc-car.gif" alt="" />
+                    </div>
+                </div>
+                <!-- Portfolio Item 6 -->
+                <div class="col-md-6 col-lg-4 mb-5 mb-lg-0">
+                    <div class="portfolio-item mx-auto" data-toggle="modal" data-target="#portfolioModal6">
+                        <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                            <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
+                        </div>
+                        <img class="img-fluid" src="assets/img/portfolio/question-mark.png" alt="" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Try out Section-->
+    <section class="page-section mb-0" id="try-out">
+        <div class="container">
+            <!-- About Section Heading-->
+            <h2 class="page-section-heading text-center text-uppercase text-secondary">Try Out</h2>
+            <!-- Icon Divider-->
+            <div class="divider-custom">
+                <div class="divider-custom-line"></div>
+                <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                <div class="divider-custom-line"></div>
+            </div>
+            <!-- REPL Content -->
+            <div align="center">
+                <iframe frameborder="0" width="100%" height="650px" src="https://repl.it/@jha929/pymodi?lite=true&outputonly=1"></iframe>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Elcy : Usage update 21-01-08~ -->
+    <!-- Usage Section-->
+    <section class="page-section mb-0" id="usage">
+        <div class="container">
+            <!-- About Section Heading-->
+            <h2 class="page-section-heading text-center text-uppercase text-secondary">모듈 소개 및 사용법</h2>
+            <!-- Icon Divider-->
+            <div class="divider-custom">
+                <div class="divider-custom-line"></div>
+                <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                <div class="divider-custom-line"></div>
+            </div>
+            <!-- Usage Manual Content -->
+
+            <div align="center">
+                <div class="wrapper">
+                    <!-- Network Module -->
+                    <div class="module network" data-toggle="modal" data-target="#networkmodulee">
+                        <img src="assets/img/modules/network.png" alt="network" width="100" height="100" />
+                    </div>
+
+                    <!-- Button Module -->
+                    <div class="module button" data-toggle="modal" data-target="#buttonmodulee">
+                        <img src="assets/img/modules/button.png" alt="button" width="100" height="100" />
+                    </div>
+
+                    <!-- Dial Module -->
+                    <div class="module dial" data-toggle="modal" data-target="#dialmodule">
+                        <img src="assets/img/modules/dial.png" alt="dial" width="100" height="100" />
+                    </div>
+
+                    <!-- Env Module -->
+                    <div class="module env" data-toggle="modal" data-target="#envmodulee">
+                        <img src="assets/img/modules/env.png" alt="env" width="100" height="100" />
+                    </div>
+
+                    <!-- Gyro Module -->
+                    <div class="module gyro" data-toggle="modal" data-target="#gyromodulee">
+                        <img src="assets/img/modules/gyro.png" alt="gyro" width="100" height="100">
+                    </div>
+
+                    <!-- Ir Module -->
+                    <div class="module ir" data-toggle="modal" data-target="#irmodulee">
+                        <img src="assets/img/modules/ir.png" alt="ir" width="100" height="100">
+                    </div>
+
+                    <!-- Mic Module -->
+                    <div class="module mic" data-toggle="modal" data-target="#micmodulee">
+                        <img src="assets/img/modules/mic.png" alt="mic" width="100" height="100">
+                    </div>
+
+                    <!-- Ultrasonic Module-->
+                    <div class="module ultrasonic" data-toggle="modal" data-target="#ultrasonicmodulee">
+                        <img src="assets/img/modules/ultrasonic.png" alt="ultrasonic" width="100" height="100">
+                    </div>
+
+                    <!-- Display Module-->
+                    <div class="module display" data-toggle="modal" data-target="#displaymodulee">
+                        <img src="assets/img/modules/display.png" alt="display" width="100" height="100">
+                    </div>
+
+                    <!-- LED Module-->
+                    <div class="module led" data-toggle="modal" data-target="#ledmodulee">
+                        <img src="assets/img/modules/led.png" alt="led" width="100" height="100">
+                    </div>
+
+                    <!-- Motor Module-->
+                    <div class="module motor" data-toggle="modal" data-target="#motormodulee">
+                        <img src="assets/img/modules/motor.png" alt="motor" width="100" height="100">
+                    </div>
+
+                    <!-- Speaker Module-->
+                    <div class="module speaker" data-toggle="modal" data-target="#speakermodulee">
+                        <img src="assets/img/modules/speaker.png" alt="speaker" width="100" height="100">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section-->
+    <section class="page-section bg-primary text-white mb-0" id="about">
+        <div class="container">
+            <!-- About Section Heading-->
+            <h2 class="page-section-heading text-center text-uppercase text-white">About</h2>
+            <!-- Icon Divider-->
+            <div class="divider-custom divider-light">
+                <div class="divider-custom-line"></div>
+                <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                <div class="divider-custom-line"></div>
+            </div>
+            <!-- About Section Content-->
+            <div class="text-center mt-4">
+                <div class="text-left mt-4" style="padding-right: 10%;
+                        padding-left: 10%;">
+                    <p class="lead" style = "font-size: 20px;">PyMODI는 MODI사용을 위한 python API입니다. &nbsp;
+                        MODI 모듈은 controller area network protocol을 사용하여 작동하는 전자 모듈입니다.&nbsp;
+                        PyMODI 패키지를 이용하여 쉽게 모듈을 작동시킬 수 있습니다.&nbsp;
+                        PyMODI를 사용하여 당신만의 MODI creation을 만들거나 리스트에 있는 여러 creation들을 체험해보세요.&nbsp;
+                        PyMODI는 게임, 기계 학습, 교육 등 다양한 분야에서 활용될 수 있습니다!&nbsp;
+                    </p>
+                </div>
+            </div>
+            <!-- About Section Button-->
+            <div class="text-center mt-4">
+                <a class="btn btn-xl btn-outline-light" href="https://pypi.org/project/pymodi/">
+                    <i class="fas fa-download mr-2"></i>
+                    설치하기
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer-->
+    <footer class="footer text-center">
+        <div class="container">
+            <div class="row">
+                <!-- Footer Location-->
+                <div class="col-lg-4 mb-5 mb-lg-0">
+                    <h4 class="text-uppercase mb-4">위치</h4>
+                    <p class="lead mb-0">
+                        대한민국 서울시 서초구 강남대로 311, 13층
+                    </p>
+                </div>
+                <!-- Footer Social Icons-->
+                <div class="col-lg-4 mb-5 mb-lg-0">
+                    <h4 class="text-uppercase mb-4">웹사이트 / SNS</h4>
+                    <a class="btn btn-outline-light btn-social mx-1" href="https://www.facebook.com/luxrobo/"><i class="fab fa-fw fa-facebook-f"></i></a>
+                    <a class="btn btn-outline-light btn-social mx-1" href="https://twitter.com/luxrobo"><i class="fab fa-fw fa-twitter"></i></a>
+                    <a class="btn btn-outline-light btn-social mx-1" href="https://www.linkedin.com/company/luxrobo/"><i class="fab fa-fw fa-linkedin-in"></i></a>
+                    <a class="btn btn-outline-light btn-social mx-1" href="https://github.com/LUXROBO/pymodi"><i class="fab fa-fw fa-github"></i></a>
+                </div>
+                <!-- Footer About Text-->
+                <div class="col-lg-4">
+                    <h4 class="text-uppercase mb-4">회사 소개</h4>
+                    <p class="lead mb-0">
+                        LUXROBO는 누구나 쉽게 로봇과 IoT 기기를 만들 수 있는 대화형 학습 플랫폼을 개발하는 플랫폼기반 스타트업입니다.<br>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Copyright Section-->
+    <div class="copyright py-4 text-center text-white">
+        <div class="container"><small>Copyright © PyMODI Official 2018</small></div>
+    </div>
+    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes)-->
+    <div class="scroll-to-top d-lg-none position-fixed">
+        <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top"><i class="fa fa-chevron-up"></i></a>
+    </div>
+    <!-- Portfolio Modals-->
+    <!-- Portfolio Modal 1-->
+    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-center">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-11">
+                                <!-- Portfolio Modal - Title-->
+                                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">PyMODI 갤러그 게임</h2>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Portfolio Modal - Image-->
+                                <img class="img-fluid rounded mb-5" src="assets/img/portfolio/galaga.gif" alt="" />
+                                <!-- Portfolio Modal - Text-->
+                                <p class="mb-5" style = "font-size: 15px;">
+                                    PyMODI로 갤러그 게임을 즐겨보세요!<br>
+                                    이 크리에이션은  MODI의 자이로 모듈을 사용하여 갤러그 제트기를 직접 조종하는 경험을 할 수 있습니다.<br>
+                                    소스코드를 보고싶다면 <a href="https://github.com/LUXROBO/pymodi/blob/master/examples/creation_examples/galaga.py">여기</a>를 클릭하세요!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Portfolio Modal 2-->
+    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-labelledby="portfolioModal2Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-center">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10">
+                                <!-- Portfolio Modal - Title-->
+                                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal2Label">PyMODI 닷지 게임</h2>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Portfolio Modal - Image-->
+                                <img class="img-fluid rounded mb-5" src="assets/img/portfolio/dodge.gif" alt="" />
+                                <!-- Portfolio Modal - Text-->
+                                <p class="mb-5" style = "font-size: 15px;">
+                                    PyMODI로 닷지 게임을 즐겨보세요!<br>
+                                    이 크리에이션은 자이로모듈을 활용하여 직접 케릭터를 움직여 떨어지는 박스들을 피하는 TUI 게임을 제공합니다.
+                                    <br>소스코드를 보고싶다면 <a href="https://github.com/LUXROBO/pymodi/blob/master/examples/creation_examples/dodge.py">여기</a>를 클릭하세요!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Portfolio Modal 3-->
+    <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-labelledby="portfolioModal3Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-center">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10">
+                                <!-- Portfolio Modal - Title-->
+                                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal3Label">MODI 마우스</h2>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Portfolio Modal - Image-->
+                                <img class="img-fluid rounded mb-5" src="assets/img/portfolio/mouse.gif" alt="" />
+                                <!-- Portfolio Modal - Text-->
+                                <p class="mb-5">
+                                    컴퓨터 마우스를 PyMODI를 활용하여 조작해보세요. 자이로모듈과 버튼모듈이 있으면, 마우스를 조작할 수 있습니다!
+                                    <br>소스코드를 보고싶다면 <a href="https://github.com/LUXROBO/pymodi/blob/master/examples/creation_examples/modimouse.py">여기</a>를 클릭하세요!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Portfolio Modal 4-->
+    <div class="portfolio-modal modal fade" id="portfolioModal4" tabindex="-1" role="dialog" aria-labelledby="portfolioModal4Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-center">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-11">
+                                <!-- Portfolio Modal - Title-->
+                                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal4Label">색 스포이드</h2>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Portfolio Modal - Image-->
+                                <img class="img-fluid rounded mb-5" src="assets/img/portfolio/spuit.gif" alt="" />
+                                <!-- Portfolio Modal - Text-->
+                                <p class="mb-5">
+                                    원하는 색을 추출해보세요!
+                                    <br>MODI 의 환경모듈과 머신러닝을 함께 활용하면 RGB 데이터를 이용하여 어떤 색이든 추출할 수 있는 크리에이션을 만들 수 있습니다.
+                                    <br>소스코드를 보고싶다면 <a href="https://github.com/LUXROBO/pymodi/blob/master/examples/ml_examples/physical_color_spuit">여기</a>를 클릭하세요!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Portfolio Modal 5-->
+    <div class="portfolio-modal modal fade" id="portfolioModal5" tabindex="-1" role="dialog" aria-labelledby="portfolioModal5Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-center">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <!-- Portfolio Modal - Title-->
+                                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal5Label">MODI 무선 자동차</h2>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Portfolio Modal - Image-->
+                                <img class="img-fluid rounded mb-5" src="assets/img/portfolio/rc-car.gif" alt="" />
+                                <!-- Portfolio Modal - Text-->
+                                <p class="mb-5">
+                                    MODI의 BLE(Bluetooth Low Engergy)기능을 활용하여 키보드로 움직이는 자동차를 조종해보세요!
+                                    <br>소스코드를 보고싶다면 <a href="https://github.com/LUXROBO/pymodi/blob/master/examples/creation_examples/motor_play.py">여기</a>를 클릭하세요!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Portfolio Modal 6-->
+    <div class="portfolio-modal modal fade" id="portfolioModal6" tabindex="-1" role="dialog" aria-labelledby="portfolioModal6Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-center">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <!-- Portfolio Modal - Title-->
+                                <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal6Label">다음 작품은?</h2>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Portfolio Modal - Image-->
+                                <img class="img-fluid rounded mb-5" src="assets/img/portfolio/question-mark.png" alt="" />
+                                <!-- Portfolio Modal - Text-->
+                                <p class="mb-5">
+                                    새로운 PyMODI 크리에이션을 만들어 주세요!
+                                    <br>Examples 폴더에 당신의 작품을 넣고 PR을 보내주세요!
+                                    <br>기발한 작품은 새로운 크리에이션 리스트에 추가될 것입니다 :)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Network Module -->
+    <div class="portfolio-modal modal fade" id="networkmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-left">
+                    <div class="container">
+                        <div class="row justify-content-left">
+                            <div class="col-lg-12">
+                                <!-- Title-->
+                                <center>
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">네트워크 모듈</h2>
+                                </center>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Image-->
+                                <img src="assets/img/modules/network.png" alt="" width="400" height="400" style="float: left" vspace=10 hspace=30 />
+                                <!-- Text-->
+                                <br>
+                                <table class="table-bordered" width=550px height=50px style='line-height: 150%' cellpadding="10">
+                                    <tbody>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 분류</th>
+                                            <td>설정(Setup) 모듈</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 설명</th>
+                                            <td>
+                                                네트워크 모듈은 유선 또는 무선으로 이용할 수 있습니다.<br>
+                                                유선연결은 USB를 이용해 PC와 네트워크 모듈을 연결합니다.<br>
+                                                무선연결은 블루투스나 Wi-FI를 이용한 연결이나 모바일 장치와 연결할 때 사용합니다.  
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>주요 기능</th>
+                                            <td>1. 모듈과 PC 연결<br>
+                                                2. 모듈과 스마트폰 연결 모드 (MODI Play Application)<br>
+                                                3. 모듈과 모듈간 연결 모드
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 크기</th>
+                                            <td>23.8*47.8*16.1(mm)</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 중량</th>
+                                            <td>12g</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>통신 사양</th>
+                                            <td>블루투스(BLE)버전 4.1v <br>
+                                                와이파이 통신 대기 802.11n(2.4GHz),up to 150 Mbps<br>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 단자</th>
+                                            <td>Micro-B USB port X1<br>
+                                                Magnetic connector X3
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <center>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">코드 사용 예제</h4>
+                                </center>
+                                <br>
+                                <!-- HTML generated using hilite.me -->
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                    import time
+									
+                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    bundle = modi.MODI()
+                                    
+                                    # 'network'라는 변수에 모듈 객체를 저장합니다.
+                                    network = bundle.networks[0]
+                                    
+                                    # MODI Play 버튼의 누름 여부를 반환합니다. 눌렸다면 True를 반환합니다.
+                                    is_pressed = network.button_pressed
+                                    print('Network Button Pressed State :', is_pressed)
+                                    
+                                    # MODI Play 다이얼 의 값을 0 ~ 100 사이의 값으로 환산하여 반환합니다.
+                                    value_dial = network.dial
+                                    print('Network Dial Value State :', value_dial)
+                                    
+                                    # 조이스틱의 버튼을 눌렀을때 각각 '위' , '아래' , '왼쪽' , '오른쪽'으로 표현해줍니다.
+                                    # 눌리지 않을경우 None을 반환합니다.
+                                    state_joystick = network.joystick
+                                    print('Network Joystick State :', state_joystick)
+                                    
+                                    # MODI Play의 왼쪽 슬라이더 값을 0 ~ 100 사이의 값으로 환산하여 반환합니다.
+                                    value_left_slider = network.left_slider
+                                    print('Network Left Slider Value State :', value_left_slider)
+                                    
+                                    # MODI Play의 오른쪽 슬라이더 값을 0 ~ 100 사이의 값으로 환산하여 반환합니다.
+                                    value_right_slider = network.right_slider
+                                    print('Network Right Slider Value State :', value_right_slider)
+                                    
+                                    # MODI Play의 타이머가 끝났을 경우 True를 반환합니다.
+                                    is_timeup = network.timer
+                                    print('Network Timer State :', is_timeup)
+                                    
+                                    # MODI Play의 버저를 울립니다.
+                                    network.buzzer_on()
+				    
+                                    # 2초동안 버저를 울립니다.
+                                    time.sleep(2)
+				    
+                                    # MODI Play 버저의 전원을 끕니다.
+                                    network.buzzer_off()
+                                    
+                                    # MODI Play 카메라를 활용하여 사진을 찍습니다.
+                                    network.take_picture()
+                                </code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Button Module -->
+    <div class="portfolio-modal modal fade" id="buttonmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-left">
+                    <div class="container">
+                        <div class="row justify-content-left">
+                            <div class="col-lg-12">
+                                <!-- Title-->
+                                <center>
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">버튼 모듈</h2>
+                                </center>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Image-->
+                                <img src="assets/img/modules/button.png" alt="" width="400" height="400" style="float: left" vspace=10 hspace=30 />
+                                <!-- Text-->
+                                <br>
+                                <table class="table-bordered" width=550px height=50px style='line-height: 150%' cellpadding="10">
+                                    <tbody>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 분류</th>
+                                            <td>입력(Input) 모듈</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 설명</th>
+                                            <td>버튼 모듈은 버튼의 눌림을 감지합니다.<br>
+                                                한 번 클릭, 두 번 클릭, 눌려져 있는 상태를 알 수 있으며, 토글을 사용해 ON 상태 또는 OFF 상태가 유지되도록 할 수 있습니다.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>주요 기능</th>
+                                            <td>1. 한 번 클릭 감지<br>
+                                                2. 두 번 클릭 감지<br>
+                                                3. 눌려져 있는 상태 감지<br>
+                                                4. 눌릴 때마다 상태 전환 (ON/OFF)
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 크기</th>
+                                            <td>23.8*47.8*16.1(mm)</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 중량</th>
+                                            <td>12g</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>연결 단자</th>
+                                            <td>
+                                                Magnetic connector X4
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <center>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">코드 사용 예제</h4>
+                                </center>
+                                <br>
+                                <!-- HTML generated using hilite.me -->
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                    import time
+				    
+                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    bundle = modi.MODI()
+                                    
+                                    # 'button'라는 변수에 모듈 객체를 저장합니다.
+                                    button = bundle.buttons[0]
+                                    
+                                    # 버튼이 눌렸을 때 True를 반환합니다.
+                                    is_pressed = button.pressed
+                                    print('Button Pressed State :', is_pressed)
+                                    
+                                    # 버튼이 연속으로 두 번 눌렸을 경우, True를 반환합니다.
+                                    is_double_clicked = button.double_clicked
+                                    print('Button Double Clicked State :', is_double_clicked)
+                                    
+                                    # 버튼을 누를 때마다 반환할 True / False 의 상태가 바뀝니다.
+                                    button_toggled = button.toggled
+                                    print('Button Toggled State :', button_toggled)
+                                   
+                                    # 버튼의 눌림 여부를 True / False로 반환하여 알려줍니다.
+                                    is_clicked = button.clicked
+                                    print('Button Cliked State :', is_clicked)
+                                </code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dial Module -->
+    <div class="portfolio-modal modal fade" id="dialmodule" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-left">
+                    <div class="container">
+                        <div class="row justify-content-left">
+                            <div class="col-lg-12">
+                                <!-- Title-->
+                                <center>
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">다이얼 모듈</h2>
+                                </center>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Image-->
+                                <img src="assets/img/modules/dial.png" alt="" width="400" height="400" style="float: left" vspace=10 hspace=30 />
+                                <!-- Text-->
+                                <br>
+                                <table class="table-bordered" width=550px height=50px style='line-height: 150%' cellpadding="10">
+                                    <tbody>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 분류</th>
+                                            <td>입력(Input) 모듈</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 설명</th>
+                                            <td>
+                                                다이얼 모듈은 모듈 손잡이의 회전을 이용합니다.<br>
+                                                회전한 각도를 측정하거나 회전하는 속도를 측정합니다.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>주요 기능</th>
+                                            <td>1. 회전 각도 측정<br>
+                                                2. 회전 속도 측정<br>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 크기</th>
+                                            <td>23.8*23.8*24.0(mm)</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 중량</th>
+                                            <td>13g</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 단자</th>
+                                            <td>
+                                                Magnetic connector X4
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>센서 사양</th>
+                                            <td>
+                                                동작범위 0° ~ 235° (± 5°)
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <center>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">코드 사용 예제</h4>
+                                </center>
+                                <br>
+                                <!-- HTML generated using hilite.me -->
+                               <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+                               <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                    import time
+									
+                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    bundle = modi.MODI()
+                                    
+                                    # 'dial'라는 변수에 모듈 객체를 저장합니다.
+                                    dial = bundle.dials[0]
+                                    
+                                    # 다이얼의 각도를 0 ~ 100 사이의 값으로 환산하여 반환합니다.
+                                    degree = dial.degree
+                                    print('Dial Degree State :', degree)
+                                    
+                                    # 다이얼의 회전 속도를 -100 ~ 100 사이의 값으로 환산하여 반환합니다.
+                                    turnspeed = dial.turnspeed
+                                    print('Dial Turnspeed State :', turnspeed)
+                                </code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Env Module -->
+    <div class="portfolio-modal modal fade" id="envmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-left">
+                    <div class="container">
+                        <div class="row justify-content-left">
+                            <div class="col-lg-12">
+                                <!-- Title-->
+                                <center>
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">환경 모듈</h2>
+                                </center>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Image-->
+                                <img src="assets/img/modules/env.png" alt="" width="400" height="400" style="float: left" vspace=10 hspace=30 />
+                                <!-- Text-->
+                                <br>
+                                <table class="table-bordered" width=550px height=50px style='line-height: 150%' cellpadding="10">
+                                    <tbody>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 분류</th>
+                                            <td>입력(Input) 모듈</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 설명</th>
+                                            <td>환경 모듈은 반도체 센서를 사용하여 주변 물리 변화와 색을 감지합니다.<br>
+                                                주변 물리 변화 값인 온도, 습도, 조도 그리고 색 감지를 위한 3원색 (R, G, B)을 측정합니다.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>주요 기능</th>
+                                            <td>1. 온도 측정<br>
+                                                2. 습도 측정<br>
+                                                3. 조도 측정<br>
+                                                4. 3원색(R, G, B) 측정
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 크기</th>
+                                            <td>23.8*23.8*16.1(mm)</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 중량</th>
+                                            <td>12g</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 단자</th>
+                                            <td>
+                                                Magnetic connector X4
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>센서 사양</th>
+                                            <td>
+                                                온도 -10℃ ~ 85℃<br>
+                                                습도 0 ~ 90% RH<br>
+                                                조도 0 ~ 40,000 Lux<br>
+                                                색상 0 ~ 40,000 Lux<br>
+                                                *일부 값의 경우 체감도가 낮아 %로 표기될 수 있습니다.<br>
+                                                *제품과 센서가 붙어있어 측정 시 측정 하려는 물체와 모듈의 적절한 거리가 요구 됩니다.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <center>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">코드 사용 예제</h4>
+                                </center>
+                                <br>
+                                <!-- HTML generated using hilite.me -->
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                    import time
+									
+                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    bundle = modi.MODI()
+                                    
+                                    # 'env'라는 변수에 모듈 객체를 저장합니다.
+                                    env = bundle.envs[0]
+                                    
+                                    # 주변환경의 명도를 0 ~ 100 사이의 값으로 환산하여 반환합니다.
+                                    brightness = env.brightness
+                                    print('Env Brightness State :', brightness)
+                                    
+                                    # 주변환경의 습도를 0 ~ 100 사이의 값으로 환산하여 반환합니다.
+                                    humidity = env.humidity
+                                    print('Env Humidity State :', humidity)
+                                    
+                                    # 주변환경의 온도를 0 ~ 100 사이의 값으로 환산하여 반환합니다.
+                                    temperature = env.temperature
+                                    print('Env Temperature State :', temperature)
+                                    
+                                    # 주변 빛의 red 비율을 0 ~ 100 사이의 값으로 환산하여 반환합니다.
+                                    env_red = env.red
+									
+                                    # 주변 빛의 green 비율을 0 ~ 100 사이의 값으로 환산하여 반환합니다.
+                                    env_green = env.green
+
+                                    # 주변 빛의 blue 비율을 0 ~ 100 사이의 값으로 환산하여 반환합니다.
+                                    env_blue = env.blue
+
+                                    print('Env Red : {0}, Green : {1}, Blue : {2}'.format(env_red, env_green, env_blue))
+                                </code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gyro Module -->
+    <div class="portfolio-modal modal fade" id="gyromodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-left">
+                    <div class="container">
+                        <div class="row justify-content-left">
+                            <div class="col-lg-12">
+                                <!-- Title-->
+                                <center>
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">자이로스코프 모듈</h2>
+                                </center>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Image-->
+                                <img src="assets/img/modules/gyro.png" alt="" width="400" height="400" style="float: left" vspace=10 hspace=30 />
+                                <!-- Text-->
+                                <br>
+                                <table class="table-bordered" width=550px height=50px style='line-height: 150%' cellpadding="10">
+                                    <tbody>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 분류</th>
+                                            <td>입력(Input)모듈</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 설명</th>
+                                            <td>자이로 모듈은 지자기 중력 가속도를 이용합니다.<br>
+                                                모듈 내 센서의 기울기 각도, 진동량, 그리고 각 축에 대한 가속도와 각속도를 측정합니다.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>주요 기능</th>
+                                            <td>1. 회전 각도 측정 (Roll, Pitch, Yaw)<br>
+                                                2. 가속도 측정 (X, Y, Z codeinates)<br>
+                                                3. 각속도 측정 (X, Y, Z codeinates)<br>
+                                                4. 진동 량 측정
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 크기</th>
+                                            <td>23.8*23.8*16.1(mm)</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 중량</th>
+                                            <td>12g</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 단자</th>
+                                            <td>
+                                                Magnetic connector X4
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>센서 사양</th>
+                                            <td>
+                                                측정 가능 범위 (X, Y, Z): -180° ~ 180° (± 5°)<br>
+                                                Z 축의 경우 센서의 특성상 자성에 의해 오차가 발생할 수 있습니다.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <center>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">코드 사용 예제</h4>
+                                </center>
+                                <br>
+                                <!-- HTML generated using hilite.me -->
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                    import time
+									
+                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    bundle = modi.MODI()
+                                    
+                                    # 'gyro'라는 변수에 모듈 객체를 저장합니다.
+                                    gyro = bundle.gyros[0]
+                                    
+                                    # 횡축을 중심으로 회전하는 정도의 값을 -180 ~ 180 사이로 환산하여 반환합니다.
+                                    gyro_pitch = gyro.pitch
+                                    print('Gyro Pitch :', gyro_pitch)
+                                    
+                                    # 종축을 중심으로 회전하는 정도의 값을 -180 ~ 180 사이로 환산하여 반환합니다.
+                                    gyro_roll = gyro.roll
+                                    print('Gyro Roll :', gyro_roll)
+
+                                    # 수직축을 중심으로 회전하는 정도의 값을 -180 ~ 180 사이로 환산하여 반환합니다.
+                                    gyro_yaw = gyro.yaw
+                                    print('Gyro Yaw :', gyro_yaw)
+
+                                    # x축의 각속도 값을 -100 ~ 100 사이로 환산하여 반환합니다.
+                                    gyro_angular_vel_x = gyro.angular_vel_x
+                                    print('Gyro Angular Velocity x :', gyro_angular_vel_x)
+                                    
+                                    # y축의 각속도 값을 -100 ~ 100 사이로 환산하여 반환합니다.
+                                    gyro_angular_vel_y = gyro.angular_vel_y
+                                    print('Gyro Angular Velocity y :', gyro_angular_vel_y)
+
+                                    # z축의 각속도 값을 -100 ~ 100 사이로 환산하여 반환합니다.
+                                    gyro_angular_vel_z = gyro.angular_vel_z
+                                    print('Gyro Angular Velocity z :', gyro_angular_vel_z)
+
+                                    # x축의 가속도 값을 -100 ~ 100 사이로 환산하여 반환합니다.
+                                    gyro_acceleration_x = gyro.acceleration_x
+                                    print('Gyro Acceleration x :', gyro_acceleration_x)
+
+                                    # y축의 가속도 값을 -100 ~ 100 사이로 환산하여 반환합니다.
+                                    gyro_acceleration_y = gyro.acceleration_y
+                                    print('Gyro Acceleration y :', gyro_acceleration_y)
+                                    
+                                    # z축의 가속도 값을 -100 ~ 100 사이로 환산하여 반환합니다.
+                                    gyro_acceleration_z = gyro.acceleration_z
+                                    print('Gyro Acceleration z :', gyro_acceleration_z)
+
+                                    # 진동하는 정도를 0 ~ 100 사이의 값으로 환산하여 반환합니다.
+                                    gyro_vibration = gyro.vibration
+                                    print('Gyro Vibration :', gyro_vibration)
+                                    </code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ir Module -->
+    <div class="portfolio-modal modal fade" id="irmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-left">
+                    <div class="container">
+                        <div class="row justify-content-left">
+                            <div class="col-lg-12">
+                                <!-- Title-->
+                                <center>
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">적외선 모듈</h2>
+                                </center>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Image-->
+                                <img src="assets/img/modules/ir.png" alt="" width="400" height="400" style="float: left" vspace=10 hspace=30 />
+                                <!-- Text-->
+                                <br>
+                                <table class="table-bordered" width=550px height=50px style='line-height: 150%' cellpadding="10">
+                                    <tbody>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 분류</th>
+                                            <td>입력(Input) 모듈</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 설명</th>
+                                            <td>적외선 모듈은 모듈에서 방사한 적외선이 반사되어 돌아오는 양을 감지합니다.<br>
+                                                반사된 적외선 양에 따라 근접도를 측정합니다.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>주요 기능</th>
+                                            <td>
+                                                1. 근접도 측정<br>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 크기</th>
+                                            <td>23.8*23.8*21.5(mm)</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 중량</th>
+                                            <td>12g</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 단자</th>
+                                            <td>
+                                                Magnetic connector X2
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>센서 사양</th>
+                                            <td>
+                                                측정 가능 범위 약 4 ~ 30cm 이내 (백색 종이 기준).<br>
+                                                *빛의 특성상 반사면의 굴곡이나 반사율, 색상에 따라 측정 량이 다를 수 있습니다.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <center>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">코드 사용 예제</h4>
+                                </center>
+                                <br>
+                                <!-- HTML generated using hilite.me -->
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                    import time
+				    
+                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    bundle = modi.MODI()
+                                    
+                                    # 'ir'라는 변수에 모듈 객체를 저장합니다.
+                                    ir = bundle.irs[0]
+                                    
+                                    # 측정된 근접도 값을 0 ~ 100 사이로 환산하여 반환합니다.
+                                    ir_proximity = ir.proximity
+                                    print('Ir Proximity :', ir_proximity)
+                                </code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mic Module -->
+    <div class="portfolio-modal modal fade" id="micmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-left">
+                    <div class="container">
+                        <div class="row justify-content-left">
+                            <div class="col-lg-12">
+                                <!-- Title-->
+                                <center>
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">마이크 모듈</h2>
+                                </center>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Image-->
+                                <img src="assets/img/modules/mic.png" alt="" width="400" height="400" style="float: left" vspace=10 hspace=30 />
+                                <!-- Text-->
+                                <br>
+                                <table class="table-bordered" width=550px height=50px style='line-height: 150%' cellpadding="10">
+                                    <tbody>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 분류</th>
+                                            <td>입력(Input) 모듈</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 설명</th>
+                                            <td>마이크 모듈은 소리에 의한 공기 압력변화를 이용합니다.<br>
+                                                주변의 소리의 크기나 주파수를 측정합니다.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>주요 기능</th>
+                                            <td>1. 소리 크기 측정<br>
+                                                2. 소리 주파수 측정<br>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 크기</th>
+                                            <td>23.8*23.8*16.4(mm)</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 중량</th>
+                                            <td>11g</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 단자</th>
+                                            <td>
+                                                Magnetic connector X4
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>센서 사양</th>
+                                            <td>
+                                                측정 가능 볼륨 0 ~ 100%<br>
+                                                측정 가능 진동수 50 ~ 400 Hz<br>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <center>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">코드 사용 예제</h4>
+                                </center>
+                                <br>
+                                <!-- HTML generated using hilite.me -->
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                    import time
+									
+                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    bundle = modi.MODI()
+                                    
+                                    # 'mic'라는 변수에 모듈 객체를 저장합니다.
+                                    mic = bundle.mics[0]
+                                    
+                                    # 주변 소리의 주파수를 float값으로 반환합니다.
+                                    mic_frequency = mic.frequency
+                                    print('Mic Frequency :', mic_frequency)
+
+                                    # 주변 소리의 크기를 0 ~ 100 사이의 값으로 환산하여 반환합니다.
+                                    mic_volume = mic.volume
+                                    print('Mic Volume :', mic_volume)
+                                </code></pre>	
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ultrasonic Module -->
+    <div class="portfolio-modal modal fade" id="ultrasonicmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-left">
+                    <div class="container">
+                        <div class="row justify-content-left">
+                            <div class="col-lg-12">
+                                <!-- Title-->
+                                <center>
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">초음파 모듈</h2>
+                                </center>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Image-->
+                                <img src="assets/img/modules/ultrasonic.png" alt="" width="400" height="400" style="float: left" vspace=10 hspace=30 />
+                                <!-- Text-->
+                                <br>
+                                <table class="table-bordered" width=550px height=50px style='line-height: 150%' cellpadding="10">
+                                    <tbody>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 분류</th>
+                                            <td>입력(Input) 모듈</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 설명</th>
+                                            <td>초음파 모듈은 사람이 들을 수 없는 20KHz이상의 초음파를 이용합니다.<br>
+                                                모듈에서 방사한 고주파 소리가 물체에 반사되어 돌아오는 시간을 측정해 거리를 계산합니다.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>주요 기능</th>
+                                            <td>
+                                                1. 거리 측정
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 크기</th>
+                                            <td>23.8*47.8*18.3(mm)</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 중량</th>
+                                            <td>18g</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 단자</th>
+                                            <td>
+                                                Magnetic connector X3
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>센서 사양</th>
+                                            <td>
+                                                측정 가능 범위 50 ~ 450 cm<br>
+                                                *방사형 센서이기 때문에 센서로부터 직각거리에 있는 거리를 측정하거나 측정에 방해되는 물체가 측정하려는 거리 내에서 간섭하면 오차가 발생할 수 있습니다.<br>
+                                                *물체 감지가 안 될 정도의 작은 물체를 거리를 측정할 경우 오차가 발생할수 있습니다.<br>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <center>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">코드 사용 예제</h4>
+                                </center>
+                                <br>
+                                <!-- HTML generated using hilite.me -->
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                    import time
+									
+                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    bundle = modi.MODI()
+                                    
+                                    # 'ultrasonic'라는 변수에 모듈 객체를 저장합니다.
+                                    ultrasonic = bundle.ultrasonics[0]
+									
+                                    # 대상과의 거리를 측정한 값을 0 ~ 100 사이로 환산하여 반환합니다.
+                                    ultrasonic_distance = ultrasonic.distance
+                                    print('Ultrasonic Distance:', ultrasonic_distance)
+                                </code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Display Module -->
+    <div class="portfolio-modal modal fade" id="displaymodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-left">
+                    <div class="container">
+                        <div class="row justify-content-left">
+                            <div class="col-lg-12">
+                                <!-- Title-->
+                                <center>
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">디스플레이 모듈</h2>
+                                </center>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Image-->
+                                <img src="assets/img/modules/display.png" alt="" width="400" height="400" style="float: left" vspace=10 hspace=30 />
+                                <!-- Text-->
+                                <br>
+                                <table class="table-bordered" width=550px height=50px style='line-height: 150%' cellpadding="10">
+                                    <tbody>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 분류</th>
+                                            <td>출력(Output) 모듈</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 설명</th>
+                                            <td>디스플레이 모듈은 사용자에게 그림, 글자와 같은 다양한 정보를 화면으로 전달합니다.<br>
+                                                사용자가 그린 그림이나, 글자 또는 모듈 정보 등을 화면에 표시할 수 있습니다.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>주요 기능</th>
+                                            <td>1. 픽셀 단위의 그림 표현<br>
+                                                2. 연결된 모듈의 정보 표현<br>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 크기</th>
+                                            <td>23.8*23.8*16.1(mm)</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 중량</th>
+                                            <td>12g</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 단자</th>
+                                            <td>
+                                                Magnetic connector X3
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>출력 범위</th>
+                                            <td>
+                                                해상도 64 * 48 (pixel)<br>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <center>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">코드 사용 예제</h4>
+                                </center>
+                                <br>
+                                <!-- HTML generated using hilite.me -->
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                    import time
+									
+                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    bundle = modi.MODI()
+                                    
+                                    # 'display'라는 변수에 모듈 객체를 저장합니다.
+                                    display = bundle.displays[0]
+									
+                                    # 원하는 문자 혹은 문자열을 디스플레이 모듈에 출력시킵니다.
+                                    display.text = 'Hello MODI!'
+                                    
+                                    '''
+                                    변수 값을 좌표상의 (pos_x, pos_y) 의 위치에 출력시킵니다.
+                                    pos_x, pos_y 의 값은 0 ~ 255 사이의 값을 출력시킬 수 있습니다.
+                                    파라미터 : 
+                                        &ensp;&ensp;&ensp;변수(variable): 출력시킬 숫자
+                                        &ensp;&ensp;&ensp;position_x(pos_x): x축 좌표
+                                        &ensp;&ensp;&ensp;position_y(pos_y): y축 좌표
+                                    '''
+                                    pos_x = 20
+                                    pos_y = 30
+                                    display.show_variable(0, pos_x, pos_y)
+                                    
+                                    # 디스플레이 모듈에서 출력중인 모든 데이터를 지웁니다.
+                                    display.clear()
+                                </code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LED Module -->
+    <div class="portfolio-modal modal fade" id="ledmodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-left">
+                    <div class="container">
+                        <div class="row justify-content-left">
+                            <div class="col-lg-12">
+                                <!-- Title-->
+                                <center>
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">LED 모듈</h2>
+                                </center>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Image-->
+                                <img src="assets/img/modules/led.png" alt="" width="400" height="400" style="float: left" vspace=10 hspace=30 />
+                                <!-- Text-->
+                                <br>
+                                <table class="table-bordered" width=550px height=50px style='line-height: 150%' cellpadding="10">
+                                    <tbody>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 분류</th>
+                                            <td>출력(Output) 모듈</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 설명</th>
+                                            <td>
+                                                LED 모듈은 전기 신호를 빛으로 바꿔주는 반도체 소자입니다.<br>
+                                                빛의 3원색인 R, G, B를 조합하여 65,000 여가지 색상의 빛을 만들어 냅니다.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>주요 기능</th>
+                                            <td>
+                                                1. 4가지 색 표현 (빨,초,파,흰,꺼짐)<br>
+                                                2. 빨강, 초록, 파랑 조합을 통한 65,000여개의 색상 표현
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 크기</th>
+                                            <td>23.8*23.8*16.1(mm)</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 중량</th>
+                                            <td>11g</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 단자</th>
+                                            <td>
+                                                Magnetic connector X4
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>센서 사양</th>
+                                            <td>
+                                                밝기(R, G, B) 180, 50, 120 mcd (2.5V 기준)<br>
+                                                *시력에 손상을 줄 수 있으니 사람의 눈에 LED를 직접 비추지 마십시오.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <center>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">코드 사용 예제</h4>
+                                </center>
+                                <br>
+                                <!-- HTML generated using hilite.me -->
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                    import time
+									
+                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    bundle = modi.MODI()
+                                    
+                                    # 'led'라는 변수에 모듈 객체를 저장합니다.
+                                    led = bundle.leds[0]
+									
+                                    # led모듈의 red값을 0 ~ 100 사이의 값으로 설정하여 출력합니다.
+                                    led.red = 100
+                                    
+                                    # led모듈의 green값을 0 ~ 100 사이의 값으로 설정하여 출력합니다.
+                                    led.green = 100
+                                    
+                                    # led모듈의 blue값을 0 ~ 100 사이의 값으로 설정하여 출력합니다.
+                                    led.blue = 100
+                                    
+                                    # 모듈의 전체 rgb값을 설정하여 출력합니다.
+                                    led.rgb = 10, 0, 60
+                                    
+                                    # rgb값을 모두 100으로 설정한 상태에서 출력합니다.
+                                    led.turn_on()
+                                    
+                                    # rgb값을 모두 0으로 설정합니다.
+                                    led.turn_off()
+                                </code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Motor Module -->
+    <div class="portfolio-modal modal fade" id="motormodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-left">
+                    <div class="container">
+                        <div class="row justify-content-left">
+                            <div class="col-lg-12">
+                                <!-- Title-->
+                                <center>
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">모터 모듈</h2>
+                                </center>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Image-->
+                                <img src="assets/img/modules/motor.png" alt="" width="400" height="400" style="float: left" vspace=10 hspace=30 />
+                                <!-- Text-->
+                                <br>
+                                <table class="table-bordered" width=550px height=50px style='line-height: 150%' cellpadding="10">
+                                    <tbody>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 분류</th>
+                                            <td>출력(Output) 모듈</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 설명</th>
+                                            <td>모터 모듈은 전기 신호를 모터 모듈로 보내서 회전 운동을 시켜주는 모듈입니다.<br>
+                                                모터가 회전하는 속도, 각도 그리고 토크를 설정할 수 있습니다.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>주요 기능</th>
+                                            <td>1. 회전각도 출력<br>
+                                                2. 속도 출력<br>
+                                                3. 토크 출력<br>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 크기</th>
+                                            <td>23.8*23.8*16.1(mm)</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 중량</th>
+                                            <td>12g</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 단자</th>
+                                            <td>
+                                                Magnetic connector X3<br>
+                                                6핀 Port X2
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <center>
+                                    <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">코드 사용 예제</h4>
+                                </center>
+                                <br>
+                                <!-- HTML generated using hilite.me -->
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                    import time
+									
+                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    bundle = modi.MODI()
+                                    
+                                    # 'motor'라는 변수에 모듈 객체를 저장합니다.
+                                    motor = bundle.motors[0]
+                                    
+                                    # 두 채널의 모터가 돌아가는 정도를 0 ~ 100 사이의 값으로 설정하여 동작시킵니다.
+                                    motor.degree = 30, 90
+
+                                    # 첫번째 채널의 모터가 돌아가는 정도를 0 ~ 100 사이의 값으로 설정하여 동작시킵니다.
+                                    motor.first_degree = 30
+                                    
+                                    # 두번째 채널의 모터가 돌아가는 정도를 0 ~ 100 사이의 값으로 설정하여 동작시킵니다.
+                                    motor.second_degree = 90
+                                    
+                                    # 두 채널의 모터가 돌아가는 속도를 -100 ~ 100 사이의 값으로 설정합니다.
+                                    # 설정 값이 -일 경우, 역으로 회전합니다.
+                                    motor.speed = 50, 100
+
+                                    # 첫번째 채널의 모터가 돌아가는 속도를 -100 ~ 100 사이의 값으로 설정합니다.
+                                    motor.first_speed = 50
+                                    
+                                    # 두번째 채널의 모터가 돌아가는 속도를 -100 ~ 100 사이의 값으로 설정합니다.
+                                    motor.second_speed = 10
+                                </code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Speaker Module -->
+    <div class="portfolio-modal modal fade" id="speakermodulee" tabindex="-1" role="dialog" aria-labelledby="portfolioModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                </button>
+                <div class="modal-body text-left">
+                    <div class="container">
+                        <div class="row justify-content-left">
+                            <div class="col-lg-12">
+                                <!-- Title-->
+                                <center>
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0" id="portfolioModal1Label">스피커 모듈</h2>
+                                </center>
+                                <!-- Icon Divider-->
+                                <div class="divider-custom">
+                                    <div class="divider-custom-line"></div>
+                                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                    <div class="divider-custom-line"></div>
+                                </div>
+                                <!-- Image-->
+                                <img src="assets/img/modules/speaker.png" alt="" width="400" height="400" style="float: left" vspace=10 hspace=30 />
+                                <!-- Text-->
+                                <br>
+                                <table class="table-bordered" width=550px height=50px style='line-height: 150%' cellpadding="10">
+                                    <tbody>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 분류</th>
+                                            <td>출력(Output) 모듈</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 설명</th>
+                                            <td>스피커 모듈은 전기 신호를 소리 신호로 변환 해줍니다.<br>
+                                                피아노 건반 UI를 사용해 음을 선택하거나 원하는 주파수를 직접 입력하여 소리를 낼 수 있습니다.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>주요 기능</th>
+                                            <td>1. 주파수에 해당하는 소리 출력
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 크기</th>
+                                            <td>23.8*23.8*16.1(mm)</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 중량</th>
+                                            <td>12g</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>모듈 단자</th>
+                                            <td>
+                                                Magnetic connector X4
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="vertical-align:top" class="table-primary" width=110px>센서 사양</th>
+                                            <td>
+                                                출력 가능 진동수 17 ~ 10,000 Hz
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <br>
+                                <center>
+                                   <h4 class="portfolio-modal-title text-secondary text-uppercase mb-1">코드 사용 예제</h4>
+                                </center>
+                                <br>
+                                <!-- HTML generated using hilite.me -->
+								
+                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.10em .6em; margin: auto;">
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                 import time
+
+                                 # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                 bundle = modi.MODI()
+
+                                 # 'speaker'라는 변수에 모듈 객체를 저장합니다.
+                                 speaker = bundle.speakers[0]
+
+                                 # 스피커의 주파수와 볼륨 크기를 0 ~ 100 사이의 값으로 설정하여 출력합니다.
+                                 # 220Hz 의 주파수와 100의 볼륨크기로 설정하여 스피커를 출력시킵니다.
+                                 speaker.tune = 220, 100
+
+                                 # 스피커의 주파수를 임의의 값으로 설정한 후, 출력합니다.
+                                 speaker.frequency = 550
+
+                                 # 스피커의 볼륨을 0 ~ 100 사이의 값으로 설정하여 출력합니다.
+                                 speaker.volume = 100
+
+                                 # 스피커의 동작을 정지합니다.
+                                 speaker.turn_off()
+                                </code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Third party plugin JS-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <!-- Contact form JS-->
+    <script src="assets/mail/jqBootstrapValidation.js"></script>
+    <script src="assets/mail/contact_me.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
+
+
+</body>
+
+</html>
+
