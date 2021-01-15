@@ -623,7 +623,12 @@
                                     
                                     # Stores the module use by the variable named 'network'
                                     network = bundle.networks[0]
-                                    
+
+                                    """
+                                    Before proceed further, ensure that you have paired the network module with your
+                                    mobile device using MODI Play, through BLE connection.
+                                    """
+
                                     # Returns whether MODI Play button is pressed, True if pressed
                                     network_button_pressed = network.button_pressed
                                     print('network_button_pressed:', network_button_pressed)
