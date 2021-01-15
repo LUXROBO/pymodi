@@ -7,10 +7,10 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>PyMODI</title>
-	  <!-- Code highlight -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/8.7/styles/rainbow.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+	<!-- Code highlight -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/8.7/styles/rainbow.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" />
     <!-- Font Awesome icons (free version)-->
@@ -286,8 +286,9 @@
             <!-- About Section Content-->
             <div class="text-center mt-4">
                 <div class="text-left mt-4" style="padding-right: 10%;
-                        padding-left: 10%;">
-                    <p class="lead" style = "font-size: 20px;">PyMODI는 MODI사용을 위한 python API입니다. &nbsp;
+                        padding-left: 10%">
+                    <p class="lead" style = "font-size: 20px;">
+                        PyMODI는 MODI사용을 위한 python API입니다. &nbsp;
                         MODI 모듈은 controller area network protocol을 사용하여 작동하는 전자 모듈입니다.&nbsp;
                         PyMODI 패키지를 이용하여 쉽게 모듈을 작동시킬 수 있습니다.&nbsp;
                         PyMODI를 사용하여 당신만의 MODI creation을 만들거나 리스트에 있는 여러 creation들을 체험해보세요.&nbsp;
@@ -400,8 +401,8 @@
                                 <img class="img-fluid rounded mb-5" src="assets/img/portfolio/dodge.gif" alt="" />
                                 <!-- Portfolio Modal - Text-->
                                 <p class="mb-5" style = "font-size: 15px;">
-                                    PyMODI로 닷지 게임을 즐겨보세요!<br>
-                                    이 크리에이션은 자이로모듈을 활용하여 직접 케릭터를 움직여 떨어지는 박스들을 피하는 TUI 게임을 제공합니다.
+                                    PyMODI로 닷지 게임을 즐겨보세요!
+                                    <br>이 크리에이션은 자이로모듈을 활용하여 직접 케릭터를 움직여 떨어지는 박스들을 피하는 TUI 게임을 제공합니다.
                                     <br>소스코드를 보고싶다면 <a href="https://github.com/LUXROBO/pymodi/blob/master/examples/creation_examples/dodge.py">여기</a>를 클릭하세요!
                                 </p>
                             </div>
@@ -622,39 +623,44 @@
                                 <br>
                                 <!-- HTML generated using hilite.me -->
                                 <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
-                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:15px;"> import modi
                                     import time
 									
-                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    # MODI 모듈의 번들을 연결하기 위해, MODI 객체를 인스턴스화합니다.
                                     bundle = modi.MODI()
                                     
                                     # 'network'라는 변수에 모듈 객체를 저장합니다.
                                     network = bundle.networks[0]
                                     
+                                    """
+                                    계속하기 전에 BLE 연결을 통해 MODI Play를 사용하여 네트워크 모듈을 모바일 장치와 
+                                    페어링했는지 확인하십시오.
+                                    """
+
                                     # MODI Play 버튼의 누름 여부를 반환합니다. 눌렸다면 True를 반환합니다.
-                                    is_pressed = network.button_pressed
-                                    print('Network Button Pressed State :', is_pressed)
+                                    network_button_pressed = network.button_pressed
+                                    print('network_button_pressed:', network_button_pressed)
                                     
                                     # MODI Play 다이얼 의 값을 0 ~ 100 사이의 값으로 환산하여 반환합니다.
-                                    value_dial = network.dial
-                                    print('Network Dial Value State :', value_dial)
+                                    network_dial = network.dial
+                                    print('network_dial:', network_dial)
                                     
                                     # 조이스틱의 버튼을 눌렀을때 각각 '위' , '아래' , '왼쪽' , '오른쪽'으로 표현해줍니다.
                                     # 눌리지 않을경우 None을 반환합니다.
-                                    state_joystick = network.joystick
-                                    print('Network Joystick State :', state_joystick)
+                                    network_joystick = network.joystick
+                                    print('network_joystick:', network_joystick)
                                     
                                     # MODI Play의 왼쪽 슬라이더 값을 0 ~ 100 사이의 값으로 환산하여 반환합니다.
-                                    value_left_slider = network.left_slider
-                                    print('Network Left Slider Value State :', value_left_slider)
+                                    network_left_slider = network.left_slider
+                                    print('network_left_slider:', network_left_slider)
                                     
                                     # MODI Play의 오른쪽 슬라이더 값을 0 ~ 100 사이의 값으로 환산하여 반환합니다.
-                                    value_right_slider = network.right_slider
-                                    print('Network Right Slider Value State :', value_right_slider)
+                                    network_right_slider = network.right_slider
+                                    print('network_right_slider:', network_right_slider)
                                     
                                     # MODI Play의 타이머가 끝났을 경우 True를 반환합니다.
-                                    is_timeup = network.timer
-                                    print('Network Timer State :', is_timeup)
+                                    network_timer = network.timer
+                                    print('network_timer:', network_timer)
                                     
                                     # MODI Play의 버저를 울립니다.
                                     network.buzzer_on()
@@ -746,30 +752,30 @@
                                 <br>
                                 <!-- HTML generated using hilite.me -->
                                 <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
-                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:15px;"> import modi
                                     import time
 				    
-                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    # MODI 모듈의 번들을 연결하기 위해, MODI 객체를 인스턴스화합니다.
                                     bundle = modi.MODI()
                                     
                                     # 'button'라는 변수에 모듈 객체를 저장합니다.
                                     button = bundle.buttons[0]
                                     
-                                    # 버튼이 눌렸을 때 True를 반환합니다.
-                                    is_pressed = button.pressed
-                                    print('Button Pressed State :', is_pressed)
+                                    # 버튼의 눌림 여부를 True / False로 반환하여 알려줍니다.
+                                    button_clicked = button.clicked
+                                    print('button_clicked:', button_clicked)
                                     
                                     # 버튼이 연속으로 두 번 눌렸을 경우, True를 반환합니다.
-                                    is_double_clicked = button.double_clicked
-                                    print('Button Double Clicked State :', is_double_clicked)
+                                    button_double_clicked = button.double_clicked
+                                    print('button_double_clicked:', button_double_clicked)
                                     
+                                    # 버튼이 눌렸을 때 True를 반환합니다.
+                                    button_pressed = button.pressed
+                                    print('button_pressed:', button_pressed)
+
                                     # 버튼을 누를 때마다 반환할 True / False 의 상태가 바뀝니다.
                                     button_toggled = button.toggled
-                                    print('Button Toggled State :', button_toggled)
-                                   
-                                    # 버튼의 눌림 여부를 True / False로 반환하여 알려줍니다.
-                                    is_clicked = button.clicked
-                                    print('Button Cliked State :', is_clicked)
+                                    print('button_toggled:', button_toggled)
                                 </code></pre>
                                 </div>
                             </div>
@@ -854,22 +860,22 @@
                                 <br>
                                 <!-- HTML generated using hilite.me -->
                                <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
-                               <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                               <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:15px;"> import modi
                                     import time
 									
-                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    # MODI 모듈의 번들을 연결하기 위해, MODI 객체를 인스턴스화합니다.
                                     bundle = modi.MODI()
                                     
                                     # 'dial'라는 변수에 모듈 객체를 저장합니다.
                                     dial = bundle.dials[0]
                                     
                                     # 다이얼의 각도를 0 ~ 100 사이의 값으로 환산하여 반환합니다.
-                                    degree = dial.degree
-                                    print('Dial Degree State :', degree)
+                                    dial_degree = dial.degree
+                                    print('dial_degree:', dial_degree)
                                     
                                     # 다이얼의 회전 속도를 -100 ~ 100 사이의 값으로 환산하여 반환합니다.
-                                    turnspeed = dial.turnspeed
-                                    print('Dial Turnspeed State :', turnspeed)
+                                    dial_turnspeed = dial.turnspeed
+                                    print('dial_turnspeed:', dial_turnspeed)
                                 </code></pre>
                                 </div>
                             </div>
@@ -960,37 +966,38 @@
                                 <br>
                                 <!-- HTML generated using hilite.me -->
                                 <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
-                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:15px;"> import modi
                                     import time
 									
-                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    # MODI 모듈의 번들을 연결하기 위해, MODI 객체를 인스턴스화합니다.
                                     bundle = modi.MODI()
                                     
                                     # 'env'라는 변수에 모듈 객체를 저장합니다.
                                     env = bundle.envs[0]
                                     
                                     # 주변환경의 명도를 0 ~ 100 사이의 값으로 환산하여 반환합니다.
-                                    brightness = env.brightness
-                                    print('Env Brightness State :', brightness)
+                                    env_brightness = env.brightness
+                                    print('env_brightness:', env_brightness)
                                     
                                     # 주변환경의 습도를 0 ~ 100 사이의 값으로 환산하여 반환합니다.
-                                    humidity = env.humidity
-                                    print('Env Humidity State :', humidity)
+                                    env_humidity = env.humidity
+                                    print('env_humidity:', env_humidity)
                                     
                                     # 주변환경의 온도를 0 ~ 100 사이의 값으로 환산하여 반환합니다.
-                                    temperature = env.temperature
-                                    print('Env Temperature State :', temperature)
+                                    env_temperature = env.temperature
+                                    print('env_temperature:', env_temperature)
                                     
                                     # 주변 빛의 red 비율을 0 ~ 100 사이의 값으로 환산하여 반환합니다.
                                     env_red = env.red
+                                    print('env_red:', env_red)
 									
                                     # 주변 빛의 green 비율을 0 ~ 100 사이의 값으로 환산하여 반환합니다.
                                     env_green = env.green
+                                    print('env_green:', env_green)
 
                                     # 주변 빛의 blue 비율을 0 ~ 100 사이의 값으로 환산하여 반환합니다.
                                     env_blue = env.blue
-
-                                    print('Env Red : {0}, Green : {1}, Blue : {2}'.format(env_red, env_green, env_blue))
+                                    print('env_blue:', env_blue)
                                 </code></pre>
                                 </div>
                             </div>
@@ -1077,10 +1084,10 @@
                                 <br>
                                 <!-- HTML generated using hilite.me -->
                                 <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
-                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:15px;"> import modi
                                     import time
 									
-                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    # MODI 모듈의 번들을 연결하기 위해, MODI 객체를 인스턴스화합니다.
                                     bundle = modi.MODI()
                                     
                                     # 'gyro'라는 변수에 모듈 객체를 저장합니다.
@@ -1088,43 +1095,43 @@
                                     
                                     # 횡축을 중심으로 회전하는 정도의 값을 -180 ~ 180 사이로 환산하여 반환합니다.
                                     gyro_pitch = gyro.pitch
-                                    print('Gyro Pitch :', gyro_pitch)
+                                    print('gyro_pitch:', gyro_pitch)
                                     
                                     # 종축을 중심으로 회전하는 정도의 값을 -180 ~ 180 사이로 환산하여 반환합니다.
                                     gyro_roll = gyro.roll
-                                    print('Gyro Roll :', gyro_roll)
+                                    print('gyro_roll:', gyro_roll)
 
                                     # 수직축을 중심으로 회전하는 정도의 값을 -180 ~ 180 사이로 환산하여 반환합니다.
                                     gyro_yaw = gyro.yaw
-                                    print('Gyro Yaw :', gyro_yaw)
+                                    print('gyro_yaw:', gyro_yaw)
 
                                     # x축의 각속도 값을 -100 ~ 100 사이로 환산하여 반환합니다.
                                     gyro_angular_vel_x = gyro.angular_vel_x
-                                    print('Gyro Angular Velocity x :', gyro_angular_vel_x)
+                                    print('gyro_angular_vel_x:', gyro_angular_vel_x)
                                     
                                     # y축의 각속도 값을 -100 ~ 100 사이로 환산하여 반환합니다.
                                     gyro_angular_vel_y = gyro.angular_vel_y
-                                    print('Gyro Angular Velocity y :', gyro_angular_vel_y)
+                                    print('gyro_angular_vel_y:', gyro_angular_vel_y)
 
                                     # z축의 각속도 값을 -100 ~ 100 사이로 환산하여 반환합니다.
                                     gyro_angular_vel_z = gyro.angular_vel_z
-                                    print('Gyro Angular Velocity z :', gyro_angular_vel_z)
+                                    print('gyro_angular_vel_z :', gyro_angular_vel_z)
 
                                     # x축의 가속도 값을 -100 ~ 100 사이로 환산하여 반환합니다.
                                     gyro_acceleration_x = gyro.acceleration_x
-                                    print('Gyro Acceleration x :', gyro_acceleration_x)
+                                    print('gyro_acceleration_x:', gyro_acceleration_x)
 
                                     # y축의 가속도 값을 -100 ~ 100 사이로 환산하여 반환합니다.
                                     gyro_acceleration_y = gyro.acceleration_y
-                                    print('Gyro Acceleration y :', gyro_acceleration_y)
+                                    print('gyro_acceleration_y :', gyro_acceleration_y)
                                     
                                     # z축의 가속도 값을 -100 ~ 100 사이로 환산하여 반환합니다.
                                     gyro_acceleration_z = gyro.acceleration_z
-                                    print('Gyro Acceleration z :', gyro_acceleration_z)
+                                    print('gyro_acceleration_z:', gyro_acceleration_z)
 
                                     # 진동하는 정도를 0 ~ 100 사이의 값으로 환산하여 반환합니다.
                                     gyro_vibration = gyro.vibration
-                                    print('Gyro Vibration :', gyro_vibration)
+                                    print('gyro_vibration:', gyro_vibration)
                                     </code></pre>
                                 </div>
                             </div>
@@ -1209,10 +1216,10 @@
                                 <br>
                                 <!-- HTML generated using hilite.me -->
                                 <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
-                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:15px;"> import modi
                                     import time
 				    
-                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    # MODI 모듈의 번들을 연결하기 위해, MODI 객체를 인스턴스화합니다.
                                     bundle = modi.MODI()
                                     
                                     # 'ir'라는 변수에 모듈 객체를 저장합니다.
@@ -1220,7 +1227,7 @@
                                     
                                     # 측정된 근접도 값을 0 ~ 100 사이로 환산하여 반환합니다.
                                     ir_proximity = ir.proximity
-                                    print('Ir Proximity :', ir_proximity)
+                                    print('ir_proximity:', ir_proximity)
                                 </code></pre>
                                 </div>
                             </div>
@@ -1305,10 +1312,10 @@
                                 <br>
                                 <!-- HTML generated using hilite.me -->
                                 <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
-                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:15px;"> import modi
                                     import time
 									
-                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    # MODI 모듈의 번들을 연결하기 위해, MODI 객체를 인스턴스화합니다.
                                     bundle = modi.MODI()
                                     
                                     # 'mic'라는 변수에 모듈 객체를 저장합니다.
@@ -1316,11 +1323,11 @@
                                     
                                     # 주변 소리의 주파수를 float값으로 반환합니다.
                                     mic_frequency = mic.frequency
-                                    print('Mic Frequency :', mic_frequency)
+                                    print('mic_frequency:', mic_frequency)
 
                                     # 주변 소리의 크기를 0 ~ 100 사이의 값으로 환산하여 반환합니다.
                                     mic_volume = mic.volume
-                                    print('Mic Volume :', mic_volume)
+                                    print('mic_volume:', mic_volume)
                                 </code></pre>	
                                 </div>
                             </div>
@@ -1406,10 +1413,10 @@
                                 <br>
                                 <!-- HTML generated using hilite.me -->
                                 <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
-                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:15px;"> import modi
                                     import time
 									
-                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    # MODI 모듈의 번들을 연결하기 위해, MODI 객체를 인스턴스화합니다.
                                     bundle = modi.MODI()
                                     
                                     # 'ultrasonic'라는 변수에 모듈 객체를 저장합니다.
@@ -1417,7 +1424,7 @@
 									
                                     # 대상과의 거리를 측정한 값을 0 ~ 100 사이로 환산하여 반환합니다.
                                     ultrasonic_distance = ultrasonic.distance
-                                    print('Ultrasonic Distance:', ultrasonic_distance)
+                                    print('ultrasonic_distance:', ultrasonic_distance)
                                 </code></pre>
                                 </div>
                             </div>
@@ -1501,10 +1508,10 @@
                                 <br>
                                 <!-- HTML generated using hilite.me -->
                                 <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
-                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:15px;"> import modi
                                     import time
 									
-                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    # MODI 모듈의 번들을 연결하기 위해, MODI 객체를 인스턴스화합니다.
                                     bundle = modi.MODI()
                                     
                                     # 'display'라는 변수에 모듈 객체를 저장합니다.
@@ -1513,14 +1520,14 @@
                                     # 원하는 문자 혹은 문자열을 디스플레이 모듈에 출력시킵니다.
                                     display.text = 'Hello MODI!'
                                     
-                                    '''
+                                    """
                                     변수 값을 좌표상의 (pos_x, pos_y) 의 위치에 출력시킵니다.
                                     pos_x, pos_y 의 값은 0 ~ 255 사이의 값을 출력시킬 수 있습니다.
                                     파라미터 : 
                                         &ensp;&ensp;&ensp;변수(variable): 출력시킬 숫자
                                         &ensp;&ensp;&ensp;position_x(pos_x): x축 좌표
                                         &ensp;&ensp;&ensp;position_y(pos_y): y축 좌표
-                                    '''
+                                    """
                                     pos_x = 20
                                     pos_y = 30
                                     display.show_variable(0, pos_x, pos_y)
@@ -1613,10 +1620,10 @@
                                 <br>
                                 <!-- HTML generated using hilite.me -->
                                 <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
-                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:15px;"> import modi
                                     import time
 									
-                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    # MODI 모듈의 번들을 연결하기 위해, MODI 객체를 인스턴스화합니다.
                                     bundle = modi.MODI()
                                     
                                     # 'led'라는 변수에 모듈 객체를 저장합니다.
@@ -1718,10 +1725,10 @@
                                 <br>
                                 <!-- HTML generated using hilite.me -->
                                 <div class="col-lg-11" style="overflow:auto;width:auto; padding:.2em .6em; margin: auto;">
-                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:15px;"> import modi
                                     import time
 									
-                                    # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                    # MODI 모듈의 번들을 연결하기 위해, MODI 객체를 인스턴스화합니다.
                                     bundle = modi.MODI()
                                     
                                     # 'motor'라는 변수에 모듈 객체를 저장합니다.
@@ -1828,10 +1835,10 @@
                                 <!-- HTML generated using hilite.me -->
 								
                                 <div class="col-lg-11" style="overflow:auto;width:auto; padding:.10em .6em; margin: auto;">
-                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:16px;"> import modi
+                                <pre style ="white-space : pre-line;"><code class = "python" style= "font-size:15px;"> import modi
                                  import time
 
-                                 # MODI모듈 덩어리를 연결하여, MODI객체를 생성합니다.
+                                 # MODI 모듈의 번들을 연결하기 위해, MODI 객체를 인스턴스화합니다.
                                  bundle = modi.MODI()
 
                                  # 'speaker'라는 변수에 모듈 객체를 저장합니다.
@@ -1873,4 +1880,3 @@
 </body>
 
 </html>
-
