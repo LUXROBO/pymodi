@@ -54,7 +54,7 @@ html {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
+article, aside, figcaption, figure, footer, header, hgroup, main, nav, section{
   display: block;
 }
 
@@ -225,6 +225,11 @@ th {
 label {
   display: inline-block;
   margin-bottom: 0.5rem;
+}
+
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2 {
+  display: inline-block;
 }
 
 button {
@@ -505,6 +510,7 @@ mark,
 code {
   font-size: 87.5%;
   color: #e83e8c;
+  background-color: #eee;
   word-wrap: break-word;
 }
 a > code {
@@ -533,6 +539,9 @@ pre code {
   font-size: inherit;
   color: inherit;
   word-break: normal;
+  padding: 20px;
+  background-color : #eee;
+  border: 1px solid #999;
 }
 
 .pre-scrollable {
@@ -9922,7 +9931,7 @@ a.text-dark:hover, a.text-dark:focus {
   }
 
   pre {
-    white-space: pre-wrap !important;
+    white-space: pre-line;
   }
 
   pre,
@@ -9982,6 +9991,7 @@ h3 {
   .table-bordered th,
 .table-bordered td {
     border: 1px solid #dee2e6 !important;
+    width: 200px;
   }
 
   .table-dark {
@@ -10347,4 +10357,23 @@ form .row:first-child .floating-label-form-group {
 .speaker {
   grid-column: 6;
   grid-row: 2;
+}
+dl {
+  position: relative;
+}
+dt {
+  width: 155px;
+  position: relative;
+  text-align: center;
+  left : 35.5%;
+}
+
+dd {
+  position: absolute;
+  padding-top: 20px;
+  width: 1100px;
+  margin: 0;
+}
+dd.hidden {
+   display: none;
 }
