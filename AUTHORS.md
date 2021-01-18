@@ -24,3 +24,4 @@ Contributors
 -   Sebeom Lee (moses97@gmail.com)
 -   Doyeon Kim (archdo0909@gmail.com)
 -   Seokyoung Woo (wsy8029@gmail.com)
+-   Seungyoon Lee (syoon624@gmail.com)
