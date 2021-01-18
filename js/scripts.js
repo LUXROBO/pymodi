@@ -76,6 +76,19 @@
         description.toggleClass('opened');
       }
     });
-  
+
+  // Tab menu click event
+  $(document).ready(function () {
+    $("dt").each(function () {
+      $(this).click(function () {
+          $('dd').addClass('hidden');
+          $(this).removeClass('btn-secondary')
+          $(this).addClass('btn-primary');
+          $(this).siblings().removeClass('btn-primary');
+          $(this).next().removeClass('hidden');
+         });
+     });
+  });
+
   })(jQuery); // End of use strict
   
