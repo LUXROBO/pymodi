@@ -1,0 +1,66 @@
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>Brython - Translate Python code into Javascript</title>
+<script type="text/javascript" src="../src/brython_builtins.js"></script>
+<script type="text/javascript" src="../src/version_info.js"></script>
+<script type="text/javascript" src="../src/identifiers_re.js"></script>
+<script type="text/javascript" src="../src/py2js.js"></script>
+<script type="text/javascript" src="../src/py_object.js"></script>
+<script type="text/javascript" src="../src/py_type.js"></script>
+<script type="text/javascript" src="../src/py_utils.js"></script>
+<script type="text/javascript" src="../src/py_sort.js"></script>
+<script type="text/javascript" src="../src/py_builtin_functions.js"></script>
+<script type="text/javascript" src="../src/py_bytes.js"></script>
+<script type="text/javascript" src="../src/py_set.js"></script>
+<script type="text/javascript" src="../src/js_objects.js"></script>
+<script type="text/javascript" src="../src/stdlib_paths.js"></script>
+<script type="text/javascript" src="../src/py_import.js"></script>
+
+<script type="text/javascript" src="../src/py_string.js"></script>
+<script type="text/javascript" src="../src/py_int.js"></script>
+<script type="text/javascript" src="../src/py_long_int.js"></script>
+<script type="text/javascript" src="../src/py_float.js"></script>
+<script type="text/javascript" src="../src/py_complex.js"></script>
+<script type="text/javascript" src="../src/py_dict.js"></script>
+<script type="text/javascript" src="../src/py_list.js"></script>
+<script type="text/javascript" src="../src/py_generator.js"></script>
+<script type="text/javascript" src="../src/py_dom.js"></script>
+
+<script type="text/javascript" src="../src/builtin_modules.js"></script>
+<script type="text/javascript" src="../src/async.js"></script>
+</head>
+
+<body onload="brython()">
+
+<p> <input type="text" placeholder="Module name" id="txt_modnm" value="x.y.z"/> </p>
+<p> <textarea id="txt_py" placeholder="Enter Python code" cols="80" rows="20">x = 3</textarea> </p>
+<p> <button id="btn_py2js">Compile to js</button> </p>
+<p> <textarea id="txt_js" readonly="true" placeholder="Javascript code" cols="80" rows="20"></textarea> </p>
+
+<script type="text/python">
+import javascript
+from browser import doc
+
+def convert_py2js(ev):
+    mod_name = doc['txt_modnm'].value or ''
+    if not mod_name:
+        alert('Module name required')
+        return
+    local_id_suffix = '_' + mod_name.replace('.', '_')
+    src = doc['txt_py'].value
+
+    js = javascript.py2js(src, mod_name)
+    mod = "var $module = (function($B){\n"
+
+    mod += js+'\nreturn $locals' + local_id_suffix + '\n})(__BRYTHON__)'
+    doc['txt_js'].set_value(mod)
+
+doc['btn_py2js'].bind('click', convert_py2js)
+
+</script>
+</body>
+
+</html>
+

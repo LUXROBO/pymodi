@@ -1,0 +1,110 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<meta charset="utf-8">
+<script type="text/javascript" src="../../src/brython_builtins.js"></script>
+<script type="text/javascript" src="../../src/version_info.js"></script>
+<script type="text/javascript" src="../../src/identifiers_re.js"></script>
+<script type="text/javascript" src="../../src/py2js.js"></script>
+<script type="text/javascript" src="../../src/py_object.js"></script>
+<script type="text/javascript" src="../../src/py_type.js"></script>
+<script type="text/javascript" src="../../src/py_utils.js"></script>
+<script type="text/javascript" src="../../src/py_sort.js"></script>
+<script type="text/javascript" src="../../src/py_builtin_functions.js"></script>
+<script type="text/javascript" src="../../src/py_bytes.js"></script>
+<script type="text/javascript" src="../../src/py_set.js"></script>
+<script type="text/javascript" src="../../src/js_objects.js"></script>
+<script type="text/javascript" src="../../src/stdlib_paths.js"></script>
+<script type="text/javascript" src="../../src/py_import.js"></script>
+
+<script type="text/javascript" src="../../src/py_string.js"></script>
+<script type="text/javascript" src="../../src/py_int.js"></script>
+<script type="text/javascript" src="../../src/py_float.js"></script>
+<script type="text/javascript" src="../../src/py_complex.js"></script>
+<script type="text/javascript" src="../../src/py_dict.js"></script>
+<script type="text/javascript" src="../../src/py_list.js"></script>
+<script type="text/javascript" src="../../src/py_generator.js"></script>
+<script type="text/javascript" src="../../src/py_dom.js"></script>
+
+<script type="text/javascript" src="../../src/builtin_modules.js"></script>
+<!-- script type="text/javascript" src="../src/async.js"></script -->
+
+<style type="text/css">
+table {
+  border: 1px solid #000;
+}
+
+th, td {
+  text-align: left; 
+  vertical-align: center; 
+  border: 1px solid #000;
+  border-collapse: collapse;
+  padding: 0.3em;
+}
+</style>
+
+<script type="text/python3">
+from browser import document as doc, timer
+import time
+import sys
+import perf_bookkeeping
+
+class cOutput:
+    def write(self, data):
+        doc["console"].innerHTML += str(data)
+
+    def flush(self):
+        pass
+
+sys.stdout = cOutput()
+sys.stderr = cOutput()
+
+_bk=perf_bookkeeping.bookkeeping()
+
+t_start = None
+
+def test(filename):
+    global failed
+
+    doc["container"].text = "running %s..." %filename
+    src = open('benchmarks/%s' % filename).read()
+    _bk.set_performance_test(filename)
+    state=_bk.run_performance_test(src)
+    if state == 0:
+        failed.append(option.text)
+
+tests=["assignment.py", "augm_assign.py", "assignment_float.py",
+       "build_dict.py", "set_dict_item.py", "build_list.py",
+       "set_list_item.py", "add_integers.py", "add_strings.py",
+       "str_of_int.py",
+       "create_function.py", "function_call.py"]
+
+def run_tests(ev):
+    failed = []
+    for filename in tests:
+        test(filename)
+    
+    _bk.show_results()
+
+doc['run_tests'].bind('click', run_tests)
+</script>
+
+</head>
+<body onload="brython({debug:0, cache:'none', static_stdlib_import:true})">
+
+<h1>Speed comparison between Brython and CPython</h1>
+
+<div id="container" style="left-padding:20px;">
+This script will compare the time taken by the execution of the same scripts
+by Brython and by the CPython interpreter. The script code is sent to the
+cgi script <code>script_timer.py</code> in folder <code>cgi-bin</code>. Make
+sure that in the first line of this script, the path is that of the CPython
+interpreter in your file system.
+
+<p><button id="run_tests">Run tests</button>
+</div>
+
+</div>
+</div>
+</body>
+</html>

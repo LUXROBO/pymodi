@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+
+
+<script type="text/javascript" src="../src/unicode_data.js"></script>
+<script type="text/javascript" src="../src/brython_builtins.js"></script>
+<script type="text/javascript" src="../src/version_info.js"></script>
+<script type="text/javascript" src="../src/py2js.js"></script>
+<script type="text/javascript" src="../src/py_object.js"></script>
+<script type="text/javascript" src="../src/py_type.js"></script>
+<script type="text/javascript" src="../src/py_utils.js"></script>
+<script type="text/javascript" src="../src/py_sort.js"></script>
+<script type="text/javascript" src="../src/py_builtin_functions.js"></script>
+<script type="text/javascript" src="../src/py_exceptions.js"></script>
+<script type="text/javascript" src="../src/py_range_slice.js"></script>
+<script type="text/javascript" src="../src/py_bytes.js"></script>
+<script type="text/javascript" src="../src/py_set.js"></script>
+<script type="text/javascript" src="../src/js_objects.js"></script>
+<script type="text/javascript" src="../src/stdlib_paths.js"></script>
+<script type="text/javascript" src="../src/py_import.js"></script>
+
+<script type="text/javascript" src="../src/py_string.js"></script>
+<script type="text/javascript" src="../src/py_int.js"></script>
+<script type="text/javascript" src="../src/py_long_int.js"></script>
+<script type="text/javascript" src="../src/py_float.js"></script>
+<script type="text/javascript" src="../src/py_complex.js"></script>
+<script type="text/javascript" src="../src/py_dict.js"></script>
+<script type="text/javascript" src="../src/py_list.js"></script>
+<script type="text/javascript" src="../src/py_generator.js"></script>
+<script type="text/javascript" src="../src/py_dom.js"></script>
+
+<script type="text/javascript" src="../src/builtin_modules.js"></script>
+<script type="text/javascript" src="../src/py_import_hooks.js"></script>
+<script type="text/javascript" src="../src/async.js"></script>
+
+<script type="text/javascript" src="../src/brython_stdlib.js"></script>
+
+<style>
+body {
+  font-family:Roboto, Arial;
+  font-size: 12px;
+  margin: 20px;
+}
+
+#editor{
+    background-color: #114;
+    color: yellow;
+    padding: 0.5em;
+    white-space: pre-wrap;
+    font-family: Consolas, "Courier New";
+    overflow: auto;
+}
+
+#filebrowser{
+    background-color: #114;
+    color: #fff;
+    padding: 0.5em;
+    white-space: pre-wrap;
+    font-family: Consolas, "Courier New";
+    cursor: default;
+    border-width: 0px 2px 0px 0px;
+    border-style: solid;
+    border-color: #fff;
+}
+
+#linenum_wrapper{
+    background-color: #114;
+    overflow: hidden;
+    width: 100%;
+}
+
+#linenum{
+    overflow: auto;
+    background-color: #114;
+    color: #ddd;
+    white-space: pre-wrap;
+    text-align: right;
+    padding-top: 0.5em;
+    font-family: Consolas, "Courier New";
+}
+
+#output_window{
+    display: none;
+    position: absolute;
+    background-color: #000;
+    border-width: 3px;
+    border-style: groove;
+    border-color: #0ff;
+}
+
+#output_table{
+    background-color: #ddd;
+}
+
+#output_bar{
+    text-align: right;
+}
+
+#output{
+    font-family: Consolas, "Courier New";
+    padding: 0.5em;
+    background-color: #000;
+    color: #fff;
+    width: 100%;
+    overflow: auto;
+    white-space: pre-wrap;
+    box-sizing: border-box;
+}
+
+#dialog_window{
+    display:none;
+    position:absolute;
+    z-index: 99;
+    background-color: #ddd;
+    cursor: default;
+    border-width: 3px;
+    border-style: groove;
+    border-color: #0ff;
+}
+
+.dialog_table{
+    border-collapse: collapse;
+}
+
+.dialog_bar{
+    background-color: #114;
+    color: #fff;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #fff;
+    padding: 0.5em;
+}
+
+#dialog{
+    padding: 0.5em;
+}
+
+/* For Python syntax highlighting */
+
+span.python-string{
+    color: #080;
+}
+span.python-comment{
+    color: green;
+}
+span.python-keyword{
+    color: #f00;
+}
+span.python-builtin{
+    color: #963;
+}
+
+</style>
+</head>
+
+<body onload="brython(1)">
+
+<div id="dialog_window"
+    style="height:{height}px; width:{width}px;top:{top}px;left:{left}px">
+  <table class="dialog_table" width="100%" cellpadding="0" cellspacing="0">
+    <tr class="dialog_bar">
+      <td class="dialog_title"></td>
+      <td align="right"><button class="dialog_close">x</button></td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <div id="dialog"></div>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div id="content">
+
+ <div id="output_window"
+     style="height:{height}px; width:{width}px;top:{top}px;left:{left}px">
+  <table class="dialog_table" width="100%" cellpadding="0" cellspacing="0">
+    <tr class="dialog_bar">
+      <td class="dialog_title"></td>
+      <td align="right"><button class="dialog_close">x</button></td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <div id="output" style="height:{int(height * 0.9)}px"></div>
+      </td>
+    </tr>
+  </table>
+  </div>
+
+  <button b-on="click:new">New</button>
+  <button b-on="click:load">Open</button>
+  <button b-on="click:save_as">Save as...</button>
+  <button b-on="click:save">Save</button>
+  <button b-on="click:close">Close</button>
+  <button b-on="click:delete">Delete</button>
+  <button b-on="click:syntax_highlight">Highlight</button>
+  <button b-on="click:size_up">&uArr;</button>
+  <button b-on="click:size_down">&dArr;</button>
+
+  <button b-on="click:run">&rtrif;</button>
+  <br>
+
+  <table width="100%" cellpadding="0" cellspacing="0">
+
+    <tr>
+
+      <td valign="top" style="width:15%;">
+        <div id="filebrowser" style="height:{editor_height}px"></div>
+      </td>
+
+      <td valign="top" style="width:2%;">
+        <div id="linenum_wrapper" style="height:{editor_height + 12}px"><div id="linenum"></div></div>
+      </td>
+
+      <td valign="top">
+        <div id="editor" style="height:{editor_height}px" contenteditable="true"></div>
+      </td>
+
+    </tr>
+  </table>
+
+</div>
+
+<script type="text/python" src="dev_env.py">
+</script>
+
+</body>
+</html>
+

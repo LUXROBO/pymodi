@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body,td,th{
+    font-family:sans-serif;
+    font-size:12px;
+}
+
+td {
+    border-style:solid;
+    border-width: 0px 0px 1px 0px;
+    border-color: #000;
+    padding:3px;
+}
+
+td.num{
+    text-align: right;
+}
+
+th {
+    border-style:solid;
+    border-width: 1px;
+    border-color: #000;
+    background-color: #61D7A4;
+    padding: 4px;
+}
+.arrows{
+    cursor: default;
+}
+</style>
+
+<script type="text/javascript" src="/src/brython.js"></script>
+<script type="text/javascript" src="../src/brython_stdlib.js"></script>
+
+<script type="text/python" src="show_source.py"></script>
+</head>
+<body onLoad="brython(1)">
+
+<h2>Pays d'Europe</h2>
+
+<table id="table">
+    <thead>
+        <tr>
+            <th b-code="for field in fields:">
+                {field} <span class="arrows" b-on="click:sort">&uparrow;&downarrow;</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr b-code="for country in countries">
+            <td b-code="for i, item in enumerate(country[:-1]):"
+                class="{'num' if i >= 2 else False}">{item}</td>
+            <td class="num">{format(country[-1], ".2f")}</td>
+        </tr>
+    </tbody>
+</table>
+
+<script type="text/python">
+from browser import document
+from browser.template import Template
+
+def sort(evt, elt):
+    # get reference to the arrow
+    arrow = evt.target
+
+    # get title cell
+    th = arrow.closest('TH')
+
+    # get column of title cell
+    column = th.index("th")
+
+    # elt.data.order is a table with the sort order to apply to each column.
+    if not hasattr(elt.data, "order"):
+        elt.data.order = [0 for _ in elt.data.fields]
+
+    order = elt.data.order[column]
+
+    key = lambda x: x[column]
+
+    # Changing the value of attribute "countries" will trigger re-rendering
+    # the template
+    elt.data.countries.sort(key=key, reverse=order)
+
+    # next time, sort this column the other way
+    elt.data.order[column] = 1 - order
+
+fields = ["Nom", "Capitale", "Population", "Superficie", "Densité / km²"]
+
+countries = [
+    ['Albanie', 'Tirana', 3020209, 28748],
+    ['Andorre', 'Andorra la Vella', 85458, 468],
+    ['Arménie', 'Yerevan', 3060631, 29743],
+    ['Autriche', 'Vienne', 8223062, 83871],
+    ['Azerbaïdjan*', 'Bakou', 9686210, 86600],
+    ['Biélorussie', 'Minsk', 9608058, 207600],
+    ['Belgique', 'Bruxelles', 11239755, 30528],
+    ['Bosnie-Herzégovine', 'Sarajevo', 3871643, 51197],
+    ['Bulgarie', 'Sofia', 6924716, 110879],
+    ['Croatie', 'Zagreb', 4470534, 56594],
+    ['Chypre', 'Nicosie', 1172458, 9251],
+    ['Tchéquie', 'Prague', 10538275, 78867],
+    ['Danemark', 'Copenhague', 5569077, 43094],
+    ['Estonie', 'Tallinn', 1257921, 45228],
+    ['Finlande', 'Helsinki', 5268799, 338145],
+    ['France', 'Paris', 66259012, 643427],
+    ['Géorgie*', 'Tbilisi', 4935880, 69700],
+    ['Allemagne', 'Berlin', 80996685, 357022],
+    ['Grèce', 'Athènes', 10816286, 131957],
+    ['Hongrie', 'Budapest', 9919128, 93028],
+    ['Islande', 'Reykjavík', 317351, 103000],
+    ['Irlande', 'Dublin', 4832765, 70273],
+    ['Italie', 'Rome', 61680122, 301340],
+    ['Kazakhstan*', 'Astana', 17948816, 2724900],
+    ['Lettonie', 'Riga', 2165165, 64589],
+    ['Liechtenstein', 'Vaduz', 37313, 160],
+    ['Lituanie', 'Vilnius', 2943472, 65300],
+    ['Luxembourg', 'Luxembourg', 520672, 2586],
+    ['Macédoine du Nord', 'Skopje', 2091719, 25713],
+    ['Malte', 'La Valette', 412655, 316],
+    ['Moldavie', 'Chișinău', 3583288, 33851],
+    ['Monaco', 'Monaco', 30508, 2],
+    ['Monténégro', 'Podgorica', 650036, 13812],
+    ['Pays-Bas', 'Amsterdam', 16877351, 41543],
+    ['Norvège', 'Oslo', 5147792, 323802],
+    ['Pologne', 'Varsovie', 38346279, 312685],
+    ['Portugal', 'Lisbonne', 10427301, 92090],
+    ['Roumanie', 'Bucarest', 21729871, 238391],
+    ['Russie*', 'Moscou', 146267288, 17098242],
+    ['Saint-Marin', 'Saint-Marin', 32742, 61],
+    ['Serbie', 'Belgrade', 7209764, 88361],
+    ['Slovaquie', 'Bratislava', 5443583, 49035],
+    ['Slovénie', 'Ljubljana', 1988292, 20273],
+    ['Espagne', 'Madrid', 47737941, 505370],
+    ['Suède', 'Stockholm', 9723809, 450295],
+    ['Suisse', 'Berne', 8061516, 41277],
+    ['Turquie*', 'Ankara', 76667864, 783562],
+    ['Ukraine', 'Kiev', 44291413, 603550],
+    ['Royaume-Uni', 'Londres', 63742977, 243610],
+    ['Vatican', 'Vatican', 842, 1],
+]
+
+for country in countries:
+    country.append(country[-2] / country[-1])
+
+Template(document["table"], [sort]).render(fields=fields, countries=countries)
+</script>
+<p>* Pays dont au moins une partie se situe en Europe
+</body>
+</html>

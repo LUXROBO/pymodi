@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body{
+    font-family: sans-serif;
+}
+</style>
+<script src="https://unpkg.com/vue"></script>
+
+<script type="text/javascript" src="../src/brython.js"></script>
+<script type="text/python" src="/gallery/show_source.py"></script>
+</head>
+<body onload="brython(1)">
+
+<div id="app">
+  {{ message }}
+</div>
+
+<div id="app-2">
+  <span v-bind:title="message">
+    Hover your mouse over me for a few seconds
+    to see my dynamically bound title!
+  </span>
+</div>
+
+<div id="app-4">
+  <ol>
+    <li v-for="todo in todos">
+      {{ todo.text }}
+    </li>
+  </ol>
+</div>
+
+<div id="app-5">
+  <p>{{ message }}</p>
+  <button v-on:click="reverseMessage">Reverse Message</button>
+</div>
+
+<div id="app-6">
+  <p>{{ message }}</p>
+  <input v-model="message">
+</div>
+
+<div id="app-7">
+  <ol>
+    <!--
+      Now we provide each todo-item with the todo object
+      it's representing, so that its content can be dynamic.
+      We also need to provide each component with a "key",
+      which will be explained later.
+    -->
+    <todo-item
+      v-for="item in groceryList"
+      v-bind:todo="item"
+      v-bind:key="item.id">
+    </todo-item>
+  </ol>
+</div>
+
+<div id="pyapp1">
+  <ol>
+    <li v-for="todo in todos" v-bind:key="todo.id">{{ todo.text }}</li>
+  </ol>
+</div>
+
+<div id="pyapp2">
+  <button @click="add_item">add</button>
+  <ol>
+    <li v-for="todo in todos" v-bind:key="todo.id">{{ todo.text }}</li>
+  </ol>
+</div>
+
+<script type="text/python">
+from browser import document, window
+from javascript import this
+
+Date = window.Date.new
+
+Vue = window.Vue
+
+app = Vue.new({
+  'el': '#app',
+  'data': {
+    'message': 'Hello Brython Vue!'
+  }
+})
+
+app2 = Vue.new({
+  'el': '#app-2',
+  'data': {
+    'message': 'You loaded this page on ' + Date().toLocaleString()
+  }
+})
+
+app4 = Vue.new({
+  'el': '#app-4',
+  'data': {
+    'todos': [
+      { 'text': 'Learn JavaScript' },
+      { 'text': 'Learn Vue' },
+      { 'text': 'Build something awesome' }
+    ]
+  }
+})
+
+def reverse_message(ev):
+    this().message = ''.join(reversed(this().message))
+
+app5 = Vue.new({
+  'el': '#app-5',
+  'data': {
+    'message': 'Hello Vue.js!'
+  },
+  'methods': {
+    'reverseMessage': reverse_message
+  }
+})
+
+app6 = Vue.new({
+  'el': '#app-6',
+  'data': {
+    'message': 'Hello Vue!'
+  }
+})
+
+Vue.component('todo-item', {
+  'props': ['todo'],
+  'template': '<li>{{ todo.text }}</li>'
+})
+
+app7 = Vue.new({
+  'el': '#app-7',
+  'data': {
+    'groceryList': [
+      { 'id': 0, 'text': 'Vegetables' },
+      { 'id': 1, 'text': 'Cheese' },
+      { 'id': 2, 'text': 'Whatever else humans are supposed to eat' }
+    ]
+  }
+})
+
+def created():
+    this().todos.push({"id":1, "text": "ADDED"})
+
+Vue.new({
+    "created": created,
+    "el": "#pyapp1",
+    "data": {
+        "todos": [{"id":0, "text": "TODO"}],
+    }
+})
+
+_id = 1
+def add_item(*args):
+    global _id
+    _id += 1
+    this().todos.push({"id": _id, "text": "ADDED"})
+
+Vue.new({
+    "methods": {
+        "add_item": add_item
+    },
+    "el": "#pyapp2",
+    "data": {
+        "todos": [{"id":0, "text": "TODO"}],
+    }
+})
+
+# issue 1185
+
+class DictMore(dict):
+    def __init__(self):
+        self['count'] = 0
+
+def produce_dict(*_):
+    item = dict()
+    item['count'] = 0
+    return item
+
+def produce_dict_more(*_):
+    return DictMore()
+
+Vue.component('button-counter', {
+  'data': produce_dict,
+  'template': '<button v-on:click="count++">You clicked me {{ count }} times.</button>',
+})
+
+Vue.component('button-counter-more', {
+  'data': produce_dict_more,
+  'template': '<button v-on:click="count++">You clicked me {{ count }} times.</button>',
+})
+
+Vue.new({"el": '#components-demo' })
+
+</script>
+
+<div id="components-demo">
+  <button-counter></button-counter>
+  <button-counter-more></button-counter-more>
+</div>
+
+</body>
+</html>

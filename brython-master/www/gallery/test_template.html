@@ -1,0 +1,188 @@
+<html>
+<head>
+<meta charset="utf-8">
+
+<script type="text/javascript" src="../src/brython_builtins.js"></script>
+<script type="text/javascript" src="../src/version_info.js"></script>
+<script type="text/javascript" src="../src/py2js.js"></script>
+<script type="text/javascript" src="../src/py_object.js"></script>
+<script type="text/javascript" src="../src/py_type.js"></script>
+<script type="text/javascript" src="../src/py_utils.js"></script>
+<script type="text/javascript" src="../src/py_sort.js"></script>
+<script type="text/javascript" src="../src/py_builtin_functions.js"></script>
+<script type="text/javascript" src="../src/py_exceptions.js"></script>
+<script type="text/javascript" src="../src/py_range_slice.js"></script>
+<script type="text/javascript" src="../src/py_bytes.js"></script>
+<script type="text/javascript" src="../src/py_set.js"></script>
+<script type="text/javascript" src="../src/js_objects.js"></script>
+<script type="text/javascript" src="../src/stdlib_paths.js"></script>
+<script type="text/javascript" src="../src/py_import.js"></script>
+<script type="text/javascript" src="../src/unicode_data.js"></script>
+<script type="text/javascript" src="../src/py_string.js"></script>
+<script type="text/javascript" src="../src/py_int.js"></script>
+<script type="text/javascript" src="../src/py_long_int.js"></script>
+<script type="text/javascript" src="../src/py_float.js"></script>
+<script type="text/javascript" src="../src/py_complex.js"></script>
+<script type="text/javascript" src="../src/py_dict.js"></script>
+<script type="text/javascript" src="../src/py_list.js"></script>
+<script type="text/javascript" src="../src/py_generator.js"></script>
+<script type="text/javascript" src="../src/py_dom.js"></script>
+
+<script type="text/javascript" src="../src/builtin_modules.js"></script>
+<script type="text/javascript" src="../src/py_import_hooks.js"></script>
+<script type="text/javascript" src="../src/async.js"></script>
+
+</head>
+<body onload="brython(1)">
+
+<div id="menu" b-include="template_home.html"></div>
+
+<div id="app">{message}</div>
+
+<div id="change_message">
+    <input b-on="blur:change_msg">
+</div>
+
+<div id="app-2">
+  <span title="{message}">
+    Hover your mouse over me for a few seconds
+    to see my dynamically bound title!
+  </span>
+</div>
+
+<div id="app-3">
+    <select>
+        <option b-code="for name in names" value="{name}" selected="{name==selected}">{name}
+    </select>
+</div>
+
+<div id="app-4">
+  <ol>
+    <li b-code="for todo in todos:">{todo}
+  </ol>
+</div>
+
+<div id="app-5">
+  {message} - {{text in braces}}
+  <button b-on="click:reverse_message">Reverse Message</button>
+
+</div>
+
+<div id="app-6">
+  <p>Increment counter
+  <button b-on="click:increment">
+      {counter}
+  </button>
+</div>
+
+<div id="app-7">
+<a href="{hrefs[ix]}">{hrefs[ix]}</a>
+<button b-on="click:reset_link">change link</button>
+</div>
+
+<div id="app-8">
+  <button id="hello" b-on="click:say_hello">Hello !</button>
+</div>
+
+<div id="incrementer">
+  <button b-on="click:incr">+1</button>{counter}
+</div>
+
+<table id="score">
+  <tr>
+    <td b-code="for pattern in score['structure']">
+      <button>{pattern}</button>
+    </td>
+  </tr>
+</table>
+
+<div id="measure">
+  <span b-code="for i in range(16):">
+    <span b-code="if i % 4 == 0:">{1 + i // 4}</span>
+    <span b-code="elif i % 4 == 2:">&</span>
+    <span b-code="else:">-</span>
+  </span>
+</div>
+<script type="text/python">
+from browser import document, window, alert
+from browser.template import Template
+
+Date = window.Date.new
+
+Template(document["menu"]).render(title="Brython Template demo")
+
+app_tmpl = Template("app")
+app_tmpl.render(message="coucou")
+
+def change_msg(evt, elt):
+    print("change message")
+    app_tmpl.render(message=evt.target.value)
+
+Template("change_message", [change_msg]).render()
+
+Template("app-2").render(
+    message="You loaded this page on " + Date().toLocaleString()
+)
+
+Template("app-3").render(
+    names = ['jean', 'jacques', 'pierre', 'paul'],
+    selected="pierre"
+)
+
+Template("app-4").render(
+    todos=['Learn JavaScript', 'Learn Vue', 'Build something awesome']
+)
+
+def reverse_message(evt, elt):
+    elt.data.message = elt.data.message[::-1]
+
+app_5 = Template("app-5", [reverse_message])
+app_5.render(message="Hello Brython template !")
+
+def increment(evt, element):
+    element.data.counter += 1
+
+app6 = Template(document["app-6"], [increment]).render(counter=0)
+
+def reset_link(evt, elt):
+    elt.data.ix = 1 - elt.data.ix
+
+app7 = Template(document["app-7"], [reset_link])
+app7.render(hrefs=["http://vuejs.org", "http://brython.info"], ix=0)
+
+def say_hello(evt, elt):
+    alert(elt.data.message)
+
+Template(document["app-8"], [say_hello]).render(message="Hello, world !")
+
+def incr(event, element):
+    element.data.counter += 1
+
+Template(document["incrementer"], [incr]).render(counter=0)
+
+score = {
+    'patterns': {
+        'A': {
+            'HiHat': [
+                0, 4, 8, 12
+            ],
+            'Kick': [
+                0, 3, 8, 10, 11, 14
+            ],
+            'Snare': [4, 7, 9, 12
+            ]
+        }
+    },
+    'structure': [
+        'A', 'A'
+    ],
+    'tempo': 100,
+    'title': 'song'
+}
+Template("score").render(score=score)
+
+Template("measure").render()
+</script>
+
+</body>
+</html>

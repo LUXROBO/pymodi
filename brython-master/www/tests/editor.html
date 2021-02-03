@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Brython</title>
+<link rel="stylesheet" href="/brython.css">
+<link rel="stylesheet" href="console.css">
+
+<script type="text/javascript" src="../src/brython_builtins.js"></script>
+<script type="text/javascript" src="../src/version_info.js"></script>
+<script type="text/javascript" src="../src/py2js.js"></script>
+<script type="text/javascript" src="../src/loaders.js"></script>
+<script type="text/javascript" src="../src/py_object.js"></script>
+<script type="text/javascript" src="../src/py_type.js"></script>
+<script type="text/javascript" src="../src/py_utils.js"></script>
+<script type="text/javascript" src="../src/py_sort.js"></script>
+<script type="text/javascript" src="../src/py_builtin_functions.js"></script>
+<script type="text/javascript" src="../src/py_exceptions.js"></script>
+<script type="text/javascript" src="../src/py_range_slice.js"></script>
+<script type="text/javascript" src="../src/py_bytes.js"></script>
+<script type="text/javascript" src="../src/py_set.js"></script>
+<script type="text/javascript" src="../src/js_objects.js"></script>
+<script type="text/javascript" src="../src/stdlib_paths.js"></script>
+<script type="text/javascript" src="../src/py_import.js"></script>
+
+<script type="text/javascript" src="../src/unicode_data.js"></script>
+<script type="text/javascript" src="../src/py_string.js"></script>
+<script type="text/javascript" src="../src/py_int.js"></script>
+<script type="text/javascript" src="../src/py_long_int.js"></script>
+<script type="text/javascript" src="../src/py_float.js"></script>
+<script type="text/javascript" src="../src/py_complex.js"></script>
+<script type="text/javascript" src="../src/py_dict.js"></script>
+<script type="text/javascript" src="../src/py_list.js"></script>
+<script type="text/javascript" src="../src/py_generator.js"></script>
+<script type="text/javascript" src="../src/py_dom.js"></script>
+
+<script type="text/javascript" src="../src/builtin_modules.js"></script>
+<script type="text/javascript" src="../src/async.js"></script>
+
+<script type="text/javascript" src="../src/brython_stdlib.js"></script>
+
+<script src="/assets/header.brython.js"></script>
+
+<script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="ace/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/python3" id="tests_editor">
+from browser import document as doc, window
+from browser import html
+import header
+
+import editor
+
+qs_lang,language = header.show()
+
+doc["test_suite"].href = f"index.html?lang={language}"
+# other translations
+
+trans = {
+    'report_bugs':{'en':'Please report bugs in the ',
+                   'es':'Poner los bugs en el ',
+                   'fr':"Signalez les bugs dans l'"},
+    'test_page':{'en':'Tests page','es':'P&aacute;gina de pruebas','fr':'Page de tests'},
+    'run':{'en':'run','es':'ejecutar','fr':'Exécuter'},
+    'clear':{'en':'clear','es':'borrar','fr':'Effacer'}
+}
+
+for key in trans:
+    if key in doc:
+        doc[key].html = trans[key].get(language,trans[key]['en'])
+
+def set_debug(ev):
+    if ev.target.checked:
+        __BRYTHON__.debug = 1
+    else:
+        __BRYTHON__.debug = 0
+
+__BRYTHON__.debug = int(doc['set_debug'].checked)
+
+# bindings
+doc['set_debug'].bind('change',set_debug)
+
+# next functions are defined in editor.py
+doc['show_js'].bind('click', editor.show_js)
+doc['share_code'].bind('click', editor.share_code)
+# Create a lambda around editor.run() so that the event object is not passed to it
+doc['run'].bind('click',lambda *args: editor.run())
+doc['show_console'].bind('click', editor.show_console)
+
+
+
+
+</script>
+
+<script>
+function run_js(){
+    var cons = document.getElementById("console")
+    var jscode = cons.value
+    var t0 = (new Date()).getTime()
+    eval(jscode)
+    var t1 = (new Date()).getTime()
+    console.log("Javascript code run in "+(t1-t0)+" ms")
+}
+</script>
+</head>
+<body onload="brython({debug:1})">
+
+<div id="banner_row">
+<span class="logo"><a href="/index.html">brython</a></span>
+</div>
+
+<div id="main_container"></div>
+
+</div>
+
+<table id="container">
+  <tr>
+    <td>Brython version: <span id="version"></span></td>
+    <td></td>
+    <td>
+        <button id="run"> ▶ Run</button>
+        Debug<input type="checkbox" id="set_debug" checked>
+        <button id="show_console">Python</button>
+        <button id="show_js">Javascript</button>
+        <button id="share_code">Share code</button>
+    </td>
+  </tr>
+
+  <tr>
+    <td id="left">
+      <div id="editor" style="width:100%;"></div>
+    </td>
+    <td id="separator"></td>
+    <td id="right">
+      <textarea id="console" autocomplete="off"></textarea>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      Python code editor uses <a href="https://ace.c9.io/" target="_blank">Ace</a>.
+    </td>
+    <td></td>
+    <td>
+      <a href="#" id="test_suite">Tests suite</a>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

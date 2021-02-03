@@ -1,0 +1,303 @@
+<!doctype html>
+<html>
+<head>
+<meta name="description" content="Brython">
+<meta name="keywords" content="Python,Brython">
+<meta name="author" content="Pierre Quentel">
+<meta charset="utf-8">
+
+<style>
+#content{
+    float: right;
+    width: 75%;
+}
+#menu{
+    padding-left:1%;
+    margin-right: 80%;
+    position: fixed;
+}
+</style>
+
+<link rel="icon" type="image/png" href="favicon.png" />
+
+<noscript>Please enable Javascript to view this page correctly.</noscript>
+
+<script type="text/javascript" src="/src/brython.js"></script>
+
+<script src="/assets/header.brython.js"></script>
+
+
+<script type="text/python3">
+from browser import document, highlight, html
+import html_parser
+import header
+
+tutorial_languages = header.languages.extend(
+  [["br", "Brezhoneg"],
+   ["it", "Italiano"],
+   ["pt-br", "Portuguese (Br.)"]
+  ])
+
+qs_lang, language = header.show(tutorial_languages)
+
+# Highlight Python code
+for elt in document.get(selector='.python'):
+    src = elt.text.strip()
+    h = highlight.highlight(src)
+    h.className = "pycode"
+    elt.clear()
+    elt <= h
+
+# Generate menu
+menu = document["menu"]
+for i, tag in enumerate(document.select("H1")):
+    menu <= html.A(tag.text, href=f"#item{i}") + html.BR()
+    tag.parent.insertBefore(html.A(name=f"item{i}"), tag)
+for elt in document.select('.xml'):
+    text = elt.text
+    elt.text = ""
+    script = False
+    for item in html_parser.tokenize(text):
+        if item.nodeType == html_parser.TEXT_NODE and item.text:
+            if script and item.text.strip():
+                h = highlight.highlight(item.text.strip())
+                h.style.margin = 0
+                h.classList.add("pycode")
+                h.style.display = "block"
+                elt <= h
+            else:
+                elt <= item.text
+        elif item.nodeType == html_parser.ELEMENT_NODE:
+            script = item.tagName == "SCRIPT" and not item.closing
+            if item.closing:
+                tag = item.text[1:len(item.tagName) + 2]
+                attrs = item.text[len(item.tagName) + 2:-1]
+            else:
+                tag = item.text[1:len(item.tagName) + 1]
+                attrs = item.text[len(item.tagName) + 1:-1]
+
+            elt <= (html.SPAN("&lt;" + tag, Class="html-tag") +
+                    html.SPAN(attrs, Class="html-attrs") +
+                    html.SPAN("&gt;", Class="html-tag"))
+</script>
+
+<title>Brython</title>
+<link rel="stylesheet" href="/brython.css">
+</head>
+
+<body onload="brython(1)">
+
+<div id="banner_row">
+<span class="logo"><a href="/index.html">brython</a></span>
+</div>
+
+
+<div id="content">
+<p>Ar gentel-mañ a ziskouez penaos skrivañ ur programm hag a ya en-dro e-barzh ar merdeer gant ar yezh-programmiñ Python. Evit-se emaomp o vont da skrivañ kod ur jedonerezh.
+<p></p>
+Ezhomm ho peus eus ur skridtreterezh, hag eveljust ur merdeer kevreet gant ar genrouedad.
+<p></p>
+Evit heuliañ ar gentel-mañ ez eo ret gouzout un nebeut traoù diwar-benn HTML (penaos e vez stummet ur bajenn, ar balizennoù a implijer ar muiañ), folennoù-stil (CSS) hag ar yezh Python.
+<p></p>
+E-barzh ar skridtreterezh, krouit ur bajenn HTML, enni ar c'hod a-dreñv:
+<p></p></p><pre class="xml">&lt;!doctype html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/brython@3.9.1/brython.min.js"&gt;
+    &lt;/script&gt;
+&lt;/head&gt;
+
+&lt;body onload="brython()"&gt;
+
+&lt;script type="text/python"&gt;
+from browser import document
+
+document &lt;= "Hopala !"
+&lt;/script&gt;
+
+
+&lt;/body&gt;
+
+&lt;/html&gt;</pre>
+<p><p></p>
+E-barzh ur kavlec'h goullo, enrollit ar bajenn dindan an anv <B><code>index.html</code></B>. Evit he lenn e-barzh ar merdeer ez eus daou doare:
+<p></p>
+<ul>
+<li> implij ar Fichennaoueg/Digeriñ lañser: an doare aesañ an hini eo. <a href="/static_doc/fr/file_or_http.html">Traoù zo</a> ne c'heller ket ober gant an doare-se, met evit ar gentel ez ayo mat pep tra
+<li> loc'han ur servijer Web: ma 'z eo staliet Python (an hini a gaver war python.org) war ho urzhiater e c'hellit seveniñ <code>python -m http.server</code> e kavlec'h ar bajenn, ha skrivañ <I>localhost:8000/index.html</I> e-barzh takad chomlec'h ar merdeer
+</ul>
+<p></p>
+Pa vo digoret ar bajenn, emichañs e vo gwelet "Hopala !" moullet war prenestr ar merdeer.
+<p></p>
+<p></p>
+<H1>Framm ur bajenn</H1>
+
+Taolomp ur sell ouzh ar pezh a zo er bajenn. E-barzh al lodenn <code>&lt;head&gt;</code> e kargomp ar skript <B><code>brython.js</code></B> : ar c'heflusker Brython eo, ar programm a ra war-dro an holl skriptoù Python er bajenn. Karget eo amañ diwar ur CDN, kuit da staliañ tra ebet war ar PC. Taolit evezh ouzh an niverenn doare (<code>brython@3.9.1</code>) : gallout a raer he hizivaat pep gwech ez a un doare Brython nevez er-maez.
+<p></p>
+Ar valizenn <code>&lt;body&gt;</code> he deus un doareenn <code>onload="brython()"</code>. Gourc'hemenn a ra ar merdeer kas an arc'hwel <code>brython()</code> en-dro pa vo echuet kargañ an holl bajenn. An arc'hwel a zo termenet e-barzh ar c'heflusker Brython. Klask a ra an holl balizennoù <code>&lt;script&gt;</code> gant an doareenn <code>type="text/python"</code> ha seveniñ a ra anezho.
+<p></p>
+E-barzh hor pajenn <B><code>index.html</code></B> e kaver ar skript-mañ:
+<p></p></p><pre class="python">from browser import document
+
+document &lt;= "Hopala !"</pre>
+<p><p></p>
+Ur programm Python ordinal eo. Da gentañ ez eo enporzhiet ur vodulenn, <B><code>browser</code></B> (amañ, ur vodulenn enframmet e-barzh <B><code>brython.js</code></B>). Ar vodulenn he deus un doareenn <code>document</code>, gantañ e c'heller gouzout pe chañch ar pezh a zo diskouezet war prenestr ar merdeer.
+<p></p>
+Evit ouzhpennañ un destenn ouzh an teul - da lavaret eo, evit diskouez an destenn war ar merdeer - e skriver kement-mañ:
+<p></p></p><pre class="python">document &lt;= "Hopala !"</pre>
+<p><p></p>
+Gallout a rit soñjal ez eo arouezenn <code>&lt;=</code> ur saezh war an tu kleiz : an teul a "zegemer" un elemant nevez, amañ ar chadenn "Hopala !". Gwelout a reot diwezatoc'h e c'heller implijout ereadurezh skoueriek an DOM evit traoù seurt-se, met kinnig a ra Brython doareoù eeunoc'h evit berraat hag eeunaat ar kod.
+<p></p>
+<p></p>
+<H1>Furmad an destenn gant balizennoù HTML</H1>
+
+Gant balizennoù HTML e c'heller resizat furmad un destenn, da skouer he skrivañ e lizerennoù tev (balizenn <code>&lt;B&gt;</code>), italek (<code>&lt;I&gt;</code>), h.a.
+<p></p>
+Gant Brython e kaver ar balizennoù dindan stumm arc'hweloù termenet e-barzh ar vodulenn <B><code>html</code></B>, ezel eus pakad <B><code>browser</code></B>. Setu penaos o implijout:
+<p></p></p><pre class="python">from browser import document, html
+
+document &lt;= html.B("Hopala !")</pre>
+<p><p></p>
+Balizennoù a c'hell bezañ lakaet an eil e-barzh eben:
+<p></p></p><pre class="python">document &lt;= html.B(html.I("Hopala !"))</pre>
+<p><p></p>
+Ouzhpennañ balizennoù ha chadennoù an eil ouzh eben a c'heller ober ivez:
+<p></p></p><pre class="python">document &lt;= html.B("Hopala, ") + "Chapalain !"</pre>
+<p><p></p>
+Kentañ arguzenn an arc'hwel a c'hell bezañ ur chadenn, un niverenn, ur valizenn all. Un "iterable" Python (listenn, "comprehension", "generator") a c'hell bezañ ivez: neuze, an holl elemantou e-barzh an iterable a vez ouzhpennet ouzh ar valizenn:
+<p></p></p><pre class="python">document &lt;= html.UL(html.LI(i) for i in range(5))</pre>
+<p><p></p>
+Doareennoù ar valizenn a vez kaset d'an arc'hwel e stumm gerioù-alc'hwez:
+<p></p></p><pre class="python">html.A("Brython", href="http://brython.info")</pre>
+<p><p></p>
+<p></p>
+<H1>Tresañ ar jedonerezh</H1>
+
+Gallout a reomp tresañ hon jedonerezh e stumm un daolenn HTML.
+<p></p>
+Al linenn gentañ a vez graet eus an dachenn evit an disorc'h, war e lerc'h un nozelenn nullañ. An teir linenn war-lerc'h a zo stokelloù ar jedonerezh, sifroù hag oberiadurioù.
+<p></p></p><pre class="python">from browser import document, html
+
+calc = html.TABLE()
+calc &lt;= html.TR(html.TH(html.DIV("0", id="result"), colspan=3) +
+                html.TD("C", id="clear"))
+lines = ["789/",
+         "456&#42;",
+         "123-",
+         "0.=+"]
+
+calc &lt;= (html.TR(html.TD(x) for x in line) for line in lines)
+
+document &lt;= calc</pre>
+<p><p></p>
+Lakait evezh ouzh implij "jeneratorioù" Python evit berraat ment ar programm, ha penaos e chom aes da lenn koulskoude.
+<p></p>
+Lakaomp ouzhpenn un nebeut stil war ar balizennoù <code>&lt;TD&gt;</code> e-barzh ur folenn-stil, ma vo bravoc'h ar jedonerezh:
+<p></p></p><pre class="xml">&lt;style&gt;
+&#42;{
+    font-family: sans-serif;
+    font-weight: normal;
+    font-size: 1.1em;
+}
+td{
+    background-color: #ccc;
+    padding: 10px 30px 10px 30px;
+    border-radius: 0.2em;
+    text-align: center;
+    cursor: default;
+}
+#result{
+    border-color: #000;
+    border-width: 1px;
+    border-style: solid;
+    padding: 10px 30px 10px 30px;
+    text-align: right;
+}
+&lt;/style&gt;</pre>
+<p><p></p>
+<p></p>
+<H1>Ober gant degouezhadennoù</H1>
+
+Ret eo lavaret bremañ petra a c'hoarvez pa vount an implijer war stokelloù ar jedonerezh:
+<p></p>
+<ul>
+<li> evit sifroù hag oberiadurioù : moullañ anezho e-barzh an dachenn-disorc'h
+<li> evit ar stokell = : seveniñ ar jedad ha moullañ an disorc'h, peotramant ur gemennad fazi ma'z eo direizh ar jedad
+<li> evit ar stokell C : mannañ an dachenn-disorc'h
+</ul>
+<p></p>
+Evit ober gant degouezhadennoù war elemantoù ar bajenn ez eo ret d'ar programm kavout un dave anezho. Stokelloù a zo bet krouet e stumm balizennoù <code>&lt;TD&gt;</code>; evit kavout an holl balizennoù seurt-se e skriver
+<p></p></p><pre class="python">document.select("td")</pre>
+<p><p></p>
+Ar arguzenn kaset d'ar metod <code>select()</code> a zo un <I>diuzer CSS</I>. A re a gaver ar muiañ a zo: anv ur valizenn ("td"), doareenn <code>id</code> un elemant ("#result") pe e doareenn <code>class</code> (".classname"). Disorc'h <code>select()</code> a vez dalc'hmat ul listenn elemantoù.
+<p></p>
+An degouezhadennoù a c'hell c'hoarvez war elemantoù ur bajenn o deus un anv reolataet: pa glik an implijer war un nozelenn, an degouezhadenn a zo "click" hec'h anv. E-barzh ar programm, an degouezhadenn a dle kas un arc'hwel en-dro. Al liamm etre elemant, degouezhadenn hag arc'hwel a vez graet e mod-se:
+<p></p></p><pre class="python">element.bind("click", action)</pre>
+<p><p></p>
+Evit ar jedonerezh e c'hellomp liammañ an hevelep arc'hwel gant an degouezhadenn "click" war an holl nozelennoù:
+<p></p></p><pre class="python">for button in document.select("td"):
+    button.bind("click", action)</pre>
+<p><p></p>
+Ret eo termeniñ an arch'wel <code>action()</code> en un lec'h bennak a-raok er programm. Seurt "callback" arc'hwelioù o deus unan arguzenn hepken, un draezenn hag a zo skeudenn an degouezhadenn.
+<p></p>
+<p></p>
+<H1>Ar programm a-bezh</H1>
+
+Setu amañ ar c'hod a c'hell kas en-dro un doare eeun eus ur jedonerezh. Al lodenn bouezusañ a zo e-barzh an alc'hwez <code>action(event)</code>.
+<p></p></p><pre class="python">from browser import document, html
+
+# Tresañ ar jedonerezh
+calc = html.TABLE()
+calc &lt;= html.TR(html.TH(html.DIV("0", id="result"), colspan=3) +
+                html.TD("C"))
+lines = ["789/", "456&#42;", "123-", "0.=+"]
+
+calc &lt;= (html.TR(html.TD(x) for x in line) for line in lines)
+
+document &lt;= calc
+
+result = document["result"] # adkavout un elemant dre e doareenn "id"
+
+def action(event):
+    """Ra war-dro an degouezhadenn "click" war nozelenn ar jedonerezh."""
+    # An elemant an implijer a vountas warnañ a zo doareenn "target" an
+    # draezenn "event".
+    element = event.target
+    # An destenn moullet war an nozelenn a zo doareenn "text" an elemant.
+    value = element.text
+    if value not in "=C":
+        # hizivaat tachenn disorc'hoù
+        if result.text in ["0", "error"]:
+            result.text = value
+        else:
+            result.text = result.text + value
+    elif value == "C":
+        # nullañ
+        result.text = "0"
+    elif value == "=":
+        # klask jediñ
+        try:
+            result.text = eval(result.text)
+        except:
+            result.text = "error"
+
+# Liamm etre an arc'hwel action() hag an degouezhadenn "click" evit an holl
+# nozelennoù.
+for button in document.select("td"):
+    button.bind("click", action)</pre>
+<p><p></p>
+<p></p>
+<H1>Disorc'h</H1>
+
+<iframe width="800", height="400" src="/gallery/calculator.html"></iframe>
+<p></p>
+<p></p></p>
+</div>
+
+<div id="menu"></div>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+{
+    "browser_disconnect_timeout": "30",
+    "tap_quiet_logs": true
+}

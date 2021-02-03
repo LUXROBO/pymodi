@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="description" content="Hello world demo written in Brython www.brython.info">
+<meta name="keywords" content="Python,Brython">
+<meta charset="iso-8859-1">
+<title>Hello world</title>
+<script type="text/javascript" src="/src/brython.js"></script>
+<script type="text/python" src="show_source.py"></script>
+</head>
+
+<body onload="brython(1)">
+
+<script type="text/python">
+from browser import document, alert
+from browser.widgets.dialog import InfoDialog
+
+def echo(ev):
+    InfoDialog("Hello", f"Hello {document['zone'].value} !")
+
+document["test"].bind("click", echo)
+</script>
+<p>Your name is : <input id="zone" autocomplete="off">
+<button id="test">click !</button>
+</body>
+
+</html>

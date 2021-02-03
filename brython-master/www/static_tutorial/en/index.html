@@ -1,0 +1,305 @@
+<!doctype html>
+<html>
+<head>
+<meta name="description" content="Brython">
+<meta name="keywords" content="Python,Brython">
+<meta name="author" content="Pierre Quentel">
+<meta charset="utf-8">
+
+<style>
+#content{
+    float: right;
+    width: 75%;
+}
+#menu{
+    padding-left:1%;
+    margin-right: 80%;
+    position: fixed;
+}
+</style>
+
+<link rel="icon" type="image/png" href="favicon.png" />
+
+<noscript>Please enable Javascript to view this page correctly.</noscript>
+
+<script type="text/javascript" src="/src/brython.js"></script>
+
+<script src="/assets/header.brython.js"></script>
+
+
+<script type="text/python3">
+from browser import document, highlight, html
+import html_parser
+import header
+
+tutorial_languages = header.languages.extend(
+  [["br", "Brezhoneg"],
+   ["it", "Italiano"],
+   ["pt-br", "Portuguese (Br.)"]
+  ])
+
+qs_lang, language = header.show(tutorial_languages)
+
+# Highlight Python code
+for elt in document.get(selector='.python'):
+    src = elt.text.strip()
+    h = highlight.highlight(src)
+    h.className = "pycode"
+    elt.clear()
+    elt <= h
+
+# Generate menu
+menu = document["menu"]
+for i, tag in enumerate(document.select("H1")):
+    menu <= html.A(tag.text, href=f"#item{i}") + html.BR()
+    tag.parent.insertBefore(html.A(name=f"item{i}"), tag)
+for elt in document.select('.xml'):
+    text = elt.text
+    elt.text = ""
+    script = False
+    for item in html_parser.tokenize(text):
+        if item.nodeType == html_parser.TEXT_NODE and item.text:
+            if script and item.text.strip():
+                h = highlight.highlight(item.text.strip())
+                h.style.margin = 0
+                h.classList.add("pycode")
+                h.style.display = "block"
+                elt <= h
+            else:
+                elt <= item.text
+        elif item.nodeType == html_parser.ELEMENT_NODE:
+            script = item.tagName == "SCRIPT" and not item.closing
+            if item.closing:
+                tag = item.text[1:len(item.tagName) + 2]
+                attrs = item.text[len(item.tagName) + 2:-1]
+            else:
+                tag = item.text[1:len(item.tagName) + 1]
+                attrs = item.text[len(item.tagName) + 1:-1]
+
+            elt <= (html.SPAN("&lt;" + tag, Class="html-tag") +
+                    html.SPAN(attrs, Class="html-attrs") +
+                    html.SPAN("&gt;", Class="html-tag"))
+</script>
+
+<title>Brython</title>
+<link rel="stylesheet" href="/brython.css">
+</head>
+
+<body onload="brython(1)">
+
+<div id="banner_row">
+<span class="logo"><a href="/index.html">brython</a></span>
+</div>
+
+
+<div id="content">
+<p>This tutorial explains how to develop an application that runs in the browser using the Python programming language. We will take the example of writing a calculator.
+<p></p>
+You will need a text editor, and of course a browser with an Internet access.
+<p></p>
+The contents of this tutorial assumes that you have at least a basic knowledge of HTML (general page structure, most usual tags), of stylesheets (CSS) and of the Python language.
+<p></p>
+In the text editor, create an HTML page with the following content:
+<p></p></p><pre class="xml">&lt;!doctype html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/brython@3.9.1/brython.min.js"&gt;
+    &lt;/script&gt;
+&lt;/head&gt;
+
+&lt;body onload="brython()"&gt;
+
+&lt;script type="text/python"&gt;
+from browser import document
+
+document &lt;= "Hello !"
+&lt;/script&gt;
+
+
+&lt;/body&gt;
+
+&lt;/html&gt;</pre>
+<p><p></p>
+In an empty directory, save this page as <B><code>index.html</code></B>. To read it in the browser, you have two options:
+<p></p>
+<ul>
+<li> use the File/Open menu: it is the most simple solution. It brings <a href="/static_doc/en/file_or_http.html">some limitations</a> for an advanced use, but it works perfectly for this tutorial
+<li> launch a web server : for instance, if the Python interpreter available from python.org is available on your machine, run <code>python -m http.server</code> in the file directory, then enter <I>localhost:8000/index.html</I> in the browser address bar
+</ul>
+<p></p>
+When you open the page, you should see the message "Hello !" printed on the browser window.
+<p></p>
+<p></p>
+<H1>Page structure</H1>
+
+Let's take a look at the page contents. In the <code>&lt;head&gt;</code> zone we load the script <B><code>brython.js</code></B> : it is the Brython engine, the program that will find and execute the Python scripts included in the page. In this example we get it from a CDN, so that there is nothing to install on the PC. Note the version number (<code>brython@3.9.1</code>) : it can be updated for each new Brython version.
+<p></p>
+The <code>&lt;body&gt;</code> tag has an attribute <code>onload="brython()"</code>. It means that when the page has finished loading, the browser has to call the function <code>brython()</code>, which is defined in the Brython engine loaded in the page. The function searches all the <code>&lt;script&gt;</code> tags that have the attribute <code>type="text/python"</code> and executes them.
+<p></p>
+Our <B><code>index.html</code></B> page embeds this script:
+<p></p></p><pre class="python">from browser import document
+
+document &lt;= "Hello !"</pre>
+<p><p></p>
+This is a standard Python program, starting by the import of a module, <B><code>browser</code></B> (in this case, a module shipped with the Brython engine <B><code>brython.js</code></B>). The module has an attribute <code>document</code> which references the content displayed in the browser window.
+<p></p>
+To add a text to the document - concretely, to display a text in the browser - the syntax used by Brython is
+<p></p></p><pre class="python">document &lt;= "Hello !"</pre>
+<p><p></p>
+You can think of the <code>&lt;=</code> sign as a left arrow : the document "receives" a new element, here the string "Hello !". You will see later that it is always possible to use the standardized DOM syntax to interact with the page, by Brython provides a few shortcuts to make the code less verbose.
+<p></p>
+For this specific case, those who are not at ease with the use of the opeartor <code>&lt;=</code> can use the method <code>attach()</code> of DOM elements instead:
+<p></p></p><pre class="python">document.attach("Hello !")</pre>
+<p><p></p>
+<p></p>
+<H1>Text formatting with HTML tags</H1>
+
+HTML tags allow text formatting, for instance to write it in bold letters (<code>&lt;B&gt;</code> tag), in italic (<code>&lt;I&gt;</code>), etc.
+<p></p>
+With Brython, these tags are available as functions defined in module <B><code>html</code></B> of the <B><code>browser</code></B> package. Here is how to use it:
+<p></p></p><pre class="python">from browser import document, html
+
+document &lt;= html.B("Hello !")</pre>
+<p><p></p>
+Tags can be nested:
+<p></p></p><pre class="python">document &lt;= html.B(html.I("Hello !"))</pre>
+<p><p></p>
+Tags can also be added to each other, as well as strings:
+<p></p></p><pre class="python">document &lt;= html.B("Hello, ") + "world !"</pre>
+<p><p></p>
+The first argument of a tag function can be a string, a number, another tag. It can also be a Python "iterable" (list, comprehension, generator): in this case, all the elements produced in the iteration are added to the tag:
+<p></p></p><pre class="python">document &lt;= html.UL(html.LI(i) for i in range(5))</pre>
+<p><p></p>
+Tag attributes are passed as keyword arguments to the function:
+<p></p></p><pre class="python">html.A("Brython", href="http://brython.info")</pre>
+<p><p></p>
+<p></p>
+<H1>Drawing the calculator</H1>
+
+We can draw our calculator as an HTML table.
+<p></p>
+The first line is made of the result zone, followed by a reset button. The next 3 lines are the calculator touches, digits and operations.
+<p></p></p><pre class="python">from browser import document, html
+
+calc = html.TABLE()
+calc &lt;= html.TR(html.TH(html.DIV("0", id="result"), colspan=3) +
+                html.TD("C", id="clear"))
+lines = ["789/",
+         "456&#42;",
+         "123-",
+         "0.=+"]
+
+calc &lt;= (html.TR(html.TD(x) for x in line) for line in lines)
+
+document &lt;= calc</pre>
+<p><p></p>
+Note the use of Python generators to reduce the program size, while keeping it readable.
+<p></p>
+Let's add style to the <code>&lt;TD&gt;</code> tags in a stylesheet so that the calculator looks better:
+<p></p></p><pre class="xml">&lt;style&gt;
+&#42;{
+    font-family: sans-serif;
+    font-weight: normal;
+    font-size: 1.1em;
+}
+td{
+    background-color: #ccc;
+    padding: 10px 30px 10px 30px;
+    border-radius: 0.2em;
+    text-align: center;
+    cursor: default;
+}
+#result{
+    border-color: #000;
+    border-width: 1px;
+    border-style: solid;
+    padding: 10px 30px 10px 30px;
+    text-align: right;
+}
+&lt;/style&gt;</pre>
+<p><p></p>
+<p></p>
+<H1>Event handling</H1>
+
+The next step is to trigger an action when the user presses the calculator touches:
+<p></p>
+<ul>
+<li> for digits and operations : print the digit or operation in the result zone
+<li> for the = sign : execute the operation and print the result, or an error message if the input is invalid
+<li> for the C letter : reset the result zone
+</ul>
+<p></p>
+To handle the elements printed in the page, the program need first to get a reference to them. The buttons have been created as <code>&lt;TD&gt;</code> tags; to get a reference to all these tags, the syntax is
+<p></p></p><pre class="python">document.select("td")</pre>
+<p><p></p>
+The argument passed to the <code>select()</code> method is a <I>CSS selector</I>. The most usual ones are: a tag name ("td"), the element's <code>id</code> attribute ("#result") or its attribute "class" (".classname"). The result of <code>select()</code> is always a list of elements.
+<p></p>
+The events that can occur on the elements of a page have a normalized name: when the user clicks on a button, the event called "click" is triggered. In the program, this event will provoque the execution of a function. The association betweeen element, event and function is defined by the syntax
+<p></p></p><pre class="python">element.bind("click", action)</pre>
+<p><p></p>
+For the calculator, we can associate the same function to the "click" event on all buttons by:
+<p></p></p><pre class="python">for button in document.select("td"):
+    button.bind("click", action)</pre>
+<p><p></p>
+To be compliant to Python syntax, the function <code>action()</code> must have been defined somewhere before in the program. Such "callback" functions take a single parameter, an object that represents the event.
+<p></p>
+<p></p>
+<H1>Complete program</H1>
+
+Here is the code that manages a minimal version of the calculator. The most important part is in the function <code>action(event)</code>.
+<p></p></p><pre class="python">from browser import document, html
+
+# Construction de la calculatrice
+calc = html.TABLE()
+calc &lt;= html.TR(html.TH(html.DIV("0", id="result"), colspan=3) +
+                html.TD("C"))
+lines = ["789/", "456&#42;", "123-", "0.=+"]
+
+calc &lt;= (html.TR(html.TD(x) for x in line) for line in lines)
+
+document &lt;= calc
+
+result = document["result"] # direct acces to an element by its id
+
+def action(event):
+    """Handles the "click" event on a button of the calculator."""
+    # The element the user clicked on is the attribute "target" of the
+    # event object
+    element = event.target
+    # The text printed on the button is the element's "text" attribute
+    value = element.text
+    if value not in "=C":
+        # update the result zone
+        if result.text in ["0", "error"]:
+            result.text = value
+        else:
+            result.text = result.text + value
+    elif value == "C":
+        # reset
+        result.text = "0"
+    elif value == "=":
+        # execute the formula in result zone
+        try:
+            result.text = eval(result.text)
+        except:
+            result.text = "error"
+
+# Associate function action() to the event "click" on all buttons
+for button in document.select("td"):
+    button.bind("click", action)</pre>
+<p><p></p>
+<p></p>
+<H1>Result</H1>
+
+<iframe width="800", height="400" src="/gallery/calculator.html"></iframe>
+<p></p>
+<p></p></p>
+</div>
+
+<div id="menu"></div>
+
+</body>
+</html>
