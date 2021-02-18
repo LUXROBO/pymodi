@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)">
+    <head>
+        <meta charset="utf-8">
+        <title>Python editor</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <link rel="stylesheet" href="css/simple-console.css">
+        <link href="css/styles.css" rel="stylesheet" />
+        <link href="css/usage.css" rel="stylesheet" />
+        <style>
+            #dropZone,
+            #modules {
+                padding-top: 40px;
+                padding-left: 3px;
+                background-color: rgb(255, 255, 255);
+                width: 170px;
+                border: 1px solid #aaaaaa;
+                float: left;
+            }
+              
+            #dropBox1{
+                background-color: rgb(248, 236, 184);
+                background-image: url("assets/img/backgroundimg.PNG");
+                width: 400px;
+                border: 1px solid #aaaaaa;
+                padding: 1rem;
+                float: left;
+                height: 535px; 
+            }
+            #draggable{
+                width: 150px; height: 150px; padding: 0.5em;
+            }
+    
+            img {
+                height: 80px;
+                object-fit: cover;
+                width: 80px;
+                float: left;
+                margin-right: 2px; margin-bottom: 2px;
+            }
+            figure {
+                position: relative;
+            }
+            figcaption{
+                position: absolute;
+                bottom: 4px;
+                left: 0;
+                right: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <script type="application/javascript">
+            // VERSION INFORMATION
+            EDITOR_VERSION = "2.1.1";
+        </script>
+        <script src="js/simple-console.js"></script>
+        <script src="js/demo.js"></script>        
+
+            <!--Code block-->
+                <div id="dropBox1" ondrop="drop(event)" ondragover="allowDrop(event)" ></div>
+                <div id="modules">
+                    <img id ="network" src="assets/img/demo-modules/network.png"alt = "network" draggable="true" ondragstart="drag(event)" >
+
+                    <img id="button" src="assets/img/demo-modules/button.png" draggable="true" ondragstart="drag(event)">
+
+                    <img id="dial" src="assets/img/demo-modules/dial.png" draggable="true" ondragstart="drag(event)">
+
+                    <img id="env" src="assets/img/demo-modules/env.png" draggable="true" ondragstart="drag(event)">
+
+                    <img id="gyro" src="assets/img/demo-modules/gyro.png" draggable="true" ondragstart="drag(event)">
+
+                    <img id="ir" src="assets/img/demo-modules/ir.png" draggable="true" ondragstart="drag(event)">
+
+                    <img id="mic" src="assets/img/demo-modules/mic.png" draggable="true" ondragstart="drag(event)">
+                    
+                    <img id="ultrasonic" src="assets/img/demo-modules/ultrasonic.png" draggable="true" ondragstart="drag(event)">
+
+                    <img id="display" src="assets/img/demo-modules/display.png" draggable="true" ondragstart="drag(event)">
+
+                    <img id="led" src="assets/img/demo-modules/led.png" draggable="true" ondragstart="drag(event)">
+                    
+                    <img id="motor" src="assets/img/demo-modules/motor.png" draggable="true" ondragstart="drag(event)">
+
+                    <img id="speaker" src="assets/img/demo-modules/speaker.png" draggable="true" ondragstart="drag(event)">
+                </div>
+
+            
+
+            <script src="ace/ace.js" type="application/javascript" charset="utf-8"></script>
+            <script src="ace/ext-language_tools.js" type="application/javascript" charset="utf-8"></script>
+            <script src="static/js/jquery-2.1.4.min.js" type="application/javascript"></script>
+            <script src="lang/en.js" id="lang"></script>
+            <script src="js/fs.js"></script>
+            <script src="js/python-main.js"></script>
+            <script>
+                // Call the web_editor function to start the editor running.
+                var config = {
+                    translate: LANGUAGE,
+                    flags: {
+                        blocks: false,
+                        snippets: true,
+                        share: false,
+                        experimental: false,
+                    }
+                };
+                web_editor(config);
+            </script>
+            
+            <script>
+                window.console = window.console || function(t) {};
+            </script>
+        
+            <script>
+                if (document.location.search.match(/type=embed/gi)) {
+                window.parent.postMessage("resize", "*");
+                }
+            </script>
+            
+            <script id="rendered-js">
+                function allowDrop(event) {
+                event.preventDefault();
+                }
+            
+                function drag(event) {
+                event.dataTransfer.setData("text", event.target.id);
+                }
+
+                function drop(event) {
+                event.preventDefault();
+                var data = event.dataTransfer.getData("text");
+                var nodeCopy = document.getElementById(data).cloneNode(true);
+                nodeCopy.id += "[0]";
+                event.target.appendChild(nodeCopy);
+                }
+            </script>
+        </main>
+    </body>
+</html>
