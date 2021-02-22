@@ -366,9 +366,6 @@ var SimpleConsole = function(options) {
 		if (e.keyCode === 13) { // Enter
 
 			var command = input.value;
-			if (command === "") {
-				return;
-			}
 			input.value = "";
 
 			if (command_history[command_history.length - 1] !== command) {

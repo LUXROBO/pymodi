@@ -82,33 +82,6 @@
                     <img id="speaker" src="assets/img/demo-modules/speaker_g.png" draggable="false" ondragstart="drag(event)">
                 </div>
             
-            <script>
-                window.console = window.console || function(t) {};
-            </script>
-        
-            <script>
-                if (document.location.search.match(/type=embed/gi)) {
-                window.parent.postMessage("resize", "*");
-                }
-            </script>
-            
-            <script id="rendered-js">
-                function allowDrop(event) {
-                event.preventDefault();
-                }
-            
-                function drag(event) {
-                event.dataTransfer.setData("text", event.target.id);
-                }
-
-                function drop(event) {
-                event.preventDefault();
-                var data = event.dataTransfer.getData("text");
-                var nodeCopy = document.getElementById(data).cloneNode(true);
-                nodeCopy.id += "[0]";
-                event.target.appendChild(nodeCopy);
-                }
-            </script>
         </main>
     </body>
 </html>
