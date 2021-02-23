@@ -1,9 +1,14 @@
 
 .simple-console {
+	padding-top: 0.5em;
 	display: flex;
 	flex: 1;
 	flex-direction: column;
 	font-family: sans-serif;
+	font-size: large;
+	line-height: 100%;
+	word-spacing: 3px;
+	letter-spacing: 1px;
 }
 
 .simple-console-output {
@@ -23,11 +28,13 @@
 	flex: 1;
 	font: inherit;
 	line-height: normal !important; /* forced by Firefox, so let's make it a consistent constraint */
-	height: 1em;
+	height: 1.5em;
 	color: inherit;
 	background: transparent;
 	border: 0;
 	box-shadow: 0 1px 0 transparent;
+	word-spacing: 3px;
+	letter-spacing: 1px;
 }
 .simple-console-input:focus {
 	outline: 0;
@@ -114,8 +121,8 @@
 }
 .simple-console-input-wrapper,
 .entry {
-	padding: 0.25rem 0.5rem;
-	padding-left: 1rem; /* = A */
+	padding: 0.1rem 0.1rem;
+	padding-left: 0.7rem; /* = A */
 	position: relative;
 }
 .input-chevron {
