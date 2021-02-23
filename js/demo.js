@@ -20,17 +20,19 @@ function drop(event) {
 	var data = event.dataTransfer.getData("text");
 	
 	var nodeCopy = document.getElementById(data).cloneNode(true);
-	nodeCopy.id += "[0]";
+	
+	if (nodeCopy.id.match("[0]")) {}
+	else nodeCopy.id += "[0]";
+
 	if(nodeCopy.id == "network[0]" || nodeCopy.id == "button[0]" || nodeCopy.id == "led[0]")
 	{
 		id.push(nodeCopy.id);
 	}
 	event.target.appendChild(nodeCopy);
-		if (event.target == document.getElementsByClassName("dropBox1" )) {
-			alert(data);
+		if (event.target == document.getElementById("dropBox1")) {
 			var trs = document.getElementById(data);
 			trs.parentNode.removeChild(trs);
-			event.target.removeChild(nodeCopy);
+
 		}
 }
 
@@ -49,6 +51,7 @@ var input_code = 0;
 var error_count = 0;
 var error_number = 0;
 var is_module_all = 0;
+var button_toggle = 0; // 0: noclick 1:click
 intro_page();
 
 // Tutorial page
@@ -195,18 +198,23 @@ function Controlling_modules2() {
 function Controlling_modules3() {
 	con.logHTML("");
 	con.logHTML("Now, see if the same command returns True when pressing the button.");
+	con.logHTML("You can press the button by clicking on the button where in the centor area.");
+	con.logHTML("Type button.pressed, after press the button.");
+	Button_press();
 };
 
 function Controlling_modules4() {
 	con.logHTML("");
-	con.logHTML("Good. Now let's send a command to the led module. Led's rgb is a property or setter method of an led module.");
+	con.logHTML("Good. if you click the button one more, the button's state return 'not pressed'.");
+	con.logHTML("Now let's send a command to the led module. Led's rgb is a property or setter method of an led module.");
 	con.logHTML("Let there be light by typing led.rgb = 0, 0, 100");
 	con.logHTML("led.rgb = 0, 0, 100");
 };
 
 function Controlling_modules5() {
 	con.logHTML("");
-	con.logHTML("Nice! if you want to turn off the led, this code let you what you want.")
+	con.logHTML("Perfect! You will see the blue light from the LED module.");
+	con.logHTML("if you want to turn off the led, this code let you what you want.")
 	con.logHTML("led.rgb = 0, 0, 0");
 };
 
@@ -237,6 +245,7 @@ function Pymodi_project2() {
 
 function Pymodi_project3() {
 	con.logHTML("Congrats!! Now let's see if the code works as we want. Press the button to light up the led. Double click the button to break out of the loop.");
+	Play_project();
 }
 
 function Pymodi_project4() {
@@ -248,6 +257,44 @@ function Pymodi_project4() {
 	con.logHTML("You have completed the tutorial.");
 
 }
+
+function Play_project() {
+	var img = document.getElementById("button[0]");
+
+	img.onclick = function(){
+		if (button_toggle == 1 )
+		{
+			img.src = "assets/img/demo-modules/button.png";
+			document.getElementById("led[0]").src = "assets/img/demo-modules/led.png";	
+			button_toggle = 0;
+		}
+		else if (button_toggle == 0)
+		{
+			img.src = "assets/img/demo-modules/button_click.png";
+			document.getElementById("led[0]").src = "assets/img/demo-modules/led_green.png";
+			button_toggle = 1;
+		}
+	};
+}
+
+function Button_press() {
+	var imgs = document.getElementById("button[0]");
+
+
+	imgs.onclick = function(){
+		if (button_toggle == 1)
+		{
+			imgs.src = "assets/img/demo-modules/button.png";	
+			button_toggle = 0;
+		}
+		else if (button_toggle == 0)
+		{
+ 			imgs.src = "assets/img/demo-modules/button_click.png";	
+			button_toggle = 1;
+		}
+	};
+}
+
 
 // add the console to the page
 document.body.appendChild(con.element);
@@ -267,6 +314,7 @@ function handle_command(command){
 		span.innerText = face.replace(">", "〉").replace("<", "〈");
 		con.log(span);
 	};
+
 
 	// press enter to next lesson
 	if (command == ""){ 
@@ -313,6 +361,7 @@ function handle_command(command){
 			input_code = 0;
 			con.clear();
 			intro_page();
+
 		} else if (command == "play") {
 			con.clear();
 			play_page();
@@ -373,23 +422,26 @@ function handle_command(command){
 		} else if (command == "button = bundle.buttons[0]") {
 			error_count = 0;
 			Controlling_modules2();
+
 		} else if (command == "button.pressed") {
-			if (button_pressed == 0)
+			if (button_toggle == 0)
 			{
 				con.log("False");
 				Controlling_modules3();
-				button_pressed = 1;
+				//button_pressed = 1;
 			}
-			else if (button_pressed == 1)
+			else if (button_toggle == 1)
 			{
 				con.log("True");
 				Controlling_modules4();
-				button_pressed = 0;
+				//button_pressed = 0;
 			}
 			
 		} else if (command == "led.rgb = 0, 0, 100") {
+			document.getElementById("led[0]").src = "assets/img/demo-modules/led_blue.png";
 			Controlling_modules5();
 		} else if (command == "led.rgb = 0, 0, 0") {
+			document.getElementById("led[0]").src = "assets/img/demo-modules/led.png";
 			Controlling_modules6();
 		} else if (command.match("0") || command.match("1") || command.match("2") || command.match("3") || command.match("4") || command.match("5") || command.match("6") || command.match("7") || command.match("8") || command.match("9")) {
 			con.log("Try again!");
