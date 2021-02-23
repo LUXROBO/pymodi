@@ -185,7 +185,7 @@ function Accessing_module3() {
 	key_page = 9;
 	con.logHTML("[＜modi.module.output_module.led.Led object at 0x0000012B425DE8C8＞]");
 	con.logHTML("<br>");
-	con.logHTML("If you have followed previous instructions correctly, there must be one led module connected to the network module. Now, make an led variable by accessing the first led module.");
+	con.logHTML("If you have followed previous instructions correctly, there must be one LED module connected to the network module. Now, make an LED variable by accessing the first LED module.");
 	con.logHTML("<br>");
 	con.logHTML("Enter Command : ");
 	con.logHTML("led = bundle.leds[0]");
@@ -213,7 +213,7 @@ function Controlling_modules() {
 function Controlling_modules2() {
 	key_page = 12;
 	con.logHTML("<br>");
-	con.logHTML("Perfect. With your button module and led module, we can either get data from the module or send command to the module.");
+	con.logHTML("Perfect. With your button module and LED module, we can either get data from the module or send command to the module.");
 	con.logHTML("<br>");
 	con.logHTML('"pressed" is a property method of a button module which returns whether the button is pressed or not (i.e. press state).');
 	con.logHTML("<br>");
@@ -234,7 +234,7 @@ function Controlling_modules4() {
 	key_page = 14;
 	con.logHTML("<br>");
 	con.logHTML("Good. if you click the button one more, the button's state return 'not pressed'.");
-	con.logHTML("Now let's send a command to the led module. Led's rgb is a property or setter method of an led module.");
+	con.logHTML("Now let's send a command to the LED module. LED's rgb is a property or setter method of an led module.");
 	con.logHTML("Let there be light by typing led.rgb = 0, 0, 100");
 	con.logHTML("<br>");
 	con.logHTML("Enter Command : led.rgb = 0, 0, 100");
@@ -244,7 +244,7 @@ function Controlling_modules5() {
 	key_page = 15;
 	con.logHTML("<br>");
 	con.logHTML("Perfect! You will see the blue light from the LED module.");
-	con.logHTML("if you want to turn off the led, this code let you what you want.")
+	con.logHTML("if you want to turn off the LED, this code let you what you want.")
 	con.logHTML("<br>");
 	con.logHTML("Enter Command : led.rgb = 0, 0, 0");
 };
@@ -262,8 +262,8 @@ function Pymodi_project() {
 	con.logHTML("------------------------------------------------------");
 	con.logHTML("&emsp;&emsp;&emsp;&emsp;Lesson 4: Your First PyMODI Project");
 	con.logHTML("------------------------------------------------------");
-	con.logHTML("Let's make a project that blinks led when button 'is pressed'.");
-	con.logHTML("In an infinite loop, we want our led to light up");
+	con.logHTML("Let's make a project that blinks LED when button 'is pressed'.");
+	con.logHTML("In an infinite loop, we want our LED to light up");
 	con.logHTML("when button is pressed, and turn off when not pressed. Complete the following code based on the description.");
 	con.logHTML("<br>");
 	con.logHTML("Press ENTER when you're ready!");
@@ -342,7 +342,7 @@ function Prepare_modi() {
 	con.logHTML("=&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp;&nbsp;&nbsp;Preparing the modi object...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;=");
 	con.logHTML("==============================================");
 	con.logHTML("In order to skip the first lesson, we need to set-up the prerequisites.");
-	con.logHTML("Thus, connect button and led module to your device.");
+	con.logHTML("Thus, connect button and LED module to your device.");
 	con.logHTML("<br>");
 
 
@@ -510,7 +510,7 @@ function handle_command(command){
 			con.logHTML(". . .&emsp;&emsp;elif button.double_clicked:");
 			con.logHTML(". . .&emsp;&emsp;&emsp;&emsp;break");
 			con.logHTML(". . .&emsp;&emsp;else:");
-			con.logHTML(". . .&emsp;&emsp;&emsp;&emsp;# Turn off the led. (i.e. set color to (0, 0, 0))");
+			con.logHTML(". . .&emsp;&emsp;&emsp;&emsp;# Turn off the LED. (i.e. set color to (0, 0, 0))");
 			con.input.value = ". . .        ";
 		} else if (!command.match(". . .        led.rgb = 0, 0, 0") && input_code == 2 && key_page == 18) {
 			con.log('Try again! the answer is "led.rgb = 0, 0, 0". Type it below.');
@@ -524,7 +524,7 @@ function handle_command(command){
 			}
 			else {
 				input_code += 1;
-				con.logHTML(". . .&emsp;&emsp;&emsp;&emsp;# Set Led color to green");
+				con.logHTML(". . .&emsp;&emsp;&emsp;&emsp;# Set LED color to green");
 				con.input.value = ". . .        ";
 			}
 		} else if (command == "bundle.modules" && key_page == 7) {
