@@ -274,7 +274,7 @@ function Pymodi_project2() {
 	key_page = 18;
 	con.logHTML("while True:");
 	con.logHTML(". . .&emsp;&emsp;# Check if button is pressed");
-	con.input.value = ". . .    if ";
+	con.input.value = ". . .   if ";
 }
 
 function Pymodi_project3() {
@@ -316,7 +316,8 @@ function Play_project() {
 		con.logHTML("loop is end.");
 		con.logHTML("Press ENTER");
 		key_page = 20;
-		return;
+		img.onclick = function(){};
+		img.ondblclick = function(){};
 	}
 }
 
@@ -442,6 +443,10 @@ function handle_command(command){
 				Prepare_modi();
 			}
 		}
+		else 
+		{
+			con.logHTML("<br>");
+		}
 	}
 	// command process
 	else {
@@ -502,30 +507,30 @@ function handle_command(command){
 			}
 		} else if (command == "bundle = modi.MODI()" && key_page == 5) {
 			bundle_modi();
-		} else if (!command.match(". . .        led.rgb = 0, 100, 0") && input_code == 1 && key_page == 18) {
+		} else if (!command.match(". . .       led.rgb = 0, 100, 0") && input_code == 1 && key_page == 18) {
 			con.log('Try again! the answer is "led.rgb = 0, 100, 0". Type it below.');
-			con.input.value = ". . .        ";
-		} else if (command.match(". . .        led.rgb = 0, 100, 0") && input_code == 1 && key_page == 18) {
+			con.input.value = ". . .       ";
+		} else if (command.match(". . .       led.rgb = 0, 100, 0") && input_code == 1 && key_page == 18) {
 			input_code += 1;
 			con.logHTML(". . .&emsp;&emsp;elif button.double_clicked:");
 			con.logHTML(". . .&emsp;&emsp;&emsp;&emsp;break");
 			con.logHTML(". . .&emsp;&emsp;else:");
 			con.logHTML(". . .&emsp;&emsp;&emsp;&emsp;# Turn off the LED. (i.e. set color to (0, 0, 0))");
-			con.input.value = ". . .        ";
-		} else if (!command.match(". . .        led.rgb = 0, 0, 0") && input_code == 2 && key_page == 18) {
+			con.input.value = ". . .       ";
+		} else if (!command.match(". . .       led.rgb = 0, 0, 0") && input_code == 2 && key_page == 18) {
 			con.log('Try again! the answer is "led.rgb = 0, 0, 0". Type it below.');
-			con.input.value = ". . .            ";
-		} else if (command.match(". . .        led.rgb = 0, 0, 0") && input_code == 2 && key_page == 18) {
+			con.input.value = ". . .           ";
+		} else if (command.match(". . .       led.rgb = 0, 0, 0") && input_code == 2 && key_page == 18) {
 			Pymodi_project3();
 		} else if (lesson_ == 5 && key_page == 18){
-			if (!command.match(". . .    if button.pressed:") && input_code == 0) {
+			if (!command.match(". . .   if button.pressed:") && input_code == 0) {
 				con.log('Try again! the answer is "button.pressed: ". Type it below.');
-				con.input.value = ". . .    if ";
+				con.input.value = ". . .   if ";
 			}
 			else {
 				input_code += 1;
 				con.logHTML(". . .&emsp;&emsp;&emsp;&emsp;# Set LED color to green");
-				con.input.value = ". . .        ";
+				con.input.value = ". . .       ";
 			}
 		} else if (command == "bundle.modules" && key_page == 7) {
 			Accessing_module2();
