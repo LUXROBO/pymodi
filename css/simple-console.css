@@ -12,7 +12,7 @@
 }
 
 .simple-console-output {
-	overflow: auto;
+	overflow: hidden;
 	flex: 0;
 	flex-basis: auto;
 }
