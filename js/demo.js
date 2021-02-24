@@ -59,12 +59,12 @@ intro_page();
 
 // Tutorial page
 function intro_page() {
-	con.logHTML("==============================================");
-	con.logHTML("=&emsp;&emsp;&emsp;&nbsp;&nbsp;&nbsp;&nbsp;Welcome to PyMODI Tutorial&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;=");
-	con.logHTML("==============================================");
+	con.logHTML("<center>============================================</center>");
+	con.logHTML("<center>Welcome to PyMODI Tutorial</center>");
+	con.logHTML("<center>============================================</center>");
 	con.logHTML("PyMODI is a very powerful tool that can control the MODI modules using python scripts. As long as you learn how to use built-in functions of PyMODI, you can easily control MODI modules. This interactive GUI tutorial will guide you through the world of PyMODI.");
 	con.logHTML("<br>")
-	con.logHTML("Please drag Network, Button, LED module and drop at the centor area First!");
+	con.logHTML("Please drag Network, Button, LED module and drop at the center area First!");
 	con.logHTML("<br>");
 	con.logHTML("If you've succeeded in dragging and dropping all the modules, please enter the command 'play'.");
 	con.logHTML("Enter Command : play");
@@ -84,9 +84,9 @@ function play_page() {
 };
 
 function makingMODI_page() {
-	con.logHTML("------------------------------------------------------");
-	con.logHTML("&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Lesson 1: Making MODI");
-	con.logHTML("------------------------------------------------------");
+	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>Lesson 1: Making MODI</center>");
+	con.logHTML("<center>------------------------------------------------------</center>");
 	con.logHTML("First, you should import modi.");
 	con.logHTML("<br>");
 	con.logHTML("Enter Command : import modi");
@@ -130,7 +130,7 @@ function importMODI_reaction2() {
 			con.logHTML("<br>");
 		}
 
-		con.logHTML("If you haven't moved the module yet, Please drag Network, Button, LED module and drop at the centor area.");
+		con.logHTML("If you haven't moved the module yet, Please drag Network, Button, LED module and drop at the center area.");
 		con.logHTML("<br>");
 		con.logHTML("If the modules are ready, press ENTER to continue.");
 		key_page = 3;
@@ -161,9 +161,9 @@ function bundle_modi() {
 
 function Accessing_module() {
 	key_page = 7;
-	con.logHTML("------------------------------------------------------");
-	con.logHTML("&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Lesson 2: Accessing modules");
-	con.logHTML("------------------------------------------------------");
+	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>Lesson 2: Accessing modules</center>");
+	con.logHTML("<center>------------------------------------------------------</center>");
 	con.logHTML("In the previous lesson, you created a MODI object. Let's figure out how we can access modules connected to it.");
 	con.logHTML("");
 	con.logHTML('"bundle.modules" is a method to get all the modules connected to the device.');
@@ -203,9 +203,9 @@ function Accessing_module4() {
 
 function Controlling_modules() {
 	key_page = 11;
-	con.logHTML("------------------------------------------------------");
-	con.logHTML("&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Lesson 3: Controlling modules");
-	con.logHTML("------------------------------------------------------");
+	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>Lesson 3: Controlling modules</center>");
+	con.logHTML("<center>------------------------------------------------------</center>");
 	con.logHTML("Now you know how to access individual modules. Let's make an object named 'button' as well for your button module. You know how to do it (You have the modi object, 'bundle').");
 	error_count = 1;
 };
@@ -224,7 +224,7 @@ function Controlling_modules3() {
 	key_page = 13;
 	con.logHTML("<br>");
 	con.logHTML("Now, see if the same command returns True when pressing the button.");
-	con.logHTML("You can press the button by clicking on the button where in the centor area.");
+	con.logHTML("You can press the button by clicking on the button where in the center area.");
 	con.logHTML("<br>");
 	con.logHTML('Type "button.pressed", after press the button.');
 	Button_press();
@@ -259,9 +259,9 @@ function Controlling_modules6() {
 
 function Pymodi_project() {
 	key_page = 17;
-	con.logHTML("------------------------------------------------------");
-	con.logHTML("&emsp;&emsp;&emsp;&emsp;Lesson 4: Your First PyMODI Project");
-	con.logHTML("------------------------------------------------------");
+	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>Lesson 4: Your First PyMODI Project</center>");
+	con.logHTML("<center>------------------------------------------------------</center>");
 	con.logHTML("Let's make a project that blinks LED when button 'is pressed'.");
 	con.logHTML("In an infinite loop, we want our LED to light up");
 	con.logHTML("when button is pressed, and turn off when not pressed. Complete the following code based on the description.");
@@ -280,7 +280,7 @@ function Pymodi_project2() {
 function Pymodi_project3() {
 	key_page = 19;
 	con.logHTML("Congrats!! Now let's see if the code works as we want. Press the button to light up the led. Double click the button to break out of the loop.");
-	con.logHTML("Try it =======================================>");
+	con.logHTML("<center>Try it ===================================></center>");
 	Play_project();
 }
 
@@ -338,9 +338,9 @@ function Button_press() {
 };
  
 function Prepare_modi() {
-	con.logHTML("==============================================");
-	con.logHTML("=&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp;&nbsp;&nbsp;Preparing the modi object...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;=");
-	con.logHTML("==============================================");
+	con.logHTML("<center>============================================</center>");
+	con.logHTML("<center>Preparing the modi object...</center>");
+	con.logHTML("<center>============================================</center>");
 	con.logHTML("In order to skip the first lesson, we need to set-up the prerequisites.");
 	con.logHTML("Thus, connect button and LED module to your device.");
 	con.logHTML("<br>");
@@ -369,7 +369,7 @@ function Prepare_modi() {
 			con.logHTML("<br>");
 		}
 
-		con.logHTML("If you haven't moved the module yet, Please drag Network, Button, LED module and drop at the centor area.");
+		con.logHTML("If you haven't moved the module yet, Please drag Network, Button, LED module and drop at the cener area.");
 		con.logHTML("If the modules are ready, press ENTER to continue.");
 	};
 	key_page = 21;
