@@ -1,4 +1,4 @@
-
+//SimpleConsole interface source
 
 
 var SimpleConsole = function(options) {

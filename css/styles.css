@@ -10378,3 +10378,30 @@ dd {
 dd.hidden {
    display: none;
 }
+
+
+/* drag & drop css */
+#dropZone,
+#modules {
+  padding-top: 40px;
+  padding-left: 3px;
+  background-color: rgb(255, 255, 255);
+  width: 170px;
+  height: 535px;
+  border: 1px solid #aaaaaa;
+  float: left;
+}
+              
+#dropBox1 {
+  background-color: rgb(248, 236, 184);
+  background-image: url("../assets/img/backgroundimg.PNG");
+  width: 400px;
+  border: 1px solid #aaaaaa;
+  padding: 1rem;
+  float: left;
+  height: 535px; 
+}
+#draggable {
+  width: 150px; height: 150px; padding: 0.5em;
+}
+

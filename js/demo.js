@@ -14,27 +14,29 @@ function allowDrop(event) {
 	
 function drag(event) {
 	event.dataTransfer.setData("text", event.target.id);
-	}
+}
 
 function drop(event) {
 	event.preventDefault();
 	var data = event.dataTransfer.getData("text");
-	
 	var nodeCopy = document.getElementById(data).cloneNode(true);
 	
-	if (nodeCopy.id.match("[0]")) {}
-	else nodeCopy.id += "[0]";
+	if (nodeCopy.id.match("[0]")) {
+		//null
+	} else {
+		nodeCopy.id += "[0]";
+	}
 
-	if(nodeCopy.id == "network[0]" || nodeCopy.id == "button[0]" || nodeCopy.id == "led[0]")
-	{
+	if (nodeCopy.id == "network[0]" || nodeCopy.id == "button[0]" || nodeCopy.id == "led[0]") {
 		id.push(nodeCopy.id);
 	}
-	event.target.appendChild(nodeCopy);
-		if (event.target == document.getElementById("dropBox1")) {
-			var trs = document.getElementById(data);
-			trs.parentNode.removeChild(trs);
 
-		}
+	event.target.appendChild(nodeCopy);
+	
+	if (event.target == document.getElementById("dropBox1")) {
+		var trs = document.getElementById(data);
+		trs.parentNode.removeChild(trs);
+	}
 }
 
 /* js console part */
@@ -46,7 +48,7 @@ var con = new SimpleConsole({
 });
 
 var lesson_ = 0; // key value of enter
-var input_code = 0; // code page in lesson 4 
+var input_code = 0; // code input key in lesson 4 
 var error_count = 0; // try count
 var is_module_all = 0; // 0:modules are not ready / 1:modulese are ready
 var button_toggle = 0; // 0:noclick / 1:click
@@ -66,7 +68,7 @@ function intro_page() {
 	con.logHTML("Please drag Network, Button, LED module and drop at the center area First!");
 	con.logHTML("<br>");
 	con.logHTML("If you've succeeded in dragging and dropping all the modules, please enter the command 'play'.");
-	con.logHTML("Enter Command : play");
+	con.logHTML("Enter Command : play"); 
 }
 
 function play_page() {
@@ -105,23 +107,23 @@ function importMODI_reaction() {
 function importMODI_reaction2() {
 	key_page = 4;
 	con.logHTML("");
-	if(id.indexOf("network[0]") != -1 && id.indexOf("button[0]") != -1 && id.indexOf("led[0]") != -1){
+	if (id.indexOf("network[0]") != -1 && id.indexOf("button[0]") != -1 && id.indexOf("led[0]") != -1) {
 		con.log("modules are connected!");
 		con.logHTML("<br>");
 		is_module_all = 1;
 		importMODI_reaction3();
-	} else{
+	} else { 
 		let need_id = [];
-		if(id.indexOf("network[0]") == -1) {
+		if (id.indexOf("network[0]") == -1) {
 			need_id.push("network");
 		} 
-		if(id.indexOf("button[0]") == -1) {
+		if (id.indexOf("button[0]") == -1) {
 			need_id.push("button");
 		}
-		if(id.indexOf("led[0]") == -1) {
+		if (id.indexOf("led[0]") == -1) {
 			need_id.push("led");
 		}
-		if(need_id != null) {
+		if (need_id != null) {
 			con.log("[" + need_id + "]");
 			con.log("Modules are not connected!");
 			con.logHTML("<br>");
@@ -131,7 +133,7 @@ function importMODI_reaction2() {
 		con.logHTML("<br>");
 		con.logHTML("If the modules are ready, press ENTER to continue.");
 		key_page = 3;
-	};
+	}
 }
 
 function importMODI_reaction3() {
@@ -306,45 +308,39 @@ function Pymodi_project_writeCode() {
 function Play_project() {
 	var img = document.getElementById("button[0]");
 
-	img.onclick = function(){
-		if (button_toggle == 1 )
-		{
+	img.onclick = function() {
+		if (button_toggle == 1 ) {
 			img.src = "assets/img/demo-modules/button.png";
 			document.getElementById("led[0]").src = "assets/img/demo-modules/led.png";	
 			button_toggle = 0;
-		}
-		else if (button_toggle == 0)
-		{
+		} else if (button_toggle == 0) {
 			img.src = "assets/img/demo-modules/button_click.png";
 			document.getElementById("led[0]").src = "assets/img/demo-modules/led_green.png";
 			button_toggle = 1;
 		}
-	}
+	};
 
 	img.ondblclick = function() {
 		key_page = 20;
 		con.logHTML("loop is end.");
 		con.logHTML("Press ENTER");
-		img.onclick = function(){}
-		img.ondblclick = function(){}
-	}
+		img.onclick = function(){};
+		img.ondblclick = function(){};
+	};
 }
 
 function Button_press() {
 	var imgs = document.getElementById("button[0]");
 
-	imgs.onclick = function(){
-		if (button_toggle == 1)
-		{
+	imgs.onclick = function() {
+		if (button_toggle == 1) {
 			imgs.src = "assets/img/demo-modules/button.png";	
 			button_toggle = 0;
-		}
-		else if (button_toggle == 0)
-		{
+		} else if (button_toggle == 0) {
  			imgs.src = "assets/img/demo-modules/button_click.png";	
 			button_toggle = 1;
 		}
-	}
+	};
 }
 
 function Prepare_modi() {
@@ -357,25 +353,27 @@ function Prepare_modi() {
 	con.logHTML("<br>");
 
 
-	if(id.indexOf("network[0]") != -1 && id.indexOf("button[0]") != -1 && id.indexOf("led[0]") != -1){
+	if (id.indexOf("network[0]") != -1 && id.indexOf("button[0]") != -1 && id.indexOf("led[0]") != -1) {
 		con.log("modules are connected!");
 		con.logHTML("<br>");
 		is_module_all = 1;
 		con.logHTML("Press ENTER to continue.");
-	}
-	else{
+	} else {
 		let need_id = [];
-		if(id.indexOf("network[0]") == -1) {
+		if (id.indexOf("network[0]") == -1) {
 			need_id.push("network");
 		} 
-		if(id.indexOf("button[0]") == -1) {
+
+		if (id.indexOf("button[0]") == -1) {
 			need_id.push("button");
 		}
-		if(id.indexOf("led[0]") == -1) {
+
+		if (id.indexOf("led[0]") == -1) {
 			need_id.push("led");
-		}
-		if(need_id != null) {
-			con.log("["+need_id+"]");
+		} 
+		
+		if (need_id != null) {
+			con.log("[" + need_id + "]");
 			con.log("Modules are not connected!");
 			con.logHTML("<br>");
 		}
@@ -406,59 +404,43 @@ function handle_command(command){
 
 
 	// press enter to the next action
-	if (command == ""){ 
-		if (lesson_ == 1 && key_page == 3){
+	if (command == "") { 
+		if (lesson_ == 1 && key_page == 3) {
 			con.clear();
 			importMODI_reaction2();
-
-		}
-		else if (lesson_ == 2 && key_page == 6){
+		} else if (lesson_ == 2 && key_page == 6) {
 			con.clear();
 			Accessing_module();
 			lesson_ = 0;
-		}
-		else if (lesson_ == 3 && key_page == 10){
+		} else if (lesson_ == 3 && key_page == 10) {
 			con.clear();
 			Controlling_modules();
 			lesson_ = 0;
-		}
-		else if (lesson_ ==4 && key_page == 16){
+		} else if (lesson_ ==4 && key_page == 16) {
 			con.clear();
 			Pymodi_project();
-		}
-		else if (lesson_ == 6 && key_page == 17){
+		} else if (lesson_ == 6 && key_page == 17) {
 			con.clear();
 			Pymodi_project2();
 			lesson_ = 5;
-		}
-		else if (key_page == 20)
-		{
+		} else if (key_page == 20) {
 			con.clear();
 			Pymodi_project4();
-		}
-		else if (key_page == 21)
-		{
+		} else if (key_page == 21) {
 			con.clear();
-			if (command_lesson == 2 && is_module_all == 1){
+			if (command_lesson == 2 && is_module_all == 1) {
 				Accessing_module();
-			}
-			else if (command_lesson == 3 && is_module_all == 1){
+			} else if (command_lesson == 3 && is_module_all == 1) {
 				Controlling_modules();
-			}
-			else if (command_lesson == 4 && is_module_all == 1){
+			} else if (command_lesson == 4 && is_module_all == 1) {
 				Pymodi_project();
-			}
-			else {
+			} else {
 				Prepare_modi();
 			}
-		}
-		else 
-		{
+		} else {
 			con.logHTML("<br>");
 		}
-	}
-	// command process
-	else {
+	} else { //command process
 		if (command == "import modi" && key_page == 2) {
 			con.log((command.match(/^[A-Z]/) ? "MODI" : "Running PyMODI (v1.1.0)") + (command.match(/\.|!/) ? "." : ""));
 			importMODI_reaction();
@@ -467,7 +449,7 @@ function handle_command(command){
 			con.clear();
 			lesson_ = 0;
 			input_code = 0;
-			key_page =0;
+			key_page = 0;
 
 		} else if (command == "tutorial") {
 			lesson_ = 0;
@@ -486,34 +468,31 @@ function handle_command(command){
 		} else if (command == "2" && key_page == 1) { 
 			command_lesson = 2;
 			con.clear();
-			if (is_module_all == 0)
-			{
+			if (is_module_all == 0) {
 				Prepare_modi();
-			}
-			else {
+			} else {
 				con.clear();
 				Accessing_module();
 			}
+
 		} else if (command == "3" && key_page == 1) { 
 			command_lesson =3;
 			con.clear();
-			if (is_module_all == 0)
-			{
+			if (is_module_all == 0) {
 				Prepare_modi();
-			}
-			else {
+			} else {
 				Controlling_modules();
 			}
+
 		} else if (command == "4" && key_page == 1) { 
 			command_lesson =4;
 			con.clear();
-			if (is_module_all == 0)
-			{
+			if (is_module_all == 0) {
 				Prepare_modi();
-			}
-			else {
+			} else {
 				Pymodi_project();
 			}
+
 		} else if (command == "bundle = modi.MODI()" && key_page == 5) {
 			bundle_modi();
 
@@ -531,16 +510,16 @@ function handle_command(command){
 		} else if (command.match(". . .       led.rgb = 0, 0, 0") && input_code == 2 && key_page == 18) {
 			Pymodi_project3();
 
-		} else if (lesson_ == 5 && key_page == 18){
+		} else if (lesson_ == 5 && key_page == 18) {
 			if (!command.match(". . .   if button.pressed:") && input_code == 0) {
 				Try_again("button.pressed:");
 				con.input.value = ". . .   if ";
-			}
-			else {
+			} else {
 				input_code ++;
 				con.logHTML(". . .&emsp;&emsp;&emsp;&emsp;# Set LED color to green");
 				con.input.value = ". . .       ";
 			}
+
 		} else if (command == "bundle.modules" && key_page == 7) {
 			Accessing_module2();
 
@@ -551,11 +530,11 @@ function handle_command(command){
 			Accessing_module4();
 
 		} else if (command != "button = bundle.buttons[0]" && key_page == 11) {
-			if (error_count <= 1){
+			if (error_count <= 1) {
 				con.log("Try again!");
 				error_count++;
 			}
-			else if(error_count > 1) {
+			else if (error_count > 1) {
 				Try_again("button = bundle.buttons[0]");
 				error_count++;
 			}
@@ -564,13 +543,10 @@ function handle_command(command){
 			Controlling_modules2();
 
 		} else if ((command == "button.pressed" && key_page == 12) || (command == "button.pressed" && key_page == 13)) {
-			if (button_toggle == 0)
-			{
+			if (button_toggle == 0) {
 				con.log("False");
 				Controlling_modules3();
-			}
-			else if (button_toggle == 1 && key_page == 13)
-			{
+			} else if (button_toggle == 1 && key_page == 13) {
 				con.log("True");
 				Controlling_modules4();
 			}
@@ -588,12 +564,12 @@ function handle_command(command){
 
 		} else {
 			var err;
-			try{
+			try {
 				var result = eval(command);
-			}catch(error) {
+			} catch(error) {
 				err = error;
 			}
-			if(err) {
+			if (err) {
 				con.error(err);
 			} else {
 				con.log(result).classList.add("result");
