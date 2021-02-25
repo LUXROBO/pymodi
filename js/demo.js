@@ -57,18 +57,23 @@ var command_lesson = 0; //copy command keyword by lesson
 
 intro_page();
 
+//time sleep function
+function sleep(ms) {
+	return new Promise((r) => setTimeout(r, ms))
+}
 // Tutorial page
 function intro_page() {
 	key_page = 0;
-	con.logHTML("<center>============================================</center>");
-	con.logHTML("<center>Welcome to PyMODI Tutorial</center>");
-	con.logHTML("<center>============================================</center>");
+	con.logHTML("<center>=====================================</center>");
+	con.logHTML("<center>=&emsp;&emsp;&emsp;&emsp;Welcome to PyMODI Tutorial&emsp;&emsp;&emsp;&emsp;=</center>");
+	con.logHTML("<center>=====================================</center>");
 	con.logHTML("PyMODI is a very powerful tool that can control the MODI modules using python scripts. As long as you learn how to use built-in functions of PyMODI, you can easily control MODI modules. This interactive GUI tutorial will guide you through the world of PyMODI.");
 	con.logHTML("<br>")
 	con.logHTML("Please drag Network, Button, LED module and drop at the center area First!");
 	con.logHTML("<br>");
-	con.logHTML("If you've succeeded in dragging and dropping all the modules, please enter the command 'play'.");
-	con.logHTML("Enter Command : play"); 
+	con.logHTML("If you've succeeded in dragging and dropping all the modules, please press ENTER.");
+	con.logHTML("<br>");
+	con.logHTML("Press ENTER.");
 }
 
 function play_page() {
@@ -85,9 +90,7 @@ function play_page() {
 
 function makingMODI_page() {
 	key_page = 2;
-	con.logHTML("<center>------------------------------------------------------</center>");
-	con.logHTML("<center>Lesson 1: Making MODI</center>");
-	con.logHTML("<center>------------------------------------------------------</center>");
+	Lesson1_cover();
 	con.logHTML("First, you should import modi.");
 	con.logHTML("<br>");
 	con.logHTML("Enter Command : import modi");
@@ -106,6 +109,7 @@ function importMODI_reaction() {
 
 function importMODI_reaction2() {
 	key_page = 4;
+	Lesson1_cover();
 	con.logHTML("");
 	if (id.indexOf("network[0]") != -1 && id.indexOf("button[0]") != -1 && id.indexOf("led[0]") != -1) {
 		con.log("modules are connected!");
@@ -145,24 +149,27 @@ function importMODI_reaction3() {
 
 function bundle_modi() {
 	key_page = 6;
-	con.logHTML("Start initializing connected MODI modules");
-	con.logHTML("Network (1761) has been connected!");
-	con.logHTML("Button (3718) has been connected!");
-	con.logHTML("Led (2931) has been connected!");
-	con.logHTML("MODI modules are initialized!");
-	con.logHTML("<br>");
-	con.logHTML('Great! The "bundle" is your MODI object. With it, you can control all the modules connected to your device.');
-	con.logHTML("<br>");
-	con.logHTML("You have completed this lesson.");
-	con.logHTML("Press ENTER to continue.");
+	sleep(300)
+	.then(() => con.logHTML("Start initializing connected MODI modules"))
+	.then(() => sleep(500))
+	.then(() => con.logHTML("Network (1761) has been connected!"))
+	.then(() => sleep(300))
+	.then(() => con.logHTML("Button (3718) has been connected!"))
+	.then(() => con.logHTML("Led (2931) has been connected!"))
+	.then(() => sleep(500))
+	.then(() => con.logHTML("MODI modules are initialized!"))
+	.then(() => sleep(300))
+	.then(() => con.logHTML("<br>"))
+	.then(() => con.logHTML('Great! The "bundle" is your MODI object. With it, you can control all the modules connected to your device.'))
+	.then(() => con.logHTML("<br>"))
+	.then(() => con.logHTML("You have completed this lesson."))
+	.then(() => con.logHTML("Press ENTER to continue."));
 	lesson_ = 2;
 }
 
 function Accessing_module() {
 	key_page = 7;
-	con.logHTML("<center>------------------------------------------------------</center>");
-	con.logHTML("<center>Lesson 2: Accessing modules</center>");
-	con.logHTML("<center>------------------------------------------------------</center>");
+	Lesson2_cover();
 	con.logHTML("In the previous lesson, you created a MODI object. Let's figure out how we can access modules connected to it.");
 	con.logHTML("");
 	con.logHTML('"bundle.modules" is a method to get all the modules connected to the device.');
@@ -172,26 +179,31 @@ function Accessing_module() {
 
 function Accessing_module2() {
 	key_page = 8;
-	con.logHTML("[＜modi.module.setup_module.network.Network object at 0x0000012B42B6E288＞, ＜modi.module.output_module.led.Led object at 0x0000012B425DE8C8＞, ＜modi.module.input_module.button.Button object at 0x0000012B42B6E308＞]");
-	con.logHTML("<br>");
-	con.logHTML("you can see two modules connected (excluding the network module) to the machine. You can access each module by the same method we use with an array.");
-	con.logHTML("You can also access modules by types.");
-	con.logHTML("<br>");
-	con.logHTML("Enter Command : bundle.leds");
+	sleep(100)
+	.then(() => con.logHTML("[＜modi.module.setup_module.network.Network object at 0x0000012B42B6E288＞, ＜modi.module.output_module.led.Led object at 0x0000012B425DE8C8＞, ＜modi.module.input_module.button.Button object at 0x0000012B42B6E308＞]"))
+	.then(() => con.logHTML("<br>"))
+	.then(() => sleep(300))
+	.then(() => con.logHTML("you can see two modules connected (excluding the network module) to the machine. You can access each module by the same method we use with an array."))
+	.then(() => con.logHTML("You can also access modules by types."))
+	.then(() => con.logHTML("<br>"))
+	.then(() => con.logHTML("Enter Command : bundle.leds"))
 }
 
 function Accessing_module3() {
 	key_page = 9;
-	con.logHTML("[＜modi.module.output_module.led.Led object at 0x0000012B425DE8C8＞]");
-	con.logHTML("<br>");
-	con.logHTML("If you have followed previous instructions correctly, there must be one LED module connected to the network module. Now, make an LED variable by accessing the first LED module.");
-	con.logHTML("<br>");
-	con.logHTML("Enter Command : ");
-	con.logHTML("led = bundle.leds[0]");
+	sleep(300)
+	.then(() => con.logHTML("[＜modi.module.output_module.led.Led object at 0x0000012B425DE8C8＞]"))
+	.then(() => sleep(300))
+	.then(() => con.logHTML("<br>"))
+	.then(() => con.logHTML("If you have followed previous instructions correctly, there must be one LED module connected to the network module. Now, make an LED variable by accessing the first LED module."))
+	.then(() => con.logHTML("<br>"))
+	.then(() => con.logHTML("Enter Command : "))
+	.then(() => con.logHTML("led = bundle.leds[0]"))
 }
 
 function Accessing_module4() {
 	key_page = 10;
+	con.logHTML("<br>");
 	con.logHTML('Super! You can now do whatever you want with these modules. If you have different modules connected, you can access the modules in a same way, just typing "bundle"');
 	con.logHTML("<br>");
 	con.logHTML("You have completed this lesson.");
@@ -201,9 +213,7 @@ function Accessing_module4() {
 
 function Controlling_modules() {
 	key_page = 11;
-	con.logHTML("<center>------------------------------------------------------</center>");
-	con.logHTML("<center>Lesson 3: Controlling modules</center>");
-	con.logHTML("<center>------------------------------------------------------</center>");
+	Lesson3_cover();
 	con.logHTML("Now you know how to access individual modules. Let's make an object named 'button' as well for your button module. You know how to do it (You have the modi object, 'bundle').");
 }
 
@@ -256,9 +266,7 @@ function Controlling_modules6() {
 
 function Pymodi_project() {
 	key_page = 17;
-	con.logHTML("<center>------------------------------------------------------</center>");
-	con.logHTML("<center>Lesson 4: Your First PyMODI Project</center>");
-	con.logHTML("<center>------------------------------------------------------</center>");
+	Lesson4_cover();
 	con.logHTML("Let's make a project that blinks LED when button 'is pressed'.");
 	con.logHTML("In an infinite loop, we want our LED to light up");
 	con.logHTML("when button is pressed, and turn off when not pressed. Complete the following code based on the description.");
@@ -290,6 +298,30 @@ function Pymodi_project4() {
 	con.logHTML("You have completed the tutorial.");
 	con.logHTML('If you want to try again, please enter command "tutorial".');
 
+}
+
+function Lesson1_cover() {
+	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>Lesson 1: Making MODI</center>");
+	con.logHTML("<center>------------------------------------------------------</center>");
+}
+
+function Lesson2_cover() {
+	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>Lesson 2: Accessing modules</center>");
+	con.logHTML("<center>------------------------------------------------------</center>");
+}
+
+function Lesson3_cover() {
+	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>Lesson 3: Controlling modules</center>");
+	con.logHTML("<center>------------------------------------------------------</center>");
+}
+
+function Lesson4_cover() {
+	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>Lesson 4: Your First PyMODI Project</center>");
+	con.logHTML("<center>------------------------------------------------------</center>");
 }
 
 function Try_again(answer) {
@@ -345,9 +377,9 @@ function Button_press() {
 
 function Prepare_modi() {
 	key_page = 21;
-	con.logHTML("<center>============================================</center>");
-	con.logHTML("<center>Preparing the modi object...</center>");
-	con.logHTML("<center>============================================</center>");
+	con.logHTML("<center>=====================================</center>");
+	con.logHTML("<center>=&nbsp;&emsp;&emsp;&emsp;&emsp;Preparing the modi object...&emsp;&emsp;&emsp;&emsp;=</center>");
+	con.logHTML("<center>=====================================</center>");
 	con.logHTML("In order to skip the first lesson, we need to set-up the prerequisites.");
 	con.logHTML("Thus, connect button and LED module to your device.");
 	con.logHTML("<br>");
@@ -405,7 +437,10 @@ function handle_command(command){
 
 	// press enter to the next action
 	if (command == "") { 
-		if (lesson_ == 1 && key_page == 3) {
+		if (key_page == 0) {
+			con.clear();
+			play_page();
+		} else if (lesson_ == 1 && key_page == 3) {
 			con.clear();
 			importMODI_reaction2();
 		} else if (lesson_ == 2 && key_page == 6) {
@@ -442,8 +477,9 @@ function handle_command(command){
 		}
 	} else { //command process
 		if (command == "import modi" && key_page == 2) {
-			con.log((command.match(/^[A-Z]/) ? "MODI" : "Running PyMODI (v1.1.0)") + (command.match(/\.|!/) ? "." : ""));
-			importMODI_reaction();
+			sleep(200)
+			.then(() => con.log((command.match(/^[A-Z]/) ? "MODI" : "Running PyMODI (v1.1.0)") + (command.match(/\.|!/) ? "." : "")))
+			.then(() => importMODI_reaction())
 
 		} else if (command.match(/^(reset)/i)) {
 			con.clear();
@@ -456,10 +492,6 @@ function handle_command(command){
 			input_code = 0;
 			con.clear();
 			intro_page();
-
-		} else if (command == "play" && key_page == 0) {
-			con.clear();
-			play_page();
 
 		} else if (command == "1" && key_page == 1) {
 			con.clear();
@@ -501,6 +533,7 @@ function handle_command(command){
 			con.input.value = ". . .       ";
 
 		} else if (command.match(". . .       led.rgb = 0, 100, 0") && input_code == 1 && key_page == 18) {
+			con.logHTML(". . .&emsp;&emsp;&emsp;&emsp;led.rgb = 0, 100, 0");
 			Pymodi_project_writeCode();
 
 		} else if (!command.match(". . .       led.rgb = 0, 0, 0") && input_code == 2 && key_page == 18) {
@@ -508,6 +541,7 @@ function handle_command(command){
 			con.input.value = ". . .       ";
 
 		} else if (command.match(". . .       led.rgb = 0, 0, 0") && input_code == 2 && key_page == 18) {
+			con.logHTML(". . .&emsp;&emsp;&emsp;&emsp;led.rgb = 0, 0, 0");
 			Pymodi_project3();
 
 		} else if (lesson_ == 5 && key_page == 18) {
@@ -516,6 +550,7 @@ function handle_command(command){
 				con.input.value = ". . .   if ";
 			} else {
 				input_code ++;
+				con.logHTML(". . .&emsp;&emsp;if button.pressed:");
 				con.logHTML(". . .&emsp;&emsp;&emsp;&emsp;# Set LED color to green");
 				con.input.value = ". . .       ";
 			}
@@ -544,20 +579,26 @@ function handle_command(command){
 
 		} else if ((command == "button.pressed" && key_page == 12) || (command == "button.pressed" && key_page == 13)) {
 			if (button_toggle == 0) {
-				con.log("False");
-				Controlling_modules3();
+				sleep(300)
+				.then(() => con.log("False"))
+				.then(() => sleep(300))
+				.then(() => Controlling_modules3())
 			} else if (button_toggle == 1 && key_page == 13) {
-				con.log("True");
-				Controlling_modules4();
+				sleep(300)
+				.then(() => con.log("True"))
+				.then(() => sleep(300))
+				.then(() => Controlling_modules4())
 			}
 			
 		} else if (command == "led.rgb = 0, 0, 100" && key_page == 14) {
-			document.getElementById("led[0]").src = "assets/img/demo-modules/led_blue.png";
-			Controlling_modules5();
+			sleep(300)
+			.then(() => document.getElementById("led[0]").src = "assets/img/demo-modules/led_blue.png")
+			.then(() => Controlling_modules5())
 
 		} else if (command == "led.rgb = 0, 0, 0" && key_page == 15) {
-			document.getElementById("led[0]").src = "assets/img/demo-modules/led.png";
-			Controlling_modules6();
+			sleep(300)
+			.then(() => document.getElementById("led[0]").src = "assets/img/demo-modules/led.png")
+			.then(() => Controlling_modules6())
 
 		} else if (command.match("0") || command.match("1") || command.match("2") || command.match("3") || command.match("4") || command.match("5") || command.match("6") || command.match("7") || command.match("8") || command.match("9")) {
 			con.log("Try again!");

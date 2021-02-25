@@ -10383,7 +10383,7 @@ dd.hidden {
 /* drag & drop css */
 #dropZone,
 #modules {
-  padding-top: 40px;
+  
   padding-left: 3px;
   background-color: rgb(255, 255, 255);
   width: 170px;
