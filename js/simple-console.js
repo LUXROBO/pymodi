@@ -365,8 +365,11 @@ var SimpleConsole = function(options) {
 	input.addEventListener("keydown", function(e) {
 		if (e.keyCode === 13) { // Enter
 			if (input.value == "") {
-				
+				var command = input.value;
+				input.value = "";
+				handle_command(command);
 			}
+			else {
 			var command = input.value;
 			input.value = "";
 
@@ -383,7 +386,7 @@ var SimpleConsole = function(options) {
 			output.scroll_to_bottom();
 
 			handle_command(command);
-
+		}
 		} else if (e.keyCode === 38) { // Up
 			
 			if (--command_index < 0) {
