@@ -473,7 +473,7 @@ function handle_command(command){
 				Prepare_modi();
 			}
 		} else {
-			con.logHTML("<br>");
+			
 		}
 	} else { //command process
 		if (command == "import modi" && key_page == 2) {

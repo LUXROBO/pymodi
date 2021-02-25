@@ -1,5 +1,5 @@
 //SimpleConsole interface source
-
+var count = 0;
 
 var SimpleConsole = function(options) {
 
@@ -364,7 +364,9 @@ var SimpleConsole = function(options) {
 
 	input.addEventListener("keydown", function(e) {
 		if (e.keyCode === 13) { // Enter
-
+			if (input.value == "") {
+				
+			}
 			var command = input.value;
 			input.value = "";
 
