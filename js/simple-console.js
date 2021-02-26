@@ -368,25 +368,36 @@ var SimpleConsole = function(options) {
 				var command = input.value;
 				input.value = "";
 				handle_command(command);
+			} else if (input.value.match(". . .       led.rgb = 0, 100, 0")) {
+				var command = input.value;
+				input.value = "";
+				handle_command(command);
+			} else if (input.value.match(". . .       led.rgb = 0, 0, 0")) {
+				var command = input.value;
+				input.value = "";
+				handle_command(command);
+			} else if (input.value.match(". . .   if button.clicked:")) {
+				var command = input.value;
+				input.value = "";
+				handle_command(command);
+			} else {
+				var command = input.value;
+				input.value = "";
+
+				if (command_history[command_history.length - 1] !== command) {
+					command_history.push(command);
+				}
+				command_index = command_history.length;
+				save_command_history();
+
+				var command_entry = log(command);
+				command_entry.classList.add("input");
+				add_chevron(command_entry);
+
+				output.scroll_to_bottom();
+
+				handle_command(command);
 			}
-			else {
-			var command = input.value;
-			input.value = "";
-
-			if (command_history[command_history.length - 1] !== command) {
-				command_history.push(command);
-			}
-			command_index = command_history.length;
-			save_command_history();
-
-			var command_entry = log(command);
-			command_entry.classList.add("input");
-			add_chevron(command_entry);
-
-			output.scroll_to_bottom();
-
-			handle_command(command);
-		}
 		} else if (e.keyCode === 38) { // Up
 			
 			if (--command_index < 0) {

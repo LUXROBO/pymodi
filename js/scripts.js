@@ -65,7 +65,7 @@
       });
     });
 
-    //
+    // MODI module navigation bar
     $('.module').click((e) => {
       const description = $(e.currentTarget).find('.module-description');
       const isOpened = $(description).hasClass('opened');
