@@ -65,7 +65,7 @@ function sleep(ms) {
 function intro_page() {
 	key_page = 0;
 	con.logHTML("<center>=====================================</center>");
-	con.logHTML("<center>=&emsp;&emsp;&emsp;&emsp;Welcome to PyMODI Tutorial&emsp;&emsp;&emsp;&emsp;=</center>");
+	con.logHTML("<center>Welcome to PyMODI Tutorial</center>");
 	con.logHTML("<center>=====================================</center>");
 	con.logHTML("PyMODI is a very powerful tool that can control the MODI modules using python scripts. As long as you learn how to use built-in functions of PyMODI, you can easily control MODI modules. This interactive GUI tutorial will guide you through the world of PyMODI.");
 	con.logHTML("<br>")
@@ -119,13 +119,13 @@ function importMODI_reaction2() {
 	} else { 
 		let need_id = [];
 		if (id.indexOf("network[0]") == -1) {
-			need_id.push("network");
+			need_id.push("NETWORK");
 		} 
 		if (id.indexOf("button[0]") == -1) {
-			need_id.push("button");
+			need_id.push("BUTTON");
 		}
 		if (id.indexOf("led[0]") == -1) {
-			need_id.push("led");
+			need_id.push("LED");
 		}
 		if (need_id != null) {
 			con.log("[" + need_id + "]");
@@ -222,18 +222,18 @@ function Controlling_modules2() {
 	con.logHTML("<br>");
 	con.logHTML("Perfect. With your button module and LED module, we can either get data from the module or send command to the module.");
 	con.logHTML("<br>");
-	con.logHTML('"pressed" is a property method of a button module which returns whether the button is pressed or not (i.e. press state).');
+	con.logHTML('"clicked" is a property method of a button module which returns whether the button is clicked or not (i.e. press state).');
 	con.logHTML("<br>");
-	con.logHTML("Check the press state of the button by typing <br>button.pressed");
+	con.logHTML("Check the press state of the button by typing <br>button.clicked");
 }
 
 function Controlling_modules3() {
 	key_page = 13;
 	con.logHTML("<br>");
-	con.logHTML("Now, see if the same command returns True when pressing the button.");
+	con.logHTML("Now, see if the same command returns True when clicked the button.");
 	con.logHTML("You can press the button by clicking on the button where in the center area.");
 	con.logHTML("<br>");
-	con.logHTML('Type "button.pressed", after press the button.');
+	con.logHTML('Type "button.clicked", after click the button.');
 	Button_press();
 }
 
@@ -267,9 +267,9 @@ function Controlling_modules6() {
 function Pymodi_project() {
 	key_page = 17;
 	Lesson4_cover();
-	con.logHTML("Let's make a project that blinks LED when button 'is pressed'.");
+	con.logHTML("Let's make a project that blinks LED when button 'is clicked'.");
 	con.logHTML("In an infinite loop, we want our LED to light up");
-	con.logHTML("when button is pressed, and turn off when not pressed. Complete the following code based on the description.");
+	con.logHTML("when button is clicked, and turn off when not clicked. Complete the following code based on the description.");
 	con.logHTML("<br>");
 	con.logHTML("Press ENTER when you're ready!");
 	lesson_ = 6;
@@ -278,14 +278,15 @@ function Pymodi_project() {
 function Pymodi_project2() {
 	key_page = 18;
 	con.logHTML("while True:");
-	con.logHTML(". . .&emsp;&emsp;# Check if button is pressed");
+	con.logHTML(". . .&emsp;&emsp;# Check if button is clicked");
 	con.input.value = ". . .   if ";
 }
 
 function Pymodi_project3() {
 	key_page = 19;
-	con.logHTML("Congrats!! Now let's see if the code works as we want. Press the button to light up the led. Double click the button to break out of the loop.");
-	con.logHTML("<center>Try it ===================================></center>");
+	con.logHTML("Congrats!! Now let's see if the code works as we want. Click the button to light up the led. Double click the button to break out of the loop.");
+	con.logHTML("<br>");
+	con.logHTML("Click the button on the right!");
 	Play_project();
 }
 
@@ -301,27 +302,27 @@ function Pymodi_project4() {
 }
 
 function Lesson1_cover() {
-	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>--------------------------------------------------</center>");
 	con.logHTML("<center>Lesson 1: Making MODI</center>");
-	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>--------------------------------------------------</center>");
 }
 
 function Lesson2_cover() {
-	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>--------------------------------------------------</center>");
 	con.logHTML("<center>Lesson 2: Accessing modules</center>");
-	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>--------------------------------------------------</center>");
 }
 
 function Lesson3_cover() {
-	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>--------------------------------------------------</center>");
 	con.logHTML("<center>Lesson 3: Controlling modules</center>");
-	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>--------------------------------------------------</center>");
 }
 
 function Lesson4_cover() {
-	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>--------------------------------------------------</center>");
 	con.logHTML("<center>Lesson 4: Your First PyMODI Project</center>");
-	con.logHTML("<center>------------------------------------------------------</center>");
+	con.logHTML("<center>--------------------------------------------------</center>");
 }
 
 function Try_again(answer) {
@@ -378,7 +379,7 @@ function Button_press() {
 function Prepare_modi() {
 	key_page = 21;
 	con.logHTML("<center>=====================================</center>");
-	con.logHTML("<center>=&nbsp;&emsp;&emsp;&emsp;&emsp;Preparing the modi object...&emsp;&emsp;&emsp;&emsp;=</center>");
+	con.logHTML("<center>Preparing the modi object...</center>");
 	con.logHTML("<center>=====================================</center>");
 	con.logHTML("In order to skip the first lesson, we need to set-up the prerequisites.");
 	con.logHTML("Thus, connect button and LED module to your device.");
@@ -393,15 +394,15 @@ function Prepare_modi() {
 	} else {
 		let need_id = [];
 		if (id.indexOf("network[0]") == -1) {
-			need_id.push("network");
+			need_id.push("NETWORK");
 		} 
 
 		if (id.indexOf("button[0]") == -1) {
-			need_id.push("button");
+			need_id.push("BUTTON");
 		}
 
 		if (id.indexOf("led[0]") == -1) {
-			need_id.push("led");
+			need_id.push("LED");
 		} 
 		
 		if (need_id != null) {
@@ -545,12 +546,12 @@ function handle_command(command){
 			Pymodi_project3();
 
 		} else if (lesson_ == 5 && key_page == 18) {
-			if (!command.match(". . .   if button.pressed:") && input_code == 0) {
-				Try_again("button.pressed:");
+			if (!command.match(". . .   if button.clicked:") && input_code == 0) {
+				Try_again("button.clicked:");
 				con.input.value = ". . .   if ";
 			} else {
 				input_code ++;
-				con.logHTML(". . .&emsp;&emsp;if button.pressed:");
+				con.logHTML(". . .&emsp;&emsp;if button.clicked:");
 				con.logHTML(". . .&emsp;&emsp;&emsp;&emsp;# Set LED color to green");
 				con.input.value = ". . .       ";
 			}
@@ -577,7 +578,7 @@ function handle_command(command){
 			error_count = 0;
 			Controlling_modules2();
 
-		} else if ((command == "button.pressed" && key_page == 12) || (command == "button.pressed" && key_page == 13)) {
+		} else if ((command == "button.clicked" && key_page == 12) || (command == "button.clicked" && key_page == 13)) {
 			if (button_toggle == 0) {
 				sleep(300)
 				.then(() => con.log("False"))

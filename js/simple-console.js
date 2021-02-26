@@ -368,8 +368,19 @@ var SimpleConsole = function(options) {
 				var command = input.value;
 				input.value = "";
 				handle_command(command);
-			}
-			else {
+			} else if (input.value.match(". . .       led.rgb = 0, 100, 0")) {
+				var command = input.value;
+				input.value = "";
+				handle_command(command);
+			} else if (input.value.match(". . .       led.rgb = 0, 0, 0")) {
+				var command = input.value;
+				input.value = "";
+				handle_command(command);
+			} else if (input.value.match(". . .   if button.clicked:")) {
+				var command = input.value;
+				input.value = "";
+				handle_command(command);
+			} else {
 			var command = input.value;
 			input.value = "";
 
