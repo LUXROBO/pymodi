@@ -40,16 +40,11 @@ class StdoutRedirect(QObject):
 
     @staticmethod
     def __is_redundant_line(line):
-        if line.startswith('\rUpdating'):
-            return True
-
-        if line.startswith('\rFirmware Upload: ['):
-            return True
-
-        if len(line) < 3:
-            return True
-
-        return False
+        return (
+            line.startswith('\rUpdating') or
+            line.startswith('\rFirmware Upload: [') or
+            len(line) < 3
+        )
 
 
 class Form(QtWidgets.QDialog):
@@ -219,10 +214,7 @@ class Form(QtWidgets.QDialog):
 
     @staticmethod
     def __is_update_progress_line(line):
-        if line.startswith('\rUpdating'):
-            return True
-
-        if line.startswith('\rFirmware Upload: ['):
-            return True
-
-        return False
+        return (
+            line.startswith('\rUpdating') or
+            line.startswith('\rFirmware Upload: [')
+        )
