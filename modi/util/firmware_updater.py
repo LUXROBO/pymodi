@@ -58,6 +58,12 @@ class STM32FirmwareUpdater:
 
         self.request_network_id()
 
+    def __del__(self):
+        try:
+            self.close()
+        except:
+            print('Magic del is called with an exception')
+
     def set_ui(self, ui):
         self.ui = ui
 
