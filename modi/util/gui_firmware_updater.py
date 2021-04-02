@@ -68,7 +68,7 @@ class Form(QtWidgets.QDialog):
             )
         self.ui = uic.loadUi(ui_path)
         self.ui.setWindowTitle('MODI Firmware Updater')
-        self.setFixedSize(self.size())
+        self.ui.setFixedSize(self.size())
         self.ui.show()
 
         # Redirect stdout to text browser (i.e. console in our UI)
