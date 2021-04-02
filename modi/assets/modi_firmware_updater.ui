@@ -10,6 +10,9 @@
     <height>338</height>
    </rect>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::StrongFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
@@ -27,6 +30,9 @@
        <width>550</width>
        <height>0</height>
       </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
     </widget>
    </item>
@@ -57,7 +63,7 @@
           </font>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::StrongFocus</enum>
+          <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
           <string>네트워크 모듈 업데이트</string>
@@ -67,6 +73,12 @@
            <width>64</width>
            <height>64</height>
           </size>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -104,6 +116,9 @@
            <height>64</height>
           </size>
          </property>
+         <property name="autoDefault">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -140,12 +155,18 @@
            <height>64</height>
           </size>
          </property>
+         <property name="autoDefault">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="translate_button">
          <property name="text">
           <string>버튼 텍스트 한/영 전환</string>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
