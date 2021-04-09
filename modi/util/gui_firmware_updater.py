@@ -67,8 +67,45 @@ class Form(QtWidgets.QDialog):
                 )
             )
         self.ui = uic.loadUi(ui_path)
+
+        self.ui.setStyleSheet('background-color: white')
+
+        self.component_path = (
+            os.path.join(
+                os.path.dirname(__file__),
+                '..', 'assets', 'image', 'component'
+            )
+        )
+
+        # Luxrobo logo image
+        logo_path = os.path.join(self.component_path, 'luxrobo_logo.png')
+        qPixmapVar = QtGui.QPixmap()
+        qPixmapVar.load(logo_path)
+        self.ui.lux_logo.setPixmap(qPixmapVar)
+
+        # Buttons image
+        self.active_path = os.path.join(self.component_path, 'btn_frame_active.png')
+        self.inactive_path = os.path.join(self.component_path, 'btn_frame_inactive.png')
+        self.pressed_path = os.path.join(self.component_path, 'btn_frame_pressed.png')
+        self.language_frame_path = os.path.join(self.component_path, 'lang_frame.png')
+        self.language_frame_pressed_path = os.path.join(
+            self.component_path, 'lang_frame_pressed.png'
+        )
+
+        self.ui.update_network_esp32.setStyleSheet(
+            f'border-image: url({self.active_path})'
+        )
+        self.ui.update_stm32_modules.setStyleSheet(
+            f'border-image: url({self.active_path})'
+        )
+        self.ui.update_network_stm32.setStyleSheet(
+            f'border-image: url({self.active_path})'
+        )
+        self.ui.translate_button.setStyleSheet(
+            f'border-image: url({self.language_frame_path})'
+        )
+
         self.ui.setWindowTitle('MODI Firmware Updater')
-        self.ui.setFixedSize(self.size())
         self.ui.show()
 
         # Redirect stdout to text browser (i.e. console in our UI)
@@ -111,24 +148,38 @@ class Form(QtWidgets.QDialog):
     # Main methods
     #
     def update_network_esp32(self):
+        button_start = time.time()
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
+        self.ui.update_network_esp32.setStyleSheet(
+            f'border-image: url({self.pressed_path})'
+        )
         self.ui.console.clear()
         print(
             'ESP32 Firmware Updater has been initialized for esp update!'
         )
+        th.Thread(
+            target=self.__click_motion, args=(0,button_start), daemon=True
+        ).start()
         esp32_updater = ESP32FirmwareUpdater()
         esp32_updater.set_ui(self.ui)
         th.Thread(target=esp32_updater.update_firmware, daemon=True).start()
         self.firmware_updater = esp32_updater
 
     def update_stm32_modules(self):
+        button_start = time.time()
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
+        self.ui.update_stm32_modules.setStyleSheet(
+            f'border-image: url({self.pressed_path})'
+        )
         self.ui.console.clear()
         print(
             'STM32 Firmware Updater has been initialized for module update!'
         )
+        th.Thread(
+            target=self.__click_motion, args=(1,button_start), daemon=True
+        ).start()
         stm32_updater = STM32FirmwareUpdater()
         stm32_updater.set_ui(self.ui)
         th.Thread(
@@ -137,12 +188,19 @@ class Form(QtWidgets.QDialog):
         self.firmware_updater = stm32_updater
 
     def update_network_stm32(self):
+        button_start = time.time()
         if self.firmware_updater and self.firmware_updater.update_in_progress:
             return
+        self.ui.update_network_stm32.setStyleSheet(
+            f'border-image: url({self.pressed_path})'
+        )
         self.ui.console.clear()
         print(
             'STM32 Firmware Updater has been initialized for base update!'
         )
+        th.Thread(
+            target=self.__click_motion, args=(2,button_start), daemon=True
+        ).start()
         stm32_updater = STM32FirmwareUpdater()
         stm32_updater.set_ui(self.ui)
         th.Thread(
@@ -153,17 +211,24 @@ class Form(QtWidgets.QDialog):
         self.firmware_updater = stm32_updater
 
     def translate_button_text(self):
+        button_start = time.time()
+        self.ui.translate_button.setStyleSheet(
+            f'border-image: url({self.language_frame_pressed_path})'
+        )
+        th.Thread(
+            target=self.__click_motion, args=(3,button_start), daemon=True
+        ).start()
         button_en = [
             'Update Network ESP32',
             'Update STM32 Modules',
             'Update Network STM32',
-            'Translate Button Text To Korean',
+            '한글',
         ]
         button_kr = [
             '네트워크 모듈 업데이트',
             '모듈 초기화',
             '네트워크 모듈 초기화',
-            '버튼 텍스트를 영어로 변경',
+            'English',
         ]
         appropriate_translation = \
             button_kr if self.button_in_english else button_en
@@ -188,6 +253,24 @@ class Form(QtWidgets.QDialog):
 
         logger.addHandler(file_handler)
         return logger
+
+    def __click_motion(self, button_type, start_time):
+        # Busy wait for 0.2 seconds
+        while time.time() - start_time < 0.2:
+            pass
+
+        if button_type == 3:
+            self.buttons[3].setStyleSheet(
+                f'border-image: url({self.language_frame_path})'
+            )
+        else:
+            self.buttons[button_type].setStyleSheet(
+                f'border-image: url({self.active_path})'
+            )
+            for i, q_button in enumerate(self.buttons):
+                if i == button_type or i == 3:
+                    continue
+                q_button.setStyleSheet(f'border-image: url({self.inactive_path})')
 
     def __append_text_line(self, line):
         self.ui.console.moveCursor(
