@@ -67,8 +67,45 @@ class Form(QtWidgets.QDialog):
                 )
             )
         self.ui = uic.loadUi(ui_path)
+
+        self.ui.setStyleSheet('background-color: white')
+
+        self.component_path = (
+            os.path.join(
+                os.path.dirname(__file__),
+                '..', 'assets', 'image', 'component'
+            )
+        )
+
+        # Luxrobo logo image
+        logo_path = os.path.join(self.component_path, 'luxrobo_logo.png')
+        qPixmapVar = QtGui.QPixmap()
+        qPixmapVar.load(logo_path)
+        self.ui.lux_logo.setPixmap(qPixmapVar)
+
+        # Buttons image
+        self.active_path = os.path.join(self.component_path, 'btn_frame_active.png')
+        self.inactive_path = os.path.join(self.component_path, 'btn_frame_inactive.png')
+        self.pressed_path = os.path.join(self.component_path, 'btn_frame_pressed.png')
+        self.language_frame_path = os.path.join(self.component_path, 'lang_frame.png')
+        self.language_frame_pressed_path = os.path.join(
+            self.component_path, 'lang_frame_pressed.png'
+        )
+
+        self.ui.update_network_esp32.setStyleSheet(
+            f'border-image: url({self.active_path})'
+        )
+        self.ui.update_stm32_modules.setStyleSheet(
+            f'border-image: url({self.active_path})'
+        )
+        self.ui.update_network_stm32.setStyleSheet(
+            f'border-image: url({self.active_path})'
+        )
+        self.ui.translate_button.setStyleSheet(
+            f'border-image: url({self.language_frame_path})'
+        )
+
         self.ui.setWindowTitle('MODI Firmware Updater')
-        self.ui.setFixedSize(self.size())
         self.ui.show()
 
         # Redirect stdout to text browser (i.e. console in our UI)
@@ -157,13 +194,13 @@ class Form(QtWidgets.QDialog):
             'Update Network ESP32',
             'Update STM32 Modules',
             'Update Network STM32',
-            'Translate Button Text To Korean',
+            '한글',
         ]
         button_kr = [
             '네트워크 모듈 업데이트',
             '모듈 초기화',
             '네트워크 모듈 초기화',
-            '버튼 텍스트를 영어로 변경',
+            'English',
         ]
         appropriate_translation = \
             button_kr if self.button_in_english else button_en
