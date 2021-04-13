@@ -285,7 +285,7 @@ class Form(QtWidgets.QDialog):
         while time.time() - start_time < 0.2:
             pass
 
-        if button_type == 3 or button_type == 4:
+        if button_type in [3, 4]:
             self.buttons[button_type].setStyleSheet(
                 f'border-image: url({self.language_frame_path})'
             )
@@ -294,7 +294,7 @@ class Form(QtWidgets.QDialog):
                 f'border-image: url({self.active_path})'
             )
             for i, q_button in enumerate(self.buttons):
-                if i == button_type or i == 3 or i == 4:
+                if i in [button_type, 3, 4]:
                     continue
                 q_button.setStyleSheet(f'border-image: url({self.inactive_path})')
 
