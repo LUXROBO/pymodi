@@ -111,7 +111,6 @@ class Form(QtWidgets.QDialog):
         )
 
         self.ui.setWindowTitle('MODI Firmware Updater')
-        self.ui.show()
 
         # Redirect stdout to text browser (i.e. console in our UI)
         self.stdout = StdoutRedirect()
@@ -158,6 +157,12 @@ class Form(QtWidgets.QDialog):
         self.ui.pressed_path = self.pressed_path
         self.ui.language_frame_path = self.language_frame_path
         self.ui.language_frame_pressed_path = self.language_frame_pressed_path
+
+        self.translate_button_text()
+        self.translate_button_text()
+        self.dev_mode_button()
+        self.dev_mode_button()
+        self.ui.show()
 
     #
     # Main methods

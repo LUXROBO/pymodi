@@ -270,7 +270,7 @@ class STM32FirmwareUpdater:
                     if self.update_network_base:
                         if self.ui.is_english:
                             self.ui.update_network_stm32.setText(
-                                f"Updating Network ESP32 is on progress. ({progress}%)"
+                                f"Network STM32 update is in progress. ({progress}%)"
                             )
                         else:
                             self.ui.update_network_stm32.setText(
@@ -279,7 +279,7 @@ class STM32FirmwareUpdater:
                     else:
                         if self.ui.is_english:
                             self.ui.update_stm32_modules.setText(
-                                f"Updating STM32 Modules is on progress. ({progress}%)"
+                                f"STM32 modules update is in progress. ({progress}%)"
                             )
                         else:
                             self.ui.update_stm32_modules.setText(
@@ -401,7 +401,7 @@ class STM32FirmwareUpdater:
                     self.ui.update_stm32_modules.setEnabled(True)
                     if self.ui.is_english:
                         self.ui.update_network_stm32.setText(
-                            "Update Network ESP32"
+                            "Update Network STM32"
                         )
                     else:
                         self.ui.update_network_stm32.setText(
