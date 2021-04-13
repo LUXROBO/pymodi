@@ -58,6 +58,9 @@ class Form(QtWidgets.QDialog):
             ui_path = os.path.dirname(__file__).replace(
                 'util', 'modi_firmware_updater.ui'
             )
+            self.component_path = (
+                os.path.join(os.path.dirname(__file__), 'util', 'component')
+            )
         else:
             ui_path = (
                 os.path.join(
@@ -65,21 +68,19 @@ class Form(QtWidgets.QDialog):
                     '..', 'assets', 'modi_firmware_updater.ui'
                 )
             )
+            self.component_path = (
+                os.path.join(
+                    os.path.dirname(__file__),
+                    '..', 'assets', 'image', 'component'
+                )
+            )
         self.ui = uic.loadUi(ui_path)
 
-        # self.ui.setWindowFlag(Qt.FramelessWindowHint)
         self.ui.setStyleSheet('background-color: white')
         self.ui.console.hide()
         self.ui.setFixedHeight(600)
 
-        self.component_path = (
-            os.path.join(
-                os.path.dirname(__file__),
-                '..', 'assets', 'image', 'component'
-            )
-        )
-
-        # Luxrobo logo image
+        # Set LUXROBO logo image
         logo_path = os.path.join(self.component_path, 'luxrobo_logo.png')
         qPixmapVar = QtGui.QPixmap()
         qPixmapVar.load(logo_path)
