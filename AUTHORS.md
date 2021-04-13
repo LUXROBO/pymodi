@@ -25,3 +25,5 @@ Contributors
 -   Doyeon Kim (archdo0909@gmail.com)
 -   Seokyoung Woo (wsy8029@gmail.com)
 -   Seungyoon Lee (syoon624@gmail.com)
+-   Jemin Yeon (yjm9507@yonsei.ac.kr)
+
