@@ -269,11 +269,11 @@ class STM32FirmwareUpdater:
                 if self.ui:
                     if self.update_network_base:
                         if self.ui.is_english:
-                            self.ui.update_stm32_modules.setText(
+                            self.ui.update_network_stm32.setText(
                                 f"Updating Network ESP32 is on progress. ({progress}%)"
                             )
                         else:
-                            self.ui.update_stm32_modules.setText(
+                            self.ui.update_network_stm32.setText(
                                 f"네트워크 모듈 초기화가 진행중입니다. ({progress}%)"
                             )
                     else:
@@ -399,13 +399,12 @@ class STM32FirmwareUpdater:
                         f'border-image: url({self.ui.active_path})'
                     )
                     self.ui.update_stm32_modules.setEnabled(True)
-                    self.ui.update_network_esp32.setText()
                     if self.ui.is_english:
-                        self.ui.update_stm32_modules.setText(
+                        self.ui.update_network_stm32.setText(
                             "Update Network ESP32"
                         )
                     else:
-                        self.ui.update_stm32_modules.setText(
+                        self.ui.update_network_stm32.setText(
                             "네트워크 모듈 초기화"
                         )
                 else:
