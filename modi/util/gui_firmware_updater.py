@@ -59,7 +59,9 @@ class Form(QtWidgets.QDialog):
                 'util', 'modi_firmware_updater.ui'
             )
             self.component_path = (
-                os.path.join(os.path.dirname(__file__), 'util', 'component')
+                os.path.dirname(__file__).replace(
+                    'util', ''
+                )
             )
         else:
             ui_path = (
