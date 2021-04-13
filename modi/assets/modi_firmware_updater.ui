@@ -103,6 +103,11 @@
        <height>0</height>
       </size>
      </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -158,7 +163,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Dev mode</string>
+          <string>개발자 모드</string>
          </property>
         </widget>
        </item>
