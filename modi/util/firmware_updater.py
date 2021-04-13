@@ -757,6 +757,24 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.flushOutput()
         self.close()
 
+        if self.ui:
+            self.ui.update_stm32_modules.setStyleSheet(
+                f'border-image: url({self.ui.active_path})'
+            )
+            self.ui.update_stm32_modules.setEnabled(True)
+            self.ui.update_network_stm32.setStyleSheet(
+                f'border-image: url({self.ui.active_path})'
+            )
+            self.ui.update_network_stm32.setEnabled(True)
+            if self.ui.is_english:
+                self.ui.update_network_esp32.setText(
+                    "Update Network ESP32"
+                )
+            else:
+                self.ui.update_network_esp32.setText(
+                    "네트워크 모듈 업데이트"
+                )
+
     def __device_ready(self):
         print("Redirecting connection to esp device...")
         self.write(b'{"c":43,"s":0,"d":4095,"b":"AA==","l":1}')
@@ -1030,6 +1048,15 @@ class ESP32FirmwareUpdater(serial.Serial):
             )
         if manager:
             manager.quit()
+        if self.ui:
+            if self.ui.is_english:
+                self.ui.update_network_esp32.setText(
+                    "Network ESP32 update is in progress. (100%)"
+                )
+            else:
+                self.ui.update_network_esp32.setText(
+                    "네트워크 모듈 업데이트가 진행중입니다. (100%)"
+                )
         print(f"\r{self.__progress_bar(1, 1)}")
         print("Firmware Upload Complete")
 
@@ -1045,6 +1072,15 @@ class ESP32FirmwareUpdater(serial.Serial):
         for seq, block in enumerate(block_queue):
             if manager:
                 manager.status = self.__progress_bar(curr_seq + seq, total_seq)
+            if self.ui:
+                if self.ui.is_english:
+                    self.ui.update_network_esp32.setText(
+                        f"Network ESP32 update is in progress. ({int((curr_seq+seq)/total_seq*100)}%)"
+                    )
+                else:
+                    self.ui.update_network_esp32.setText(
+                        f"네트워크 모듈 업데이트가 진행중입니다. ({int((curr_seq+seq)/total_seq*100)}%)"
+                    )
             print(
                 f'\r{self.__progress_bar(curr_seq + seq, total_seq)}', end=''
             )
