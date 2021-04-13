@@ -111,7 +111,6 @@ class Form(QtWidgets.QDialog):
         )
 
         self.ui.setWindowTitle('MODI Firmware Updater')
-        self.ui.show()
 
         # Redirect stdout to text browser (i.e. console in our UI)
         self.stdout = StdoutRedirect()
@@ -151,6 +150,19 @@ class Form(QtWidgets.QDialog):
         self.firmware_updater = None
         self.button_in_english = False
         self.console = False
+
+        # Set up ui field variables
+        self.ui.is_english = False
+        self.ui.active_path = self.active_path
+        self.ui.pressed_path = self.pressed_path
+        self.ui.language_frame_path = self.language_frame_path
+        self.ui.language_frame_pressed_path = self.language_frame_pressed_path
+
+        self.translate_button_text()
+        self.translate_button_text()
+        self.dev_mode_button()
+        self.dev_mode_button()
+        self.ui.show()
 
     #
     # Main methods
@@ -259,6 +271,7 @@ class Form(QtWidgets.QDialog):
         appropriate_translation = \
             button_kr if self.button_in_english else button_en
         self.button_in_english = not self.button_in_english
+        self.ui.is_english = not self.ui.is_english
         for i, button in enumerate(self.buttons):
             button.setText(appropriate_translation[i])
 
@@ -297,6 +310,7 @@ class Form(QtWidgets.QDialog):
                 if i in [button_type, 3, 4]:
                     continue
                 q_button.setStyleSheet(f'border-image: url({self.inactive_path})')
+                q_button.setEnabled(False)
 
     def __append_text_line(self, line):
         self.ui.console.moveCursor(

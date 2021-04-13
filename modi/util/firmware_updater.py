@@ -265,6 +265,27 @@ class STM32FirmwareUpdater:
             page_offset = 0 if not self.update_network_base else 0x8800
             for page_begin in range(bin_begin, bin_end + 1, page_size):
                 progress = 100 * page_begin // bin_end
+
+                if self.ui:
+                    if self.update_network_base:
+                        if self.ui.is_english:
+                            self.ui.update_network_stm32.setText(
+                                f"Network STM32 update is in progress. ({progress}%)"
+                            )
+                        else:
+                            self.ui.update_network_stm32.setText(
+                                f"네트워크 모듈 초기화가 진행중입니다. ({progress}%)"
+                            )
+                    else:
+                        if self.ui.is_english:
+                            self.ui.update_stm32_modules.setText(
+                                f"STM32 modules update is in progress. ({progress}%)"
+                            )
+                        else:
+                            self.ui.update_stm32_modules.setText(
+                                f"모듈 초기화가 진행중입니다. ({progress}%)"
+                            )
+
                 print(
                     f"\rUpdating {module_type} ({module_id}) "
                     f"{self.__progress_bar(page_begin, bin_end)} "
@@ -371,6 +392,38 @@ class STM32FirmwareUpdater:
             time.sleep(1)
             self.update_in_progress = False
             self.update_event.set()
+
+            if self.ui:
+                if self.update_network_base:
+                    self.ui.update_stm32_modules.setStyleSheet(
+                        f'border-image: url({self.ui.active_path})'
+                    )
+                    self.ui.update_stm32_modules.setEnabled(True)
+                    if self.ui.is_english:
+                        self.ui.update_network_stm32.setText(
+                            "Update Network STM32"
+                        )
+                    else:
+                        self.ui.update_network_stm32.setText(
+                            "네트워크 모듈 초기화"
+                        )
+                else:
+                    self.ui.update_network_stm32.setStyleSheet(
+                        f'border-image: url({self.ui.active_path})'
+                    )
+                    self.ui.update_network_stm32.setEnabled(True)
+                    if self.ui.is_english:
+                        self.ui.update_stm32_modules.setText(
+                            "Update STM32 Modules."
+                        )
+                    else:
+                        self.ui.update_stm32_modules.setText(
+                            "모듈 초기화"
+                        )
+                self.ui.update_network_esp32.setStyleSheet(
+                    f'border-image: url({self.ui.active_path})'
+                )
+                self.ui.update_network_esp32.setEnabled(True)
 
     @staticmethod
     def __delay(span):
@@ -704,6 +757,24 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.flushOutput()
         self.close()
 
+        if self.ui:
+            self.ui.update_stm32_modules.setStyleSheet(
+                f'border-image: url({self.ui.active_path})'
+            )
+            self.ui.update_stm32_modules.setEnabled(True)
+            self.ui.update_network_stm32.setStyleSheet(
+                f'border-image: url({self.ui.active_path})'
+            )
+            self.ui.update_network_stm32.setEnabled(True)
+            if self.ui.is_english:
+                self.ui.update_network_esp32.setText(
+                    "Update Network ESP32"
+                )
+            else:
+                self.ui.update_network_esp32.setText(
+                    "네트워크 모듈 업데이트"
+                )
+
     def __device_ready(self):
         print("Redirecting connection to esp device...")
         self.write(b'{"c":43,"s":0,"d":4095,"b":"AA==","l":1}')
@@ -977,6 +1048,15 @@ class ESP32FirmwareUpdater(serial.Serial):
             )
         if manager:
             manager.quit()
+        if self.ui:
+            if self.ui.is_english:
+                self.ui.update_network_esp32.setText(
+                    "Network ESP32 update is in progress. (100%)"
+                )
+            else:
+                self.ui.update_network_esp32.setText(
+                    "네트워크 모듈 업데이트가 진행중입니다. (100%)"
+                )
         print(f"\r{self.__progress_bar(1, 1)}")
         print("Firmware Upload Complete")
 
@@ -992,6 +1072,15 @@ class ESP32FirmwareUpdater(serial.Serial):
         for seq, block in enumerate(block_queue):
             if manager:
                 manager.status = self.__progress_bar(curr_seq + seq, total_seq)
+            if self.ui:
+                if self.ui.is_english:
+                    self.ui.update_network_esp32.setText(
+                        f"Network ESP32 update is in progress. ({int((curr_seq+seq)/total_seq*100)}%)"
+                    )
+                else:
+                    self.ui.update_network_esp32.setText(
+                        f"네트워크 모듈 업데이트가 진행중입니다. ({int((curr_seq+seq)/total_seq*100)}%)"
+                    )
             print(
                 f'\r{self.__progress_bar(curr_seq + seq, total_seq)}', end=''
             )
