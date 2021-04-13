@@ -135,8 +135,8 @@ class Form(QtWidgets.QDialog):
             self.ui.update_network_esp32,
             self.ui.update_stm32_modules,
             self.ui.update_network_stm32,
-            self.ui.translate_button,
             self.ui.devmode_button,
+            self.ui.translate_button,
         ]
 
         # Disable the first button to be focused when UI is loaded
@@ -218,41 +218,13 @@ class Form(QtWidgets.QDialog):
         ).start()
         self.firmware_updater = stm32_updater
 
-    def translate_button_text(self):
-        button_start = time.time()
-        self.ui.translate_button.setStyleSheet(
-            f'border-image: url({self.language_frame_pressed_path})'
-        )
-        th.Thread(
-            target=self.__click_motion, args=(3,button_start), daemon=True
-        ).start()
-        button_en = [
-            'Update Network ESP32',
-            'Update STM32 Modules',
-            'Update Network STM32',
-            '한글',
-            'Dev Mode'
-        ]
-        button_kr = [
-            '네트워크 모듈 업데이트',
-            '모듈 초기화',
-            '네트워크 모듈 초기화',
-            'English',
-            '개발자 모드'
-        ]
-        appropriate_translation = \
-            button_kr if self.button_in_english else button_en
-        self.button_in_english = not self.button_in_english
-        for i, button in enumerate(self.buttons):
-            button.setText(appropriate_translation[i])
-
     def dev_mode_button(self):
         button_start = time.time()
         self.ui.devmode_button.setStyleSheet(
             f'border-image: url({self.language_frame_pressed_path})'
         )
         th.Thread(
-            target=self.__click_motion, args=(4,button_start), daemon=True
+            target=self.__click_motion, args=(3,button_start), daemon=True
         ).start()
         if self.console:
             self.ui.console.hide()
@@ -261,6 +233,34 @@ class Form(QtWidgets.QDialog):
             self.ui.console.show()
             self.ui.setFixedHeight(780)
         self.console = not self.console
+
+    def translate_button_text(self):
+        button_start = time.time()
+        self.ui.translate_button.setStyleSheet(
+            f'border-image: url({self.language_frame_pressed_path})'
+        )
+        th.Thread(
+            target=self.__click_motion, args=(4,button_start), daemon=True
+        ).start()
+        button_en = [
+            'Update Network ESP32',
+            'Update STM32 Modules',
+            'Update Network STM32',
+            'Dev Mode',
+            '한글',
+        ]
+        button_kr = [
+            '네트워크 모듈 업데이트',
+            '모듈 초기화',
+            '네트워크 모듈 초기화',
+            '개발자 모드',
+            'English',
+        ]
+        appropriate_translation = \
+            button_kr if self.button_in_english else button_en
+        self.button_in_english = not self.button_in_english
+        for i, button in enumerate(self.buttons):
+            button.setText(appropriate_translation[i])
 
     #
     # Helper functions
@@ -294,7 +294,7 @@ class Form(QtWidgets.QDialog):
                 f'border-image: url({self.active_path})'
             )
             for i, q_button in enumerate(self.buttons):
-                if i == button_type or i == 3:
+                if i == button_type or i == 3 or i == 4:
                     continue
                 q_button.setStyleSheet(f'border-image: url({self.inactive_path})')
 
