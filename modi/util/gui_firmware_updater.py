@@ -5,7 +5,6 @@ import logging
 
 import threading as th
 
-
 from PyQt5 import uic
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QObject, pyqtSignal
@@ -68,7 +67,10 @@ class Form(QtWidgets.QDialog):
             )
         self.ui = uic.loadUi(ui_path)
 
+        # self.ui.setWindowFlag(Qt.FramelessWindowHint)
         self.ui.setStyleSheet('background-color: white')
+        self.ui.console.hide()
+        self.ui.setFixedHeight(600)
 
         self.component_path = (
             os.path.join(
@@ -104,6 +106,9 @@ class Form(QtWidgets.QDialog):
         self.ui.translate_button.setStyleSheet(
             f'border-image: url({self.language_frame_path})'
         )
+        self.ui.devmode_button.setStyleSheet(
+            f'border-image: url({self.language_frame_path})'
+        )
 
         self.ui.setWindowTitle('MODI Firmware Updater')
         self.ui.show()
@@ -124,12 +129,14 @@ class Form(QtWidgets.QDialog):
         self.ui.update_stm32_modules.clicked.connect(self.update_stm32_modules)
         self.ui.update_network_stm32.clicked.connect(self.update_network_stm32)
         self.ui.translate_button.clicked.connect(self.translate_button_text)
+        self.ui.devmode_button.clicked.connect(self.dev_mode_button)
 
         self.buttons = [
             self.ui.update_network_esp32,
             self.ui.update_stm32_modules,
             self.ui.update_network_stm32,
             self.ui.translate_button,
+            self.ui.devmode_button,
         ]
 
         # Disable the first button to be focused when UI is loaded
@@ -143,6 +150,7 @@ class Form(QtWidgets.QDialog):
         # Set up field variables
         self.firmware_updater = None
         self.button_in_english = False
+        self.console = False
 
     #
     # Main methods
@@ -223,18 +231,36 @@ class Form(QtWidgets.QDialog):
             'Update STM32 Modules',
             'Update Network STM32',
             '한글',
+            'Dev Mode'
         ]
         button_kr = [
             '네트워크 모듈 업데이트',
             '모듈 초기화',
             '네트워크 모듈 초기화',
             'English',
+            '개발자 모드'
         ]
         appropriate_translation = \
             button_kr if self.button_in_english else button_en
         self.button_in_english = not self.button_in_english
         for i, button in enumerate(self.buttons):
             button.setText(appropriate_translation[i])
+
+    def dev_mode_button(self):
+        button_start = time.time()
+        self.ui.devmode_button.setStyleSheet(
+            f'border-image: url({self.language_frame_pressed_path})'
+        )
+        th.Thread(
+            target=self.__click_motion, args=(4,button_start), daemon=True
+        ).start()
+        if self.console:
+            self.ui.console.hide()
+            self.ui.setFixedHeight(600)
+        else:
+            self.ui.console.show()
+            self.ui.setFixedHeight(780)
+        self.console = not self.console
 
     #
     # Helper functions
@@ -259,8 +285,8 @@ class Form(QtWidgets.QDialog):
         while time.time() - start_time < 0.2:
             pass
 
-        if button_type == 3:
-            self.buttons[3].setStyleSheet(
+        if button_type == 3 or button_type == 4:
+            self.buttons[button_type].setStyleSheet(
                 f'border-image: url({self.language_frame_path})'
             )
         else:

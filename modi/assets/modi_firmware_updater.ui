@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>744</width>
-    <height>679</height>
+    <width>750</width>
+    <height>789</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="maximumSize">
    <size>
-    <width>744</width>
+    <width>750</width>
     <height>16777215</height>
    </size>
   </property>
@@ -38,8 +38,24 @@
    <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="4" column="0">
-    <spacer name="horizontalSpacer_4">
+   <item row="0" column="1">
+    <spacer name="verticalSpacer_4">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0">
+    <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -70,8 +86,46 @@
      </property>
     </spacer>
    </item>
-   <item row="1" column="0">
-    <spacer name="horizontalSpacer">
+   <item row="4" column="1">
+    <widget class="QTextBrowser" name="console">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>550</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <spacer name="horizontalSpacer_4">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::MinimumExpanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="2">
+    <spacer name="horizontalSpacer_3">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -89,18 +143,36 @@
    <item row="1" column="1">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0">
+       <item>
+        <widget class="QPushButton" name="devmode_button">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>LuxHanSans</family>
+          </font>
+         </property>
+         <property name="text">
+          <string>Dev mode</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
+          <enum>QSizePolicy::MinimumExpanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>200</width>
+           <width>90</width>
            <height>20</height>
           </size>
          </property>
@@ -131,11 +203,11 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
+          <enum>QSizePolicy::MinimumExpanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>100</width>
+           <width>90</width>
            <height>20</height>
           </size>
          </property>
@@ -163,7 +235,8 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>16</pointsize>
+           <family>LuxHanSans</family>
+           <pointsize>13</pointsize>
            <kerning>false</kerning>
           </font>
          </property>
@@ -206,7 +279,7 @@
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
-         <height>40</height>
+         <height>60</height>
         </size>
        </property>
       </spacer>
@@ -233,6 +306,7 @@
        </property>
        <property name="font">
         <font>
+         <family>LuxHanSans</family>
          <pointsize>18</pointsize>
          <kerning>false</kerning>
         </font>
@@ -268,7 +342,7 @@
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
-         <height>40</height>
+         <height>60</height>
         </size>
        </property>
       </spacer>
@@ -295,6 +369,7 @@
        </property>
        <property name="font">
         <font>
+         <family>LuxHanSans</family>
          <pointsize>18</pointsize>
          <weight>50</weight>
          <bold>false</bold>
@@ -329,7 +404,7 @@
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
-         <height>40</height>
+         <height>60</height>
         </size>
        </property>
       </spacer>
@@ -356,6 +431,7 @@
        </property>
        <property name="font">
         <font>
+         <family>LuxHanSans</family>
          <pointsize>18</pointsize>
          <weight>50</weight>
          <bold>false</bold>
@@ -381,40 +457,18 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="2">
-    <spacer name="horizontalSpacer_3">
+   <item row="5" column="1">
+    <spacer name="verticalSpacer_5">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::MinimumExpanding</enum>
+      <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>40</width>
-       <height>20</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
     </spacer>
-   </item>
-   <item row="4" column="1">
-    <widget class="QTextBrowser" name="console">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>550</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-    </widget>
    </item>
    <item row="0" column="1">
     <spacer name="verticalSpacer_4">
