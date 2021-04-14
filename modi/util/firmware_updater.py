@@ -225,13 +225,13 @@ class STM32FirmwareUpdater:
                     root_path = (
                         'https://download.luxrobo.com/modi-network-os'
                     )
-                    zip_path = path.join(root_path, 'network.zip')
+                    zip_path = root_path + '/network.zip'
                     bin_path = 'network.bin'
                 else:
                     root_path = (
                         'https://download.luxrobo.com/modi-skeleton-mobile'
                     )
-                    zip_path = path.join(root_path, 'skeleton.zip')
+                    zip_path = root_path + '/skeleton.zip'
                     bin_path = (
                         path.join(f'skeleton/{module_type.lower()}.bin')
                         if module_type != 'env' else
@@ -346,7 +346,7 @@ class STM32FirmwareUpdater:
         else:
             if self.update_network_base:
                 version_file = 'base_' + version_file
-            version_path = path.join(root_path, version_file)
+            version_path = root_path + '/' + version_file
             with open(version_path) as version_file:
                 version_info = version_file.readline().lstrip('v').rstrip('\n')
         version_digits = [int(digit) for digit in version_info.split('.')]
