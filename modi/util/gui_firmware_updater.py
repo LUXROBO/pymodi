@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import logging
+import pathlib
 
 import threading as th
 
@@ -70,12 +71,20 @@ class Form(QtWidgets.QDialog):
                     '..', 'assets', 'modi_firmware_updater.ui'
                 )
             )
-            self.component_path = (
-                os.path.join(
-                    os.path.dirname(__file__),
-                    '..', 'assets', 'image', 'component'
+            if sys.platform.startswith('win'):
+                self.component_path = (
+                    pathlib.PurePosixPath(
+                        pathlib.PurePath(__file__),
+                        '..', '..', 'assets', 'image', 'component'
+                    )
                 )
-            )
+            else:
+                self.component_path = (
+                    os.path.join(
+                        os.path.dirname(__file__),
+                        '..', 'assets', 'image', 'component'
+                    )
+                )
         self.ui = uic.loadUi(ui_path)
 
         self.ui.setStyleSheet('background-color: white')
@@ -89,11 +98,11 @@ class Form(QtWidgets.QDialog):
         self.ui.lux_logo.setPixmap(qPixmapVar)
 
         # Buttons image
-        self.active_path = os.path.join(self.component_path, 'btn_frame_active.png')
-        self.inactive_path = os.path.join(self.component_path, 'btn_frame_inactive.png')
-        self.pressed_path = os.path.join(self.component_path, 'btn_frame_pressed.png')
-        self.language_frame_path = os.path.join(self.component_path, 'lang_frame.png')
-        self.language_frame_pressed_path = os.path.join(
+        self.active_path = pathlib.PurePosixPath(self.component_path, 'btn_frame_active.png')
+        self.inactive_path = pathlib.PurePosixPath(self.component_path, 'btn_frame_inactive.png')
+        self.pressed_path = pathlib.PurePosixPath(self.component_path, 'btn_frame_pressed.png')
+        self.language_frame_path = pathlib.PurePosixPath(self.component_path, 'lang_frame.png')
+        self.language_frame_pressed_path = pathlib.PurePosixPath(
             self.component_path, 'lang_frame_pressed.png'
         )
 
