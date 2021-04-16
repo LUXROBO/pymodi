@@ -105,9 +105,9 @@ class STM32FirmwareUpdater:
                     f'Sending a request to update firmware of network '
                     f'({self.network_id})'
                 )
-                self.request_to_update_firmware(
-                    self.network_id, is_network=True
-                )
+            self.request_to_update_firmware(
+                self.network_id, is_network=True
+            )
         else:
             self.reset_state()
             for target in self.__target_ids:
@@ -130,9 +130,14 @@ class STM32FirmwareUpdater:
     def reinitialize_serial_connection(self):
         print('Temporally disconnecting the serial connection...')
         self.close()
-
         print('Re-init serial connection for the update, in 2 seconds...')
+        if self.ui:
+            self.ui.pop_up().run()
+            
         time.sleep(2)
+        self._reinitialize_serial_connection()
+
+    def _reinitialize_serial_connection(self):
         self.__conn = self.__open_conn()
         self.__conn.open_conn()
         self.__running = True

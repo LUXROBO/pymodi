@@ -8,7 +8,8 @@ import threading as th
 
 from PyQt5 import uic
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, QThread
+from PyQt5.QtWidgets import QDialog, QWidget, QMessageBox
 
 from modi.util.firmware_updater import STM32FirmwareUpdater
 from modi.util.firmware_updater import ESP32FirmwareUpdater
@@ -54,7 +55,7 @@ class Form(QtWidgets.QDialog):
 
     def __init__(self, installer=False):
         self.logger = self.__init_logger()
-        QtWidgets.QDialog.__init__(self)
+        QDialog.__init__(self)
         if installer:
             ui_path = os.path.dirname(__file__).replace(
                 'util', 'modi_firmware_updater.ui'
@@ -63,7 +64,7 @@ class Form(QtWidgets.QDialog):
                 self.component_path = (
                     pathlib.PurePosixPath(
                         pathlib.PurePath(__file__),
-                        '..', '..', '..', 'assets', 'image', 'component'
+                        '..', '..'
                     )
                 )
             else:
