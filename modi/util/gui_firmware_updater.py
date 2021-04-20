@@ -48,7 +48,7 @@ class StdoutRedirect(QObject):
         )
 
 
-class Form(QtWidgets.QDialog):
+class Form(QDialog):
     """
     GUI Form of MODI Firmware Updater
     """
@@ -107,10 +107,18 @@ class Form(QtWidgets.QDialog):
         self.ui.lux_logo.setPixmap(qPixmapVar)
 
         # Buttons image
-        self.active_path = pathlib.PurePosixPath(self.component_path, 'btn_frame_active.png')
-        self.inactive_path = pathlib.PurePosixPath(self.component_path, 'btn_frame_inactive.png')
-        self.pressed_path = pathlib.PurePosixPath(self.component_path, 'btn_frame_pressed.png')
-        self.language_frame_path = pathlib.PurePosixPath(self.component_path, 'lang_frame.png')
+        self.active_path = pathlib.PurePosixPath(
+            self.component_path, 'btn_frame_active.png'
+        )
+        self.inactive_path = pathlib.PurePosixPath(
+            self.component_path, 'btn_frame_inactive.png'
+        )
+        self.pressed_path = pathlib.PurePosixPath(
+            self.component_path, 'btn_frame_pressed.png'
+        )
+        self.language_frame_path = pathlib.PurePosixPath(
+            self.component_path, 'lang_frame.png'
+        )
         self.language_frame_pressed_path = pathlib.PurePosixPath(
             self.component_path, 'lang_frame_pressed.png'
         )

@@ -105,9 +105,10 @@ class STM32FirmwareUpdater:
                     f'Sending a request to update firmware of network '
                     f'({self.network_id})'
                 )
-            self.request_to_update_firmware(
-                self.network_id, is_network=True
-            )
+            if not self.update_in_progress:
+                self.request_to_update_firmware(
+                    self.network_id, is_network=True
+                )
         else:
             self.reset_state()
             for target in self.__target_ids:
@@ -127,17 +128,40 @@ class STM32FirmwareUpdater:
         else:
             return im('modi.task.ser_task').SerTask()
 
-    def reinitialize_serial_connection(self):
+    def _reconnect_serial_connection(self, modi_num):
+        while True:
+            time.sleep(0.1)
+            disconnect = False
+            if not list_modi_ports():
+                disconnect = True
+            if disconnect:
+                if modi_num == list_modi_ports():
+                    self.__reinitialize_serial_connection()
+                    break
+
+    def reinitialize_serial_connection(self, mode=1):
+        if self.ui and self.update_network_base and mode == 2:
+            modi_num = len(list_modi_ports())
+            if self.ui.is_english:
+                self.ui.update_network_stm32.setText(
+                    "Reconnect network module and click the button again please."
+                )
+            else:
+                self.ui.update_network_stm32.setText(
+                    "네트워크 모듈을 재연결 후 버튼을 다시 눌러주십시오."
+                )
+            th.Thread(
+                target=self._reconnect_serial_connection,
+                args=(modi_num,),
+                daemon=True
+            ).start() 
+        else:
+            self.__reinitialize_serial_connection()
+
+    def __reinitialize_serial_connection(self):
         print('Temporally disconnecting the serial connection...')
         self.close()
         print('Re-init serial connection for the update, in 2 seconds...')
-        if self.ui:
-            self.ui.pop_up().run()
-            
-        time.sleep(2)
-        self._reinitialize_serial_connection()
-
-    def _reinitialize_serial_connection(self):
         self.__conn = self.__open_conn()
         self.__conn.open_conn()
         self.__running = True
@@ -162,7 +186,7 @@ class STM32FirmwareUpdater:
                 module_id, 4, Module.PNP_OFF
             )
             self.__conn.send_nowait(firmware_update_message)
-            self.reinitialize_serial_connection()
+            self.reinitialize_serial_connection(2)
         else:
             firmware_update_message = self.__set_module_state(
                 module_id, Module.UPDATE_FIRMWARE, Module.PNP_OFF
@@ -275,16 +299,19 @@ class STM32FirmwareUpdater:
                     if self.update_network_base:
                         if self.ui.is_english:
                             self.ui.update_network_stm32.setText(
-                                f"Network STM32 update is in progress. ({progress}%)"
+                                f"Network STM32 update is in progress. "
+                                f"({progress}%)"
                             )
                         else:
                             self.ui.update_network_stm32.setText(
-                                f"네트워크 모듈 초기화가 진행중입니다. ({progress}%)"
+                                f"네트워크 모듈 초기화가 진행중입니다. "
+                                f"({progress}%)"
                             )
                     else:
                         if self.ui.is_english:
                             self.ui.update_stm32_modules.setText(
-                                f"STM32 modules update is in progress. ({progress}%)"
+                                f"STM32 modules update is in progress. "
+                                f"({progress}%)"
                             )
                         else:
                             self.ui.update_stm32_modules.setText(
@@ -391,7 +418,7 @@ class STM32FirmwareUpdater:
             print("Reboot message has been sent to all connected modules")
             self.reset_state()
             if self.update_network_base:
-                self.reinitialize_serial_connection()
+                self.reinitialize_serial_connection(1)
                 time.sleep(0.5)
 
             time.sleep(1)
