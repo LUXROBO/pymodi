@@ -154,7 +154,7 @@ class STM32FirmwareUpdater:
                 target=self._reconnect_serial_connection,
                 args=(modi_num,),
                 daemon=True
-            ).start() 
+            ).start()
         else:
             self.__reinitialize_serial_connection()
 
@@ -372,7 +372,7 @@ class STM32FirmwareUpdater:
         # Get version info from version_path, using appropriate methods
         version_info, version_file = None, 'version.txt'
         if self.ui:
-            version_path = path.join(root_path, version_file)
+            version_path = root_path + '/' + version_file
             for line in ur.urlopen(version_path, timeout=5):
                 version_info = line.decode('utf-8').lstrip('v')
         else:
