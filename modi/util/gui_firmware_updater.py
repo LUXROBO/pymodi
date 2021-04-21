@@ -288,7 +288,7 @@ class Form(QDialog):
             'Update STM32 Modules',
             'Update Network STM32',
             'Dev Mode',
-            'Korean',
+            '한국어',
         ]
         button_kr = [
             '네트워크 모듈 업데이트',

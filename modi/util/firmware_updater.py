@@ -161,6 +161,7 @@ class STM32FirmwareUpdater:
     def __reinitialize_serial_connection(self):
         print('Temporally disconnecting the serial connection...')
         self.close()
+        time.sleep(2)
         print('Re-init serial connection for the update, in 2 seconds...')
         self.__conn = self.__open_conn()
         self.__conn.open_conn()
