@@ -8,8 +8,8 @@ import threading as th
 
 from PyQt5 import uic
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
-from PyQt5.QtWidgets import QDialog, QWidget, QMessageBox
+from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtWidgets import QDialog
 
 from modi.util.firmware_updater import STM32FirmwareUpdater
 from modi.util.firmware_updater import ESP32FirmwareUpdater
@@ -288,7 +288,7 @@ class Form(QDialog):
             'Update STM32 Modules',
             'Update Network STM32',
             'Dev Mode',
-            '한글',
+            'Korean',
         ]
         button_kr = [
             '네트워크 모듈 업데이트',
