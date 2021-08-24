@@ -1,6 +1,6 @@
 # common
-pyserial
-pyqt5
+pyserial==3.5
+pyqt5==5.15.4
 
 # windows
 bleak==0.8.0; sys_platform == 'win32'
