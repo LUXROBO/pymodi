@@ -43,6 +43,11 @@ def get_module_from_name(module_type: str):
 
 
 def ask_modi_device(devices):
+    if not devices:
+        raise ValueError(
+            'No MODI network module(s) available!\n'
+            'The network module that you\'re trying to connect, may in use.'
+        )
     for idx, dev in enumerate(devices):
         print(f"<{idx}>: {dev}")
     i = input("Choose your device index (ex: 0) : ")
