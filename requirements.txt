@@ -7,7 +7,7 @@ bleak==0.8.0; sys_platform == 'win32'
 
 # mac
 tkmacosx; sys_platform == 'darwin'
-bleak==0.8.0; sys_platform == 'darwin'
+bleak==0.12.1; sys_platform == 'darwin'
 
 # linux
 python-can==3.3.4; sys_platform == 'linux'
