@@ -43,7 +43,8 @@ class BleTask(ConnTask):
                 modi_devies.append(d)
         if not self.__uuid:
             self.__uuid = ask_modi_device(
-                [d.name.upper() for d in modi_devies])
+                [d.name.upper() for d in modi_devies]
+            )
         for d in modi_devies:
             if self.__uuid in d.name.upper():
                 return d
@@ -73,9 +74,12 @@ class BleTask(ConnTask):
             if self._send_q.empty():
                 await asyncio.sleep(0.001)
             else:
-                await self._bus.write_gatt_char(
-                    self.CHAR_UUID, self._send_q.get()
-                )
+                try:
+                    await self._bus.write_gatt_char(
+                        self.CHAR_UUID, self._send_q.get()
+                    )
+                except BleakError:
+                    self.__close_event = True
             if self.__close_event:
                 break
 
