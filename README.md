@@ -33,12 +33,6 @@ PyMODI provides a control of modular electronics, [MODI](https://modi.luxrobo.co
 * Update of MODI firmware consisting of both ESP32 and STM32 modules
 * Direct manipulation of MODI network module using [MODI Play](https://play.google.com/store/apps/details?id=com.luxrobo.modiplay&hl=en_US)
 
-UML Diagram
------------
-<p align="center">
-    <img src="https://github.com/LUXROBO/pymodi/blob/master/docs/_static/img/umldiagram.svg?raw=true">
-</p>
-
 Build Status
 ------------
 |master|develop|
