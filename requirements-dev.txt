@@ -1,7 +1,6 @@
-pip
-flake8
-black
-tox
-coverage
-pre-commit
-bumpversion
+flake8==4.0.1
+black==21.10b0
+tox==3.24.4
+coverage==6.1.1
+pre-commit==2.15.0
+bumpversion==0.6.0
