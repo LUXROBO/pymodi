@@ -290,6 +290,11 @@ code {
   font-family: Consolas;
 }
 
+code.style {
+  height: 100%;
+  margin: auto;
+}
+
 code.file{
     background-color: var(--dark-2);
     font-weight: bold;
