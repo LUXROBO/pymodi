@@ -74,7 +74,7 @@ python --version
 
 Install the latest PyMODI if you haven't installed it yet:
 ```commandline
-python -m pip install -U pymodi --user
+python -m pip install pymodi --user --upgrade
 ```
 
 You can also install PyMODI at develop branch (containing latest changes but it can be unstable) with:
