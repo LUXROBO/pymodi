@@ -61,8 +61,8 @@ class STM32FirmwareUpdater:
     def __del__(self):
         try:
             self.close()
-        except:
-            print('Magic del is called with an exception')
+        except Exception as e:
+            print('Magic del is called with an exception:', e)
 
     def set_ui(self, ui):
         self.ui = ui
@@ -144,7 +144,8 @@ class STM32FirmwareUpdater:
             modi_num = len(list_modi_ports())
             if self.ui.is_english:
                 self.ui.update_network_stm32.setText(
-                    "Reconnect network module and click the button again please."
+                    "Reconnect network module and "
+                    "click the button again please."
                 )
             else:
                 self.ui.update_network_stm32.setText(
@@ -1108,11 +1109,13 @@ class ESP32FirmwareUpdater(serial.Serial):
             if self.ui:
                 if self.ui.is_english:
                     self.ui.update_network_esp32.setText(
-                        f"Network ESP32 update is in progress. ({int((curr_seq+seq)/total_seq*100)}%)"
+                        f"Network ESP32 update is in progress. "
+                        f"({int((curr_seq+seq)/total_seq*100)}%)"
                     )
                 else:
                     self.ui.update_network_esp32.setText(
-                        f"네트워크 모듈 업데이트가 진행중입니다. ({int((curr_seq+seq)/total_seq*100)}%)"
+                        f"네트워크 모듈 업데이트가 진행중입니다. "
+                        f"({int((curr_seq+seq)/total_seq*100)}%)"
                     )
             print(
                 f'\r{self.__progress_bar(curr_seq + seq, total_seq)}', end=''
