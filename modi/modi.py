@@ -49,8 +49,9 @@ class MODI:
         while not self._topology_manager.is_topology_complete():
             time.sleep(0.1)
             if time.time() - init_time > 5:
-                print("MODI init timeout over. "
-                      "Check your module connection.")
+                print(
+                    'MODI init timeout over. Check your module connection.'
+                )
                 break
         check_complete(self)
         print("MODI modules are initialized!")
@@ -116,10 +117,12 @@ class MODI:
 
         if conn_type == 'ser':
             return im('modi.task.ser_task').SerTask(verbose, port)
-        elif conn_type == 'can':
-            return im('modi.task.can_task').CanTask(verbose)
         elif conn_type == 'vir':
             return im('modi.task.vir_task').VirTask(verbose, port)
+        elif conn_type == 'soc':
+            return im('modi.task.soc_task').SocTask(verbose)
+        elif conn_type == 'can':
+            return im('modi.task.can_task').CanTask(verbose)
         elif conn_type == 'ble':
             mod_path = {
                 'win32': 'modi.task.ble_task.ble_task_win',
@@ -128,7 +131,7 @@ class MODI:
             }.get(sys.platform)
             return im(mod_path).BleTask(verbose, network_uuid)
         else:
-            raise ValueError(f'Invalid conn mode {conn_type}')
+            raise ValueError(f'Invalid conn mode: {conn_type}')
 
     def open(self):
         atexit.register(self.close)
