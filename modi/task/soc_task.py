@@ -9,10 +9,9 @@ from websocket_server import WebsocketServer
 from modi.task.conn_task import ConnTask
 
 
-
 class SocTask(ConnTask):
     """
-    SocTask implements a websocket server. 
+    SocTask implements a websocket server.
     Thus, PyMODI works as a websocket server, listening to a MODI Client.
     A connection between a server and a client must be one-to-one.
     """
@@ -30,7 +29,7 @@ class SocTask(ConnTask):
     def open_conn(self):
         Thread(target=self.__open, daemon=True).start()
         Thread(target=self.__send_handler, daemon=True).start()
-    
+
     def close_conn(self):
         self.__close_event = True
         self._bus.shutdown_gracefully()
@@ -64,6 +63,7 @@ class SocTask(ConnTask):
             server.send_message_to_all(
                 f'Hey all, a new client:{client} has joined us'
             )
+
         def client_left(client, server):
             server.send_message_to_all(
                 f'Hey all, a client:{client} has left us'
