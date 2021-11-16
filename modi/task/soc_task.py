@@ -1,10 +1,13 @@
 
 import time
-import asyncio
+
 from queue import Queue
-from websockets import serve
+from threading import Thread
+
+from websocket_server import WebsocketServer
 
 from modi.task.conn_task import ConnTask
+
 
 
 class SocTask(ConnTask):
@@ -12,17 +15,18 @@ class SocTask(ConnTask):
     def __init__(self, verbose=False):
         super().__init__(verbose=verbose)
         print('Initiating soc_task connection...')
+        self._bus = WebsocketServer(host='localhost', port=8765)
         self._recv_q = Queue()
         self._send_q = Queue()
         self.__close_event = False
 
     def open_conn(self):
-        asyncio.run(self.__main())
-
+        Thread(target=self.__open, daemon=True).start()
+        Thread(target=self.__open, daemon=True).start()
+    
     def close_conn(self):
-        while self._loop.is_running():
-            time.sleep(0.1)
-        self._loop.run_until_complete(self.__close())
+        self.__close_event = True
+        self._bus.shutdown_gracefully()
 
     def recv(self):
         if self._recv_q.empty():
@@ -48,36 +52,34 @@ class SocTask(ConnTask):
     #
     # Async Methods
     #
-    async def __main(self):
-        await asyncio.gather(
-            self.__open(), self.__send_handler()
-        )
+    def __open(self):
+        def new_client(client, server):
+            server.send_message_to_all(
+                f'Hey all, a new client:{client} has joined us'
+            )
+        def client_left(client, server):
+            server.send_message_to_all(
+                f'Hey all, a client:{client} has left us'
+            )
 
-    async def __open(self):
-        async with serve(self.__recv_handler, 'localhost', 8765):
-            await asyncio.Future()
+        # Set callback functions
+        self._bus.set_fn_new_client(new_client)
+        self._bus.set_fn_message_received(self.__recv_handler)
+        self._bus.set_fn_client_left(client_left)
 
-    async def __close(self):
-        try:
-            await self._bus.disconnect()
-        except Exception:
-            self.__close_event = True
+        # Run the server forever
+        self._bus.run_forever()
 
-    async def __recv_handler(self, websocket):
-        self._bus = websocket
-        while not self.__close_event:
-            try:
-                message = await self._bus.recv()
-                self._recv_q.put(message)
-            except Exception:
-                self.__close_event = True
+    def __recv_handler(self, client, server, message):
+        self._recv_q.put(message)
 
-    async def __send_handler(self):
+    def __send_handler(self):
         while not self.__close_event:
             if self._send_q.empty():
-                await asyncio.sleep(0.001)
+                time.sleep(0.001)
                 continue
             try:
-                await self._bus.send(self._send_q.get())
+                message = self._send_q.get()
+                self._bus.send_message_to_all(message)
             except Exception:
                 self.__close_event = True
