@@ -117,10 +117,10 @@ class MODI:
 
         if conn_type == 'ser':
             return im('modi.task.ser_task').SerTask(verbose, port)
-        elif conn_type == 'vir':
-            return im('modi.task.vir_task').VirTask(verbose, port)
         elif conn_type == 'soc':
             return im('modi.task.soc_task').SocTask(verbose, port)
+        elif conn_type == 'vir':
+            return im('modi.task.vir_task').VirTask(verbose, port)
         elif conn_type == 'can':
             return im('modi.task.can_task').CanTask(verbose)
         elif conn_type == 'ble':
