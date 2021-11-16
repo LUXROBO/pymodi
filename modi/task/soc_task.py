@@ -15,7 +15,9 @@ class SocTask(ConnTask):
     def __init__(self, verbose=False, port=None):
         super().__init__(verbose=verbose)
         print('Initiating soc_task connection...')
-        self._bus = WebsocketServer(host='localhost', port=8765)
+        DEFAULT_SOC_PORT = 8765
+        port = port if port else DEFAULT_SOC_PORT
+        self._bus = WebsocketServer(host='localhost', port=port)
         self._recv_q = Queue()
         self._send_q = Queue()
         self.__close_event = False
@@ -50,7 +52,7 @@ class SocTask(ConnTask):
             print(f'send: {pkt}')
 
     #
-    # Async Methods
+    # Helper Methods
     #
     def __open(self):
         def new_client(client, server):

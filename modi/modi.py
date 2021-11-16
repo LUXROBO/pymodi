@@ -48,7 +48,7 @@ class MODI:
         init_time = time.time()
         while not self._topology_manager.is_topology_complete():
             time.sleep(0.1)
-            if time.time() - init_time > 5:
+            if time.time() - init_time > 3:
                 print(
                     'MODI init timeout over. Check your module connection.'
                 )
@@ -120,7 +120,7 @@ class MODI:
         elif conn_type == 'vir':
             return im('modi.task.vir_task').VirTask(verbose, port)
         elif conn_type == 'soc':
-            return im('modi.task.soc_task').SocTask(verbose)
+            return im('modi.task.soc_task').SocTask(verbose, port)
         elif conn_type == 'can':
             return im('modi.task.can_task').CanTask(verbose)
         elif conn_type == 'ble':
