@@ -12,7 +12,7 @@ from modi.task.conn_task import ConnTask
 
 class SocTask(ConnTask):
 
-    def __init__(self, verbose=False):
+    def __init__(self, verbose=False, port=None):
         super().__init__(verbose=verbose)
         print('Initiating soc_task connection...')
         self._bus = WebsocketServer(host='localhost', port=8765)
@@ -22,7 +22,7 @@ class SocTask(ConnTask):
 
     def open_conn(self):
         Thread(target=self.__open, daemon=True).start()
-        Thread(target=self.__open, daemon=True).start()
+        Thread(target=self.__send_handler, daemon=True).start()
     
     def close_conn(self):
         self.__close_event = True
