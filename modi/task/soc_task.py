@@ -21,7 +21,7 @@ class SocTask(ConnTask):
         print('Initiating soc_task connection...')
         DEFAULT_SOC_PORT = 8765
         port = port if port else DEFAULT_SOC_PORT
-        self._bus = WebsocketServer(host='localhost', port=port)
+        self._bus = WebsocketServer(host='', port=port)
         self._recv_q = Queue()
         self._send_q = Queue()
         self.__close_event = False
