@@ -1,6 +1,6 @@
 # common
 pyserial==3.5
-websocket-server==0.6.1
+websocket-client==1.2.2
 
 # windows
 bleak==0.8.0; sys_platform == 'win32'
