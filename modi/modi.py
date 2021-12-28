@@ -19,6 +19,22 @@ from modi.about import __version__
 
 
 class MODI:
+    network_uuids = {}
+
+    def __call__(cls, *args, **kwargs):
+        #if cls not in cls.instances:
+        #    cls.instances[cls] = super(MODI, cls).__call__(*args, **kwargs)
+        #return cls.instances[cls]
+        network_uuid = kwargs.get('network_uuid')
+        conn_type = kwargs.get('conn_type')
+        if conn_type != 'ble':
+            return super(MODI, cls).__call__(*args, **kwargs)
+        if not network_uuid:
+            raise ValueError('Should input a valid network uuid!')
+        if network_uuid not in cls.network_uuids:
+            cls.network_uuids[network_uuid] = \
+                super(MODI, cls).__call__(*args, **kwargs)
+        return cls.network_uuids[network_uuid]
 
     def __init__(
         self, modi_version=1, conn_type="", verbose=False, port=None,
@@ -107,9 +123,8 @@ class MODI:
                 bad_modules.append(module)
         return bad_modules
 
-    @staticmethod
     def __init_task(
-        conn_type, verbose, port, network_uuid,
+        self, conn_type, verbose, port, network_uuid,
     ):
         if not conn_type:
             is_can = not is_network_module_connected() and is_on_pi()
@@ -124,6 +139,9 @@ class MODI:
         elif conn_type == 'can':
             return im('modi.task.can_task').CanTask(verbose)
         elif conn_type == 'ble':
+            if not network_uuid:
+                raise ValueError('Network UUID not specified!')
+            self.network_uuids[network_uuid] = self
             mod_path = {
                 'win32': 'modi.task.ble_task.ble_task_win',
                 'linux': 'modi.task.ble_task.ble_task_rpi',
