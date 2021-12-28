@@ -1,5 +1,6 @@
 # common
 pyserial==3.5
+nest-asyncio==1.5.4
 websocket-client==1.2.3
 
 # windows
