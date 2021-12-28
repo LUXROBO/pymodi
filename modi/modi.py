@@ -32,7 +32,8 @@ class MODI:
         if not network_uuid:
             raise ValueError('Should input a valid network uuid!')
         if network_uuid not in cls.network_uuids:
-            cls.network_uuids[network_uuid] = super(MODI, cls).__call__(*args, **kwargs)
+            cls.network_uuids[network_uuid] = \
+                super(MODI, cls).__call__(*args, **kwargs)
         return cls.network_uuids[network_uuid]
 
     def __init__(
