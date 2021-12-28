@@ -19,11 +19,15 @@ from modi.about import __version__
 
 
 class MODI:
+    network_uuids = []
 
     def __init__(
         self, modi_version=1, conn_type="", verbose=False, port=None,
         network_uuid="", virtual_modules=None,
     ):
+        if network_uuid in self.network_uuids:
+            raise ValueError(f'{network_uuid} is already used!')
+
         if virtual_modules and conn_type != "vir":
             raise ValueError(
                 "Virtual modules can only be defined in virtual connection"
@@ -107,10 +111,14 @@ class MODI:
                 bad_modules.append(module)
         return bad_modules
 
-    @staticmethod
     def __init_task(
-        conn_type, verbose, port, network_uuid,
+        self, conn_type, verbose, port, network_uuid,
     ):
+        print('what?')
+        # Put these lines where you want to debug
+        from IPython import embed
+        embed()
+        print(self)
         if not conn_type:
             is_can = not is_network_module_connected() and is_on_pi()
             conn_type = 'can' if is_can else 'ser'
@@ -124,6 +132,9 @@ class MODI:
         elif conn_type == 'can':
             return im('modi.task.can_task').CanTask(verbose)
         elif conn_type == 'ble':
+            if not network_uuid:
+                raise ValueError('Network UUID not specified!')
+            self.network_uuids.append(network_uuid)
             mod_path = {
                 'win32': 'modi.task.ble_task.ble_task_win',
                 'linux': 'modi.task.ble_task.ble_task_rpi',
