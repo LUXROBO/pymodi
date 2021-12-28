@@ -9,6 +9,9 @@ from threading import Thread
 from bleak import discover, BleakClient, BleakError
 from bleak.backends.corebluetooth import client as mac_client
 
+import nest_asyncio
+nest_asyncio.apply()
+
 from modi.task.conn_task import ConnTask
 from modi.util.connection_util import MODIConnectionError
 from modi.util.miscellaneous_util import ask_modi_device
