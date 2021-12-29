@@ -9,12 +9,9 @@ from queue import Queue
 from threading import Thread
 
 from bleak import discover, BleakClient, BleakError
-from bleak.backends.corebluetooth import client as mac_client
-
 
 from modi.task.conn_task import ConnTask
 from modi.util.connection_util import MODIConnectionError
-from modi.util.miscellaneous_util import ask_modi_device
 
 
 nest_asyncio.apply()
@@ -32,35 +29,20 @@ class BleTask(ConnTask):
         self._recv_q = Queue()
         self._send_q = Queue()
         self.__close_event = False
-        self.__get_service = \
-            mac_client.BleakClientCoreBluetooth.get_services
-        mac_client.BleakClientCoreBluetooth.get_services = self.mac_get_service
-
-    @staticmethod
-    # The 'self' parameter of this function is necessary
-    async def mac_get_service(client):
-        return None
 
     async def _list_modi_devices(self):
         devices = await discover(timeout=1)
-        modi_devies = []
         for d in devices:
-            if 'MODI' in d.name:
-                modi_devies.append(d)
-        if not self.__uuid:
-            self.__uuid = ask_modi_device(
-                [d.name.upper() for d in modi_devies]
-            )
-        for d in modi_devies:
-            if self.__uuid in d.name.upper():
+            if 'MODI' not in d.name:
+                continue
+            if self.__uuid == d.name.split('_')[-1].upper():
                 return d
-        return None
+        raise ValueError(f'Cannot find a modi module with {self.__uuid}!')
 
     async def __connect(self, address):
         client = BleakClient(address, timeout=1)
         await client.connect(timeout=1)
         await asyncio.sleep(1)
-        await self.__get_service(client)
         return client
 
     def __run_loop(self):
