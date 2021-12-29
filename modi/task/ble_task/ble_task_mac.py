@@ -1,3 +1,4 @@
+import sys
 import json
 import time
 import base64
@@ -30,6 +31,17 @@ class BleTask(ConnTask):
         self._send_q = Queue()
         self.__close_event = False
 
+        if sys.platform == 'darwin':
+            from bleak.backends.corebluetooth import client as mac_client
+            self.__get_service = \
+                mac_client.BleakClientCoreBluetooth.get_services
+            mac_client.BleakClientCoreBluetooth.get_services = \
+                self.mac_get_service
+    
+    @staticmethod
+    async def mac_get_service(client):
+        return None
+
     async def _list_modi_devices(self):
         devices = await discover(timeout=1)
         for d in devices:
@@ -43,6 +55,8 @@ class BleTask(ConnTask):
         client = BleakClient(address, timeout=1)
         await client.connect(timeout=1)
         await aio.sleep(1)
+        if sys.platform == 'darwin':
+            await self.__get_service(client)
         return client
 
     def __run_loop(self):
