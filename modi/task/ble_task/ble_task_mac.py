@@ -84,8 +84,9 @@ class BleTask(ConnTask):
             Thread(target=self.__run_loop, daemon=True).start()
             print(f"Connected to {modi_device.name}")
         else:
-            raise MODIConnectionError(f"Network module of {self.__uuid}"
-                                      f" not found!")
+            raise MODIConnectionError(
+                f"Network module of {self.__uuid} not found!"
+            )
 
     async def __close_client(self):
         try:
@@ -100,6 +101,7 @@ class BleTask(ConnTask):
             while self._loop.is_running():
                 time.sleep(0.1)
             self._loop.run_until_complete(self.__close_client())
+            self._loop.close()
 
     def recv(self) -> Optional[str]:
         if self._recv_q.empty():
