@@ -1,8 +1,8 @@
 import json
 import time
 import base64
-import asyncio
-import nest_asyncio
+import asyncio as aio
+import nest_asyncio as nest_aio
 
 from typing import Optional
 from queue import Queue
@@ -14,7 +14,7 @@ from modi.task.conn_task import ConnTask
 from modi.util.connection_util import MODIConnectionError
 
 
-nest_asyncio.apply()
+nest_aio.apply()
 
 
 class BleTask(ConnTask):
@@ -24,7 +24,7 @@ class BleTask(ConnTask):
     def __init__(self, verbose=False, uuid=None):
         super().__init__(verbose=verbose)
         print("Initiating ble_task connection...")
-        self._loop = asyncio.get_event_loop()
+        self._loop = aio.get_event_loop()
         self.__uuid = uuid
         self._recv_q = Queue()
         self._send_q = Queue()
@@ -42,25 +42,25 @@ class BleTask(ConnTask):
     async def __connect(self, address):
         client = BleakClient(address, timeout=1)
         await client.connect(timeout=1)
-        await asyncio.sleep(1)
+        await aio.sleep(1)
         return client
 
     def __run_loop(self):
-        asyncio.set_event_loop(self._loop)
-        tasks = asyncio.gather(self.__send_handler(), self.__watch_notify())
+        aio.set_event_loop(self._loop)
+        tasks = aio.gather(self.__send_handler(), self.__watch_notify())
         self._loop.run_until_complete(tasks)
 
     async def __watch_notify(self):
         await self._bus.start_notify(self.CHAR_UUID, self.__recv_handler)
         while True:
-            await asyncio.sleep(0.001)
+            await aio.sleep(0.001)
             if self.__close_event:
                 break
 
     async def __send_handler(self):
         while True:
             if self._send_q.empty():
-                await asyncio.sleep(0.001)
+                await aio.sleep(0.001)
             else:
                 try:
                     await self._bus.write_gatt_char(
@@ -75,7 +75,7 @@ class BleTask(ConnTask):
         self._recv_q.put(self.__parse_ble_msg(data))
 
     def open_conn(self):
-        loop = asyncio.get_event_loop()
+        loop = aio.get_event_loop()
         modi_device = loop.run_until_complete(self._list_modi_devices())
         if modi_device:
             self._bus = self._loop.run_until_complete(
