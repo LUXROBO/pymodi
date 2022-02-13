@@ -143,7 +143,7 @@ class MODI:
                 raise ValueError('Network UUID not specified!')
             self.network_uuids[network_uuid] = self
             mod_path = {
-                'win32': 'modi.task.ble_task.ble_task_win',
+                'win32': 'modi.task.ble_task.ble_task_mac',
                 'linux': 'modi.task.ble_task.ble_task_rpi',
                 'darwin': 'modi.task.ble_task.ble_task_mac',
             }.get(sys.platform)
