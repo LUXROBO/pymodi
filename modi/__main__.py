@@ -7,10 +7,10 @@ from getopt import getopt, GetoptError
 
 import modi
 
-from modi.util.debugger import Debugger
-from modi.util.usage_instructor import UsageInstructor
-from modi.util.tutor import Tutor
-from modi.util.inspector import Inspector
+from modi.util.debugging_util import Debugger
+from modi.util.usage_util import UsageInstructor
+from modi.util.tutorial_util import Tutor
+from modi.util.inspection_util import Inspector
 
 from modi.util.firmware_updater import STM32FirmwareUpdater
 from modi.util.firmware_updater import ESP32FirmwareUpdater
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     try:
         # all commands should be defined here in advance
         opts, args = getopt(
-            sys.argv[1:], "tamhvpdinubgxy",
+            sys.argv[1:], "tamhvpdinubxy",
             [
                 "tutorial",
                 "initialize",
@@ -63,7 +63,6 @@ if __name__ == "__main__":
                 "update_network",
                 "usage",
                 "update_network_base",
-                "update_in_gui",
                 "update_modules_gd",
                 "update_network_base_gd",
             ]
@@ -199,13 +198,4 @@ if __name__ == "__main__":
     if check_option('-u', '--usage'):
         usage = UsageInstructor()
         usage.run_usage_manual()
-        os._exit(0)
-
-    # Run GUI MODI Firmware Updater
-    if check_option('-g', '--update_in_gui'):
-        from PyQt5 import QtWidgets
-        from modi.util.gui_firmware_updater import Form
-        app = QtWidgets.QApplication(sys.argv)
-        w = Form()
-        sys.exit(app.exec())
         os._exit(0)

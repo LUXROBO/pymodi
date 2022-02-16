@@ -104,7 +104,7 @@ History
 2. Improve BLE connection stability in Linux Platform
 3. Implement module usage manual (i.e. quick-start)
 4. Implement module inspection functionality (i.e. diagnose)
-5.  Refactor GUI debugger design, fix initialization issue on macOS
+5. Refactor GUI debugger design, fix initialization issue on macOS
 
 1.1.0 (2020-12-17)
 --
@@ -112,3 +112,11 @@ History
 2. Implement network base (STM32) firmware updater
 3. Implement GD32 firmware updater
 4. Implement [VirtualMODI](https://github.com/luxrobo/virtual-modi) integration code
+
+1.2.0 (2022-02-16)
+--
+1. Detach GUI Firmware Updater from PyMODI to individual repo
+2. Implement web client method for MODI json connection
+3. Package PyMODI into a dockerfile via GHCR
+4. Fix minor bug in BLE connection
+

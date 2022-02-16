@@ -1,81 +1,82 @@
+import sys
 import json
-import base64
-import asyncio
 import time
+import base64
+import asyncio as aio
+import nest_asyncio as nest_aio
+
 from typing import Optional
 from queue import Queue
 from threading import Thread
 
-from bleak import discover, BleakClient, BleakError
-from bleak.backends.corebluetooth import client as mac_client
+from bleak import BleakClient, BleakError, BleakScanner
 
 from modi.task.conn_task import ConnTask
 from modi.util.connection_util import MODIConnectionError
-from modi.util.miscellaneous import ask_modi_device
+
+
+nest_aio.apply()
 
 
 class BleTask(ConnTask):
-
     CHAR_UUID = '00008421-0000-1000-8000-00805f9b34fb'
 
     def __init__(self, verbose=False, uuid=None):
         super().__init__(verbose=verbose)
-        print("Initiating ble_task connection...")
-        self._loop = asyncio.get_event_loop()
-        self.__uuid = uuid
+        self.modi_name = f'MODI_{uuid.upper()}'
+        print(f'Initiating ble_task connection with {self.modi_name}')
+        self._loop = aio.get_event_loop()
         self._recv_q = Queue()
         self._send_q = Queue()
         self.__close_event = False
-        self.__get_service = \
-            mac_client.BleakClientCoreBluetooth.get_services
-        mac_client.BleakClientCoreBluetooth.get_services = self.mac_get_service
+
+        if sys.platform == 'darwin':
+            from bleak.backends.corebluetooth import client as mac_client
+            self.__get_service = \
+                mac_client.BleakClientCoreBluetooth.get_services
+            mac_client.BleakClientCoreBluetooth.get_services = \
+                self.mac_get_service
 
     @staticmethod
-    # The 'self' parameter of this function is necessary
     async def mac_get_service(client):
         return None
 
-    async def _list_modi_devices(self):
-        devices = await discover(timeout=1)
-        modi_devies = []
-        for d in devices:
-            if 'MODI' in d.name:
-                modi_devies.append(d)
-        if not self.__uuid:
-            self.__uuid = ask_modi_device(
-                [d.name.upper() for d in modi_devies])
-        for d in modi_devies:
-            if self.__uuid in d.name.upper():
-                return d
-        return None
+    def match_device(self, device, _):
+        return device.name == self.modi_name
 
     async def __connect(self, address):
-        client = BleakClient(address, timeout=1)
-        await client.connect(timeout=1)
-        await asyncio.sleep(1)
-        await self.__get_service(client)
+        client = BleakClient(
+            address, disconnected_callback=self.handle_disconnected, timeout=2
+        )
+        await client.connect(timeout=2)
+        await aio.sleep(1)
+        if sys.platform == 'darwin':
+            await self.__get_service(client)
         return client
 
     def __run_loop(self):
-        asyncio.set_event_loop(self._loop)
-        tasks = asyncio.gather(self.__send_handler(), self.__watch_notify())
+        aio.set_event_loop(self._loop)
+        tasks = aio.gather(self.__send_handler(), self.__watch_notify())
         self._loop.run_until_complete(tasks)
 
     async def __watch_notify(self):
         await self._bus.start_notify(self.CHAR_UUID, self.__recv_handler)
         while True:
-            await asyncio.sleep(0.001)
+            await aio.sleep(0.001)
             if self.__close_event:
                 break
 
     async def __send_handler(self):
         while True:
             if self._send_q.empty():
-                await asyncio.sleep(0.001)
+                await aio.sleep(0.001)
             else:
-                await self._bus.write_gatt_char(
-                    self.CHAR_UUID, self._send_q.get()
-                )
+                try:
+                    await self._bus.write_gatt_char(
+                        self.CHAR_UUID, self._send_q.get()
+                    )
+                except BleakError:
+                    self.__close_event = True
             if self.__close_event:
                 break
 
@@ -83,8 +84,10 @@ class BleTask(ConnTask):
         self._recv_q.put(self.__parse_ble_msg(data))
 
     def open_conn(self):
-        loop = asyncio.get_event_loop()
-        modi_device = loop.run_until_complete(self._list_modi_devices())
+        loop = aio.get_event_loop()
+        modi_device = loop.run_until_complete(
+            BleakScanner.find_device_by_filter(self.match_device)
+        )
         if modi_device:
             self._bus = self._loop.run_until_complete(
                 self.__connect(modi_device.address)
@@ -92,8 +95,10 @@ class BleTask(ConnTask):
             Thread(target=self.__run_loop, daemon=True).start()
             print(f"Connected to {modi_device.name}")
         else:
-            raise MODIConnectionError(f"Network module of {self.__uuid}"
-                                      f" not found!")
+            raise MODIConnectionError(
+                f"Network module of {self.modi_name} not found!"
+                'Perhaps, the module is already paired with your device?'
+            )
 
     async def __close_client(self):
         try:
@@ -108,6 +113,10 @@ class BleTask(ConnTask):
             while self._loop.is_running():
                 time.sleep(0.1)
             self._loop.run_until_complete(self.__close_client())
+            self._loop.close()
+
+    def handle_disconnected(self, _):
+        print('Device is being properly disconnected...')
 
     def recv(self) -> Optional[str]:
         if self._recv_q.empty():

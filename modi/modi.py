@@ -9,9 +9,9 @@ from importlib import import_module as im
 
 from modi._exe_thrd import ExeThrd
 from modi.util.connection_util import is_network_module_connected, is_on_pi
-from modi.util.miscellaneous import ModuleList
-from modi.util.stranger import check_complete
-from modi.util.topology_manager import TopologyManager
+from modi.util.miscellaneous_util import ModuleList
+from modi.util.strange_util import check_complete
+from modi.util.topology_util import TopologyManager
 from modi.util.firmware_updater import STM32FirmwareUpdater
 from modi.util.firmware_updater import ESP32FirmwareUpdater
 
@@ -19,6 +19,19 @@ from modi.about import __version__
 
 
 class MODI:
+    network_uuids = {}
+
+    def __call__(cls, *args, **kwargs):
+        network_uuid = kwargs.get('network_uuid')
+        conn_type = kwargs.get('conn_type')
+        if conn_type != 'ble':
+            return super(MODI, cls).__call__(*args, **kwargs)
+        if not network_uuid:
+            raise ValueError('Should input a valid network uuid!')
+        if network_uuid not in cls.network_uuids:
+            cls.network_uuids[network_uuid] = \
+                super(MODI, cls).__call__(*args, **kwargs)
+        return cls.network_uuids[network_uuid]
 
     def __init__(
         self, modi_version=1, conn_type="", verbose=False, port=None,
@@ -48,9 +61,10 @@ class MODI:
         init_time = time.time()
         while not self._topology_manager.is_topology_complete():
             time.sleep(0.1)
-            if time.time() - init_time > 5:
-                print("MODI init timeout over. "
-                      "Check your module connection.")
+            if time.time() - init_time > 3:
+                print(
+                    'MODI init timeout over. Check your module connection.'
+                )
                 break
         check_complete(self)
         print("MODI modules are initialized!")
@@ -106,9 +120,8 @@ class MODI:
                 bad_modules.append(module)
         return bad_modules
 
-    @staticmethod
     def __init_task(
-        conn_type, verbose, port, network_uuid,
+        self, conn_type, verbose, port, network_uuid,
     ):
         if not conn_type:
             is_can = not is_network_module_connected() and is_on_pi()
@@ -116,19 +129,24 @@ class MODI:
 
         if conn_type == 'ser':
             return im('modi.task.ser_task').SerTask(verbose, port)
-        elif conn_type == 'can':
-            return im('modi.task.can_task').CanTask(verbose)
+        elif conn_type == 'soc':
+            return im('modi.task.soc_task').SocTask(verbose, port)
         elif conn_type == 'vir':
             return im('modi.task.vir_task').VirTask(verbose, port)
+        elif conn_type == 'can':
+            return im('modi.task.can_task').CanTask(verbose)
         elif conn_type == 'ble':
+            if not network_uuid:
+                raise ValueError('Network UUID not specified!')
+            self.network_uuids[network_uuid] = self
             mod_path = {
-                'win32': 'modi.task.ble_task.ble_task_win',
+                'win32': 'modi.task.ble_task.ble_task_mac',
                 'linux': 'modi.task.ble_task.ble_task_rpi',
                 'darwin': 'modi.task.ble_task.ble_task_mac',
             }.get(sys.platform)
             return im(mod_path).BleTask(verbose, network_uuid)
         else:
-            raise ValueError(f'Invalid conn mode {conn_type}')
+            raise ValueError(f'Invalid conn mode: {conn_type}')
 
     def open(self):
         atexit.register(self.close)

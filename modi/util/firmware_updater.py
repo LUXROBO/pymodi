@@ -20,7 +20,7 @@ from urllib.error import URLError
 from modi.module.module import Module
 from modi.util.message_util import unpack_data, decode_message, parse_message
 from modi.util.connection_util import list_modi_ports, is_on_pi
-from modi.util.miscellaneous import get_module_type_from_uuid
+from modi.util.miscellaneous_util import get_module_type_from_uuid
 
 
 class STM32FirmwareUpdater:
@@ -57,6 +57,12 @@ class STM32FirmwareUpdater:
         self.ui = None
 
         self.request_network_id()
+
+    def __del__(self):
+        try:
+            self.close()
+        except Exception as e:
+            print('Magic del is called with an exception:', e)
 
     def set_ui(self, ui):
         self.ui = ui
@@ -99,6 +105,7 @@ class STM32FirmwareUpdater:
                     f'Sending a request to update firmware of network '
                     f'({self.network_id})'
                 )
+            if not self.update_in_progress:
                 self.request_to_update_firmware(
                     self.network_id, is_network=True
                 )
@@ -121,12 +128,42 @@ class STM32FirmwareUpdater:
         else:
             return im('modi.task.ser_task').SerTask()
 
-    def reinitialize_serial_connection(self):
+    def _reconnect_serial_connection(self, modi_num):
+        while True:
+            time.sleep(0.1)
+            disconnect = False
+            if not list_modi_ports():
+                disconnect = True
+            if disconnect:
+                if modi_num == list_modi_ports():
+                    self.__reinitialize_serial_connection()
+                    break
+
+    def reinitialize_serial_connection(self, mode=1):
+        if self.ui and self.update_network_base and mode == 2:
+            modi_num = len(list_modi_ports())
+            if self.ui.is_english:
+                self.ui.update_network_stm32.setText(
+                    "Reconnect network module and "
+                    "click the button again please."
+                )
+            else:
+                self.ui.update_network_stm32.setText(
+                    "네트워크 모듈을 재연결 후 버튼을 다시 눌러주십시오."
+                )
+            th.Thread(
+                target=self._reconnect_serial_connection,
+                args=(modi_num,),
+                daemon=True
+            ).start()
+        else:
+            self.__reinitialize_serial_connection()
+
+    def __reinitialize_serial_connection(self):
         print('Temporally disconnecting the serial connection...')
         self.close()
-
-        print('Re-init serial connection for the update, in 2 seconds...')
         time.sleep(2)
+        print('Re-init serial connection for the update, in 2 seconds...')
         self.__conn = self.__open_conn()
         self.__conn.open_conn()
         self.__running = True
@@ -151,7 +188,7 @@ class STM32FirmwareUpdater:
                 module_id, 4, Module.PNP_OFF
             )
             self.__conn.send_nowait(firmware_update_message)
-            self.reinitialize_serial_connection()
+            self.reinitialize_serial_connection(2)
         else:
             firmware_update_message = self.__set_module_state(
                 module_id, Module.UPDATE_FIRMWARE, Module.PNP_OFF
@@ -219,13 +256,13 @@ class STM32FirmwareUpdater:
                     root_path = (
                         'https://download.luxrobo.com/modi-network-os'
                     )
-                    zip_path = path.join(root_path, 'network.zip')
+                    zip_path = root_path + '/network.zip'
                     bin_path = 'network.bin'
                 else:
                     root_path = (
                         'https://download.luxrobo.com/modi-skeleton-mobile'
                     )
-                    zip_path = path.join(root_path, 'skeleton.zip')
+                    zip_path = root_path + '/skeleton.zip'
                     bin_path = (
                         path.join(f'skeleton/{module_type.lower()}.bin')
                         if module_type != 'env' else
@@ -259,6 +296,30 @@ class STM32FirmwareUpdater:
             page_offset = 0 if not self.update_network_base else 0x8800
             for page_begin in range(bin_begin, bin_end + 1, page_size):
                 progress = 100 * page_begin // bin_end
+
+                if self.ui:
+                    if self.update_network_base:
+                        if self.ui.is_english:
+                            self.ui.update_network_stm32.setText(
+                                f"Network STM32 update is in progress. "
+                                f"({progress}%)"
+                            )
+                        else:
+                            self.ui.update_network_stm32.setText(
+                                f"네트워크 모듈 초기화가 진행중입니다. "
+                                f"({progress}%)"
+                            )
+                    else:
+                        if self.ui.is_english:
+                            self.ui.update_stm32_modules.setText(
+                                f"STM32 modules update is in progress. "
+                                f"({progress}%)"
+                            )
+                        else:
+                            self.ui.update_stm32_modules.setText(
+                                f"모듈 초기화가 진행중입니다. ({progress}%)"
+                            )
+
                 print(
                     f"\rUpdating {module_type} ({module_id}) "
                     f"{self.__progress_bar(page_begin, bin_end)} "
@@ -313,13 +374,13 @@ class STM32FirmwareUpdater:
         # Get version info from version_path, using appropriate methods
         version_info, version_file = None, 'version.txt'
         if self.ui:
-            version_path = path.join(root_path, version_file)
+            version_path = root_path + '/' + version_file
             for line in ur.urlopen(version_path, timeout=5):
                 version_info = line.decode('utf-8').lstrip('v')
         else:
             if self.update_network_base:
                 version_file = 'base_' + version_file
-            version_path = path.join(root_path, version_file)
+            version_path = root_path + '/' + version_file
             with open(version_path) as version_file:
                 version_info = version_file.readline().lstrip('v').rstrip('\n')
         version_digits = [int(digit) for digit in version_info.split('.')]
@@ -359,12 +420,44 @@ class STM32FirmwareUpdater:
             print("Reboot message has been sent to all connected modules")
             self.reset_state()
             if self.update_network_base:
-                self.reinitialize_serial_connection()
+                self.reinitialize_serial_connection(1)
                 time.sleep(0.5)
 
             time.sleep(1)
             self.update_in_progress = False
             self.update_event.set()
+
+            if self.ui:
+                if self.update_network_base:
+                    self.ui.update_stm32_modules.setStyleSheet(
+                        f'border-image: url({self.ui.active_path})'
+                    )
+                    self.ui.update_stm32_modules.setEnabled(True)
+                    if self.ui.is_english:
+                        self.ui.update_network_stm32.setText(
+                            "Update Network STM32"
+                        )
+                    else:
+                        self.ui.update_network_stm32.setText(
+                            "네트워크 모듈 초기화"
+                        )
+                else:
+                    self.ui.update_network_stm32.setStyleSheet(
+                        f'border-image: url({self.ui.active_path})'
+                    )
+                    self.ui.update_network_stm32.setEnabled(True)
+                    if self.ui.is_english:
+                        self.ui.update_stm32_modules.setText(
+                            "Update STM32 Modules."
+                        )
+                    else:
+                        self.ui.update_stm32_modules.setText(
+                            "모듈 초기화"
+                        )
+                self.ui.update_network_esp32.setStyleSheet(
+                    f'border-image: url({self.ui.active_path})'
+                )
+                self.ui.update_network_esp32.setEnabled(True)
 
     @staticmethod
     def __delay(span):
@@ -698,6 +791,24 @@ class ESP32FirmwareUpdater(serial.Serial):
         self.flushOutput()
         self.close()
 
+        if self.ui:
+            self.ui.update_stm32_modules.setStyleSheet(
+                f'border-image: url({self.ui.active_path})'
+            )
+            self.ui.update_stm32_modules.setEnabled(True)
+            self.ui.update_network_stm32.setStyleSheet(
+                f'border-image: url({self.ui.active_path})'
+            )
+            self.ui.update_network_stm32.setEnabled(True)
+            if self.ui.is_english:
+                self.ui.update_network_esp32.setText(
+                    "Update Network ESP32"
+                )
+            else:
+                self.ui.update_network_esp32.setText(
+                    "네트워크 모듈 업데이트"
+                )
+
     def __device_ready(self):
         print("Redirecting connection to esp device...")
         self.write(b'{"c":43,"s":0,"d":4095,"b":"AA==","l":1}')
@@ -971,6 +1082,15 @@ class ESP32FirmwareUpdater(serial.Serial):
             )
         if manager:
             manager.quit()
+        if self.ui:
+            if self.ui.is_english:
+                self.ui.update_network_esp32.setText(
+                    "Network ESP32 update is in progress. (100%)"
+                )
+            else:
+                self.ui.update_network_esp32.setText(
+                    "네트워크 모듈 업데이트가 진행중입니다. (100%)"
+                )
         print(f"\r{self.__progress_bar(1, 1)}")
         print("Firmware Upload Complete")
 
@@ -986,6 +1106,17 @@ class ESP32FirmwareUpdater(serial.Serial):
         for seq, block in enumerate(block_queue):
             if manager:
                 manager.status = self.__progress_bar(curr_seq + seq, total_seq)
+            if self.ui:
+                if self.ui.is_english:
+                    self.ui.update_network_esp32.setText(
+                        f"Network ESP32 update is in progress. "
+                        f"({int((curr_seq+seq)/total_seq*100)}%)"
+                    )
+                else:
+                    self.ui.update_network_esp32.setText(
+                        f"네트워크 모듈 업데이트가 진행중입니다. "
+                        f"({int((curr_seq+seq)/total_seq*100)}%)"
+                    )
             print(
                 f'\r{self.__progress_bar(curr_seq + seq, total_seq)}', end=''
             )

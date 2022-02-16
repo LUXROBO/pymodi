@@ -33,12 +33,6 @@ PyMODI provides a control of modular electronics, [MODI](https://modi.luxrobo.co
 * Update of MODI firmware consisting of both ESP32 and STM32 modules
 * Direct manipulation of MODI network module using [MODI Play](https://play.google.com/store/apps/details?id=com.luxrobo.modiplay&hl=en_US)
 
-UML Diagram
------------
-<p align="center">
-    <img src="https://github.com/LUXROBO/pymodi/blob/master/docs/_static/img/umldiagram.svg?raw=true">
-</p>
-
 Build Status
 ------------
 |master|develop|
@@ -80,7 +74,7 @@ python --version
 
 Install the latest PyMODI if you haven't installed it yet:
 ```commandline
-python -m pip install -U pymodi --user
+python -m pip install pymodi --user --upgrade
 ```
 
 You can also install PyMODI at develop branch (containing latest changes but it can be unstable) with:
@@ -179,11 +173,6 @@ $ python -m modi --update_network_base
 To update MODI modules (all modules but the network module),
 ```commandline
 $ python -m modi --update_modules
-```
-
-To update firmware in GUI mode (all three commands above are available)
-```commandline
-$ python -m modi --update_in_gui
 ```
 
 To diagnose MODI modules (helpful to find existing malfunctioning modules),

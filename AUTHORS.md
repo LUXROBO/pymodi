@@ -11,7 +11,9 @@ Maintainer
 
 Committer
 ---------
--   Jinsung Ha (jinsung@luxrobo.com)
+-   Jinsoo Heo (koriel@luxrobo.com)
+-   Jinsung Ha (jsung5381@naver.com)
+-   Sebeom Lee (moses97@gmail.com)
 
 Contributors
 ------------
@@ -22,3 +24,6 @@ Contributors
 -   Sebeom Lee (moses97@gmail.com)
 -   Doyeon Kim (archdo0909@gmail.com)
 -   Seokyoung Woo (wsy8029@gmail.com)
+-   Seungyoon Lee (syoon624@gmail.com)
+-   Jemin Yeon (yjm9507@yonsei.ac.kr)
+

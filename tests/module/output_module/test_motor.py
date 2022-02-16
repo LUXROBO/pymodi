@@ -2,7 +2,7 @@ import unittest
 
 from modi.module.output_module.motor import Motor
 from modi.util.message_util import parse_data, parse_message
-from modi.util.miscellaneous import MockConn
+from modi.util.miscellaneous_util import MockConn
 
 
 class TestMotor(unittest.TestCase):
