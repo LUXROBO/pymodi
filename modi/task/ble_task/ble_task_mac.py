@@ -36,7 +36,7 @@ class BleTask(ConnTask):
                 mac_client.BleakClientCoreBluetooth.get_services
             mac_client.BleakClientCoreBluetooth.get_services = \
                 self.mac_get_service
-    
+
     @staticmethod
     async def mac_get_service(client):
         return None
@@ -114,11 +114,9 @@ class BleTask(ConnTask):
                 time.sleep(0.1)
             self._loop.run_until_complete(self.__close_client())
             self._loop.close()
-    
+
     def handle_disconnected(self, _):
         print('Device is being properly disconnected...')
-        #for task in aio.all_tasks():
-        #    task.cancel()
 
     def recv(self) -> Optional[str]:
         if self._recv_q.empty():
